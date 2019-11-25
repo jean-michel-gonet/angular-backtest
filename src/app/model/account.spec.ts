@@ -2,6 +2,10 @@ import { Account } from './account';
 import { Asset } from './asset';
 
 class TestAccount extends Account {
+  public constructor(obj = {} as TestAccount) {
+    super(obj);
+  }
+
   buy(asset: Asset, parts: number): void {
     throw new Error("Method not implemented.");
   }
@@ -11,7 +15,7 @@ class TestAccount extends Account {
 }
 
 describe('Account', () => {
-  it('should create an instance', () => {
+  it('Should be able to compute NAV', () => {
     expect(new TestAccount()).toBeTruthy();
   });
 });

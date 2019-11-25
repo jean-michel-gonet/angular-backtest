@@ -15,10 +15,12 @@ export abstract class Account {
   constructor(obj = {} as Account) {
     let {
       cash = 0,
-      positions = Position[0]
+      positions = Position[0],
+      strategy = null
     } = obj;
     this.cash = cash;
     this.positions = positions;
+    this.strategy = strategy;
   }
 
   /**
