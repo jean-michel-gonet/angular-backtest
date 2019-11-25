@@ -1,6 +1,6 @@
 import { Strategy } from './strategy';
 import { Account } from './account';
-import { Stock } from './Stock';
+import { Stock } from './stock';
 
 class TestStrategy extends Strategy {
   applyStrategy(account: Account, stock: Stock): void {

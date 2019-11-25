@@ -10,7 +10,7 @@ class TestAccount extends Account {
   }
 }
 
-describe('Position', () => {
+describe('Account', () => {
   it('should create an instance', () => {
     expect(new TestAccount()).toBeTruthy();
   });
