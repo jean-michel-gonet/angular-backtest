@@ -1,3 +1,5 @@
+import { Stock } from './stock';
+
 /**
  * Base class for an asset.
  */
@@ -45,14 +47,27 @@ export class AssetOfInterest extends Asset {
  * Contains the required information to calculate
  * the NAV.
  */
-export class AssetInPortfolio extends Asset {
+export class Position extends Asset {
   parts: number;
 
-  constructor(obj: AssetInPortfolio = {} as AssetInPortfolio) {
+  constructor(obj: Position = {} as Position) {
     super(obj);
     let {
       parts = 0
     } = obj;
     this.parts = parts;
+  }
+
+  /**
+   * Updates the part value of this position based on the
+   * provided stock update.
+   * @param {Stock} stock The stock update.
+   */
+  update(stock: Stock): void {
+    stock.assetsOfInterest.forEach(assetOfInterest => {
+      if (assetOfInterest.isin == this.isin) {
+        this.partValue = assetOfInterest.partValue;
+      }
+    });
   }
 }
