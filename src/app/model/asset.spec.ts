@@ -30,6 +30,18 @@ describe('Position', () => {
   });
 });
 
+describe('AssetOfInterest', () => {
+  it('Can create a new instance', () => {
+    expect(new AssetOfInterest({
+      isin: "XX",
+      name: "name",
+      partValue: 1.5,
+      spread: 0.01,
+      dividend: 0.01
+    })).toBeTruthy();
+  });
+});
+
 describe('Asset', () => {
   it('Can create a new instance', () => {
     expect(new Asset({
