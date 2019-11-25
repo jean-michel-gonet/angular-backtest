@@ -1,8 +1,8 @@
 import { AssetOfInterest } from './asset';
 
 export class Stock {
-  time: Date;
-  assetsOfInterest: AssetOfInterest[];
+  time?: Date;
+  assetsOfInterest?: AssetOfInterest[];
 
   constructor(obj : Stock = {} as Stock) {
     let {

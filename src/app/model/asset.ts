@@ -42,20 +42,34 @@ export class AssetOfInterest extends Asset {
   }
 }
 
-/**
- * An asset as described when held in a portfolio.
- * Contains the required information to calculate
- * the NAV.
- */
-export class Position extends Asset {
-  parts: number;
+class IPosition extends Asset {
+  parts?: number;
 
-  constructor(obj: Position = {} as Position) {
+  constructor(obj: IPosition = {} as IPosition) {
     super(obj);
     let {
       parts = 0
     } = obj;
     this.parts = parts;
+  }
+}
+
+/**
+ * An asset as described when held in a portfolio.
+ * Contains the required information to calculate
+ * the NAV.
+ */
+export class Position extends IPosition {
+  constructor(obj: IPosition = {} as IPosition) {
+    super(obj);
+  }
+
+  /**
+   * Returns the net asset value based on the part value and
+   * the number of parts.
+   */
+  nav():number {
+    return this.partValue * this.parts;
   }
 
   /**
