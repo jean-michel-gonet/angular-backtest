@@ -74,14 +74,10 @@ export class Position extends IPosition {
 
   /**
    * Updates the part value of this position based on the
-   * provided stock update.
-   * @param {Stock} stock The stock update.
+   * provided asset.
+   * @param {Asset} asset The update.
    */
-  update(stock: Stock): void {
-    stock.assetsOfInterest.forEach(assetOfInterest => {
-      if (assetOfInterest.isin == this.isin) {
-        this.partValue = assetOfInterest.partValue;
-      }
-    });
+  update(asset: Asset): void {
+      this.partValue = asset.partValue;
   }
 }

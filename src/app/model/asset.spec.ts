@@ -18,14 +18,7 @@ describe('Position', () => {
       parts: 6
     });
 
-    let stock = new Stock({
-      time: new Date(),
-      assetsOfInterest: [
-        new AssetOfInterest({isin: "XX", partValue: 1.5}),
-        new AssetOfInterest({isin: "YY", partValue: 3.0})
-      ]
-    });
-    position.update(stock);
+    position.update(new AssetOfInterest({isin: "XX", partValue: 1.5}));
     expect(position.nav()).toBe(9);
   });
 });

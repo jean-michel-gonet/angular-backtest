@@ -60,8 +60,13 @@ export class Account extends IAccount {
    */
   process(stock: Stock): void {
     // Update the positions:
-    this.positions.forEach(position => {
-      position.update(stock);
+    stock.assetsOfInterest.forEach(assetOfInterest => {
+      let position: Position = this.positions.find(p => {
+        return p.isin == assetOfInterest.isin;
+      });
+      if (position) {
+        position.update(assetOfInterest);
+      }
     });
 
     // Call the strategy:
@@ -94,24 +99,26 @@ export class Account extends IAccount {
   order(asset: AssetOfInterest, parts: number): void {
 
     // Looks for the corresponding position:
-    let position: Position;
-    this.positions.forEach(p => {
-      if (p.isin == asset.isin) {
-        position = p;
-      }
+    let position: Position = this.positions.find(p => {
+      return p.isin == asset.isin;
     });
-    if (!position) {
+
+    // Either update or create the position:
+    if (position) {
+      position.partValue = asset.partValue;
+    } else {
       position = new Position(asset);
       this.positions.push(position);
     }
 
-    // If possible, corrects the position accordingly:
+    // If possible, updates the number of parts accordingly:
     if (position.parts + parts < 0) {
       parts =  -position.parts;
     }
     position.parts += parts;
 
-    // Removes from cash the part value and the costs.
+    // Updates the cash based on the number of parts,
+    // the part value and the costs:
     this.cash = this.cash -
                 parts * asset.partValue -
                 this.costs(asset, parts);
