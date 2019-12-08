@@ -4,7 +4,7 @@ import { Stock } from './stock';
  * Base class for an asset.
  */
 export class Asset {
-  isin?: string;
+  isin: string;
   name?: string;
   partValue?: number;
 
