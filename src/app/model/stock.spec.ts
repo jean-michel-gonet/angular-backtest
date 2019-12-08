@@ -55,12 +55,11 @@ describe('StockData', () => {
         new Stock()
       ])).toBeTruthy();
   });
+  let today: Date = new Date();
+  let yesterday: Date = new Date(today.valueOf() - 1);
+  let beforeYesterday: Date = new Date(yesterday.valueOf() - 1);
 
   it('Can return the stock of the required day', () => {
-    let today: Date = new Date();
-    let yesterday: Date = new Date(today.valueOf() - 1);
-    let beforeYesterday: Date = new Date(yesterday.valueOf() - 1);
-
     let stockData: StockData = new StockData([
       new Stock({time: beforeYesterday, assetsOfInterest: [
         new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
@@ -100,11 +99,8 @@ describe('StockData', () => {
         new AssetOfInterest({isin: "ISIN3", partValue: 3.3})
       ]));
   });
-  it('Can add more data', () =>{
-    let today: Date = new Date();
-    let yesterday: Date = new Date(today.valueOf() - 1);
-    let beforeYesterday: Date = new Date(yesterday.valueOf() - 1);
 
+  it('Can add more data', () =>{
     let stockData: StockData = new StockData([
       new Stock({time: beforeYesterday, assetsOfInterest: [
         new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
@@ -148,9 +144,6 @@ describe('StockData', () => {
       ]));
   });
   it('Can replace existing data', () => {
-    let today: Date = new Date();
-    let yesterday: Date = new Date(today.valueOf() - 1);
-    let beforeYesterday: Date = new Date(yesterday.valueOf() - 1);
 
     let stockData: StockData = new StockData([
       new Stock({time: beforeYesterday, assetsOfInterest: [
