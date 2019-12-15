@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-
-import { StockServiceService } from './stock-service.service';
-import { Stock } from '../model/stock';
+import { StockService } from './stock.service';
+import { HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 // Example downloaded from https://www.six-group.com/exchanges/funds/security_info_en.html?id=LU1290894820CHF4
 var sixGroupResponse = {
@@ -31,11 +31,11 @@ var sixGroupResponse = {
   "elapsed":21
 };
 
-describe('StockServiceService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+describe('StockService', () => {
+  beforeEach(() => TestBed.configureTestingModule({
+    imports:[HttpClientTestingModule]
+  }));
 
   it('should be created', () => {
-    const service: StockServiceService = TestBed.get(StockServiceService);
-    expect(service).toBeTruthy();
   });
 });
