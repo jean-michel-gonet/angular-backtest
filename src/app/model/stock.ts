@@ -1,6 +1,6 @@
 import { AssetOfInterest } from './asset';
 
-class IStock {
+export class IStock {
   time?: Date;
   assetsOfInterest?: AssetOfInterest[];
 
@@ -25,6 +25,14 @@ export class Stock extends IStock {
     });
   }
 
+  /**
+   * Handy to make expectations, as IStock is a simpler class.
+   * @return {IStock} An instance of a simpler class.
+   */
+  asIStock(): IStock {
+    return new IStock({time: this.time, assetsOfInterest: this.assetsOfInterest});
+  }
+
   add(newAssetsOfInterest: AssetOfInterest[]): void {
     newAssetsOfInterest.forEach(newAssetOfInterest => {
       let existingAssetOfInterest = this.mapOfAssets.get(newAssetOfInterest.isin);
@@ -40,27 +48,38 @@ export class Stock extends IStock {
 }
 
 export class StockData {
-  stock: Map<Date, Stock>;
+  stock: Map<number, Stock>;
 
-  constructor(newStocks:Stock[]) {
-    this.stock = new Map<Date, Stock>();
+  constructor(newStocks:IStock[]) {
+    this.stock = new Map<number, Stock>();
     newStocks.forEach(newStock => {
-      this.stock.set(newStock.time, newStock);
+      this.stock.set(newStock.time.valueOf(), new Stock(newStock));
     });
   }
 
-  add(newStocks: Stock[]):void {
+  add(newStocks: IStock[]):void {
     newStocks.forEach(newStock => {
-      let existingStock:Stock = this.stock.get(newStock.time);
+      let existingStock:Stock = this.stock.get(newStock.time.valueOf());
       if (existingStock) {
         existingStock.add(newStock.assetsOfInterest);
       } else {
-        this.stock.set(newStock.time, newStock);
+        this.stock.set(newStock.time.valueOf(), new Stock(newStock));
       }
     });
   }
 
+  asIStock():IStock[] {
+    let iStock: IStock[] = [];
+    this.stock.forEach(stock => {
+      iStock.push(new IStock({
+        time: stock.time,
+        assetsOfInterest: stock.assetsOfInterest
+      }));
+    });
+    return iStock;
+  }
+
   get(time: Date): Stock {
-    return this.stock.get(time);
+    return this.stock.get(time.valueOf());
   }
 }

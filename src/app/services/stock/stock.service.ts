@@ -2,28 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { forkJoin } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { StockData } from '../../model/stock';
-
-/**
- * Converts SIX data into StockData.
- * @class{SixConverter}
- */
-export class SixConverter {
-  /**
-   * Class constructor.
-   * @param{any} sixData The raw data returned by SIX.
-   */
-  constructor(private sixData: any) {
-  }
-
-  /**
-   * Transforms the provided SIX data into StockData.
-   * @return {StockData} The transformed data.
-   */
-  asStockData(): StockData {
-      return null;
-  }
-}
 
 /**
  * Retrieves stock data from a provider, and then broadcasts the
