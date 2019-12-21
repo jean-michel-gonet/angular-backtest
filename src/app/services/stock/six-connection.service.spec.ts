@@ -1,8 +1,21 @@
 import { TestBed } from '@angular/core/testing';
 
 import { SixConnectionService, SixConverter } from './six-connection.service';
-import { Stock, StockData, IStock } from 'src/app/model/stock';
+import { StockData, IStock } from 'src/app/model/stock';
 import { AssetOfInterest } from 'src/app/model/asset';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+
+
+describe('SixConnectionService', () => {
+  beforeEach(() => TestBed.configureTestingModule({
+    imports:[HttpClientTestingModule]
+  }));
+
+  it('should be created', () => {
+    const service: SixConnectionService = TestBed.get(SixConnectionService);
+    expect(service).toBeTruthy();
+  });
+});
 
 
 describe('SixConverter', () => {
@@ -90,14 +103,5 @@ describe('SixConverter', () => {
           ]
         })
       ]));
-  });
-});
-
-describe('SixConnectionService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
-
-  it('should be created', () => {
-    const service: SixConnectionService = TestBed.get(SixConnectionService);
-    expect(service).toBeTruthy();
   });
 });

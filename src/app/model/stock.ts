@@ -57,17 +57,37 @@ export class StockData {
     });
   }
 
-  add(newStocks: IStock[]):void {
-    newStocks.forEach(newStock => {
-      let existingStock:Stock = this.stock.get(newStock.time.valueOf());
+  /**
+   * Merge this stock data with another.
+   * This stock data gets modified.
+   * @param {StockData} otherStockData The other data.
+   */
+  merge(otherStockData: StockData):void {
+    otherStockData.stock.forEach(otherStock => {
+      this.add(otherStock);
+    });
+  }
+
+  /**
+   * Adds one stock to this stock data.
+   * @param {IStock} otherStock The stock.
+   */
+  add(...otherStock: IStock[]):void  {
+    otherStock.forEach((other: IStock) => {
+      let existingStock:Stock = this.stock.get(other.time.valueOf());
       if (existingStock) {
-        existingStock.add(newStock.assetsOfInterest);
+        existingStock.add(other.assetsOfInterest);
       } else {
-        this.stock.set(newStock.time.valueOf(), new Stock(newStock));
+        this.stock.set(other.time.valueOf(), new Stock(other));
       }
     });
   }
 
+  /**
+   * Transform this stock data into an array of simpler
+   * data, that can be displayed as JSON.
+   * @return {IStock[]} The array of data.
+   */
   asIStock():IStock[] {
     let iStock: IStock[] = [];
     this.stock.forEach(stock => {
@@ -79,6 +99,10 @@ export class StockData {
     return iStock;
   }
 
+  /**
+   * Returns the stock at the specified date.
+   * @param {Date} time The relevant date.
+   */
   get(time: Date): Stock {
     return this.stock.get(time.valueOf());
   }

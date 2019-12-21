@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { forkJoin } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { Observable, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { SixConnectionService } from './six-connection.service';
+import { StockData } from 'src/app/model/stock';
+
 
 /**
  * Retrieves stock data from a provider, and then broadcasts the
@@ -12,23 +14,25 @@ import { HttpClient } from '@angular/common/http';
    providedIn: 'root'
  })
 export class StockService {
-  constructor(private http: HttpClient) {
+  constructor(private sixConnectionService: SixConnectionService) {
   }
 
-  getSixData(isin: String): Observable<any> {
-    return this.http.get(
-      '/itf/fqs/delayed/charts.json?' +
-      'select=ISIN,ClosingPrice,ClosingPerformance,PreviousClosingPrice&' +
-      'where=ValorId=' + isin + 'CHF4&' +
-      'columns=Date,Time,Close,Open,Low,High,TotalVolume&' +
-      'fromdate=19880630&netting=1440&clientApp=getDailyHLOC&type=2&line=id,6m,max,530&' +
-      'dojo.preventCache=1575104481880');
-  }
-
-  getStockData(): Observable<any> {
-    return forkJoin(
-      this.getSixData('LU1290894820'),
-      this.getSixData('LU1290894820'),
-      this.getSixData('LU1290894820'));
+  getStockData(isins: string[]): Observable<StockData> {
+    let o: Observable<StockData>[] = [];
+    isins.forEach(isin => {
+      o.push(this.sixConnectionService.get(isin));
+    });
+    return forkJoin(o)
+      .pipe(map(s => {
+        let stockData: StockData;
+        s.forEach((d: StockData) => {
+          if (stockData) {
+            stockData.merge(d);
+          } else {
+            stockData = d;
+          }
+        });
+        return stockData;
+      }));
   }
 }

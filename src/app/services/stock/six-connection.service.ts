@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { StockData, Stock } from 'src/app/model/stock';
 import { AssetOfInterest } from 'src/app/model/asset';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /**
  * Converts SIX data into StockData.
@@ -23,8 +26,6 @@ export class SixConverter {
 
     let stockData: StockData = new StockData([]);
     valors.forEach(valor => {
-      let stocks: Stock[] = [];
-
       let isin = valor.ISIN;
       let data:any = valor.data;
       let dates:number[] = data.Date;
@@ -45,9 +46,8 @@ export class SixConverter {
               dividend: 0})
           ]
         });
-        stocks.push(stock);
+        stockData.add(stock);
       }
-      stockData.add(stocks);
     });
     return stockData;
   }
@@ -71,11 +71,24 @@ export class SixConverter {
   }
 }
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class SixConnectionService {
 
-  constructor() { }
+  constructor(private http: HttpClient) {
+  }
+
+  get(isin: String): Observable<StockData> {
+    return this.http.get(
+      '/itf/fqs/delayed/charts.json?' +
+      'select=ISIN,ClosingPrice,ClosingPerformance,PreviousClosingPrice&' +
+      'where=ValorId=' + isin + '&' +
+      'columns=Date,Time,Close,Open,Low,High,TotalVolume&' +
+      'fromdate=19880630&netting=1440&clientApp=getDailyHLOC&type=2&line=id,6m,max,530&' +
+      'dojo.preventCache=1575104481880').pipe(map(s => {
+        let sixConverter: SixConverter = new SixConverter(s);
+        return sixConverter.asStockData();
+      }));
+  }
 }

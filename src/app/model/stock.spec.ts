@@ -117,7 +117,7 @@ describe('StockData', () => {
       ]})
     ]);
 
-    stockData.add([
+    stockData.add(
       new Stock({time: beforeYesterday, assetsOfInterest: [
         new AssetOfInterest({isin: "ISIN3", partValue: 1.3})
       ]}),
@@ -127,7 +127,7 @@ describe('StockData', () => {
       new Stock({time: today, assetsOfInterest: [
         new AssetOfInterest({isin: "ISIN3", partValue: 3.3})
       ]})
-    ]);
+    );
 
     expect(stockData.get(beforeYesterday2).assetsOfInterest)
       .toEqual(jasmine.arrayWithExactContents([
@@ -162,7 +162,7 @@ describe('StockData', () => {
       ]})
     ]);
 
-    stockData.add([
+    stockData.add(
       new Stock({time: beforeYesterday, assetsOfInterest: [
         new AssetOfInterest({isin: "ISIN2", partValue: 4.4})
       ]}),
@@ -172,7 +172,7 @@ describe('StockData', () => {
       new Stock({time: today, assetsOfInterest: [
         new AssetOfInterest({isin: "ISIN2", partValue: 4.6})
       ]})
-    ]);
+    );
 
     expect(stockData.get(beforeYesterday2).assetsOfInterest)
       .toEqual(jasmine.arrayWithExactContents([
