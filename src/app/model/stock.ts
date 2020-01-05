@@ -90,12 +90,18 @@ export class StockData {
    */
   asIStock():IStock[] {
     let iStock: IStock[] = [];
+
     this.stock.forEach(stock => {
       iStock.push(new IStock({
         time: stock.time,
         assetsOfInterest: stock.assetsOfInterest
       }));
     });
+
+    iStock.sort((s1: IStock, s2: IStock) => {
+      return s1.time.valueOf() - s2.time.valueOf();
+    });
+
     return iStock;
   }
 

@@ -1,5 +1,4 @@
 import { Asset, Position, AssetOfInterest } from './asset';
-import { Stock } from './stock';
 
 describe('Position', () => {
   it('Can calculate the NAV', () => {
