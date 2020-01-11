@@ -112,4 +112,27 @@ export class StockData {
   get(time: Date): Stock {
     return this.stock.get(time.valueOf());
   }
+
+  forEachDate(callbackfn:(stock:Stock)=>void, start?:Date, end?: Date):void {
+    let stockTimes: Date[] = [];
+
+    for (let stock of this.stock.values()) {
+      let time: Date = stock.time;
+      if (start && time.valueOf() < start.valueOf()) {
+        continue;
+      }
+      if (end && end.valueOf() < time.valueOf()) {
+        continue;
+      }
+      stockTimes.push(stock.time);
+    }
+
+    stockTimes.sort((d1: Date, d2: Date) => {
+      return d1.valueOf() - d2.valueOf();
+    });
+
+    stockTimes.forEach(time => {
+      callbackfn(this.get(time));
+    });
+  }
 }

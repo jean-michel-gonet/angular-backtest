@@ -190,6 +190,70 @@ describe('StockData', () => {
       .toEqual(jasmine.arrayWithExactContents([
         new AssetOfInterest({isin: "ISIN2", partValue: 4.6})
       ]));
-
   });
+
+  it('Can iterate over all dates', () => {
+    let stockData: StockData = new StockData([
+      new Stock({time: beforeYesterday, assetsOfInterest: [
+        new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
+        new AssetOfInterest({isin: "ISIN2", partValue: 1.2}),
+      ]}),
+      new Stock({time: yesterday, assetsOfInterest: [
+        new AssetOfInterest({isin: "ISIN1", partValue: 2.1}),
+        new AssetOfInterest({isin: "ISIN2", partValue: 2.2}),
+      ]}),
+      new Stock({time: today, assetsOfInterest: [
+        new AssetOfInterest({isin: "ISIN1", partValue: 3.1}),
+        new AssetOfInterest({isin: "ISIN2", partValue: 3.2}),
+      ]})
+    ]);
+
+    let numberOfCalls: number = 0;
+    let time: Date = beforeYesterday;
+    stockData.forEachDate((stock: Stock) => {
+      numberOfCalls++;
+      expect(stock.assetsOfInterest.length).toBe(2);
+      expect(stock.time.valueOf()).toBeGreaterThanOrEqual(time.valueOf());
+      time = stock.time;
+    });
+    expect(numberOfCalls).toBe(3);
+  });
+
+  it('Can iterate over a range of dates', () => {
+    let stockData: StockData = new StockData([
+      new Stock({time: beforeYesterday, assetsOfInterest: [
+        new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
+        new AssetOfInterest({isin: "ISIN2", partValue: 1.2}),
+      ]}),
+      new Stock({time: yesterday, assetsOfInterest: [
+        new AssetOfInterest({isin: "ISIN1", partValue: 2.1}),
+        new AssetOfInterest({isin: "ISIN2", partValue: 2.2}),
+      ]}),
+      new Stock({time: today, assetsOfInterest: [
+        new AssetOfInterest({isin: "ISIN1", partValue: 3.1}),
+        new AssetOfInterest({isin: "ISIN2", partValue: 3.2}),
+      ]})
+    ]);
+
+    let numberOfCalls: number;
+
+    numberOfCalls = 0;
+    stockData.forEachDate(() => {
+      numberOfCalls++;
+    }, beforeYesterday, today);
+    expect(numberOfCalls).toBe(3);
+
+    numberOfCalls = 0;
+    stockData.forEachDate(() => {
+      numberOfCalls++;
+    }, yesterday, today);
+    expect(numberOfCalls).toBe(2);
+
+    numberOfCalls = 0;
+    stockData.forEachDate(() => {
+      numberOfCalls++;
+    }, beforeYesterday, beforeYesterday);
+    expect(numberOfCalls).toBe(1);
+  });
+
 });
