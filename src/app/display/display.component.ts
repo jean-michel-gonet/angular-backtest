@@ -3,7 +3,7 @@ import { StockService } from '../services/stock/stock.service';
 import { Simulation } from '../model/core/simulation';
 import { SwissQuoteAccount } from '../model/account.swissquote';
 import { BuyAndHoldStrategy } from '../model/strategy.buy-and-hold';
-import { ChartDataSets } from 'chart.js';
+import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Label, Color } from 'ng2-charts';
 
 @Component({
@@ -13,26 +13,61 @@ import { Label, Color } from 'ng2-charts';
 })
 export class DisplayComponent implements OnInit {
   simulation: Simulation;
-  lineChartData: ChartDataSets[] = [
-    { data: [85, 72, 78, 75, 77, 75], label: 'Crude oil prices' },
-  ];
-
-  lineChartLabels: Label[] = ['January', 'February', 'March', 'April', 'May', 'June'];
-
-  lineChartOptions = {
-    responsive: true,
-  };
-
-  lineChartColors: Color[] = [
+  dataSets: ChartDataSets[] = [
     {
-      borderColor: 'black',
-      backgroundColor: 'rgba(255,255,0,0.28)',
+      data: [0, 30, 20, 40, 35, 45, 33, 0, 0],
+      label: "Bar 1",
+      yAxisID: "y-axis-right"
     },
+    {
+      data: [0, 500, 600, 550, 590, 300, 400, 0, 0],
+      label: "Bar 2",
+      yAxisID: "y-axis-left"
+    },
+    {
+      data: [15, 55, 25, 35, 45, 55, 75, 85, 55],
+      label: "Line",
+      type: "line"
+    }
   ];
-
-  lineChartLegend = true;
-  lineChartPlugins = [];
-  lineChartType = 'line';
+  labels: Label[] = [
+    "FirstPlaceholder",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+    "LastPlaceholder"
+  ];
+  options: ChartOptions = {
+      legend: {
+        display: true
+      },
+      scales: {
+        yAxes: [
+          {
+            id: "y-axis-left",
+            position: 'left',
+            ticks: {
+              beginAtZero: true
+            }
+          }, {
+            id: "y-axis-right",
+            position: 'right',
+            ticks: {
+              beginAtZero: true
+            }
+          }],
+        xAxes: [{
+          ticks: {
+            min: "Monday",
+            max: "Sunday",
+          }
+        }],
+      }
+    };
 
   constructor(private stockService:StockService) {
   }

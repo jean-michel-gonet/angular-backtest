@@ -1,12 +1,10 @@
 <p>Display stock data</p>
 <div class="chart-wrapper">
     <canvas baseChart
-        [datasets]="lineChartData"
-        [labels]="lineChartLabels"
-        [options]="lineChartOptions"
-        [colors]="lineChartColors"
-        [legend]="lineChartLegend"
-        [chartType]="lineChartType"
-        [plugins]="lineChartPlugins">
+        chartType="bar"
+        [datasets]="dataSets"
+        [labels]="labels"
+        [options]="options"
+        legend="true">
     </canvas>
 </div>
