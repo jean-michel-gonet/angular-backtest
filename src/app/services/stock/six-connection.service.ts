@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { StockData, Stock } from 'src/app/model/stock';
-import { AssetOfInterest } from 'src/app/model/asset';
+import { StockData, Stock } from 'src/app/model/core/stock';
+import { AssetOfInterest } from 'src/app/model/core/asset';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';

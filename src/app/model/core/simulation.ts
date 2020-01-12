@@ -1,5 +1,5 @@
-import { StockData } from '../model/stock';
-import { Account } from '../model/account';
+import { StockData } from './stock';
+import { Account } from './account';
 
 class ISimulation {
   stockData: StockData;

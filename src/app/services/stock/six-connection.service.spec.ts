@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
 import { SixConnectionService, SixConverter } from './six-connection.service';
-import { StockData, IStock } from 'src/app/model/stock';
-import { AssetOfInterest } from 'src/app/model/asset';
+import { StockData, IStock } from 'src/app/model/core/stock';
+import { AssetOfInterest } from 'src/app/model/core/asset';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { HttpRequest } from '@angular/common/http';
 

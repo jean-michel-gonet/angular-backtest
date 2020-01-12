@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SixConnectionService } from './six-connection.service';
-import { StockData } from 'src/app/model/stock';
+import { StockData } from 'src/app/model/core/stock';
 
 
 /**
