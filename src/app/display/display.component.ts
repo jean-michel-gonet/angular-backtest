@@ -73,7 +73,6 @@ export class DisplayComponent implements OnInit {
   }
 
   ngOnInit() {
-    /*
     // Fetch the data:
     this.stockService.getStockData(['LU1290894820CHF4', 'CH0017810976CHF9']).subscribe(data => {
 
@@ -81,7 +80,9 @@ export class DisplayComponent implements OnInit {
       this.simulation = new Simulation({
         account: new SwissQuoteAccount({
           cash: 100000,
-          strategy: new BuyAndHoldStrategy("LU1290894820")
+          strategy: new BuyAndHoldStrategy({
+            isin: "LU1290894820",
+            monthlyOutput: 100})
         }),
         stockData: data
       });
@@ -89,6 +90,5 @@ export class DisplayComponent implements OnInit {
       // Run the simulation:
       this.simulation.run(new Date(2010, 1, 1), new Date (2020, 1, 1));
     });
-    */
   }
 }
