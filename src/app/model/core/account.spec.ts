@@ -122,4 +122,28 @@ describe('Account', () => {
     expect(account.nav()).toBe(cash + 4 * partValue - costs);
   });
 
+  it('Can obtain one single position identified by its ISIN', () => {
+    let account: Account = new Account({
+      cash: 1000.0,
+      strategy: new MockStrategy(),
+      positions: [
+        new Position({
+          isin: "XX",
+          partValue: 100,
+          parts: 3
+        }),
+        new Position({
+          isin: "YY",
+          partValue: 10,
+          parts: 4
+        })
+      ]
+    });
+    let position: Position = account.position("XX");
+    expect(position).toEqual(new Position({
+      isin: "XX",
+      partValue: 100,
+      parts: 3
+    }));
+  });
 });

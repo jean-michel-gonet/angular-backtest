@@ -36,7 +36,7 @@ export class Account extends IAccount {
    */
   position(isin: string): Position {
     return this.positions.find(position => {
-      position.isin == isin;
+      return position.isin == isin;
     });
   }
 

@@ -45,8 +45,10 @@ export class BuyAndHoldStrategy extends Strategy {
    */
   private executeInitialOrder(account: Account, stock: Stock): void {
     let assetOfInterest: AssetOfInterest = stock.assetOfInterest(this.isin);
-    let numberOfParts: number = account.cash / assetOfInterest.partValue;
-    account.order(assetOfInterest, numberOfParts);
+    if (assetOfInterest) {
+      let numberOfParts: number = account.cash / assetOfInterest.partValue;
+      account.order(assetOfInterest, numberOfParts);
+    }
   }
 
   /**
@@ -55,7 +57,9 @@ export class BuyAndHoldStrategy extends Strategy {
    */
   private performMonthlyOutput(account: Account, stock: Stock): void {
     let assetOfInterest: AssetOfInterest = stock.assetOfInterest(this.isin);
-    let numberOfParts: number = this.monthlyOutput / assetOfInterest.partValue;
-    account.order(assetOfInterest, numberOfParts);
+    if (assetOfInterest) {
+      let numberOfParts: number = this.monthlyOutput / assetOfInterest.partValue;
+      account.order(assetOfInterest, numberOfParts);
+    }
   }
 }

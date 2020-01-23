@@ -54,7 +54,7 @@ export class Stock extends IStock {
    */
   assetOfInterest(isin: String): AssetOfInterest {
     return this.assetsOfInterest.find(a => {
-      a.isin == isin;
+      return a.isin == isin;
     });
   }
 }

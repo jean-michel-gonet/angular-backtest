@@ -11,6 +11,21 @@ describe('Stock', () => {
       ]})).toBeTruthy();
   });
 
+  it('Can obtain one asset of interest', () => {
+    let stock: Stock = new Stock({
+      time: new Date(),
+      assetsOfInterest: [
+          new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
+          new AssetOfInterest({isin: "ISIN2", partValue: 1.2}),
+          new AssetOfInterest({isin: "ISIN3", partValue: 1.3})
+    ]});
+    let assetOfInterest: AssetOfInterest = stock.assetOfInterest("ISIN1");
+    expect(assetOfInterest).toEqual(new AssetOfInterest({
+      isin: "ISIN1",
+      partValue: 1.1
+    }));
+  });
+
   it('Can add more assets of interest', () =>{
     let stock: Stock = new Stock({
       time: new Date(),
