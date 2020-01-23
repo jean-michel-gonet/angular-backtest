@@ -45,6 +45,18 @@ export class Stock extends IStock {
       this.mapOfAssets.set(newAssetOfInterest.isin, newAssetOfInterest);
     });
   }
+
+  /**
+   * Returns the specified asset of interest.
+   * @param {string} isin The ISIN of the asset.
+   * @return {AssetOfInterest} The asset of interest,
+   * or null.
+   */
+  assetOfInterest(isin: String): AssetOfInterest {
+    return this.assetsOfInterest.find(a => {
+      a.isin == isin;
+    });
+  }
 }
 
 export class StockData {
