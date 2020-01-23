@@ -5,4 +5,8 @@ describe('BuyAndHoldStrategy', () => {
   it('Can create a new instance', () => {
     expect(new BuyAndHoldStrategy()).toBeTruthy();
   });
+
+  it('Can perform the initial investment', () => {
+      
+  })
 });
