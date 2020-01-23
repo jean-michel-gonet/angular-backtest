@@ -59,7 +59,7 @@ export class BuyAndHoldStrategy extends Strategy {
     let assetOfInterest: AssetOfInterest = stock.assetOfInterest(this.isin);
     if (assetOfInterest) {
       let numberOfParts: number = this.monthlyOutput / assetOfInterest.partValue;
-      account.order(assetOfInterest, numberOfParts);
+      account.order(assetOfInterest, -numberOfParts);
     }
   }
 }

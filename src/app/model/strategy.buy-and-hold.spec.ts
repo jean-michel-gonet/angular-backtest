@@ -1,7 +1,7 @@
 import { BuyAndHoldStrategy } from './strategy.buy-and-hold';
 import { Account } from './core/account';
 import { Stock } from './core/stock';
-import { AssetOfInterest } from './core/asset';
+import { AssetOfInterest, Position } from './core/asset';
 
 
 describe('BuyAndHoldStrategy', () => {
@@ -20,7 +20,7 @@ describe('BuyAndHoldStrategy', () => {
     });
 
     let stock: Stock = new Stock({
-      time: new Date(),
+      time: new Date(2010, 10, 10),
       assetsOfInterest: [
         new AssetOfInterest({
           isin: "ISIN1",
@@ -32,5 +32,35 @@ describe('BuyAndHoldStrategy', () => {
 
     expect(account.cash).toBe(0);
     expect(account.position("ISIN1").parts).toBe(100);
-  })
+    expect(account.nav()).toBe(1000);
+  });
+
+  it('Can output the monthly amount', () => {
+    let monthlyOutput: number = 10;
+    let buyAndHoldStrategy: BuyAndHoldStrategy = new BuyAndHoldStrategy({
+      isin: "ISIN1",
+      monthlyOutput: monthlyOutput
+    });
+    let account: Account = new Account({
+      cash:0,
+      positions: [
+        new Position({
+          isin: "ISIN1",
+          parts: 100,
+          partValue: 5
+        })
+      ]
+    });
+    let stock: Stock = new Stock({
+      time: new Date(2010, 1, 1),
+      assetsOfInterest: [
+        new AssetOfInterest({
+          isin: "ISIN1",
+          partValue: 5})
+      ]
+    });
+
+    buyAndHoldStrategy.applyStrategy(account, stock);
+    expect(account.cash).toBe(monthlyOutput);
+  });
 });
