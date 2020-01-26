@@ -5,7 +5,7 @@ import { SwissQuoteAccount } from '../model/account.swissquote';
 import { BuyAndHoldStrategy } from '../model/strategy.buy-and-hold';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Label, Color } from 'ng2-charts';
-import { Show, ShowDataAs, ShowDataOn, Ng2ChartDataProcessor } from './graphic-data';
+import { Ng2ChartDataProcessor, ShowDataAs, ShowDataOn } from './ng2-chart.data-processor';
 
 @Component({
   selector: 'app-display',

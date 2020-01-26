@@ -1,4 +1,4 @@
-import { Ng2ChartDataProcessor, ShowDataAs, ShowDataOn } from './graphic-data';
+import { Ng2ChartDataProcessor, ShowDataAs, ShowDataOn } from "./ng2-chart.data-processor";
 
 describe('GraphicData', () => {
   it('should create an instance', () => {
