@@ -1,4 +1,5 @@
 import { AssetOfInterest } from './asset';
+import { DataProvider, DataProcessor, ProvidedData } from './data-processor';
 
 export class IStock {
   time?: Date;
@@ -14,7 +15,7 @@ export class IStock {
   }
 }
 
-export class Stock extends IStock {
+export class Stock extends IStock implements DataProvider {
   private mapOfAssets: Map<String, AssetOfInterest>;
 
   constructor(obj : IStock = {} as IStock) {
@@ -55,6 +56,16 @@ export class Stock extends IStock {
   assetOfInterest(isin: String): AssetOfInterest {
     return this.assetsOfInterest.find(a => {
       return a.isin == isin;
+    });
+  }
+
+  provideData(dataProcessor:DataProcessor): void {
+    this.assetsOfInterest.forEach(a => {
+      dataProcessor.receiveData(new ProvidedData({
+        sourceName: a.isin + ".CLOSE",
+        time: this.time,
+        y: a.partValue
+      }));
     });
   }
 }

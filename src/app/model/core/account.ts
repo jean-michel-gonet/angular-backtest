@@ -1,18 +1,22 @@
 import {Position, AssetOfInterest} from './asset';
 import { Stock } from './stock';
 import { Strategy } from './strategy';
+import { DataProvider, DataProcessor, ProvidedData } from './data-processor';
 
 class IAccount {
+  id?: string;
   cash?: number;
   positions?: Position[];
   strategy?: Strategy;
 
   constructor(obj = {} as IAccount) {
     let {
+      id = "ACCOUNT",
       cash = 0,
       positions = [],
       strategy = null
     } = obj;
+    this.id = id;
     this.cash = cash;
     this.positions = positions;
     this.strategy = strategy;
@@ -24,7 +28,10 @@ class IAccount {
  * It also handles the buy and sell operations.
  * @class Account
  */
-export class Account extends IAccount {
+export class Account extends IAccount implements DataProvider {
+  private lastProcessedTime: Date;
+  private accumulatedCosts: number;
+
   constructor(obj = {} as IAccount) {
     super(obj);
   }
@@ -59,6 +66,9 @@ export class Account extends IAccount {
    * @param{Stock} stock The stock update.
    */
   process(stock: Stock): void {
+    this.lastProcessedTime = stock.time;
+    this.accumulatedCosts = 0;
+
     // Update the positions:
     stock.assetsOfInterest.forEach(assetOfInterest => {
       let position: Position = this.positions.find(p => {
@@ -119,8 +129,46 @@ export class Account extends IAccount {
 
     // Updates the cash based on the number of parts,
     // the part value and the costs:
+    let costs: number = this.costs(asset, parts);
+    this.accumulatedCosts += costs;
     this.cash = this.cash -
                 parts * asset.partValue -
-                this.costs(asset, parts);
+                costs;
+  }
+
+  /**
+   * Reports to a data processor.
+   * Reports contains:
+   * - The current cash.
+   * - The current nav.
+   * - The costs of the day.
+   * - The valuation of each position.
+   */
+  provideData(dataProcessor: DataProcessor): void {
+    dataProcessor.receiveData(new ProvidedData({
+      sourceName: this.id + ".CASH",
+      time: this.lastProcessedTime,
+      y: this.cash
+    }));
+
+    dataProcessor.receiveData(new ProvidedData({
+      sourceName: this.id + ".NAV",
+      time: this.lastProcessedTime,
+      y: this.nav()
+    }));
+
+    dataProcessor.receiveData(new ProvidedData({
+      sourceName: this.id + ".COST",
+      time: this.lastProcessedTime,
+      y: this.accumulatedCosts
+    }));
+
+    this.positions.forEach(p => {
+      dataProcessor.receiveData(new ProvidedData({
+        sourceName: this.id + "." + p.isin + ".POS",
+        time: this.lastProcessedTime,
+        y: p.nav()
+      }));
+    });
   }
 }

@@ -1,24 +1,40 @@
-import { Observable } from 'rxjs';
+import { ChartDataSets, ChartOptions } from 'chart.js';
+import { Label, Color } from 'ng2-charts';
+import { DataProcessor, ProvidedData } from '../model/core/data-processor';
 
-export enum GraphicDataType {
-  STATUS,
-  CONTINUOUS,
-  DISCRETE
-}
+export enum ShowDataAs {
+  LINE,
+  BAR
+};
 
-export class GraphicData {
-  x: number;
-  y: Date;
+export enum ShowDataOn {
+  LEFT,
+  RIGHT
+};
+
+export class Show {
+  show: String;
+  as: ShowDataAs;
+  on: ShowDataOn;
 }
 
 /**
- * Any class providing graphic data should implement
- * this interface.
- * @interface GraphicDataProvider
+ * Receives the data and formats them into Ng2 data, so they can directly
+ * be displayed in a Ng2 Chart.
+ * @class {Ng2ChartDataProcessor}
  */
-export interface GraphicDataProvider {
-  graphicDataName: string;
-  graphicDataType: GraphicDataType;
+export class Ng2ChartDataProcessor implements DataProcessor {
+  public dataSets: ChartDataSets;
+  public labels: Label[];
+  public options: ChartOptions;
 
-  getGraphicData():Observable<GraphicData>;
+  private show: Show[];
+
+  constructor(obj = [] as Show[]) {
+    this.show = obj;
+  }
+
+  receiveData(providedData: ProvidedData): void {
+    console.log(providedData);
+  }
 }
