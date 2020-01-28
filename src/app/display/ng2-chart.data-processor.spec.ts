@@ -1,6 +1,5 @@
 import { Ng2ChartDataProcessor, ShowDataAs, ShowDataOn } from "./ng2-chart.data-processor";
 import { ProvidedData } from '../model/core/data-processor';
-import { ChartDataSets } from 'chart.js';
 
 describe('GraphicData', () => {
   it('should create an instance', () => {

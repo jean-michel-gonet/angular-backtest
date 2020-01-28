@@ -1,5 +1,5 @@
 import { ChartDataSets, ChartOptions } from 'chart.js';
-import { Label, Color } from 'ng2-charts';
+import { Label } from 'ng2-charts';
 import { DataProcessor, ProvidedData } from '../model/core/data-processor';
 
 export enum ShowDataAs {
@@ -76,11 +76,14 @@ export class Ng2ChartDataProcessor implements DataProcessor {
   receiveData(providedData: ProvidedData): void {
     let dataSet: ChartDataSets = this.mapOfDatasets.get(providedData.sourceName);
     if (dataSet) {
-      dataSet.data.push(providedData.y);
-      if (!this.lastTime || this.lastTime.getDate() < providedData.time.getDate()) {
-        this.labels.push(providedData.time.toDateString());
+      if (!this.lastTime || this.lastTime.valueOf() < providedData.time.valueOf()) {
         this.lastTime = providedData.time;
+        this.labels.push(providedData.time.toDateString());
+        this.dataSets.forEach(d => {
+          d.data.push(0);
+        });
       }
+      dataSet.data[dataSet.data.length - 1] = providedData.y;
     }
   }
 

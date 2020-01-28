@@ -1,4 +1,3 @@
-
 /**
  * The smallest atom of provided data.
  */
@@ -31,16 +30,6 @@ export interface DataProvider {
 }
 
 /**
- * A data processor that does absolutely nothing, to have as default
- * value to avoid null pointer exceptions.
- */
-export class NullDataProcessor implements DataProcessor {
-  receiveData(): void {
-    // Let's do nothing.
-  }
-}
-
-/**
  * Interface to receive data produced by @class{DataProvider}.
  */
 export interface DataProcessor {
@@ -49,4 +38,14 @@ export interface DataProcessor {
    * @param {ProvidedData} providedData The provided data.
    */
   receiveData(providedData: ProvidedData):void;
+}
+
+/**
+ * A data processor that does absolutely nothing, to have as default
+ * value to avoid null pointer exceptions.
+ */
+export class NullDataProcessor implements DataProcessor {
+  receiveData(): void {
+    // Let's do nothing.
+  }
 }
