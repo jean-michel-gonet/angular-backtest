@@ -95,7 +95,7 @@ export class Account extends IAccount implements DataProvider {
    *                       negative, the number of parts to sell.
    * @return {number} The cost, always positive.
    **/
-  costs(asset: AssetOfInterest, parts: number): number {
+  orderCost(asset: AssetOfInterest, parts: number): number {
     return Math.abs(parts * asset.partValue * asset.spread / 2);
   }
 
@@ -129,11 +129,44 @@ export class Account extends IAccount implements DataProvider {
 
     // Updates the cash based on the number of parts,
     // the part value and the costs:
-    let costs: number = this.costs(asset, parts);
+    let costs: number = this.orderCost(asset, parts);
     this.accumulatedCosts += costs;
     this.cash = this.cash -
                 parts * asset.partValue -
                 costs;
+  }
+
+  /**
+   * Transfer the specified amount to the specified account.
+   * If cash is available. Involved costs are removed from
+   * the transferred account.
+   */
+  transfer(account: Account, amount: number): void {
+    if (this.cash > amount) {
+      let costs = this.transferCost(account, amount);
+      account.receive(amount - costs);
+      this.cash -= amount;
+    }
+  }
+
+  /**
+   * Receive the specified amount of cash.
+   */
+  receive(amount: number): void {
+    this.cash += amount;
+  }
+
+  /**
+   * Calculates the absolute cost of transferring the specified amount
+   * to the specified account.
+   * Extend this method to reflect specific behavior of each
+   * trading partner.
+   * @param {Account} account The destination account.
+   * @param {number} amount The amount to transfer.
+   * @return {number} The cost, never negative.
+   **/
+  transferCost(account: Account, amount: number): number {
+    return 0;
   }
 
   /**

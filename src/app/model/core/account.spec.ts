@@ -71,8 +71,8 @@ describe('Account', () => {
       spread: spread
     });
     let account = new Account();
-    expect(account.costs(assetOfInterest, 2)).toBe(2 * partValue * spread / 2);
-    expect(account.costs(assetOfInterest, -3)).toBe(3 * partValue * spread / 2);
+    expect(account.orderCost(assetOfInterest, 2)).toBe(2 * partValue * spread / 2);
+    expect(account.orderCost(assetOfInterest, -3)).toBe(3 * partValue * spread / 2);
   });
 
   it('Can buy an asset taking in count the costs', () => {
@@ -89,7 +89,7 @@ describe('Account', () => {
       cash: cash
     });
 
-    let costs = account.costs(assetOfInterest, 3);
+    let costs = account.orderCost(assetOfInterest, 3);
     expect(costs).toBe(3 * partValue * spread / 2);
 
     account.order(assetOfInterest, 3);
@@ -114,7 +114,7 @@ describe('Account', () => {
       ]
     });
 
-    let costs = account.costs(assetOfInterest, -3);
+    let costs = account.orderCost(assetOfInterest, -3);
     expect(costs).toBe(3 * partValue * spread / 2);
 
     account.order(assetOfInterest, -3);
@@ -146,4 +146,56 @@ describe('Account', () => {
       parts: 3
     }));
   });
+
+  it('Can transfer an amount of cash to another account', () => {
+    let account1: Account = new Account({
+      cash: 1000.0
+    });
+    let account2: Account = new Account({
+      cash: 0
+    });
+
+    account1.transfer(account2, 250);
+
+    expect(account1.cash).toBe(750);
+    expect(account1.nav()).toBe(750);
+
+    expect(account2.cash).toBe(250);
+    expect(account2.nav()).toBe(250);
+  });
+
+  it('Can transfer an amount of cash to another account only if available', () => {
+    let account1: Account = new Account({
+      cash: 200.0
+    });
+    let account2: Account = new Account({
+      cash: 0
+    });
+
+    account1.transfer(account2, 250);
+
+    expect(account1.cash).toBe(200);
+    expect(account2.cash).toBe(0);
+  });
+
+  class MockAccount extends Account {
+    transferCost(account: Account, amount: number): number {
+      return 100;
+    }
+  }
+
+  it('Can compute possible costs when transfer an amount of cash to another account', () => {
+    let account1: Account = new MockAccount({
+      cash: 1000.0
+    });
+    let account2: Account = new Account({
+      cash: 0
+    });
+
+    account1.transfer(account2, 250);
+
+    expect(account1.cash).toBe(750);
+    expect(account2.cash).toBe(150);
+  });
+
 });
