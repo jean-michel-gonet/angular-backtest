@@ -2,6 +2,7 @@ import { BuyAndHoldStrategy } from './strategy.buy-and-hold';
 import { Account } from './core/account';
 import { Stock } from './core/stock';
 import { AssetOfInterest, Position } from './core/asset';
+import { RegularTransfer, RegularPeriod } from './core/transfer';
 
 
 describe('BuyAndHoldStrategy', () => {
@@ -37,10 +38,16 @@ describe('BuyAndHoldStrategy', () => {
 
   it('Can output the monthly amount', () => {
     let monthlyOutput: number = 10;
+    let accountOutput: Account = new Account();
     let buyAndHoldStrategy: BuyAndHoldStrategy = new BuyAndHoldStrategy({
       isin: "ISIN1",
-      monthlyOutput: monthlyOutput
+      transfer: new RegularTransfer({
+        transfer: monthlyOutput,
+        every: RegularPeriod.MONTH,
+        to: accountOutput
+      })
     });
+
     let account: Account = new Account({
       cash:0,
       positions: [
@@ -61,6 +68,9 @@ describe('BuyAndHoldStrategy', () => {
     });
 
     buyAndHoldStrategy.applyStrategy(account, stock);
-    expect(account.cash).toBe(monthlyOutput);
+
+    expect(account.nav()).toBe(100 * 5 - monthlyOutput);
+    expect(account.position("ISIN1").parts).toBe(100 - 2);
+    expect(accountOutput.cash).toBe(monthlyOutput);
   });
 });

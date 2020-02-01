@@ -1,11 +1,11 @@
-import { Extraction, ExtractionPeriod } from "./extraction";
 import { Account } from './account';
+import { RegularTransfer, RegularPeriod } from './transfer';
 
-describe('Extraction', () => {
+describe('RegularTransfer', () => {
   it('Can create a new instance', () => {
-    let extraction = new Extraction({
-      extract: 1000,
-      every: ExtractionPeriod.MONTH,
+    let extraction = new RegularTransfer({
+      transfer: 1000,
+      every: RegularPeriod.MONTH,
       to: new Account()
     });
     expect(extraction).toBeTruthy();
@@ -15,9 +15,9 @@ describe('Extraction', () => {
   let anyDay: Date = new Date(2000, 23, 5);
 
   it('Can detect the day to do the monthly extraction', () => {
-    let extraction = new Extraction({
-      extract: 1000,
-      every: ExtractionPeriod.MONTH,
+    let extraction = new RegularTransfer({
+      transfer: 1000,
+      every: RegularPeriod.MONTH,
       to: new Account()
     });
     expect(extraction.amount(anyDay)).toBe(0);
@@ -26,9 +26,9 @@ describe('Extraction', () => {
   });
 
   it('Can detect the day to do the yearly extraction', () => {
-    let extraction = new Extraction({
-      extract: 1000,
-      every: ExtractionPeriod.YEAR,
+    let extraction = new RegularTransfer({
+      transfer: 1000,
+      every: RegularPeriod.YEAR,
       to: new Account()
     });
     expect(extraction.amount(anyDay)).toBe(0);

@@ -34,10 +34,13 @@ export class Simulation extends ISimulation {
    * @param {Date} end Ends the simulation at this date.
    */
   run(start?:Date, end?:Date) {
+    this.account.accept(this.dataProcessor);
+    this.stockData.accept(this.dataProcessor);
+
     this.stockData.forEachDate(stock => {
+      this.dataProcessor.startReportingCycle(stock.time);
       this.account.process(stock);
-      stock.provideData(this.dataProcessor);
-      this.account.provideData(this.dataProcessor);
+      this.dataProcessor.collectReports();
     }, start, end);
   }
 }

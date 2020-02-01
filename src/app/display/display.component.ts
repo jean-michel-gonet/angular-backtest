@@ -6,6 +6,8 @@ import { BuyAndHoldStrategy } from '../model/strategy.buy-and-hold';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Label } from 'ng2-charts';
 import { Ng2ChartDataProcessor, ShowDataAs, ShowDataOn } from './ng2-chart.data-processor';
+import { RegularTransfer, RegularPeriod } from '../model/core/transfer';
+import { Account } from '../model/core/account';
 
 @Component({
   selector: 'app-display',
@@ -36,8 +38,8 @@ export class DisplayComponent implements OnInit {
         on: ShowDataOn.LEFT
       },
       {
-        show: "SQA01.COST",
-        as: ShowDataAs.BAR,
+        show: "EXPENSES.CASH",
+        as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT
       }
     ]);
@@ -55,7 +57,13 @@ export class DisplayComponent implements OnInit {
           cash: 100000,
           strategy: new BuyAndHoldStrategy({
             isin: "LU1290894820",
-            monthlyOutput: 100})
+            transfer: new RegularTransfer({
+              transfer: 100,
+              to: new Account({
+                id: "EXPENSES"
+              }),
+              every: RegularPeriod.MONTH
+            })})
         }),
         stockData: data,
         dataProcessor: this.ng2ChartDataProcessor

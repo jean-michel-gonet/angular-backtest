@@ -1,6 +1,6 @@
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Label } from 'ng2-charts';
-import { DataProcessor, ProvidedData } from '../model/core/data-processor';
+import { DataProcessor, ProvidedData, DataProvider } from '../model/core/data-processor';
 
 export enum ShowDataAs {
   LINE,
@@ -55,6 +55,7 @@ export class Ng2ChartDataProcessor implements DataProcessor {
 
   private mapOfDatasets: Map<String, ChartDataSets>;
   private lastTime: Date;
+  private dataProviders: DataProvider[] = [];
 
   constructor(obj = [] as Show[]) {
     this.mapOfDatasets = new Map<String, ChartDataSets>();
@@ -70,6 +71,23 @@ export class Ng2ChartDataProcessor implements DataProcessor {
       };
       this.mapOfDatasets.set(show.show, dataSet);
       this.dataSets.push(dataSet);
+    });
+  }
+
+
+  visit(dataProvider: DataProvider): void {
+    this.dataProviders.push(dataProvider);
+  }
+
+  startReportingCycle(time: Date): void {
+    this.dataProviders.forEach(dataProvider => {
+      dataProvider.startReportingCycle(time);
+    });
+  }
+
+  collectReports(): void {
+    this.dataProviders.forEach(dataProvider => {
+      dataProvider.report(this);
     });
   }
 

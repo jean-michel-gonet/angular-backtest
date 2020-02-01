@@ -1,9 +1,9 @@
 import { Account } from './account';
-import { Strategy } from './strategy';
+import { NullStrategy } from './strategy';
 import { Stock } from './stock';
 import { Position, AssetOfInterest } from './asset';
 
-class MockStrategy extends Strategy {
+class MockStrategy extends NullStrategy {
   gotCalled: boolean = false;
 
   applyStrategy(account: Account, stock: Stock): void {

@@ -1,6 +1,6 @@
 import {Position, AssetOfInterest} from './asset';
 import { Stock } from './stock';
-import { Strategy } from './strategy';
+import { Strategy, NullStrategy } from './strategy';
 import { DataProvider, DataProcessor, ProvidedData } from './data-processor';
 
 class IAccount {
@@ -14,7 +14,7 @@ class IAccount {
       id = "ACCOUNT",
       cash = 0,
       positions = [],
-      strategy = null
+      strategy = new NullStrategy()
     } = obj;
     this.id = id;
     this.cash = cash;
@@ -29,7 +29,7 @@ class IAccount {
  * @class Account
  */
 export class Account extends IAccount implements DataProvider {
-  private lastProcessedTime: Date;
+  private reportingTime: Date;
   private accumulatedCosts: number;
 
   constructor(obj = {} as IAccount) {
@@ -66,7 +66,6 @@ export class Account extends IAccount implements DataProvider {
    * @param{Stock} stock The stock update.
    */
   process(stock: Stock): void {
-    this.lastProcessedTime = stock.time;
     this.accumulatedCosts = 0;
 
     // Update the positions:
@@ -142,7 +141,7 @@ export class Account extends IAccount implements DataProvider {
    * the transferred account.
    */
   transfer(account: Account, amount: number): void {
-    if (this.cash > amount) {
+    if (this.cash >= amount) {
       let costs = this.transferCost(account, amount);
       account.receive(amount - costs);
       this.cash -= amount;
@@ -170,6 +169,25 @@ export class Account extends IAccount implements DataProvider {
   }
 
   /**
+   * Accepts the visit of a data processor,
+   * and guides it through the hierarchy.
+   */
+  accept(dataProcessor: DataProcessor): void {
+    dataProcessor.visit(this);
+    if (this.strategy) {
+      this.strategy.accept(dataProcessor);
+    }
+  }
+
+  /**
+   * Receives notification that a new reporting cycle starts,
+   * at the specified time.
+   */
+  startReportingCycle(time: Date): void {
+    this.reportingTime = time;
+  }
+
+  /**
    * Reports to a data processor.
    * Reports contains:
    * - The current cash.
@@ -177,29 +195,29 @@ export class Account extends IAccount implements DataProvider {
    * - The costs of the day.
    * - The valuation of each position.
    */
-  provideData(dataProcessor: DataProcessor): void {
+  report(dataProcessor: DataProcessor): void {
     dataProcessor.receiveData(new ProvidedData({
       sourceName: this.id + ".CASH",
-      time: this.lastProcessedTime,
+      time: this.reportingTime,
       y: this.cash
     }));
 
     dataProcessor.receiveData(new ProvidedData({
       sourceName: this.id + ".NAV",
-      time: this.lastProcessedTime,
+      time: this.reportingTime,
       y: this.nav()
     }));
 
     dataProcessor.receiveData(new ProvidedData({
       sourceName: this.id + ".COST",
-      time: this.lastProcessedTime,
+      time: this.reportingTime,
       y: this.accumulatedCosts
     }));
 
     this.positions.forEach(p => {
       dataProcessor.receiveData(new ProvidedData({
         sourceName: this.id + "." + p.isin + ".POS",
-        time: this.lastProcessedTime,
+        time: this.reportingTime,
         y: p.nav()
       }));
     });

@@ -1,13 +1,13 @@
 import { Simulation } from "./simulation";
 import { Account } from './account';
 import { StockData, Stock } from './stock';
-import { Strategy } from './strategy';
+import { NullStrategy } from './strategy';
 import { AssetOfInterest } from './asset';
 
 /**
  * A fake strategy, just to verify that it has been called.
  */
-class TestStrategy extends Strategy {
+class TestStrategy extends NullStrategy {
   numberOfCalls: number = 0;
   stockTimes: number[] = [];
 

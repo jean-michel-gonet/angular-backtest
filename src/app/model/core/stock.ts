@@ -15,7 +15,7 @@ export class IStock {
   }
 }
 
-export class Stock extends IStock implements DataProvider {
+export class Stock extends IStock {
   private mapOfAssets: Map<String, AssetOfInterest>;
 
   constructor(obj : IStock = {} as IStock) {
@@ -58,19 +58,9 @@ export class Stock extends IStock implements DataProvider {
       return a.isin == isin;
     });
   }
-
-  provideData(dataProcessor:DataProcessor): void {
-    this.assetsOfInterest.forEach(a => {
-      dataProcessor.receiveData(new ProvidedData({
-        sourceName: a.isin + ".CLOSE",
-        time: this.time,
-        y: a.partValue
-      }));
-    });
-  }
 }
 
-export class StockData {
+export class StockData implements DataProvider {
   stock: Map<number, Stock>;
 
   constructor(newStocks:IStock[]) {
@@ -156,6 +146,45 @@ export class StockData {
 
     stockTimes.forEach(time => {
       callbackfn(this.get(time));
+    });
+  }
+
+  // ********************************************************************
+  // **                  DataProvider interface.                       **
+  // ********************************************************************
+
+  private reportingTime: Date;
+
+  /**
+   * Turns itself in as a data provider to the data processor.
+   * @param {DataProcessor} dataProcessor The data processor.
+   */
+  accept(dataProcessor: DataProcessor): void {
+    dataProcessor.visit(this);
+  }
+
+  /**
+   * Next report will be about the closing values of all the assets of interest.
+   * @param {Date} time The date to report.
+   */
+  startReportingCycle(time: Date): void {
+    this.reportingTime = time;
+  }
+
+  /**
+   * Reports to a data processor all assets of interest
+   * corresponding to the reporting time.
+   * @param {DataProcessor} dataProcessor The data processor
+   * to report.
+   */
+  report(dataProcessor: DataProcessor): void {
+    let stock: Stock = this.stock.get(this.reportingTime.valueOf());
+    stock.assetsOfInterest.forEach(assetOfInterest => {
+      dataProcessor.receiveData(new ProvidedData({
+        time: this.reportingTime,
+        y: assetOfInterest.partValue,
+        sourceName: assetOfInterest.isin + ".CLOSE"
+      }));
     });
   }
 }
