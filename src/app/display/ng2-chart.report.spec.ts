@@ -1,4 +1,4 @@
-import { Ng2ChartReport, ShowDataAs, ShowDataOn } from "./ng2-chart.data-processor";
+import { Ng2ChartReport, ShowDataAs, ShowDataOn } from "./ng2-chart.report";
 import { ReportedData } from '../model/core/reporting';
 
 describe('Ng2ChartReport', () => {
