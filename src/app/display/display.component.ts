@@ -3,8 +3,6 @@ import { StockService } from '../services/stock/stock.service';
 import { Simulation } from '../model/core/simulation';
 import { SwissQuoteAccount } from '../model/account.swissquote';
 import { BuyAndHoldStrategy } from '../model/strategy.buy-and-hold';
-import { ChartDataSets, ChartOptions } from 'chart.js';
-import { Label } from 'ng2-charts';
 import { Ng2ChartReport, ShowDataAs, ShowDataOn } from './ng2-chart.report';
 import { RegularTransfer, RegularPeriod } from '../model/core/transfer';
 import { Account } from '../model/core/account';
@@ -17,10 +15,6 @@ import { Account } from '../model/core/account';
 export class DisplayComponent implements OnInit {
   simulation: Simulation;
   ng2ChartReport: Ng2ChartReport;
-
-  dataSets: ChartDataSets[];
-  labels: Label[];
-  options: ChartOptions;
 
   constructor(private stockService:StockService) {
   }
@@ -43,9 +37,6 @@ export class DisplayComponent implements OnInit {
         on: ShowDataOn.LEFT
       }
     ]);
-    this.dataSets = this.ng2ChartReport.dataSets;
-    this.labels = this.ng2ChartReport.labels;
-    this.options = this.ng2ChartReport.options;
 
     // Fetch the data:
     this.stockService.getStockData(['LU1290894820CHF4', 'CH0017810976CHF9']).subscribe(data => {
