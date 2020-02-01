@@ -1,7 +1,7 @@
 import {Position, AssetOfInterest} from './asset';
 import { Stock } from './stock';
 import { Strategy, NullStrategy } from './strategy';
-import { DataProvider, DataProcessor, ProvidedData } from './data-processor';
+import { Reporter, Report, ReportedData } from './reporting';
 
 class IAccount {
   id?: string;
@@ -28,8 +28,7 @@ class IAccount {
  * It also handles the buy and sell operations.
  * @class Account
  */
-export class Account extends IAccount implements DataProvider {
-  private reportingTime: Date;
+export class Account extends IAccount implements Reporter {
   private accumulatedCosts: number;
 
   constructor(obj = {} as IAccount) {
@@ -66,7 +65,6 @@ export class Account extends IAccount implements DataProvider {
    * @param{Stock} stock The stock update.
    */
   process(stock: Stock): void {
-    this.accumulatedCosts = 0;
 
     // Update the positions:
     stock.assetsOfInterest.forEach(assetOfInterest => {
@@ -169,13 +167,12 @@ export class Account extends IAccount implements DataProvider {
   }
 
   /**
-   * Accepts the visit of a data processor,
-   * and guides it through the hierarchy.
+   * Registers all available data providers to the specified data processor.
    */
-  accept(dataProcessor: DataProcessor): void {
-    dataProcessor.visit(this);
+  doRegister(report: Report): void {
+    report.register(this);
     if (this.strategy) {
-      this.strategy.accept(dataProcessor);
+      this.strategy.doRegister(report);
     }
   }
 
@@ -184,7 +181,7 @@ export class Account extends IAccount implements DataProvider {
    * at the specified time.
    */
   startReportingCycle(time: Date): void {
-    this.reportingTime = time;
+    this.accumulatedCosts = 0;
   }
 
   /**
@@ -195,29 +192,25 @@ export class Account extends IAccount implements DataProvider {
    * - The costs of the day.
    * - The valuation of each position.
    */
-  report(dataProcessor: DataProcessor): void {
-    dataProcessor.receiveData(new ProvidedData({
+  reportTo(report: Report): void {
+    report.receiveData(new ReportedData({
       sourceName: this.id + ".CASH",
-      time: this.reportingTime,
       y: this.cash
     }));
 
-    dataProcessor.receiveData(new ProvidedData({
+    report.receiveData(new ReportedData({
       sourceName: this.id + ".NAV",
-      time: this.reportingTime,
       y: this.nav()
     }));
 
-    dataProcessor.receiveData(new ProvidedData({
+    report.receiveData(new ReportedData({
       sourceName: this.id + ".COST",
-      time: this.reportingTime,
       y: this.accumulatedCosts
     }));
 
     this.positions.forEach(p => {
-      dataProcessor.receiveData(new ProvidedData({
+      report.receiveData(new ReportedData({
         sourceName: this.id + "." + p.isin + ".POS",
-        time: this.reportingTime,
         y: p.nav()
       }));
     });

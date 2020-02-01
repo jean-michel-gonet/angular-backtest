@@ -3,7 +3,7 @@ import { Stock } from './core/stock';
 import { Account } from './core/account';
 import { AssetOfInterest } from './core/asset';
 import { RegularTransfer } from './core/transfer';
-import { DataProcessor } from './core/data-processor';
+import { Report } from './core/reporting';
 
 class IBuyAndHoldStrategy {
   isin?: string;
@@ -69,11 +69,11 @@ export class BuyAndHoldStrategy implements Strategy {
 
   /**
    * Turns the transfer account in as a data provider.
-   * @param {DataProcessor} dataProcessor The data processor.
+   * @param {Report} report The data processor.
    */
-  accept(dataProcessor: DataProcessor): void {
+  doRegister(report: Report): void {
     if (this.transfer.to) {
-      this.transfer.to.accept(dataProcessor);
+      this.transfer.to.doRegister(report);
     }
   }
 
@@ -81,7 +81,7 @@ export class BuyAndHoldStrategy implements Strategy {
     // Don't care.
   }
 
-  report(dataProcessor: DataProcessor): void {
+  reportTo(report: Report): void {
     // Nothing to report.
   }
 }

@@ -1,12 +1,12 @@
 import { Stock } from './stock';
 import { Account } from './account';
-import { DataProvider } from './data-processor';
+import { Reporter, Report } from './reporting';
 
 /**
  * Extend this class to implement a trading strategy.
  * @class Strategy.
  */
-export interface Strategy extends DataProvider {
+export interface Strategy extends Reporter {
   /**
    * Receives regular stock updates, and executes trading operations
    * against an existing account.
@@ -25,13 +25,13 @@ export class NullStrategy implements Strategy {
   applyStrategy(account: Account, stock: Stock): void {
     // Let's do nothing.
   }
-  accept(dataProcessor: import("./data-processor").DataProcessor): void {
+  doRegister(report: Report): void {
     // Let's do nothing.
   }
   startReportingCycle(time: Date): void {
     // Let's do nothing.
   }
-  report(dataProcessor: import("./data-processor").DataProcessor): void {
+  reportTo(report: Report): void {
     // Let's do nothing.
   }
 }

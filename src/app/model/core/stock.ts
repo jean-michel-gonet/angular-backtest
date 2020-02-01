@@ -1,5 +1,5 @@
 import { AssetOfInterest } from './asset';
-import { DataProvider, DataProcessor, ProvidedData } from './data-processor';
+import { Reporter, Report, ReportedData } from './reporting';
 
 export class IStock {
   time?: Date;
@@ -60,7 +60,7 @@ export class Stock extends IStock {
   }
 }
 
-export class StockData implements DataProvider {
+export class StockData implements Reporter {
   stock: Map<number, Stock>;
 
   constructor(newStocks:IStock[]) {
@@ -157,10 +157,10 @@ export class StockData implements DataProvider {
 
   /**
    * Turns itself in as a data provider to the data processor.
-   * @param {DataProcessor} dataProcessor The data processor.
+   * @param {Report} report The data processor.
    */
-  accept(dataProcessor: DataProcessor): void {
-    dataProcessor.visit(this);
+  doRegister(report: Report): void {
+    report.register(this);
   }
 
   /**
@@ -174,14 +174,13 @@ export class StockData implements DataProvider {
   /**
    * Reports to a data processor all assets of interest
    * corresponding to the reporting time.
-   * @param {DataProcessor} dataProcessor The data processor
+   * @param {Report} report The data processor
    * to report.
    */
-  report(dataProcessor: DataProcessor): void {
+  reportTo(report: Report): void {
     let stock: Stock = this.stock.get(this.reportingTime.valueOf());
     stock.assetsOfInterest.forEach(assetOfInterest => {
-      dataProcessor.receiveData(new ProvidedData({
-        time: this.reportingTime,
+      report.receiveData(new ReportedData({
         y: assetOfInterest.partValue,
         sourceName: assetOfInterest.isin + ".CLOSE"
       }));

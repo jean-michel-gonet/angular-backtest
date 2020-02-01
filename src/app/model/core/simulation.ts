@@ -1,21 +1,21 @@
 import { StockData } from './stock';
 import { Account } from './account';
-import { DataProcessor, NullDataProcessor } from './data-processor';
+import { Report, NullReport } from './reporting';
 
 class ISimulation {
   stockData: StockData;
   account: Account;
-  dataProcessor?: DataProcessor;
+  report?: Report;
 
   constructor(obj = {} as ISimulation) {
     let {
       stockData = new StockData([]),
       account = new Account(),
-      dataProcessor = new NullDataProcessor()
+      report = new NullReport()
     } = obj;
     this.stockData = stockData;
     this.account = account;
-    this.dataProcessor = dataProcessor;
+    this.report = report;
   }
 }
 
@@ -34,13 +34,13 @@ export class Simulation extends ISimulation {
    * @param {Date} end Ends the simulation at this date.
    */
   run(start?:Date, end?:Date) {
-    this.account.accept(this.dataProcessor);
-    this.stockData.accept(this.dataProcessor);
+    this.account.doRegister(this.report);
+    this.stockData.doRegister(this.report);
 
     this.stockData.forEachDate(stock => {
-      this.dataProcessor.startReportingCycle(stock.time);
+      this.report.startReportingCycle(stock.time);
       this.account.process(stock);
-      this.dataProcessor.collectReports();
+      this.report.collectReports();
     }, start, end);
   }
 }

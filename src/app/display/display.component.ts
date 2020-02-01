@@ -5,7 +5,7 @@ import { SwissQuoteAccount } from '../model/account.swissquote';
 import { BuyAndHoldStrategy } from '../model/strategy.buy-and-hold';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Label } from 'ng2-charts';
-import { Ng2ChartDataProcessor, ShowDataAs, ShowDataOn } from './ng2-chart.data-processor';
+import { Ng2ChartReport, ShowDataAs, ShowDataOn } from './ng2-chart.data-processor';
 import { RegularTransfer, RegularPeriod } from '../model/core/transfer';
 import { Account } from '../model/core/account';
 
@@ -16,7 +16,7 @@ import { Account } from '../model/core/account';
 })
 export class DisplayComponent implements OnInit {
   simulation: Simulation;
-  ng2ChartDataProcessor: Ng2ChartDataProcessor;
+  ng2ChartReport: Ng2ChartReport;
 
   dataSets: ChartDataSets[];
   labels: Label[];
@@ -26,7 +26,7 @@ export class DisplayComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.ng2ChartDataProcessor = new Ng2ChartDataProcessor([
+    this.ng2ChartReport = new Ng2ChartReport([
       {
         show: "SQA01.NAV",
         as: ShowDataAs.LINE,
@@ -43,9 +43,9 @@ export class DisplayComponent implements OnInit {
         on: ShowDataOn.LEFT
       }
     ]);
-    this.dataSets = this.ng2ChartDataProcessor.dataSets;
-    this.labels = this.ng2ChartDataProcessor.labels;
-    this.options = this.ng2ChartDataProcessor.options;
+    this.dataSets = this.ng2ChartReport.dataSets;
+    this.labels = this.ng2ChartReport.labels;
+    this.options = this.ng2ChartReport.options;
 
     // Fetch the data:
     this.stockService.getStockData(['LU1290894820CHF4', 'CH0017810976CHF9']).subscribe(data => {
@@ -66,7 +66,7 @@ export class DisplayComponent implements OnInit {
             })})
         }),
         stockData: data,
-        dataProcessor: this.ng2ChartDataProcessor
+        report: this.ng2ChartReport
       });
 
       // Run the simulation:

@@ -1,6 +1,6 @@
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Label } from 'ng2-charts';
-import { DataProcessor, ProvidedData, DataProvider } from '../model/core/data-processor';
+import { Report, Reporter, ReportedData } from '../model/core/reporting';
 
 export enum ShowDataAs {
   LINE,
@@ -21,9 +21,9 @@ export class Show {
 /**
  * Receives the data and formats them into Ng2 data, so they can directly
  * be displayed in a Ng2 Chart.
- * @class {Ng2ChartDataProcessor}
+ * @class {Ng2ChartReport}
  */
-export class Ng2ChartDataProcessor implements DataProcessor {
+export class Ng2ChartReport implements Report {
   public dataSets: ChartDataSets[];
   public labels: Label[];
   public options: ChartOptions = {
@@ -52,10 +52,8 @@ export class Ng2ChartDataProcessor implements DataProcessor {
         }],
       }
     };
-
   private mapOfDatasets: Map<String, ChartDataSets>;
-  private lastTime: Date;
-  private dataProviders: DataProvider[] = [];
+  private reporters: Reporter[] = [];
 
   constructor(obj = [] as Show[]) {
     this.mapOfDatasets = new Map<String, ChartDataSets>();
@@ -74,37 +72,6 @@ export class Ng2ChartDataProcessor implements DataProcessor {
     });
   }
 
-
-  visit(dataProvider: DataProvider): void {
-    this.dataProviders.push(dataProvider);
-  }
-
-  startReportingCycle(time: Date): void {
-    this.dataProviders.forEach(dataProvider => {
-      dataProvider.startReportingCycle(time);
-    });
-  }
-
-  collectReports(): void {
-    this.dataProviders.forEach(dataProvider => {
-      dataProvider.report(this);
-    });
-  }
-
-  receiveData(providedData: ProvidedData): void {
-    let dataSet: ChartDataSets = this.mapOfDatasets.get(providedData.sourceName);
-    if (dataSet) {
-      if (!this.lastTime || this.lastTime.valueOf() < providedData.time.valueOf()) {
-        this.lastTime = providedData.time;
-        this.labels.push(providedData.time.toDateString());
-        this.dataSets.forEach(d => {
-          d.data.push(0);
-        });
-      }
-      dataSet.data[dataSet.data.length - 1] = providedData.y;
-    }
-  }
-
   private showOn(showOn: ShowDataOn):string {
     switch(showOn) {
       case ShowDataOn.LEFT:
@@ -116,6 +83,7 @@ export class Ng2ChartDataProcessor implements DataProcessor {
         return "";
     }
   }
+
   private showAs(showAs: ShowDataAs):string {
     switch(showAs) {
       case ShowDataAs.LINE:
@@ -125,6 +93,37 @@ export class Ng2ChartDataProcessor implements DataProcessor {
       default:
         console.warn("showAs=" + showAs + ": unknown literal of ShowDataAs");
         return "";
+    }
+  }
+
+  /**
+   * Registers a reporter to this data processor.
+   */
+  register(reporter: Reporter): void {
+    this.reporters.push(reporter);
+  }
+
+  startReportingCycle(time: Date): void {
+    this.labels.push(time.toDateString());
+    this.dataSets.forEach(d => {
+      d.data.push(0);
+    });
+
+    this.reporters.forEach(reporter => {
+      reporter.startReportingCycle(time);
+    });
+  }
+
+  collectReports(): void {
+    this.reporters.forEach(reporter => {
+      reporter.reportTo(this);
+    });
+  }
+
+  receiveData(providedData: ReportedData): void {
+    let dataSet: ChartDataSets = this.mapOfDatasets.get(providedData.sourceName);
+    if (dataSet) {
+      dataSet.data[dataSet.data.length - 1] = providedData.y;
     }
   }
 }
