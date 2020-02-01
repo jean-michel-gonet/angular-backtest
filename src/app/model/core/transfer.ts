@@ -20,7 +20,7 @@ export class RegularTransfer {
   public every: RegularPeriod;
   public to: Account;
 
-  private lastTime: Date;
+  private lastDay: Date;
 
   constructor(obj = {} as IRegularTransfer) {
     let {
@@ -38,22 +38,22 @@ export class RegularTransfer {
     let today = new Date(time.getFullYear(), time.getMonth(), time.getDate());
 
     // Is it the first call?
-    if (!this.lastTime) {
-      this.lastTime = today;
+    if (!this.lastDay) {
+      this.lastDay = today;
     }
 
     // Check each day between the last time we checked untin today.
-    let amount: number = 0;
+    let totalAmount: number = 0;
     do {
-      amount += this.xx(this.lastTime);
-      this.lastTime = new Date(this.lastTime.getFullYear(), this.lastTime.getMonth(), this.lastTime.getDate() + 1);
-    } while (this.lastTime.valueOf() <= today.valueOf());
+      totalAmount += this.dueAmount(this.lastDay);
+      this.lastDay = new Date(this.lastDay.getFullYear(), this.lastDay.getMonth(), this.lastDay.getDate() + 1);
+    } while (this.lastDay.valueOf() <= today.valueOf());
 
     // Return the total amount to transfer:
-    return amount;
+    return totalAmount;
   }
 
-  private xx(time: Date): number {
+  private dueAmount(time: Date): number {
     switch(this.every) {
       case RegularPeriod.MONTH:
         if (time.getDate() == 1) {
