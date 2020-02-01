@@ -34,7 +34,7 @@ export class DisplayComponent implements OnInit {
       {
         show: "EXPENSES.CASH",
         as: ShowDataAs.LINE,
-        on: ShowDataOn.LEFT
+        on: ShowDataOn.RIGHT
       }
     ]);
 
@@ -49,7 +49,7 @@ export class DisplayComponent implements OnInit {
           strategy: new BuyAndHoldStrategy({
             isin: "LU1290894820",
             transfer: new RegularTransfer({
-              transfer: 100,
+              transfer: 1000,
               to: new Account({
                 id: "EXPENSES"
               }),
@@ -61,7 +61,7 @@ export class DisplayComponent implements OnInit {
       });
 
       // Run the simulation:
-      this.simulation.run(new Date(2010, 1, 1), new Date (2020, 12, 31));
+      this.simulation.run(new Date(2016, 1, 1), new Date (2020, 12, 31));
     });
   }
 }
