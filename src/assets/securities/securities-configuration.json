@@ -1,0 +1,26 @@
+[
+  {
+    "name": "IBEX-35",
+    "file": "indexes/ibex35-yahoo.csv",
+    "format": "csv",
+    "provider": "finance.yahoo.com"
+  },
+  {
+    "name": "SP500",
+    "file": "indexes/sp500-yahoo.csv",
+    "format": "csv",
+    "provider": "finance.yahoo.com"
+  },
+  {
+    "name": "LU1290894820",
+    "file": "instruments/lu1290894820-six.json",
+    "format": "json",
+    "provider": "www.six-group.com"
+  },
+  {
+    "name": "CH0017810976",
+    "file": "instruments/ch0017810976-six.json",
+    "format": "json",
+    "provider": "www.six-group.com"
+  }
+]

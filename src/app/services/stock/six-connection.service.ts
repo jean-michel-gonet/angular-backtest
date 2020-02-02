@@ -79,14 +79,8 @@ export class SixConnectionService {
   constructor(private http: HttpClient) {
   }
 
-  get(isin: String): Observable<StockData> {
-    return this.http.get(
-      '/itf/fqs/delayed/charts.json?' +
-      'select=ISIN,ClosingPrice,ClosingPerformance,PreviousClosingPrice&' +
-      'where=ValorId=' + isin + '&' +
-      'columns=Date,Time,Close,Open,Low,High,TotalVolume&' +
-      'fromdate=19880630&netting=1440&clientApp=getDailyHLOC&type=2&line=id,6m,max,530&' +
-      'dojo.preventCache=1575104481880').pipe(map(s => {
+  get(file: string): Observable<StockData> {
+    return this.http.get(file).pipe(map(s => {
         let sixConverter: SixConverter = new SixConverter(s);
         return sixConverter.asStockData();
       }));

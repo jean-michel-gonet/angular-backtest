@@ -39,7 +39,7 @@ export class DisplayComponent implements OnInit {
     ]);
 
     // Fetch the data:
-    this.stockService.getStockData(['LU1290894820CHF4', 'CH0017810976CHF9']).subscribe(data => {
+    this.stockService.getStockData(['LU1290894820', 'CH0017810976']).subscribe(data => {
 
       // Set up the simulation:
       this.simulation = new Simulation({
