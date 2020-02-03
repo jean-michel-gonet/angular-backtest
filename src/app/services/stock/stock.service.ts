@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SixConnectionService } from './six-connection.service';
+import { YahooConnectionService } from './yahoo-connection.service';
 import { StockData } from 'src/app/model/core/stock';
 
 /**
@@ -29,7 +30,8 @@ import securityDescriptors from '../../../assets/securities/securities-configura
    providedIn: 'root'
  })
 export class StockService {
-  constructor(private sixConnectionService: SixConnectionService) {
+  constructor(private sixConnectionService: SixConnectionService,
+              private yahooConnectionService: YahooConnectionService) {
   }
 
   private obtainDescriptor(name: String): SecurityDescriptor {
@@ -54,6 +56,9 @@ export class StockService {
         case "www.six-group.com":
           o.push(this.sixConnectionService.get(relativePath));
           break;
+        case "finance.yahoo.com":
+        o.push(this.yahooConnectionService.get(descriptor.name, relativePath));
+        break;
       }
     });
 

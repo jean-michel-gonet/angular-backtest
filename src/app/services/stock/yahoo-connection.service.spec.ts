@@ -13,7 +13,7 @@ var yahooResponse = "Date,Open,High,Low,Close,Adj Close,Volume\r\n" +
 "1993-03-19,9393.299805,9393.299805,9243.000000,9251.299805,9251.290039,6878000\r\n" +
 "1993-03-22,null,null,null,null,null,null\r\n" +
 "1993-04-06,2612.300049,2612.300049,2599.300049,2603.199951,2603.197266,0\r\n" +
-"1993-04-20,9798.000000,9856.099609,9535.299805,9547.500000,9547.490234,9644600\r\n" +
+"1993-04-20,9798.000000,9856.099609,9535.299805,9547.500000,9547.490234,9644600\r\n";
 
 describe('YahooConnectionService', () => {
   let service: YahooConnectionService;
@@ -28,7 +28,7 @@ describe('YahooConnectionService', () => {
   });
 
   it('Can return Stock Data from Yahoo', () => {
-      service.get("XX").subscribe((data: StockData) => {
+      service.get("ISIN1", "XX").subscribe((data: StockData) => {
         expect(data).toBeTruthy();
       });
 
@@ -46,23 +46,51 @@ describe('YahooConnectionService', () => {
 
 describe('YahooConverter', () => {
   it('Can convert responses from Yahoo into StockData', () => {
-    let yahooConverter: YahooConverter = new YahooConverter(yahooResponse);
+    let yahooConverter: YahooConverter = new YahooConverter("ISIN1", yahooResponse);
     let xx: StockData = yahooConverter.asStockData();
     let iStock: IStock[] = xx.asIStock();
     expect(iStock).toEqual(
       jasmine.arrayWithExactContents([
         new IStock({
-          time: new Date(2016, 7, 21),
+          time: new Date(1993, 1, 15),
           assetsOfInterest: [
             new AssetOfInterest({
-              isin: "LU1290894820",
-              name: "LU1290894820",
-              partValue: 109.39,
+              isin: "ISIN1",
+              name: "ISIN1",
+              partValue: 9865.299805,
               spread: 0,
               dividend: 0
-            })
-          ]
-        })
+            })]}),
+        new IStock({
+          time: new Date(1993, 2, 19),
+          assetsOfInterest: [
+            new AssetOfInterest({
+              isin: "ISIN1",
+              name: "ISIN1",
+              partValue: 9251.299805,
+              spread: 0,
+              dividend: 0
+            })]}),
+        new IStock({
+          time: new Date(1993, 3, 6),
+          assetsOfInterest: [
+            new AssetOfInterest({
+              isin: "ISIN1",
+              name: "ISIN1",
+              partValue: 2603.199951,
+              spread: 0,
+              dividend: 0
+            })]}),
+        new IStock({
+          time: new Date(1993, 3, 20),
+          assetsOfInterest: [
+            new AssetOfInterest({
+              isin: "ISIN1",
+              name: "ISIN1",
+              partValue: 9547.500000,
+              spread: 0,
+              dividend: 0
+            })]})
       ]));
   });
 });

@@ -27,19 +27,14 @@ export class DisplayComponent implements OnInit {
         on: ShowDataOn.RIGHT
       },
       {
-        show: "LU1290894820.CLOSE",
+        show: "SP500.CLOSE",
         as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT
-      },
-      {
-        show: "EXPENSES.CASH",
-        as: ShowDataAs.LINE,
-        on: ShowDataOn.RIGHT
       }
     ]);
 
     // Fetch the data:
-    this.stockService.getStockData(['LU1290894820', 'CH0017810976']).subscribe(data => {
+    this.stockService.getStockData(['SP500']).subscribe(data => {
 
       // Set up the simulation:
       this.simulation = new Simulation({
@@ -47,9 +42,9 @@ export class DisplayComponent implements OnInit {
           id: "SQA01",
           cash: 100000,
           strategy: new BuyAndHoldStrategy({
-            isin: "LU1290894820",
+            isin: "SP500",
             transfer: new RegularTransfer({
-              transfer: 1000,
+              transfer: 0,
               to: new Account({
                 id: "EXPENSES"
               }),
@@ -61,7 +56,7 @@ export class DisplayComponent implements OnInit {
       });
 
       // Run the simulation:
-      this.simulation.run(new Date(2016, 1, 1), new Date (2020, 12, 31));
+      this.simulation.run(new Date(1980, 1, 1), new Date (2020, 12, 31));
     });
   }
 }

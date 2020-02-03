@@ -65,7 +65,8 @@ export class Ng2ChartReport implements Report {
         data: [],
         label: show.show,
         yAxisID: yAxisID,
-        type: this.showAs(show.as)
+        type: this.showAs(show.as),
+        pointRadius: 0
       };
       this.mapOfDatasets.set(show.show, dataSet);
       this.dataSets.push(dataSet);
