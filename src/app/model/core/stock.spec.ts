@@ -1,4 +1,4 @@
-import { Stock, StockData } from './stock';
+import { Stock, StockData, Dividend } from './stock';
 import { AssetOfInterest } from './asset';
 
 describe('Stock', () => {
@@ -132,16 +132,17 @@ describe('StockData', () => {
       ]})
     ]);
 
-    stockData.add(
-      new Stock({time: beforeYesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN3", partValue: 1.3})
-      ]}),
-      new Stock({time: yesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN3", partValue: 2.3})
-      ]}),
-      new Stock({time: today, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN3", partValue: 3.3})
-      ]})
+    stockData.merge(
+      new StockData([
+        new Stock({time: beforeYesterday, assetsOfInterest: [
+          new AssetOfInterest({isin: "ISIN3", partValue: 1.3})
+        ]}),
+        new Stock({time: yesterday, assetsOfInterest: [
+          new AssetOfInterest({isin: "ISIN3", partValue: 2.3})
+        ]}),
+        new Stock({time: today, assetsOfInterest: [
+          new AssetOfInterest({isin: "ISIN3", partValue: 3.3})
+        ]})])
     );
 
     expect(stockData.get(beforeYesterday2).assetsOfInterest)
@@ -177,16 +178,18 @@ describe('StockData', () => {
       ]})
     ]);
 
-    stockData.add(
-      new Stock({time: beforeYesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN2", partValue: 4.4})
-      ]}),
-      new Stock({time: yesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN2", partValue: 4.5})
-      ]}),
-      new Stock({time: today, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN2", partValue: 4.6})
-      ]})
+    stockData.merge(
+      new StockData([
+        new Stock({time: beforeYesterday, assetsOfInterest: [
+          new AssetOfInterest({isin: "ISIN2", partValue: 4.4})
+        ]}),
+        new Stock({time: yesterday, assetsOfInterest: [
+          new AssetOfInterest({isin: "ISIN2", partValue: 4.5})
+        ]}),
+        new Stock({time: today, assetsOfInterest: [
+          new AssetOfInterest({isin: "ISIN2", partValue: 4.6})
+        ]})
+      ])
     );
 
     expect(stockData.get(beforeYesterday2).assetsOfInterest)
@@ -205,6 +208,31 @@ describe('StockData', () => {
       .toEqual(jasmine.arrayWithExactContents([
         new AssetOfInterest({isin: "ISIN2", partValue: 4.6})
       ]));
+  });
+
+  it('Can enrich with dividends', () => {
+    let stockData: StockData = new StockData([
+      new Stock({time: beforeYesterday, assetsOfInterest: [
+        new AssetOfInterest({isin: "ISIN1", partValue: 200}),
+        new AssetOfInterest({isin: "ISIN2", partValue: 200}),
+      ]}),
+      new Stock({time: yesterday, assetsOfInterest: [
+        new AssetOfInterest({isin: "ISIN1", partValue: 100}),
+        new AssetOfInterest({isin: "ISIN2", partValue: 100}),
+      ]}),
+      new Stock({time: today, assetsOfInterest: [
+        new AssetOfInterest({isin: "ISIN1", partValue: 300}),
+        new AssetOfInterest({isin: "ISIN2", partValue: 300}),
+      ]})
+    ]);
+
+    stockData.enrichWithDividends([
+      new Dividend({time: beforeYesterday, isin : "ISIN1", dividend: 2}),
+      new Dividend({time: today, isin : "ISIN1", dividend: 1}),
+    ]);
+
+    expect(stockData.get(beforeYesterday).assetOfInterest("ISIN1").dividend).toBe(4);
+    expect(stockData.get(today).assetOfInterest("ISIN1").dividend).toBe(3);
   });
 
   it('Can iterate over all dates', () => {
@@ -270,5 +298,4 @@ describe('StockData', () => {
     }, beforeYesterday, beforeYesterday);
     expect(numberOfCalls).toBe(1);
   });
-
 });

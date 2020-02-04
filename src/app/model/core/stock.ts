@@ -15,6 +15,22 @@ export class IStock {
   }
 }
 
+export class Dividend {
+  time: Date;
+  isin: string;
+  dividend: number;
+  constructor(obj : Dividend = {} as Dividend) {
+    let {
+      time,
+      isin,
+      dividend
+    } = obj;
+    this.time = time;
+    this.isin = isin;
+    this.dividend = dividend;
+  }
+}
+
 export class Stock extends IStock {
   private mapOfAssets: Map<String, AssetOfInterest>;
 
@@ -67,6 +83,14 @@ export class StockData implements Reporter {
     this.stock = new Map<number, Stock>();
     newStocks.forEach(newStock => {
       this.stock.set(newStock.time.valueOf(), new Stock(newStock));
+    });
+  }
+
+  enrichWithDividends(dividends: Dividend[]):void {
+    dividends.forEach(dividend => {
+      let stock: Stock = this.get(dividend.time);
+      let assetOfInterest = stock.assetOfInterest(dividend.isin);
+      assetOfInterest.dividend = assetOfInterest.partValue * dividend.dividend / 100;
     });
   }
 
