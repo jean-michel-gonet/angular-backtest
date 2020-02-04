@@ -48,7 +48,7 @@ describe('SixConnectionService', () => {
   });
 
   it('Can return Stock Data from SIX', () => {
-      service.get("XX").subscribe((data: StockData) => {
+      service.getQuotes("XX").subscribe((data: StockData) => {
         expect(data).toBeTruthy();
       });
 

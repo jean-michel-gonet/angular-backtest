@@ -79,7 +79,7 @@ export class SixConnectionService {
   constructor(private http: HttpClient) {
   }
 
-  get(file: string): Observable<StockData> {
+  getQuotes(file: string): Observable<StockData> {
     return this.http.get(file).pipe(map(s => {
         let sixConverter: SixConverter = new SixConverter(s);
         return sixConverter.asStockData();

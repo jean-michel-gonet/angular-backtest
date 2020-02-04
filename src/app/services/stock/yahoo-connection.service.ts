@@ -97,7 +97,7 @@ export class YahooConnectionService {
   constructor(private http: HttpClient) {
   }
 
-  get(isin:string, file: string): Observable<StockData> {
+  getQuotes(isin:string, file: string): Observable<StockData> {
     return this.http.get(file,{responseType: 'text'}).pipe(map(s => {
         let yahooConverter: YahooConverter = new YahooConverter(isin, s as string);
         return yahooConverter.asStockData();

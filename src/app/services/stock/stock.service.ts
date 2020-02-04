@@ -54,10 +54,10 @@ export class StockService {
 
       switch(descriptor.provider) {
         case "www.six-group.com":
-          o.push(this.sixConnectionService.get(relativePath));
+          o.push(this.sixConnectionService.getQuotes(relativePath));
           break;
         case "finance.yahoo.com":
-        o.push(this.yahooConnectionService.get(descriptor.name, relativePath));
+        o.push(this.yahooConnectionService.getQuotes(descriptor.name, relativePath));
         break;
       }
     });
