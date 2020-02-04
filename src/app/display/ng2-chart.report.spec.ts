@@ -52,7 +52,8 @@ describe('Ng2ChartReport', () => {
       data: [100, 101],
       label: "SQA01.NAV",
       yAxisID: "y-axis-left",
-      type: "line"
+      type: "line",
+      pointRadius: 0
     }]));
     expect(ng2ChartReport.labels).toEqual([
       today.toDateString(),
@@ -97,12 +98,14 @@ describe('Ng2ChartReport', () => {
         data: [100, 101],
         label: "SQA01.NAV",
         yAxisID: "y-axis-left",
-        type: "line"
+        type: "line",
+        pointRadius: 0
       }, {
         data: [1, 2],
         label: "SQA01.COSTS",
         yAxisID: "y-axis-right",
-        type: "bar"
+        type: "bar",
+        pointRadius: 0
       }
     ]));
     expect(ng2ChartReport.labels).toEqual([
