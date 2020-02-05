@@ -235,6 +235,27 @@ describe('StockData', () => {
     expect(stockData.get(today).assetOfInterest("ISIN1").dividend).toBe(3);
   });
 
+  it('Can enrich with dividends even when dates mismatch', () => {
+    let stockData: StockData = new StockData([
+      new Stock({time: yesterday, assetsOfInterest: [
+        new AssetOfInterest({isin: "ISIN1", partValue: 100}),
+        new AssetOfInterest({isin: "ISIN2", partValue: 100}),
+      ]}),
+      new Stock({time: today, assetsOfInterest: [
+        new AssetOfInterest({isin: "ISIN1", partValue: 300}),
+        new AssetOfInterest({isin: "ISIN2", partValue: 300}),
+      ]})
+    ]);
+
+    stockData.enrichWithDividends([
+      new Dividend({time: beforeYesterday, isin : "ISIN1", dividend: 2}),
+      new Dividend({time: today, isin : "ISIN1", dividend: 1}),
+    ]);
+
+    expect(stockData.get(yesterday).assetOfInterest("ISIN1").dividend).toBe(4);
+    expect(stockData.get(today).assetOfInterest("ISIN1").dividend).toBe(3);
+  });
+
   it('Can iterate over all dates', () => {
     let stockData: StockData = new StockData([
       new Stock({time: beforeYesterday, assetsOfInterest: [
