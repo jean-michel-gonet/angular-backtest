@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { StockData, Stock } from 'src/app/model/core/stock';
+import { StockData, Stock, Dividend } from 'src/app/model/core/stock';
 import { AssetOfInterest } from 'src/app/model/core/asset';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ConnectionService } from './connection.service';
 
 /**
  * Converts SIX data into StockData.
@@ -74,15 +75,19 @@ export class SixConverter {
 @Injectable({
   providedIn: 'root'
 })
-export class SixConnectionService {
+export class SixConnectionService implements ConnectionService {
 
   constructor(private http: HttpClient) {
   }
 
-  getQuotes(file: string): Observable<StockData> {
-    return this.http.get(file).pipe(map(s => {
+  getQuotes(source: string, name: string): Observable<StockData> {
+    return this.http.get(source).pipe(map(s => {
         let sixConverter: SixConverter = new SixConverter(s);
         return sixConverter.asStockData();
       }));
+  }
+
+  getDividends(source: string): Observable<Dividend[]> {
+    throw new Error("Method not implemented.");
   }
 }

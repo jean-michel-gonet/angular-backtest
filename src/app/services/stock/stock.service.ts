@@ -5,15 +5,14 @@ import { SixConnectionService } from './six-connection.service';
 import { YahooConnectionService } from './yahoo-connection.service';
 import { StockData } from 'src/app/model/core/stock';
 
-/**
- * Describes the element found in securities-configuration.json.
- * @class{SecurityDescriptor}
- */
-export class SecurityDescriptor {
+ export class SourceAndProvider {
+   source: string;
+   provider: string;
+ }
+
+export class QuoteSourceAndProvider extends SourceAndProvider {
   name: string;
-  file: string;
-  format: string;
-  provider: string;
+  dividends?: SourceAndProvider;
 };
 
 /**
@@ -34,30 +33,41 @@ export class StockService {
               private yahooConnectionService: YahooConnectionService) {
   }
 
-  private obtainDescriptor(name: String): SecurityDescriptor {
-    let securityDescriptor: SecurityDescriptor = securityDescriptors.find((securityDescriptor: SecurityDescriptor) => {
-      return securityDescriptor.name == name;
-    });
-    return securityDescriptor;
+  private obtainQuoteSourceAndProvider(name: String): QuoteSourceAndProvider {
+    let quoteSourceAndProvider: QuoteSourceAndProvider =
+      securityDescriptors.find((securityDescriptor: QuoteSourceAndProvider) => {
+        return securityDescriptor.name == name;
+      });
+    return quoteSourceAndProvider;
   }
 
-  private makeItGood(file: string): string {
-    return "../../../assets/securities/" + file;
+  private makeItGood(source: string): string {
+    return "../../../assets/securities/" + source;
   }
 
+  /*
+  xx(): void {
+    this.sixConnectionService.getQuotes("xx").subscribe(s => {
+      this.yahooConnectionService.getQuotes("yy", "zz").subscribe(d => {
+        s.enrichWithDividends(d);
+        return s;
+      });
+    })
+  }
+  */
   getStockData(names: string[]): Observable<StockData> {
     let o: Observable<StockData>[] = [];
 
     names.forEach(name => {
-      let descriptor: SecurityDescriptor = this.obtainDescriptor(name);
-      let relativePath = this.makeItGood(descriptor.file);
+      let quoteSourceAndProvider: QuoteSourceAndProvider = this.obtainQuoteSourceAndProvider(name);
+      let source = this.makeItGood(quoteSourceAndProvider.source);
 
-      switch(descriptor.provider) {
+      switch(quoteSourceAndProvider.provider) {
         case "www.six-group.com":
-          o.push(this.sixConnectionService.getQuotes(relativePath));
+          o.push(this.sixConnectionService.getQuotes(source, quoteSourceAndProvider.name));
           break;
         case "finance.yahoo.com":
-        o.push(this.yahooConnectionService.getQuotes(descriptor.name, relativePath));
+          o.push(this.yahooConnectionService.getQuotes(source, quoteSourceAndProvider.name));
         break;
       }
     });

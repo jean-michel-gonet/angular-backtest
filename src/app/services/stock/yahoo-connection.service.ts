@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { StockData, Stock } from 'src/app/model/core/stock';
+import { StockData, Stock, Dividend } from 'src/app/model/core/stock';
 import { map } from 'rxjs/operators';
 import { AssetOfInterest } from 'src/app/model/core/asset';
+import { ConnectionService } from './connection.service';
 
 
 
@@ -16,7 +17,7 @@ export class YahooConverter {
    * Class constructor.
    * @param{string} yahooData The raw data returned by SIX.
    */
-  constructor(private isin: string, private yahooData: string) {
+  constructor(private name: string, private yahooData: string) {
   }
 
   /**
@@ -44,8 +45,8 @@ export class YahooConverter {
             time: this.convertToDate(date),
             assetsOfInterest: [
               new AssetOfInterest({
-                isin: this.isin,
-                name: this.isin,
+                isin: this.name,
+                name: this.name,
                 partValue: this.convertToNumber(partValue),
                 spread: 0,
                 dividend: 0})
@@ -92,15 +93,19 @@ export class YahooConverter {
 @Injectable({
   providedIn: 'root'
 })
-export class YahooConnectionService {
-
+export class YahooConnectionService implements ConnectionService {
   constructor(private http: HttpClient) {
   }
 
-  getQuotes(isin:string, file: string): Observable<StockData> {
-    return this.http.get(file,{responseType: 'text'}).pipe(map(s => {
-        let yahooConverter: YahooConverter = new YahooConverter(isin, s as string);
+  getQuotes(source: string, name: string): Observable<StockData> {
+    return this.http.get(source,{responseType: 'text'}).pipe(map(s => {
+        let yahooConverter: YahooConverter = new YahooConverter(name, s as string);
         return yahooConverter.asStockData();
       }));
   }
+
+  getDividends(source: string): Observable<Dividend[]> {
+    throw new Error("Method not implemented.");
+  }
+
 }

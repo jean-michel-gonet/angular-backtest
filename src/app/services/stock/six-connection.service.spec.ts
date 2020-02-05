@@ -48,13 +48,13 @@ describe('SixConnectionService', () => {
   });
 
   it('Can return Stock Data from SIX', () => {
-      service.getQuotes("XX").subscribe((data: StockData) => {
+      service.getQuotes("SOURCE", "NAME").subscribe((data: StockData) => {
         expect(data).toBeTruthy();
       });
 
       const req = httpMock.expectOne((request:HttpRequest<any>) => {
         expect(request.method).toBe('GET');
-        expect(request.url).toContain("XX");
+        expect(request.url).toContain("SOURCE");
         return true
       });
 

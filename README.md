@@ -64,6 +64,41 @@ just because economy evolves.
 
 ## How to use the library
 
+[STUB]
+
+- Find the financial source: f.e. The S&P500 index quotes.
+- Include the file in the project.
+- Configure it in securities-configuration.json
+- Create a graph to display it.
+- Don't forget the dividends. Either use a Total return version of the index,
+or add the dividends as a separated file.
+- Devise your strategy.
+- Configure your strategy.
+- Test your strategy with other indexes.
+- Make out your cost scheme.
+- Are you investing in a different currency?
+
+## Troubleshooting
+
+Those are some common errors you may stumble upon when you start using this
+project.
+
+### ERROR in securities-configuration.json
+
+When launching the application: ``npm start``:
+```
+ERROR in ./src/assets/securities/securities-configuration.json
+Module parse failed: Unexpected token } in JSON at position 321 while parsing near...,
+...
+You may need an appropriate loader to handle this file type
+```
+
+This is usually a syntax error in the securities configuration file, which
+is located at ``securities-configuration.json``.
+
+Best strategy, if you can't spot the error, is to copy the content of the file
+into some online JSON validator (like https://jsonlint.com/?code=) and let it
+find the error for you.
 
 ## Documentation I used to write the code:
 
@@ -71,3 +106,4 @@ This is some of my reference documentation:
 
 - https://www.positronx.io/angular-chart-js-tutorial-with-ng2-charts-examples/
 - This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.9.
+- Historical dividends for S&P500 index: https://www.multpl.com/s-p-500-dividend-yield/table/by-year
