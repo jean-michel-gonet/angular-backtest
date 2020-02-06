@@ -61,22 +61,23 @@ describe('Stock', () => {
   });
 });
 
+let now: Date = new Date();
+let today: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+let yesterday: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+let beforeYesterday: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 2);
+let today2: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+let yesterday2: Date = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+let beforeYesterday2: Date = new Date(beforeYesterday.getFullYear(), beforeYesterday.getMonth(), beforeYesterday.getDate());
+
 describe('StockData', () => {
   it('Can create an instance', () => {
     expect(new StockData(
       [
-        new Stock(),
-        new Stock(),
-        new Stock()
+        new Stock({time: today}),
+        new Stock({time: yesterday}),
+        new Stock({time: beforeYesterday})
       ])).toBeTruthy();
   });
-  let now: Date = new Date();
-  let today: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  let yesterday: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
-  let beforeYesterday: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 2);
-  let today2: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  let yesterday2: Date = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
-  let beforeYesterday2: Date = new Date(beforeYesterday.getFullYear(), beforeYesterday.getMonth(), beforeYesterday.getDate());
 
   it('Can return the stock of the required day', () => {
 
@@ -252,7 +253,28 @@ describe('StockData', () => {
       new Dividend({time: today, isin : "ISIN1", dividend: 1}),
     ]);
 
-    expect(stockData.get(yesterday).assetOfInterest("ISIN1").dividend).toBe(4);
+    expect(stockData.get(yesterday).assetOfInterest("ISIN1").dividend).toBe(0);
+    expect(stockData.get(today).assetOfInterest("ISIN1").dividend).toBe(3);
+  });
+
+  it('Can enrich with dividends even when dates mismatch (2)', () => {
+    let stockData: StockData = new StockData([
+      new Stock({time: beforeYesterday, assetsOfInterest: [
+        new AssetOfInterest({isin: "ISIN1", partValue: 100}),
+        new AssetOfInterest({isin: "ISIN2", partValue: 100}),
+      ]}),
+      new Stock({time: today, assetsOfInterest: [
+        new AssetOfInterest({isin: "ISIN1", partValue: 300}),
+        new AssetOfInterest({isin: "ISIN2", partValue: 300}),
+      ]})
+    ]);
+
+    stockData.enrichWithDividends([
+      new Dividend({time: yesterday, isin : "ISIN1", dividend: 2}),
+      new Dividend({time: today, isin : "ISIN1", dividend: 1}),
+    ]);
+
+    expect(stockData.get(beforeYesterday).assetOfInterest("ISIN1").dividend).toBe(2);
     expect(stockData.get(today).assetOfInterest("ISIN1").dividend).toBe(3);
   });
 

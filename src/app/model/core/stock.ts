@@ -2,12 +2,12 @@ import { AssetOfInterest } from './asset';
 import { Reporter, Report, ReportedData } from './reporting';
 
 export class IStock {
-  time?: Date;
+  time: Date;
   assetsOfInterest?: AssetOfInterest[];
 
-  constructor(obj : IStock = {} as IStock) {
+  constructor(obj : IStock) {
     let {
-      time = new Date(),
+      time,
       assetsOfInterest = []
     } = obj;
     this.time = time;
@@ -77,20 +77,14 @@ export class Stock extends IStock {
 }
 
 export class StockData implements Reporter {
-  stock: Map<number, Stock>;
+  private stock: Stock[] = [];
 
   constructor(newStocks:IStock[]) {
-    this.stock = new Map<number, Stock>();
     newStocks.forEach(newStock => {
-      this.stock.set(newStock.time.valueOf(), new Stock(newStock));
+      this.stock.push(new Stock(newStock));
     });
-  }
-
-  enrichWithDividends(dividends: Dividend[]):void {
-    dividends.forEach(dividend => {
-      let stock: Stock = this.get(dividend.time);
-      let assetOfInterest = stock.assetOfInterest(dividend.isin);
-      assetOfInterest.dividend = assetOfInterest.partValue * dividend.dividend / 100;
+    this.stock.sort((a: Stock, b:Stock) => {
+      return a.time.valueOf() - b.time.valueOf();
     });
   }
 
@@ -109,13 +103,64 @@ export class StockData implements Reporter {
    * Adds one stock to this stock data.
    * @param {IStock} otherStock The stock.
    */
-  add(...otherStock: IStock[]):void  {
-    otherStock.forEach((other: IStock) => {
-      let existingStock:Stock = this.stock.get(other.time.valueOf());
-      if (existingStock) {
-        existingStock.add(other.assetsOfInterest);
+  add(...otherStocks: IStock[]):void  {
+    otherStocks.forEach((otherStock: IStock) => {
+
+      // Looks for a position where to insert this other stock:
+      let index: number = this.stock.findIndex(stock => {
+        let found: boolean = stock.time.valueOf() >= otherStock.time.valueOf();
+        return found;
+      });
+
+      // If there isn't any entry, adds it at the end:
+      if (index <0) {
+        this.stock.push(new Stock(otherStock));
       } else {
-        this.stock.set(other.time.valueOf(), new Stock(other));
+        let existingStock: Stock = this.stock[index];
+        // If there is an existing entry, adds the asset of interest in it.
+        if (existingStock.time.valueOf() == otherStock.time.valueOf()) {
+          existingStock.add(otherStock.assetsOfInterest);
+        }
+        // Otherwise, creates a new entry in this precise place:
+        else {
+          this.stock.splice(index, 0, new Stock(otherStock));
+        }
+      }
+    });
+  }
+
+  /**
+   * Returns the stock at the specified date or, if date is not found,
+   * then stock at the pior date.
+   * @param {Date} time The relevant date.
+   */
+  get(time: Date): Stock {
+    let valueOf: number = time.valueOf();
+    let index: number = this.stock.findIndex(stock => {
+      return stock.time.valueOf() >= valueOf;
+    });
+    if (index < 0) {
+      return null;
+    } else {
+      let stockAtIndex: Stock = this.stock[index];
+      if (stockAtIndex.time.valueOf() == valueOf) {
+        return stockAtIndex;
+      } else {
+        if (index == 0) {
+          return null;
+        } else {
+          return this.stock[index - 1];
+        }
+      }
+    }
+  }
+
+  enrichWithDividends(dividends: Dividend[]):void {
+    dividends.forEach(dividend => {
+      let stock: Stock = this.get(dividend.time);
+      if (stock) {
+        let assetOfInterest = stock.assetOfInterest(dividend.isin);
+        assetOfInterest.dividend = assetOfInterest.partValue * dividend.dividend / 100;
       }
     });
   }
@@ -135,42 +180,20 @@ export class StockData implements Reporter {
       }));
     });
 
-    iStock.sort((s1: IStock, s2: IStock) => {
-      return s1.time.valueOf() - s2.time.valueOf();
-    });
-
     return iStock;
   }
 
-  /**
-   * Returns the stock at the specified date.
-   * @param {Date} time The relevant date.
-   */
-  get(time: Date): Stock {
-    return this.stock.get(time.valueOf());
-  }
-
   forEachDate(callbackfn:(stock:Stock)=>void, start?:Date, end?: Date):void {
-    let stockTimes: Date[] = [];
-
     for (let stock of this.stock.values()) {
       let time: Date = stock.time;
       if (start && time.valueOf() < start.valueOf()) {
         continue;
       }
       if (end && end.valueOf() < time.valueOf()) {
-        continue;
+        break;
       }
-      stockTimes.push(stock.time);
-    }
-
-    stockTimes.sort((d1: Date, d2: Date) => {
-      return d1.valueOf() - d2.valueOf();
-    });
-
-    stockTimes.forEach(time => {
       callbackfn(this.get(time));
-    });
+    }
   }
 
   // ********************************************************************
@@ -202,7 +225,7 @@ export class StockData implements Reporter {
    * to report.
    */
   reportTo(report: Report): void {
-    let stock: Stock = this.stock.get(this.reportingTime.valueOf());
+    let stock: Stock = this.get(this.reportingTime);
     stock.assetsOfInterest.forEach(assetOfInterest => {
       report.receiveData(new ReportedData({
         y: assetOfInterest.partValue,
