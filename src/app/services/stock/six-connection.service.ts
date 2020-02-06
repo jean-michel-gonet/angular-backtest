@@ -25,7 +25,7 @@ export class SixConverter {
   asStockData(): StockData {
     let valors:any[] = this.sixData.valors;
 
-    let stockData: StockData = new StockData([]);
+    let stockData: Stock[] = [];
     valors.forEach(valor => {
       let isin = valor.ISIN;
       let data:any = valor.data;
@@ -47,10 +47,10 @@ export class SixConverter {
               dividend: 0})
           ]
         });
-        stockData.add(stock);
+        stockData.push(stock);
       }
     });
-    return stockData;
+    return new StockData(stockData);
   }
 
   private convertToNumber(a: any): number {

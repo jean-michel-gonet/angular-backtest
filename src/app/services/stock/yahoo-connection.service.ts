@@ -25,7 +25,7 @@ export class YahooConverter {
    * @return {StockData} The transformed data.
    */
   asStockData(): StockData {
-    let stockData: StockData = new StockData([]);
+    let stockData: Stock[] = [];
     let lineNumber = 0;
     let csvContent: string[] = this.yahooData.split(/\r\n|\r|\n/);
     csvContent.forEach( (line: string) => {
@@ -52,11 +52,11 @@ export class YahooConverter {
                 dividend: 0})
             ]
           });
-          stockData.add(stock);
+          stockData.push(stock);
         }
       }
     });
-    return stockData;
+    return new StockData(stockData);
   }
 
   /**

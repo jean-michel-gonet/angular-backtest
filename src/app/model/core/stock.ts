@@ -94,39 +94,48 @@ export class StockData implements Reporter {
    * @param {StockData} otherStockData The other data.
    */
   merge(otherStockData: StockData):void {
-    otherStockData.stock.forEach(otherStock => {
-      this.add(otherStock);
-    });
-  }
+    let mergedStockData: Stock[] = [];
+    let otherIndex: number = 0;
+    let thisIndex: number = 0;
 
-  /**
-   * Adds one stock to this stock data.
-   * @param {IStock} otherStock The stock.
-   */
-  add(...otherStocks: IStock[]):void  {
-    otherStocks.forEach((otherStock: IStock) => {
 
-      // Looks for a position where to insert this other stock:
-      let index: number = this.stock.findIndex(stock => {
-        let found: boolean = stock.time.valueOf() >= otherStock.time.valueOf();
-        return found;
-      });
-
-      // If there isn't any entry, adds it at the end:
-      if (index <0) {
-        this.stock.push(new Stock(otherStock));
-      } else {
-        let existingStock: Stock = this.stock[index];
-        // If there is an existing entry, adds the asset of interest in it.
-        if (existingStock.time.valueOf() == otherStock.time.valueOf()) {
-          existingStock.add(otherStock.assetsOfInterest);
-        }
-        // Otherwise, creates a new entry in this precise place:
-        else {
-          this.stock.splice(index, 0, new Stock(otherStock));
-        }
+    while(otherIndex < otherStockData.stock.length && thisIndex < this.stock.length) {
+      let otherEntry = otherStockData.stock[otherIndex];
+      let thisEntry = this.stock[thisIndex];
+      if (thisEntry.time.valueOf() == otherEntry.time.valueOf()) {
+        let mergedEntry: Stock = new Stock(thisEntry);
+        mergedEntry.add(otherEntry.assetsOfInterest);
+        mergedStockData.push(mergedEntry);
+        thisIndex++;
+        otherIndex++;
       }
-    });
+
+      if (thisEntry.time.valueOf() < otherEntry.time.valueOf()) {
+        let mergedEntry: Stock = new Stock(thisEntry);
+        mergedStockData.push(mergedEntry);
+        thisIndex++;
+      }
+
+      if (thisEntry.time.valueOf() > otherEntry.time.valueOf()) {
+        let mergedEntry: Stock = new Stock(otherEntry);
+        mergedStockData.push(mergedEntry);
+        otherIndex++;
+      }
+    }
+
+    while(otherIndex < otherStockData.stock.length) {
+      let otherEntry = otherStockData.stock[otherIndex];
+      mergedStockData.push(new Stock(otherEntry));
+      otherIndex++;
+    }
+
+    while(thisIndex < this.stock.length) {
+      let thisEntry = this.stock[thisIndex];
+      mergedStockData.push(new Stock(thisEntry));
+      thisIndex++;
+    }
+
+    this.stock = mergedStockData;
   }
 
   /**
@@ -184,15 +193,27 @@ export class StockData implements Reporter {
   }
 
   forEachDate(callbackfn:(stock:Stock)=>void, start?:Date, end?: Date):void {
-    for (let stock of this.stock.values()) {
+    let firstIndex: number;
+
+    // Look for the index of the start date:
+    if (start) {
+      firstIndex = this.stock.findIndex(stock => {
+        return stock.time.valueOf() >= start.valueOf();
+      });
+    } else {
+      firstIndex = 0;
+    }
+
+    // Simulating until specified end date:
+    let n: number;
+    for(n = firstIndex; n < this.stock.length; n++) {
+      let stock: Stock = this.stock[n];
       let time: Date = stock.time;
-      if (start && time.valueOf() < start.valueOf()) {
-        continue;
-      }
-      if (end && end.valueOf() < time.valueOf()) {
+      if (end && time.valueOf() > end.valueOf()) {
         break;
       }
-      callbackfn(this.get(time));
+      this.reportingStock = stock;
+      callbackfn(stock);
     }
   }
 
@@ -200,7 +221,7 @@ export class StockData implements Reporter {
   // **                  DataProvider interface.                       **
   // ********************************************************************
 
-  private reportingTime: Date;
+  private reportingStock: Stock;
 
   /**
    * Turns itself in as a data provider to the data processor.
@@ -215,7 +236,7 @@ export class StockData implements Reporter {
    * @param {Date} time The date to report.
    */
   startReportingCycle(time: Date): void {
-    this.reportingTime = time;
+    // Let's do nothing.
   }
 
   /**
@@ -225,8 +246,7 @@ export class StockData implements Reporter {
    * to report.
    */
   reportTo(report: Report): void {
-    let stock: Stock = this.get(this.reportingTime);
-    stock.assetsOfInterest.forEach(assetOfInterest => {
+    this.reportingStock.assetsOfInterest.forEach(assetOfInterest => {
       report.receiveData(new ReportedData({
         y: assetOfInterest.partValue,
         sourceName: assetOfInterest.isin + ".CLOSE"
