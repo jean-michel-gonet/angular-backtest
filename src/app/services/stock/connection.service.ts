@@ -18,5 +18,5 @@ export interface ConnectionService {
    * To retrieve the dividends of the specified instrument.
    * @param {string} source Where to find the file with data.
    */
-  getDividends(source: string): Observable<Dividend[]>;
+  getDividends(source: string, name:string): Observable<Dividend[]>;
 }

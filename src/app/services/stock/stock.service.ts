@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, mergeMap , concatMap} from 'rxjs/operators';
 import { SixConnectionService } from './six-connection.service';
 import { YahooConnectionService } from './yahoo-connection.service';
-import { StockData } from 'src/app/model/core/stock';
+import { StockData, Dividend } from 'src/app/model/core/stock';
 
  export class SourceAndProvider {
    source: string;
@@ -56,23 +56,22 @@ export class StockService {
   }
   */
   getStockData(names: string[]): Observable<StockData> {
-    let o: Observable<StockData>[] = [];
+    let oo: Observable<StockData>[] = [];
 
     names.forEach(name => {
       let quoteSourceAndProvider: QuoteSourceAndProvider = this.obtainQuoteSourceAndProvider(name);
-      let source = this.makeItGood(quoteSourceAndProvider.source);
-
-      switch(quoteSourceAndProvider.provider) {
-        case "www.six-group.com":
-          o.push(this.sixConnectionService.getQuotes(source, quoteSourceAndProvider.name));
-          break;
-        case "finance.yahoo.com":
-          o.push(this.yahooConnectionService.getQuotes(source, quoteSourceAndProvider.name));
-        break;
-      }
+      let o: Observable<StockData> = this.obtainQuote(quoteSourceAndProvider)
+        .pipe(mergeMap(s => {
+          return this.obtainDividends(quoteSourceAndProvider.dividends)
+            .pipe(map(d =>{
+              s.enrichWithDividends(d);
+              return s;
+            }));
+        }));
+      oo.push(o);
     });
 
-    return forkJoin(o)
+    return forkJoin(oo)
       .pipe(map(s => {
         let stockData: StockData;
         s.forEach((d: StockData) => {
@@ -84,5 +83,23 @@ export class StockService {
         });
         return stockData;
       }));
+  }
+
+  private obtainDividends(sourceAndProvider: SourceAndProvider): Observable<Dividend[]> {
+    return null;
+  }
+
+  private obtainQuote(quoteSourceAndProvider: QuoteSourceAndProvider): Observable<StockData> {
+    let source = this.makeItGood(quoteSourceAndProvider.source);
+
+    switch(quoteSourceAndProvider.provider) {
+      case "www.six-group.com":
+        return this.sixConnectionService.getQuotes(source, quoteSourceAndProvider.name);
+      case "finance.yahoo.com":
+        return this.yahooConnectionService.getQuotes(source, quoteSourceAndProvider.name);
+      default:
+        console.warn(quoteSourceAndProvider.provider + " - Unknown provider");
+        return null;
+    }
   }
 }
