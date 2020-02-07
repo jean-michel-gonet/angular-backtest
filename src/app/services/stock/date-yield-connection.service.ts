@@ -30,15 +30,17 @@ export class DateYieldConverter {
     csvContent.forEach( (line: string) => {
       if (lineNumber++ > 0) {
         let tokens: string[] = line.split(",");
-        let date             = tokens[0];
-        let yyield          = tokens[1];
+        if (tokens.length == 2) {
+          let date             = tokens[0];
+          let yyield          = tokens[1];
 
-        let dividend: Dividend = new Dividend({
-          time: this.convertToDate(date),
-          isin: name,
-          dividend: this.convertToNumber(yyield)
-        });
-        dividends.push(dividend);
+          let dividend: Dividend = new Dividend({
+            time: this.convertToDate(date),
+            isin: this.name,
+            dividend: this.convertToNumber(yyield)
+          });
+          dividends.push(dividend);
+        }
       }
     });
     return dividends;
