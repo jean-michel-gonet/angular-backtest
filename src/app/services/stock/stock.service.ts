@@ -4,21 +4,8 @@ import { map, mergeMap , concatMap} from 'rxjs/operators';
 import { SixConnectionService } from './six-connection.service';
 import { YahooConnectionService } from './yahoo-connection.service';
 import { StockData, Dividend } from 'src/app/model/core/stock';
-
- export class SourceAndProvider {
-   source: string;
-   provider: string;
- }
-
-export class QuoteSourceAndProvider extends SourceAndProvider {
-  name: string;
-  dividends?: SourceAndProvider;
-};
-
-/**
- * Imports the configuration file where all securities data are registered.
- */
-import securityDescriptors from '../../../assets/securities/securities-configuration.json';
+import { SecuritiesConfigurationService, QuoteSourceAndProvider, SourceAndProvider } from './securities-configuration.service';
+import { DateYieldConnectionService } from './date-yield-connection.service';
 
 /**
  * Retrieves stock data from a provider, and then broadcasts the
@@ -30,15 +17,9 @@ import securityDescriptors from '../../../assets/securities/securities-configura
  })
 export class StockService {
   constructor(private sixConnectionService: SixConnectionService,
-              private yahooConnectionService: YahooConnectionService) {
-  }
-
-  private obtainQuoteSourceAndProvider(name: String): QuoteSourceAndProvider {
-    let quoteSourceAndProvider: QuoteSourceAndProvider =
-      securityDescriptors.find((securityDescriptor: QuoteSourceAndProvider) => {
-        return securityDescriptor.name == name;
-      });
-    return quoteSourceAndProvider;
+              private yahooConnectionService: YahooConnectionService,
+              private dateYieldConnectionService: DateYieldConnectionService,
+              private securitiesConfigurationService: SecuritiesConfigurationService) {
   }
 
   private makeItGood(source: string): string {
@@ -59,7 +40,12 @@ export class StockService {
     let oo: Observable<StockData>[] = [];
 
     names.forEach(name => {
-      let quoteSourceAndProvider: QuoteSourceAndProvider = this.obtainQuoteSourceAndProvider(name);
+      let quoteSourceAndProvider: QuoteSourceAndProvider =
+        this.securitiesConfigurationService.obtainQuoteSourceAndProvider(name);
+
+      let o: Observable<StockData> = this.obtainQuote(quoteSourceAndProvider);
+
+      /*
       let o: Observable<StockData> = this.obtainQuote(quoteSourceAndProvider)
         .pipe(mergeMap(s => {
           return this.obtainDividends(quoteSourceAndProvider.dividends)
@@ -68,6 +54,7 @@ export class StockService {
               return s;
             }));
         }));
+      */
       oo.push(o);
     });
 
@@ -85,8 +72,16 @@ export class StockService {
       }));
   }
 
-  private obtainDividends(sourceAndProvider: SourceAndProvider): Observable<Dividend[]> {
-    return null;
+  private obtainDividends(sourceAndProvider: SourceAndProvider, name: string): Observable<Dividend[]> {
+    let source = this.makeItGood(sourceAndProvider.source);
+
+    switch(sourceAndProvider.provider) {
+      case "date.yield.csv":
+        return this.dateYieldConnectionService.getDividends(source, name);
+      default:
+        console.warn(sourceAndProvider.provider + " - Unknown provider for dividends");
+        return null;
+    }
   }
 
   private obtainQuote(quoteSourceAndProvider: QuoteSourceAndProvider): Observable<StockData> {
