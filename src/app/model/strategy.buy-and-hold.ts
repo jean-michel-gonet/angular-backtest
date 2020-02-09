@@ -34,9 +34,8 @@ export class BuyAndHoldStrategy implements Strategy {
   applyStrategy(account: Account, stock: Stock): void {
     let assetOfInterest: AssetOfInterest = stock.assetOfInterest(this.isin);
     if (assetOfInterest) {
-      if (!account.position(this.isin)) {
-        this.executeInitialOrder(account, assetOfInterest);
-      }
+      this.investAllYourCashInOneSingleBasket(account, assetOfInterest);
+
       let amountToTransfer = this.transfer.amount(stock.time);
       if (amountToTransfer > 0) {
         this.performTransfer(account, assetOfInterest, amountToTransfer);
@@ -48,9 +47,11 @@ export class BuyAndHoldStrategy implements Strategy {
    * Initial order consists in investing the whole
    * capital into one single ISIN.
    */
-  private executeInitialOrder(account: Account, assetOfInterest: AssetOfInterest): void {
-    let numberOfParts: number = account.cash / assetOfInterest.partValue;
-    account.order(assetOfInterest, numberOfParts);
+  private investAllYourCashInOneSingleBasket(account: Account, assetOfInterest: AssetOfInterest): void {
+    if (account.cash > 0) {
+      let numberOfParts: number = account.cash / assetOfInterest.partValue;
+      account.order(assetOfInterest, numberOfParts);
+    }
   }
 
   /**
