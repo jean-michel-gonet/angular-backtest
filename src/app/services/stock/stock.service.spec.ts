@@ -1,11 +1,11 @@
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { SixConnectionService } from './six-connection.service';
 import { YahooConnectionService } from './yahoo-connection.service';
 import { DateYieldConnectionService } from './date-yield-connection.service';
 import { StockService } from './stock.service';
 import { ConnectionService } from './connection.service';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { StockData, Dividend, Stock } from 'src/app/model/core/stock';
 import { QuoteSourceAndProvider, SecuritiesConfigurationService } from './securities-configuration.service';
 import { AssetOfInterest } from 'src/app/model/core/asset';
@@ -84,8 +84,8 @@ describe('StockService', () => {
   });
 
   it('Can retrieve from Yahoo data', (done: DoneFn) => {
-    configurationService.when("NAME", {
-      name: "NAME",
+    configurationService.when("ISIN3", {
+      name: "ISIN3",
       provider: "finance.yahoo.com",
       source: "xx",
       dividends: {
@@ -98,17 +98,17 @@ describe('StockService', () => {
       new Stock({time: beforeYesterday, assetsOfInterest: [
         new AssetOfInterest({isin: "ISIN3", partValue: 1.3})
       ]})]);
-    yahoo.whenQuotes("NAME", stockData);
+    yahoo.whenQuotes("ISIN3", stockData);
 
     let dividends: Dividend[] = [new Dividend(
-      {isin: "NAME", dividend: 1.5, time: beforeYesterday}
+      {isin: "ISIN3", dividend: 1.5, time: beforeYesterday}
     )];
 
-    dateYield.whenDividends("NAME", dividends);
+    dateYield.whenDividends("ISIN3", dividends);
 
-    stockService.getStockData(["NAME"]).subscribe(data => {
+    stockService.getStockData(["ISIN3"]).subscribe(data => {
       expect(data.get(beforeYesterday).assetOfInterest("ISIN3").partValue).toBe(1.3);
-      //expect(data.get(beforeYesterday).assetOfInterest("ISIN3").dividend).toBe(1.5);
+      expect(data.get(beforeYesterday).assetOfInterest("ISIN3").dividend).toBe(1.5);
       done();
     });
   });

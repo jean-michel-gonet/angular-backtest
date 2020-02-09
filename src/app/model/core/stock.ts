@@ -165,13 +165,33 @@ export class StockData implements Reporter {
   }
 
   enrichWithDividends(dividends: Dividend[]):void {
-    dividends.forEach(dividend => {
-      let stock: Stock = this.get(dividend.time);
-      if (stock) {
-        let assetOfInterest = stock.assetOfInterest(dividend.isin);
-        assetOfInterest.dividend = assetOfInterest.partValue * dividend.dividend / 100;
+    let thisIndex: number = 0;
+    let dividendIndex: number = 0;
+
+    let previousEntry = this.stock[thisIndex];
+    while(dividendIndex < dividends.length && thisIndex < this.stock.length) {
+      let dividendEntry = dividends[dividendIndex];
+      let thisEntry = this.stock[thisIndex];
+
+      if (thisEntry.time.valueOf() < dividendEntry.time.valueOf()) {
+        thisIndex++;
       }
-    });
+
+      if (thisEntry.time.valueOf() == dividendEntry.time.valueOf()) {
+        let assetOfInterest = thisEntry.assetOfInterest(dividendEntry.isin);
+        assetOfInterest.dividend = dividendEntry.dividend;
+        thisIndex++;
+        dividendIndex++;
+      }
+
+      if (thisEntry.time.valueOf() > dividendEntry.time.valueOf()) {
+        let assetOfInterest = previousEntry.assetOfInterest(dividendEntry.isin);
+        assetOfInterest.dividend = dividendEntry.dividend;
+        dividendIndex++;
+      }
+
+      previousEntry = thisEntry;
+    }
   }
 
   /**

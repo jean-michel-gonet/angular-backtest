@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin } from 'rxjs';
-import { map, mergeMap , concatMap} from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { SixConnectionService } from './six-connection.service';
 import { YahooConnectionService } from './yahoo-connection.service';
 import { StockData, Dividend } from 'src/app/model/core/stock';
@@ -26,16 +26,6 @@ export class StockService {
     return "../../../assets/securities/" + source;
   }
 
-  /*
-  xx(): void {
-    this.sixConnectionService.getQuotes("xx").subscribe(s => {
-      this.yahooConnectionService.getQuotes("yy", "zz").subscribe(d => {
-        s.enrichWithDividends(d);
-        return s;
-      });
-    })
-  }
-  */
   getStockData(names: string[]): Observable<StockData> {
     let oo: Observable<StockData>[] = [];
 
@@ -43,18 +33,14 @@ export class StockService {
       let quoteSourceAndProvider: QuoteSourceAndProvider =
         this.securitiesConfigurationService.obtainQuoteSourceAndProvider(name);
 
-      let o: Observable<StockData> = this.obtainQuote(quoteSourceAndProvider);
-
-      /*
       let o: Observable<StockData> = this.obtainQuote(quoteSourceAndProvider)
         .pipe(mergeMap(s => {
-          return this.obtainDividends(quoteSourceAndProvider.dividends)
+          return this.obtainDividends(quoteSourceAndProvider.dividends, quoteSourceAndProvider.name)
             .pipe(map(d =>{
               s.enrichWithDividends(d);
               return s;
             }));
         }));
-      */
       oo.push(o);
     });
 

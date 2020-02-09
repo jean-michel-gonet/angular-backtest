@@ -275,12 +275,12 @@ describe('StockData', () => {
     ]);
 
     stockData.enrichWithDividends([
-      new Dividend({time: beforeYesterday, isin : "ISIN1", dividend: 2}),
-      new Dividend({time: today, isin : "ISIN1", dividend: 1}),
+      new Dividend({time: beforeYesterday, isin : "ISIN1", dividend: 2.5}),
+      new Dividend({time: today, isin : "ISIN1", dividend: 1.5}),
     ]);
 
-    expect(stockData.get(beforeYesterday).assetOfInterest("ISIN1").dividend).toBe(4);
-    expect(stockData.get(today).assetOfInterest("ISIN1").dividend).toBe(3);
+    expect(stockData.get(beforeYesterday).assetOfInterest("ISIN1").dividend).toBe(2.5);
+    expect(stockData.get(today).assetOfInterest("ISIN1").dividend).toBe(1.5);
   });
 
   it('Can enrich with dividends even when dates mismatch', () => {
@@ -296,12 +296,12 @@ describe('StockData', () => {
     ]);
 
     stockData.enrichWithDividends([
-      new Dividend({time: beforeYesterday, isin : "ISIN1", dividend: 2}),
-      new Dividend({time: today, isin : "ISIN1", dividend: 1}),
+      new Dividend({time: beforeYesterday, isin : "ISIN1", dividend: 2.5}),
+      new Dividend({time: today, isin : "ISIN1", dividend: 1.5}),
     ]);
 
-    expect(stockData.get(yesterday).assetOfInterest("ISIN1").dividend).toBe(0);
-    expect(stockData.get(today).assetOfInterest("ISIN1").dividend).toBe(3);
+    expect(stockData.get(yesterday).assetOfInterest("ISIN1").dividend).toBe(2.5);
+    expect(stockData.get(today).assetOfInterest("ISIN1").dividend).toBe(1.5);
   });
 
   it('Can enrich with dividends even when dates mismatch (2)', () => {
@@ -317,12 +317,12 @@ describe('StockData', () => {
     ]);
 
     stockData.enrichWithDividends([
-      new Dividend({time: yesterday, isin : "ISIN1", dividend: 2}),
-      new Dividend({time: today, isin : "ISIN1", dividend: 1}),
+      new Dividend({time: yesterday, isin : "ISIN1", dividend: 2.5}),
+      new Dividend({time: today, isin : "ISIN1", dividend: 1.5}),
     ]);
 
-    expect(stockData.get(beforeYesterday).assetOfInterest("ISIN1").dividend).toBe(2);
-    expect(stockData.get(today).assetOfInterest("ISIN1").dividend).toBe(3);
+    expect(stockData.get(beforeYesterday).assetOfInterest("ISIN1").dividend).toBe(2.5);
+    expect(stockData.get(today).assetOfInterest("ISIN1").dividend).toBe(1.5);
   });
 
   it('Can iterate over all dates', () => {
