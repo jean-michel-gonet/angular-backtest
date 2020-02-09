@@ -49,19 +49,19 @@ describe('DateYieldConverter', () => {
       jasmine.arrayWithExactContents([
         new Dividend({
           time: new Date(2019, 11, 31),
-          isin: "ISIN1",
+          name: "ISIN1",
           dividend: 1.81}),
         new Dividend({
           time: new Date(2018, 11, 31),
-          isin: "ISIN1",
+          name: "ISIN1",
           dividend: 2.09}),
         new Dividend({
           time: new Date(2017, 11, 31),
-          isin: "ISIN1",
+          name: "ISIN1",
           dividend: 1.84}),
         new Dividend({
           time: new Date(2016, 11, 31),
-          isin: "ISIN1",
+          name: "ISIN1",
           dividend: 2.03})
       ]));
   });

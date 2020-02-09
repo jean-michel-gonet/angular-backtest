@@ -13,7 +13,7 @@ describe('BuyAndHoldStrategy', () => {
 
   it('Can perform the initial investment', () => {
     let buyAndHoldStrategy: BuyAndHoldStrategy = new BuyAndHoldStrategy({
-      isin: "ISIN1"
+      name: "ISIN1"
     });
 
     let account: Account = new Account({
@@ -25,7 +25,7 @@ describe('BuyAndHoldStrategy', () => {
       time: new Date(2010, 10, 10),
       quotes: [
         new Quote({
-          isin: "ISIN1",
+          name: "ISIN1",
           partValue: 10})
       ]
     });
@@ -39,20 +39,20 @@ describe('BuyAndHoldStrategy', () => {
 
   it('Can reinvest dividends in the asset', () => {
     let buyAndHoldStrategy: BuyAndHoldStrategy = new BuyAndHoldStrategy({
-      isin: "ISIN1"
+      name: "ISIN1"
     });
 
     let account: Account = new Account({
       strategy: buyAndHoldStrategy,
       cash:0,
-      positions: [new Position({isin: "ISIN1", parts: 1000})]
+      positions: [new Position({name: "ISIN1", parts: 1000})]
     });
 
     let stock: Stock = new Stock({
       time: new Date(2010, 10, 10),
       quotes: [
         new Quote({
-          isin: "ISIN1",
+          name: "ISIN1",
           partValue: 10,
           dividend: 5
         })
@@ -70,7 +70,7 @@ describe('BuyAndHoldStrategy', () => {
     let monthlyOutput: number = 10;
     let accountOutput: Account = new Account();
     let buyAndHoldStrategy: BuyAndHoldStrategy = new BuyAndHoldStrategy({
-      isin: "ISIN1",
+      name: "ISIN1",
       transfer: new RegularTransfer({
         transfer: monthlyOutput,
         every: RegularPeriod.MONTH,
@@ -83,7 +83,7 @@ describe('BuyAndHoldStrategy', () => {
       cash:0,
       positions: [
         new Position({
-          isin: "ISIN1",
+          name: "ISIN1",
           parts: 100,
           partValue: 5
         })
@@ -93,7 +93,7 @@ describe('BuyAndHoldStrategy', () => {
       time: new Date(2010, 1, 1),
       quotes: [
         new Quote({
-          isin: "ISIN1",
+          name: "ISIN1",
           partValue: 5})
       ]
     });

@@ -17,16 +17,16 @@ export class IStock {
 
 export class Dividend {
   time: Date;
-  isin: string;
+  name: string;
   dividend: number;
   constructor(obj : Dividend = {} as Dividend) {
     let {
       time,
-      isin,
+      name,
       dividend
     } = obj;
     this.time = time;
-    this.isin = isin;
+    this.name = name;
     this.dividend = dividend;
   }
 }
@@ -38,7 +38,7 @@ export class Stock extends IStock {
     super(obj);
     this.mapOfQuotes = new Map<String, Quote>();
     this.quotes.forEach(quote => {
-      this.mapOfQuotes.set(quote.isin, quote);
+      this.mapOfQuotes.set(quote.name, quote);
     });
   }
 
@@ -52,26 +52,26 @@ export class Stock extends IStock {
 
   add(newAssetsOfInterest: Quote[]): void {
     newAssetsOfInterest.forEach(newQuote => {
-      let existingQuote = this.mapOfQuotes.get(newQuote.isin);
+      let existingQuote = this.mapOfQuotes.get(newQuote.name);
       if (existingQuote) {
         let i = this.quotes.indexOf(existingQuote);
         this.quotes.splice(i, 1);
-        this.mapOfQuotes.delete(existingQuote.isin);
+        this.mapOfQuotes.delete(existingQuote.name);
       }
       this.quotes.push(newQuote);
-      this.mapOfQuotes.set(newQuote.isin, newQuote);
+      this.mapOfQuotes.set(newQuote.name, newQuote);
     });
   }
 
   /**
    * Returns the specified quote.
-   * @param {string} isin The ISIN of the asset.
+   * @param {string} name The ISIN of the asset.
    * @return {Quote} The quote,
    * or null.
    */
-  quote(isin: String): Quote {
+  quote(name: String): Quote {
     return this.quotes.find(a => {
-      return a.isin == isin;
+      return a.name == name;
     });
   }
 }
@@ -178,14 +178,14 @@ export class StockData implements Reporter {
       }
 
       if (thisEntry.time.valueOf() == dividendEntry.time.valueOf()) {
-        let quote = thisEntry.quote(dividendEntry.isin);
+        let quote = thisEntry.quote(dividendEntry.name);
         quote.dividend = dividendEntry.dividend;
         thisIndex++;
         dividendIndex++;
       }
 
       if (thisEntry.time.valueOf() > dividendEntry.time.valueOf()) {
-        let quote = previousEntry.quote(dividendEntry.isin);
+        let quote = previousEntry.quote(dividendEntry.name);
         quote.dividend = dividendEntry.dividend;
         dividendIndex++;
       }
@@ -269,7 +269,7 @@ export class StockData implements Reporter {
     this.reportingStock.quotes.forEach(quote => {
       report.receiveData(new ReportedData({
         y: quote.partValue,
-        sourceName: quote.isin + ".CLOSE"
+        sourceName: quote.name + ".CLOSE"
       }));
     });
   }

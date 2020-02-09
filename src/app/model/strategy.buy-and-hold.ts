@@ -6,7 +6,7 @@ import { RegularTransfer } from './core/transfer';
 import { Report } from './core/reporting';
 
 class IBuyAndHoldStrategy {
-  isin?: string;
+  name?: string;
   transfer?: RegularTransfer;
 }
 
@@ -16,15 +16,15 @@ class IBuyAndHoldStrategy {
  * @class {BuyAndHoldStrategy}
  */
 export class BuyAndHoldStrategy implements Strategy {
-  isin: string;
+  name: string;
   transfer: RegularTransfer;
 
   constructor(obj = {} as IBuyAndHoldStrategy) {
     let {
-      isin = "",
+      name = "",
       transfer = new RegularTransfer(),
     } = obj;
-    this.isin = isin;
+    this.name = name;
     this.transfer = transfer;
   }
 
@@ -32,7 +32,7 @@ export class BuyAndHoldStrategy implements Strategy {
    * Applies the Buy And Hold strategy.
    */
   applyStrategy(account: Account, stock: Stock): void {
-    let quote: Quote = stock.quote(this.isin);
+    let quote: Quote = stock.quote(this.name);
     if (quote) {
       this.investAllYourCashInOneSingleBasket(account, quote);
 

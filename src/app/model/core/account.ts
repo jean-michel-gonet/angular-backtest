@@ -37,12 +37,12 @@ export class Account extends IAccount implements Reporter {
 
   /**
    * Returns the position designated by the provided ISIN.
-   * @param {string} isin The required isin.
+   * @param {string} name The required name.
    * @return {Position} The corresponding position, or null.
    */
-  position(isin: string): Position {
+  position(name: string): Position {
     return this.positions.find(position => {
-      return position.isin == isin;
+      return position.name == name;
     });
   }
 
@@ -69,7 +69,7 @@ export class Account extends IAccount implements Reporter {
     // Update the positions:
     stock.quotes.forEach(quote => {
       let position: Position = this.positions.find(p => {
-        return p.isin == quote.isin;
+        return p.name == quote.name;
       });
       if (position) {
         position.update(quote);
@@ -108,7 +108,7 @@ export class Account extends IAccount implements Reporter {
 
     // Looks for the corresponding position:
     let position: Position = this.positions.find(p => {
-      return p.isin == asset.isin;
+      return p.name == asset.name;
     });
 
     // Either update or create the position:
@@ -211,7 +211,7 @@ export class Account extends IAccount implements Reporter {
 
     this.positions.forEach(p => {
       report.receiveData(new ReportedData({
-        sourceName: this.id + "." + p.isin + ".POS",
+        sourceName: this.id + "." + p.name + ".POS",
         y: p.nav()
       }));
     });

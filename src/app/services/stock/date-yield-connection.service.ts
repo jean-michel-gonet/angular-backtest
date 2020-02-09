@@ -36,7 +36,7 @@ export class DateYieldConverter {
 
           let dividend: Dividend = new Dividend({
             time: this.convertToDate(date),
-            isin: this.name,
+            name: this.name,
             dividend: this.convertToNumber(yyield)
           });
           dividends.push(dividend);

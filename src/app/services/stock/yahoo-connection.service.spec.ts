@@ -55,7 +55,6 @@ describe('YahooConverter', () => {
           time: new Date(1993, 1, 15),
           quotes: [
             new Quote({
-              isin: "ISIN1",
               name: "ISIN1",
               partValue: 9865.299805,
               spread: 0,
@@ -65,7 +64,6 @@ describe('YahooConverter', () => {
           time: new Date(1993, 2, 19),
           quotes: [
             new Quote({
-              isin: "ISIN1",
               name: "ISIN1",
               partValue: 9251.299805,
               spread: 0,
@@ -75,7 +73,6 @@ describe('YahooConverter', () => {
           time: new Date(1993, 3, 6),
           quotes: [
             new Quote({
-              isin: "ISIN1",
               name: "ISIN1",
               partValue: 2603.199951,
               spread: 0,
@@ -85,7 +82,6 @@ describe('YahooConverter', () => {
           time: new Date(1993, 3, 20),
           quotes: [
             new Quote({
-              isin: "ISIN1",
               name: "ISIN1",
               partValue: 9547.500000,
               spread: 0,

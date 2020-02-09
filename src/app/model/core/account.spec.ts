@@ -18,12 +18,12 @@ describe('Account', () => {
       strategy: new MockStrategy(),
       positions: [
         new Position({
-          isin: "XX",
+          name: "XX",
           partValue: 100,
           parts: 3
         }),
         new Position({
-          isin: "XX",
+          name: "XX",
           partValue: 10,
           parts: 4
         })
@@ -37,8 +37,8 @@ describe('Account', () => {
     let stock: Stock = new Stock({
       time: new Date(),
       quotes: [
-        new Quote({isin: "XX", partValue: 110}),
-        new Quote({isin: "YY", partValue: 11})
+        new Quote({name: "XX", partValue: 110}),
+        new Quote({name: "YY", partValue: 11})
       ]
     });
     let account: Account = new Account({
@@ -46,12 +46,12 @@ describe('Account', () => {
       strategy: strategy,
       positions: [
         new Position({
-          isin: "XX",
+          name: "XX",
           partValue: 100,
           parts: 3
         }),
         new Position({
-          isin: "YY",
+          name: "YY",
           partValue: 10,
           parts: 4
         })
@@ -67,7 +67,7 @@ describe('Account', () => {
     let stock: Stock = new Stock({
       time: new Date(),
       quotes: [
-        new Quote({isin: "YY", partValue: 11, dividend: 10})
+        new Quote({name: "YY", partValue: 11, dividend: 10})
       ]
     });
     let account: Account = new Account({
@@ -75,7 +75,7 @@ describe('Account', () => {
       strategy: strategy,
       positions: [
         new Position({
-          isin: "YY",
+          name: "YY",
           partValue: 10,
           parts: 4
         })
@@ -90,7 +90,7 @@ describe('Account', () => {
     let partValue: number = 110;
     let spread: number = 0.1;
     let quote: Quote = new Quote({
-      isin: "XX",
+      name: "XX",
       partValue: partValue,
       spread: spread
     });
@@ -105,7 +105,7 @@ describe('Account', () => {
     let cash: number = 1000;
 
     let quote: Quote = new Quote({
-      isin: "XX",
+      name: "XX",
       partValue: partValue,
       spread: spread
     });
@@ -127,14 +127,14 @@ describe('Account', () => {
     let cash: number = 1000;
 
     let quote: Quote = new Quote({
-      isin: "XX",
+      name: "XX",
       partValue: partValue,
       spread: spread
     });
     let account: Account = new Account({
       cash: cash,
       positions: [
-        new Position({isin: "XX", parts: 4})
+        new Position({name: "XX", parts: 4})
       ]
     });
 
@@ -152,12 +152,12 @@ describe('Account', () => {
       strategy: new MockStrategy(),
       positions: [
         new Position({
-          isin: "XX",
+          name: "XX",
           partValue: 100,
           parts: 3
         }),
         new Position({
-          isin: "YY",
+          name: "YY",
           partValue: 10,
           parts: 4
         })
@@ -165,7 +165,7 @@ describe('Account', () => {
     });
     let position: Position = account.position("XX");
     expect(position).toEqual(new Position({
-      isin: "XX",
+      name: "XX",
       partValue: 100,
       parts: 3
     }));

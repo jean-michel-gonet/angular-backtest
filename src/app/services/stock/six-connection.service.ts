@@ -27,7 +27,7 @@ export class SixConverter {
 
     let stockData: Stock[] = [];
     valors.forEach(valor => {
-      let isin = valor.ISIN;
+      let name = valor.ISIN;
       let data:any = valor.data;
       let dates:number[] = data.Date;
       let close:number[] = data.Close;
@@ -40,8 +40,7 @@ export class SixConverter {
           time: date,
           quotes: [
             new Quote({
-              isin: isin,
-              name: isin,
+              name: name,
               partValue: this.convertToNumber(partValue),
               spread: 0,
               dividend: 0})

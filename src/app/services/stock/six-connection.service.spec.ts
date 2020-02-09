@@ -77,7 +77,6 @@ describe('SixConverter', () => {
           time: new Date(2016, 7, 21),
           quotes: [
             new Quote({
-              isin: "LU1290894820",
               name: "LU1290894820",
               partValue: 109.39,
               spread: 0,
@@ -89,7 +88,6 @@ describe('SixConverter', () => {
           time: new Date(2016, 7, 22),
           quotes: [
             new Quote({
-              isin: "LU1290894820",
               name: "LU1290894820",
               partValue: 108.19,
               spread: 0,
@@ -101,7 +99,6 @@ describe('SixConverter', () => {
           time: new Date(2016, 7, 23),
           quotes: [
             new Quote({
-              isin: "LU1290894820",
               name: "LU1290894820",
               partValue: 0,
               spread: 0,
@@ -113,7 +110,6 @@ describe('SixConverter', () => {
           time: new Date(2016, 7, 26),
           quotes: [
             new Quote({
-              isin: "LU1290894820",
               name: "LU1290894820",
               partValue: 109.97,
               spread: 0,

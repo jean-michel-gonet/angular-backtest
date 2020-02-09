@@ -8,18 +8,15 @@
  * @class{Asset}
  */
 export class Asset {
-  isin: string;
-  name?: string;
+  name: string;
   partValue?: number;
 
   constructor(obj: Asset = {} as Asset) {
     let {
-      isin = "",
       name = "",
       partValue = 0
     } = obj;
 
-    this.isin = isin;
     this.name = name;
     this.partValue = partValue;
   }

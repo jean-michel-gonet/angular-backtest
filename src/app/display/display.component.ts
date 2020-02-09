@@ -44,7 +44,7 @@ export class DisplayComponent implements OnInit {
           id: "SQA01",
           cash: 100000,
           strategy: new BuyAndHoldStrategy({
-            isin: "SP500",
+            name: "SP500",
             transfer: new RegularTransfer({
               transfer: 0,
               to: new Account({

@@ -45,7 +45,6 @@ export class YahooConverter {
             time: this.convertToDate(date),
             quotes: [
               new Quote({
-                isin: this.name,
                 name: this.name,
                 partValue: this.convertToNumber(partValue),
                 spread: 0,

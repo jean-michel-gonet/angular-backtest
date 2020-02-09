@@ -42,19 +42,19 @@ describe('Simulation', () => {
       new Stock({
         time: tomorrow,
         quotes:[
-          new Quote({isin: "ISIN1", partValue: 1})
+          new Quote({name: "ISIN1", partValue: 1})
         ]
       }),
       new Stock({
         time: afterTomorrow,
         quotes:[
-          new Quote({isin: "ISIN1", partValue: 2})
+          new Quote({name: "ISIN1", partValue: 2})
         ]
       }),
       new Stock({
         time: today,
         quotes:[
-          new Quote({isin: "ISIN1", partValue: 3})
+          new Quote({name: "ISIN1", partValue: 3})
         ]
       })
     ])
