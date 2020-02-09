@@ -16,6 +16,7 @@ export class Show {
   show: string;
   as: ShowDataAs;
   on: ShowDataOn;
+  normalize?: boolean;
 }
 
 /**
@@ -31,20 +32,7 @@ export class Ng2ChartReport implements Report {
         display: true
       },
       scales: {
-        yAxes: [
-          {
-            id: "y-axis-left",
-            position: 'left',
-            ticks: {
-              beginAtZero: true
-            }
-          }, {
-            id: "y-axis-right",
-            position: 'right',
-            ticks: {
-              beginAtZero: true
-            }
-          }],
+        yAxes: [],
         xAxes: [{
           ticks: {
             display: true,
@@ -53,10 +41,12 @@ export class Ng2ChartReport implements Report {
       }
     };
   private mapOfDatasets: Map<String, ChartDataSets>;
+  private mapOfShows: Map<String, Show>;
   private reporters: Reporter[] = [];
 
   constructor(obj = [] as Show[]) {
     this.mapOfDatasets = new Map<String, ChartDataSets>();
+    this.mapOfShows = new Map<String, Show>();
     this.dataSets = [];
     this.labels = [];
     obj.forEach(show => {
@@ -69,15 +59,41 @@ export class Ng2ChartReport implements Report {
         pointRadius: 0
       };
       this.mapOfDatasets.set(show.show, dataSet);
+      this.mapOfShows.set(show.show, show);
       this.dataSets.push(dataSet);
     });
   }
 
+  private leftAxisIsUsed:boolean = false;
+  private rightAxisIsUsed: boolean = false;
+
   private showOn(showOn: ShowDataOn):string {
     switch(showOn) {
       case ShowDataOn.LEFT:
+        if (!this.leftAxisIsUsed) {
+          this.options.scales.yAxes.push(
+            {
+              id: "y-axis-left",
+              position: 'left',
+              ticks: {
+                beginAtZero: true
+              }
+            });
+          this.leftAxisIsUsed = true;
+        }
         return "left";
       case ShowDataOn.RIGHT:
+        if (!this.rightAxisIsUsed) {
+          this.options.scales.yAxes.push(
+            {
+              id: "y-axis-right",
+              position: 'right',
+              ticks: {
+                beginAtZero: true
+              }
+            });
+          this.rightAxisIsUsed = true;
+        }
         return "right";
       default:
         console.warn("showOn=" + showOn + ": unknown literal of ShowDataOn");
@@ -124,7 +140,26 @@ export class Ng2ChartReport implements Report {
   receiveData(providedData: ReportedData): void {
     let dataSet: ChartDataSets = this.mapOfDatasets.get(providedData.sourceName);
     if (dataSet) {
-      dataSet.data[dataSet.data.length - 1] = providedData.y;
+      let normalizedY: number = this.normalize(providedData.sourceName, providedData.y);
+      dataSet.data[dataSet.data.length - 1] = normalizedY;
     }
+  }
+
+  private normalizationMap: Map<string, number> = new Map<string, number>();
+
+  private normalize(sourceName: string, y: number): number {
+    let show: Show = this.mapOfShows.get(sourceName);
+    if (show) {
+      if (show.normalize) {
+        let normalizationId: string = sourceName + ":" + show.on;
+        let normalizationScale:number = this.normalizationMap.get(normalizationId);
+        if (!normalizationScale) {
+          normalizationScale = 100 / y;
+          this.normalizationMap.set(normalizationId, normalizationScale);
+        }
+        return normalizationScale * y;
+      }
+    }
+    return y;
   }
 }

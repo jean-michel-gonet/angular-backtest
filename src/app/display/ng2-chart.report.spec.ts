@@ -113,4 +113,104 @@ describe('Ng2ChartReport', () => {
       tomorrow.toDateString()
     ]);
   });
+
+  it('Can normalize outputs', () => {
+    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport([
+      {
+        show: "VALUE1",
+        as: ShowDataAs.LINE,
+        on: ShowDataOn.LEFT,
+        normalize: true
+      }, {
+        show: "VALUE2",
+        as: ShowDataAs.BAR,
+        on: ShowDataOn.LEFT,
+        normalize: true
+      }
+    ]);
+
+    ng2ChartReport.startReportingCycle(today);
+    ng2ChartReport.receiveData(new ReportedData({
+      sourceName: "VALUE1",
+      y: 1000
+    }));
+    ng2ChartReport.receiveData(new ReportedData({
+      sourceName: "VALUE2",
+      y: 10
+    }));
+    ng2ChartReport.startReportingCycle(tomorrow);
+    ng2ChartReport.receiveData(new ReportedData({
+      sourceName: "VALUE1",
+      y: 1010
+    }));
+    ng2ChartReport.receiveData(new ReportedData({
+      sourceName: "VALUE2",
+      y: 20
+    }));
+
+    expect(ng2ChartReport.dataSets).toEqual(jasmine.arrayWithExactContents([
+      {
+        data: [100, 101],
+        label: "VALUE1",
+        yAxisID: "y-axis-left",
+        type: "line",
+        pointRadius: 0
+      }, {
+        data: [100, 200],
+        label: "VALUE2",
+        yAxisID: "y-axis-left",
+        type: "bar",
+        pointRadius: 0
+      }
+    ]));
+    expect(ng2ChartReport.labels).toEqual([
+      today.toDateString(),
+      tomorrow.toDateString()
+    ]);
+  });
+
+  it('Can hide the left axis when not used', () => {
+    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport([
+      {
+        show: "VALUE1",
+        as: ShowDataAs.LINE,
+        on: ShowDataOn.LEFT
+      }, {
+        show: "VALUE2",
+        as: ShowDataAs.BAR,
+        on: ShowDataOn.LEFT
+      }
+    ]);
+    expect(ng2ChartReport.options.scales.yAxes).toEqual(jasmine.arrayWithExactContents([
+      {
+        id: "y-axis-left",
+        position: 'left',
+        ticks: {
+          beginAtZero: true
+        }
+      }]));
+  });
+
+  it('Can hide the right axis when not used', () => {
+    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport([
+      {
+        show: "VALUE1",
+        as: ShowDataAs.LINE,
+        on: ShowDataOn.RIGHT
+      }, {
+        show: "VALUE2",
+        as: ShowDataAs.BAR,
+        on: ShowDataOn.RIGHT
+      }
+    ]);
+    expect(ng2ChartReport.options.scales.yAxes).toEqual(jasmine.arrayWithExactContents([
+      {
+        id: "y-axis-right",
+        position: 'right',
+        ticks: {
+          beginAtZero: true
+        }
+      }]));
+  });
+
 });

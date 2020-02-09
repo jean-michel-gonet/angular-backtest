@@ -24,12 +24,14 @@ export class DisplayComponent implements OnInit {
       {
         show: "SQA01.NAV",
         as: ShowDataAs.LINE,
-        on: ShowDataOn.RIGHT
+        on: ShowDataOn.LEFT,
+        normalize: true
       },
       {
         show: "SP500.CLOSE",
         as: ShowDataAs.LINE,
-        on: ShowDataOn.LEFT
+        on: ShowDataOn.LEFT,
+        normalize: true
       }
     ]);
 
@@ -56,7 +58,7 @@ export class DisplayComponent implements OnInit {
       });
 
       // Run the simulation:
-      this.simulation.run(new Date(1980, 1, 1), new Date (2020, 12, 31));
+      this.simulation.run(new Date(1996, 1, 1), new Date (2020, 12, 31));
     });
   }
 }
