@@ -62,6 +62,30 @@ describe('Account', () => {
     expect(account.nav()).toBe(1000 + 3 * 110 + 4 * 11);
   });
 
+  it('Can cash the dividends coming from the positions', () => {
+    let strategy: MockStrategy = new MockStrategy();
+    let stock: Stock = new Stock({
+      time: new Date(),
+      assetsOfInterest: [
+        new AssetOfInterest({isin: "YY", partValue: 11, dividend: 10})
+      ]
+    });
+    let account: Account = new Account({
+      cash: 1000.0,
+      strategy: strategy,
+      positions: [
+        new Position({
+          isin: "YY",
+          partValue: 10,
+          parts: 4
+        })
+      ]
+    });
+    account.process(stock);
+    expect(account.cash).toBe(1004.4);
+    expect(account.nav()).toBe(1004.4 + 4 * 11);
+  });
+
   it('Can calculate costs based on the spread', () => {
     let partValue: number = 110;
     let spread: number = 0.1;

@@ -73,6 +73,7 @@ export class Account extends IAccount implements Reporter {
       });
       if (position) {
         position.update(assetOfInterest);
+        this.cash += position.nav() * assetOfInterest.dividend / 100;
       }
     });
 
