@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { SixConnectionService, SixConverter } from './six-connection.service';
 import { StockData, IStock } from 'src/app/model/core/stock';
-import { AssetOfInterest } from 'src/app/model/core/asset';
+import { Quote } from 'src/app/model/core/asset';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { HttpRequest } from '@angular/common/http';
 
@@ -75,8 +75,8 @@ describe('SixConverter', () => {
       jasmine.arrayWithExactContents([
         new IStock({
           time: new Date(2016, 7, 21),
-          assetsOfInterest: [
-            new AssetOfInterest({
+          quotes: [
+            new Quote({
               isin: "LU1290894820",
               name: "LU1290894820",
               partValue: 109.39,
@@ -87,8 +87,8 @@ describe('SixConverter', () => {
         }),
         new IStock({
           time: new Date(2016, 7, 22),
-          assetsOfInterest: [
-            new AssetOfInterest({
+          quotes: [
+            new Quote({
               isin: "LU1290894820",
               name: "LU1290894820",
               partValue: 108.19,
@@ -99,8 +99,8 @@ describe('SixConverter', () => {
         }),
         new IStock({
           time: new Date(2016, 7, 23),
-          assetsOfInterest: [
-            new AssetOfInterest({
+          quotes: [
+            new Quote({
               isin: "LU1290894820",
               name: "LU1290894820",
               partValue: 0,
@@ -111,8 +111,8 @@ describe('SixConverter', () => {
         }),
         new IStock({
           time: new Date(2016, 7, 26),
-          assetsOfInterest: [
-            new AssetOfInterest({
+          quotes: [
+            new Quote({
               isin: "LU1290894820",
               name: "LU1290894820",
               partValue: 109.97,

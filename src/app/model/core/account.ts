@@ -1,4 +1,4 @@
-import {Position, AssetOfInterest} from './asset';
+import {Position, Quote} from './asset';
 import { Stock } from './stock';
 import { Strategy, NullStrategy } from './strategy';
 import { Reporter, Report, ReportedData } from './reporting';
@@ -67,13 +67,13 @@ export class Account extends IAccount implements Reporter {
   process(stock: Stock): void {
 
     // Update the positions:
-    stock.assetsOfInterest.forEach(assetOfInterest => {
+    stock.quotes.forEach(quote => {
       let position: Position = this.positions.find(p => {
-        return p.isin == assetOfInterest.isin;
+        return p.isin == quote.isin;
       });
       if (position) {
-        position.update(assetOfInterest);
-        this.cash += position.nav() * assetOfInterest.dividend / 100;
+        position.update(quote);
+        this.cash += position.nav() * quote.dividend / 100;
       }
     });
 
@@ -88,23 +88,23 @@ export class Account extends IAccount implements Reporter {
    * The basic behavior is to consider only the cost of the spread.
    * Extend this method to reflect specific behavior of each
    * trending partner.
-   * @param {AssetOfInterest} asset The asset to buy.
+   * @param {Quote} asset The asset to buy.
    * @param {number} parts When positive, the number of parts to buy. When
    *                       negative, the number of parts to sell.
    * @return {number} The cost, always positive.
    **/
-  orderCost(asset: AssetOfInterest, parts: number): number {
+  orderCost(asset: Quote, parts: number): number {
     return Math.abs(parts * asset.partValue * asset.spread / 2);
   }
 
   /**
    * Sells or buys the specified asset, updating the concerned position
    * and the cash.
-   * @param {AssetOfInterest} asset The asset to buy.
+   * @param {Quote} asset The asset to buy.
    * @param {number} parts When positive, the number of parts to buy. When
    *                       negative, the number of parts to sell.
    **/
-  order(asset: AssetOfInterest, parts: number): void {
+  order(asset: Quote, parts: number): void {
 
     // Looks for the corresponding position:
     let position: Position = this.positions.find(p => {

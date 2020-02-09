@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { StockData, Stock, Dividend } from 'src/app/model/core/stock';
-import { AssetOfInterest } from 'src/app/model/core/asset';
+import { Quote } from 'src/app/model/core/asset';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -38,8 +38,8 @@ export class SixConverter {
 
         let stock: Stock = new Stock({
           time: date,
-          assetsOfInterest: [
-            new AssetOfInterest({
+          quotes: [
+            new Quote({
               isin: isin,
               name: isin,
               partValue: this.convertToNumber(partValue),

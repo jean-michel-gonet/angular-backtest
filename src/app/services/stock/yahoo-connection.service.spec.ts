@@ -4,7 +4,7 @@ import { YahooConnectionService, YahooConverter } from './yahoo-connection.servi
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { StockData, IStock } from 'src/app/model/core/stock';
 import { HttpRequest } from '@angular/common/http';
-import { AssetOfInterest } from 'src/app/model/core/asset';
+import { Quote } from 'src/app/model/core/asset';
 
 
 var yahooResponse = "Date,Open,High,Low,Close,Adj Close,Volume\r\n" +
@@ -53,8 +53,8 @@ describe('YahooConverter', () => {
       jasmine.arrayWithExactContents([
         new IStock({
           time: new Date(1993, 1, 15),
-          assetsOfInterest: [
-            new AssetOfInterest({
+          quotes: [
+            new Quote({
               isin: "ISIN1",
               name: "ISIN1",
               partValue: 9865.299805,
@@ -63,8 +63,8 @@ describe('YahooConverter', () => {
             })]}),
         new IStock({
           time: new Date(1993, 2, 19),
-          assetsOfInterest: [
-            new AssetOfInterest({
+          quotes: [
+            new Quote({
               isin: "ISIN1",
               name: "ISIN1",
               partValue: 9251.299805,
@@ -73,8 +73,8 @@ describe('YahooConverter', () => {
             })]}),
         new IStock({
           time: new Date(1993, 3, 6),
-          assetsOfInterest: [
-            new AssetOfInterest({
+          quotes: [
+            new Quote({
               isin: "ISIN1",
               name: "ISIN1",
               partValue: 2603.199951,
@@ -83,8 +83,8 @@ describe('YahooConverter', () => {
             })]}),
         new IStock({
           time: new Date(1993, 3, 20),
-          assetsOfInterest: [
-            new AssetOfInterest({
+          quotes: [
+            new Quote({
               isin: "ISIN1",
               name: "ISIN1",
               partValue: 9547.500000,

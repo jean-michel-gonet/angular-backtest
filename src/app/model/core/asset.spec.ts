@@ -1,4 +1,4 @@
-import { Asset, Position, AssetOfInterest } from './asset';
+import { Asset, Position, Quote } from './asset';
 
 describe('Position', () => {
   it('Can calculate the NAV', () => {
@@ -17,14 +17,14 @@ describe('Position', () => {
       parts: 6
     });
 
-    position.update(new AssetOfInterest({isin: "XX", partValue: 1.5}));
+    position.update(new Quote({isin: "XX", partValue: 1.5}));
     expect(position.nav()).toBe(9);
   });
 });
 
-describe('AssetOfInterest', () => {
+describe('Quote', () => {
   it('Can create a new instance', () => {
-    expect(new AssetOfInterest({
+    expect(new Quote({
       isin: "XX",
       name: "name",
       partValue: 1.5,

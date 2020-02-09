@@ -8,7 +8,7 @@ import { ConnectionService } from './connection.service';
 import { Observable } from 'rxjs';
 import { StockData, Dividend, Stock } from 'src/app/model/core/stock';
 import { QuoteSourceAndProvider, SecuritiesConfigurationService } from './securities-configuration.service';
-import { AssetOfInterest } from 'src/app/model/core/asset';
+import { Quote } from 'src/app/model/core/asset';
 
 class ConnectionServiceMock implements ConnectionService {
   private stockData: Map<string, StockData> = new Map<string, StockData>();
@@ -95,8 +95,8 @@ describe('StockService', () => {
     });
 
     let stockData: StockData = new StockData([
-      new Stock({time: beforeYesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN3", partValue: 1.3})
+      new Stock({time: beforeYesterday, quotes: [
+        new Quote({isin: "ISIN3", partValue: 1.3})
       ]})]);
     yahoo.whenQuotes("ISIN3", stockData);
 
@@ -107,8 +107,8 @@ describe('StockService', () => {
     dateYield.whenDividends("ISIN3", dividends);
 
     stockService.getStockData(["ISIN3"]).subscribe(data => {
-      expect(data.get(beforeYesterday).assetOfInterest("ISIN3").partValue).toBe(1.3);
-      expect(data.get(beforeYesterday).assetOfInterest("ISIN3").dividend).toBe(1.5);
+      expect(data.get(beforeYesterday).quote("ISIN3").partValue).toBe(1.3);
+      expect(data.get(beforeYesterday).quote("ISIN3").dividend).toBe(1.5);
       done();
     });
   });

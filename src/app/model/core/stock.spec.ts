@@ -1,26 +1,26 @@
 import { Stock, StockData, Dividend } from './stock';
-import { AssetOfInterest } from './asset';
+import { Quote } from './asset';
 
 describe('Stock', () => {
   it('Can create an instance', () => {
     expect(new Stock({
       time: new Date(),
-      assetsOfInterest: [
-        new AssetOfInterest(),
-        new AssetOfInterest()
+      quotes: [
+        new Quote(),
+        new Quote()
       ]})).toBeTruthy();
   });
 
-  it('Can obtain one asset of interest', () => {
+  it('Can obtain one quote', () => {
     let stock: Stock = new Stock({
       time: new Date(),
-      assetsOfInterest: [
-          new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
-          new AssetOfInterest({isin: "ISIN2", partValue: 1.2}),
-          new AssetOfInterest({isin: "ISIN3", partValue: 1.3})
+      quotes: [
+          new Quote({isin: "ISIN1", partValue: 1.1}),
+          new Quote({isin: "ISIN2", partValue: 1.2}),
+          new Quote({isin: "ISIN3", partValue: 1.3})
     ]});
-    let assetOfInterest: AssetOfInterest = stock.assetOfInterest("ISIN1");
-    expect(assetOfInterest).toEqual(new AssetOfInterest({
+    let quote: Quote = stock.quote("ISIN1");
+    expect(quote).toEqual(new Quote({
       isin: "ISIN1",
       partValue: 1.1
     }));
@@ -29,34 +29,34 @@ describe('Stock', () => {
   it('Can add more assets of interest', () =>{
     let stock: Stock = new Stock({
       time: new Date(),
-      assetsOfInterest: [
-          new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
-          new AssetOfInterest({isin: "ISIN2", partValue: 1.2}),
-          new AssetOfInterest({isin: "ISIN3", partValue: 1.3})
+      quotes: [
+          new Quote({isin: "ISIN1", partValue: 1.1}),
+          new Quote({isin: "ISIN2", partValue: 1.2}),
+          new Quote({isin: "ISIN3", partValue: 1.3})
     ]});
 
     stock.add([
-      new AssetOfInterest({isin: "ISIN2", partValue: 2.2}),
-      new AssetOfInterest({isin: "ISIN3", partValue: 2.3}),
-      new AssetOfInterest({isin: "ISIN4", partValue: 2.4})
+      new Quote({isin: "ISIN2", partValue: 2.2}),
+      new Quote({isin: "ISIN3", partValue: 2.3}),
+      new Quote({isin: "ISIN4", partValue: 2.4})
     ]);
 
-    expect(stock.assetsOfInterest).toEqual(jasmine.arrayWithExactContents([
-      new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
-      new AssetOfInterest({isin: "ISIN2", partValue: 2.2}),
-      new AssetOfInterest({isin: "ISIN3", partValue: 2.3}),
-      new AssetOfInterest({isin: "ISIN4", partValue: 2.4})
+    expect(stock.quotes).toEqual(jasmine.arrayWithExactContents([
+      new Quote({isin: "ISIN1", partValue: 1.1}),
+      new Quote({isin: "ISIN2", partValue: 2.2}),
+      new Quote({isin: "ISIN3", partValue: 2.3}),
+      new Quote({isin: "ISIN4", partValue: 2.4})
     ]));
 
     stock.add([
-      new AssetOfInterest({isin: "ISIN1", partValue: 3.1})
+      new Quote({isin: "ISIN1", partValue: 3.1})
     ]);
 
-    expect(stock.assetsOfInterest).toEqual(jasmine.arrayWithExactContents([
-      new AssetOfInterest({isin: "ISIN1", partValue: 3.1}),
-      new AssetOfInterest({isin: "ISIN2", partValue: 2.2}),
-      new AssetOfInterest({isin: "ISIN3", partValue: 2.3}),
-      new AssetOfInterest({isin: "ISIN4", partValue: 2.4})
+    expect(stock.quotes).toEqual(jasmine.arrayWithExactContents([
+      new Quote({isin: "ISIN1", partValue: 3.1}),
+      new Quote({isin: "ISIN2", partValue: 2.2}),
+      new Quote({isin: "ISIN3", partValue: 2.3}),
+      new Quote({isin: "ISIN4", partValue: 2.4})
     ]));
   });
 });
@@ -84,193 +84,193 @@ describe('StockData', () => {
   it('Can return the stock of the required day', () => {
 
     let stockData: StockData = new StockData([
-      new Stock({time: beforeYesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 1.2}),
-        new AssetOfInterest({isin: "ISIN3", partValue: 1.3})
+      new Stock({time: beforeYesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 1.1}),
+        new Quote({isin: "ISIN2", partValue: 1.2}),
+        new Quote({isin: "ISIN3", partValue: 1.3})
       ]}),
-      new Stock({time: yesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 2.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 2.2}),
-        new AssetOfInterest({isin: "ISIN3", partValue: 2.3})
+      new Stock({time: yesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 2.1}),
+        new Quote({isin: "ISIN2", partValue: 2.2}),
+        new Quote({isin: "ISIN3", partValue: 2.3})
       ]}),
-      new Stock({time: today, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 3.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 3.2}),
-        new AssetOfInterest({isin: "ISIN3", partValue: 3.3})
+      new Stock({time: today, quotes: [
+        new Quote({isin: "ISIN1", partValue: 3.1}),
+        new Quote({isin: "ISIN2", partValue: 3.2}),
+        new Quote({isin: "ISIN3", partValue: 3.3})
       ]})
     ]);
 
-    expect(stockData.get(beforeYesterday2).assetsOfInterest)
+    expect(stockData.get(beforeYesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 1.2}),
-        new AssetOfInterest({isin: "ISIN3", partValue: 1.3})
+        new Quote({isin: "ISIN1", partValue: 1.1}),
+        new Quote({isin: "ISIN2", partValue: 1.2}),
+        new Quote({isin: "ISIN3", partValue: 1.3})
       ]));
 
-    expect(stockData.get(yesterday2).assetsOfInterest)
+    expect(stockData.get(yesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new AssetOfInterest({isin: "ISIN1", partValue: 2.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 2.2}),
-        new AssetOfInterest({isin: "ISIN3", partValue: 2.3})
+        new Quote({isin: "ISIN1", partValue: 2.1}),
+        new Quote({isin: "ISIN2", partValue: 2.2}),
+        new Quote({isin: "ISIN3", partValue: 2.3})
       ]));
 
-    expect(stockData.get(today2).assetsOfInterest)
+    expect(stockData.get(today2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new AssetOfInterest({isin: "ISIN1", partValue: 3.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 3.2}),
-        new AssetOfInterest({isin: "ISIN3", partValue: 3.3})
+        new Quote({isin: "ISIN1", partValue: 3.1}),
+        new Quote({isin: "ISIN2", partValue: 3.2}),
+        new Quote({isin: "ISIN3", partValue: 3.3})
       ]));
   });
 
   it('Can add more data', () =>{
     let stockData: StockData = new StockData([
-      new Stock({time: beforeYesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 1.2})
+      new Stock({time: beforeYesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 1.1}),
+        new Quote({isin: "ISIN2", partValue: 1.2})
       ]}),
-      new Stock({time: yesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 2.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 2.2})
+      new Stock({time: yesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 2.1}),
+        new Quote({isin: "ISIN2", partValue: 2.2})
       ]})
     ]);
 
     stockData.merge(
       new StockData([
-        new Stock({time: beforeYesterday, assetsOfInterest: [
-          new AssetOfInterest({isin: "ISIN3", partValue: 1.3})
+        new Stock({time: beforeYesterday, quotes: [
+          new Quote({isin: "ISIN3", partValue: 1.3})
         ]}),
-        new Stock({time: yesterday, assetsOfInterest: [
-          new AssetOfInterest({isin: "ISIN3", partValue: 2.3})
+        new Stock({time: yesterday, quotes: [
+          new Quote({isin: "ISIN3", partValue: 2.3})
         ]}),
-        new Stock({time: today, assetsOfInterest: [
-          new AssetOfInterest({isin: "ISIN3", partValue: 3.3})
+        new Stock({time: today, quotes: [
+          new Quote({isin: "ISIN3", partValue: 3.3})
         ]})])
     );
 
-    expect(stockData.get(beforeYesterday2).assetsOfInterest)
+    expect(stockData.get(beforeYesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 1.2}),
-        new AssetOfInterest({isin: "ISIN3", partValue: 1.3})
+        new Quote({isin: "ISIN1", partValue: 1.1}),
+        new Quote({isin: "ISIN2", partValue: 1.2}),
+        new Quote({isin: "ISIN3", partValue: 1.3})
       ]));
 
-    expect(stockData.get(yesterday2).assetsOfInterest)
+    expect(stockData.get(yesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new AssetOfInterest({isin: "ISIN1", partValue: 2.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 2.2}),
-        new AssetOfInterest({isin: "ISIN3", partValue: 2.3})
+        new Quote({isin: "ISIN1", partValue: 2.1}),
+        new Quote({isin: "ISIN2", partValue: 2.2}),
+        new Quote({isin: "ISIN3", partValue: 2.3})
       ]));
 
-    expect(stockData.get(today2).assetsOfInterest)
+    expect(stockData.get(today2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new AssetOfInterest({isin: "ISIN3", partValue: 3.3})
+        new Quote({isin: "ISIN3", partValue: 3.3})
       ]));
   });
 
   it('Can add more data (2)', () =>{
     let stockData: StockData = new StockData([
-      new Stock({time: threeDaysAgo, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 3.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 3.2})
+      new Stock({time: threeDaysAgo, quotes: [
+        new Quote({isin: "ISIN1", partValue: 3.1}),
+        new Quote({isin: "ISIN2", partValue: 3.2})
       ]}),
-      new Stock({time: yesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 1.2})
+      new Stock({time: yesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 1.1}),
+        new Quote({isin: "ISIN2", partValue: 1.2})
       ]})
     ]);
 
     stockData.merge(
       new StockData([
-        new Stock({time: beforeYesterday, assetsOfInterest: [
-          new AssetOfInterest({isin: "ISIN3", partValue: 2.3})
+        new Stock({time: beforeYesterday, quotes: [
+          new Quote({isin: "ISIN3", partValue: 2.3})
         ]}),
-        new Stock({time: today, assetsOfInterest: [
-          new AssetOfInterest({isin: "ISIN3", partValue: 0.3})
+        new Stock({time: today, quotes: [
+          new Quote({isin: "ISIN3", partValue: 0.3})
         ]})])
     );
 
-    expect(stockData.get(threeDaysAgo2).assetsOfInterest)
+    expect(stockData.get(threeDaysAgo2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new AssetOfInterest({isin: "ISIN1", partValue: 3.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 3.2})
+        new Quote({isin: "ISIN1", partValue: 3.1}),
+        new Quote({isin: "ISIN2", partValue: 3.2})
       ]));
 
-    expect(stockData.get(beforeYesterday2).assetsOfInterest)
+    expect(stockData.get(beforeYesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new AssetOfInterest({isin: "ISIN3", partValue: 2.3})
+        new Quote({isin: "ISIN3", partValue: 2.3})
       ]));
 
-    expect(stockData.get(yesterday2).assetsOfInterest)
+    expect(stockData.get(yesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 1.2})
+        new Quote({isin: "ISIN1", partValue: 1.1}),
+        new Quote({isin: "ISIN2", partValue: 1.2})
       ]));
 
-    expect(stockData.get(today2).assetsOfInterest)
+    expect(stockData.get(today2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new AssetOfInterest({isin: "ISIN3", partValue: 0.3})
+        new Quote({isin: "ISIN3", partValue: 0.3})
       ]));
   });
 
   it('Can replace existing data', () => {
 
     let stockData: StockData = new StockData([
-      new Stock({time: beforeYesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 1.2})
+      new Stock({time: beforeYesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 1.1}),
+        new Quote({isin: "ISIN2", partValue: 1.2})
       ]}),
-      new Stock({time: yesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 2.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 2.2})
+      new Stock({time: yesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 2.1}),
+        new Quote({isin: "ISIN2", partValue: 2.2})
       ]})
     ]);
 
     stockData.merge(
       new StockData([
-        new Stock({time: beforeYesterday, assetsOfInterest: [
-          new AssetOfInterest({isin: "ISIN2", partValue: 4.4})
+        new Stock({time: beforeYesterday, quotes: [
+          new Quote({isin: "ISIN2", partValue: 4.4})
         ]}),
-        new Stock({time: yesterday, assetsOfInterest: [
-          new AssetOfInterest({isin: "ISIN2", partValue: 4.5})
+        new Stock({time: yesterday, quotes: [
+          new Quote({isin: "ISIN2", partValue: 4.5})
         ]}),
-        new Stock({time: today, assetsOfInterest: [
-          new AssetOfInterest({isin: "ISIN2", partValue: 4.6})
+        new Stock({time: today, quotes: [
+          new Quote({isin: "ISIN2", partValue: 4.6})
         ]})
       ])
     );
 
-    expect(stockData.get(beforeYesterday2).assetsOfInterest)
+    expect(stockData.get(beforeYesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 4.4})
+        new Quote({isin: "ISIN1", partValue: 1.1}),
+        new Quote({isin: "ISIN2", partValue: 4.4})
       ]));
 
-    expect(stockData.get(yesterday2).assetsOfInterest)
+    expect(stockData.get(yesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new AssetOfInterest({isin: "ISIN1", partValue: 2.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 4.5})
+        new Quote({isin: "ISIN1", partValue: 2.1}),
+        new Quote({isin: "ISIN2", partValue: 4.5})
       ]));
 
-    expect(stockData.get(today2).assetsOfInterest)
+    expect(stockData.get(today2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new AssetOfInterest({isin: "ISIN2", partValue: 4.6})
+        new Quote({isin: "ISIN2", partValue: 4.6})
       ]));
   });
 
   it('Can enrich with dividends', () => {
     let stockData: StockData = new StockData([
-      new Stock({time: beforeYesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 200}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 200}),
+      new Stock({time: beforeYesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 200}),
+        new Quote({isin: "ISIN2", partValue: 200}),
       ]}),
-      new Stock({time: yesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 100}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 100}),
+      new Stock({time: yesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 100}),
+        new Quote({isin: "ISIN2", partValue: 100}),
       ]}),
-      new Stock({time: today, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 300}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 300}),
+      new Stock({time: today, quotes: [
+        new Quote({isin: "ISIN1", partValue: 300}),
+        new Quote({isin: "ISIN2", partValue: 300}),
       ]})
     ]);
 
@@ -279,19 +279,19 @@ describe('StockData', () => {
       new Dividend({time: today, isin : "ISIN1", dividend: 1.5}),
     ]);
 
-    expect(stockData.get(beforeYesterday).assetOfInterest("ISIN1").dividend).toBe(2.5);
-    expect(stockData.get(today).assetOfInterest("ISIN1").dividend).toBe(1.5);
+    expect(stockData.get(beforeYesterday).quote("ISIN1").dividend).toBe(2.5);
+    expect(stockData.get(today).quote("ISIN1").dividend).toBe(1.5);
   });
 
   it('Can enrich with dividends even when dates mismatch', () => {
     let stockData: StockData = new StockData([
-      new Stock({time: yesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 100}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 100}),
+      new Stock({time: yesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 100}),
+        new Quote({isin: "ISIN2", partValue: 100}),
       ]}),
-      new Stock({time: today, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 300}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 300}),
+      new Stock({time: today, quotes: [
+        new Quote({isin: "ISIN1", partValue: 300}),
+        new Quote({isin: "ISIN2", partValue: 300}),
       ]})
     ]);
 
@@ -300,19 +300,19 @@ describe('StockData', () => {
       new Dividend({time: today, isin : "ISIN1", dividend: 1.5}),
     ]);
 
-    expect(stockData.get(yesterday).assetOfInterest("ISIN1").dividend).toBe(2.5);
-    expect(stockData.get(today).assetOfInterest("ISIN1").dividend).toBe(1.5);
+    expect(stockData.get(yesterday).quote("ISIN1").dividend).toBe(2.5);
+    expect(stockData.get(today).quote("ISIN1").dividend).toBe(1.5);
   });
 
   it('Can enrich with dividends even when dates mismatch (2)', () => {
     let stockData: StockData = new StockData([
-      new Stock({time: beforeYesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 100}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 100}),
+      new Stock({time: beforeYesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 100}),
+        new Quote({isin: "ISIN2", partValue: 100}),
       ]}),
-      new Stock({time: today, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 300}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 300}),
+      new Stock({time: today, quotes: [
+        new Quote({isin: "ISIN1", partValue: 300}),
+        new Quote({isin: "ISIN2", partValue: 300}),
       ]})
     ]);
 
@@ -321,23 +321,23 @@ describe('StockData', () => {
       new Dividend({time: today, isin : "ISIN1", dividend: 1.5}),
     ]);
 
-    expect(stockData.get(beforeYesterday).assetOfInterest("ISIN1").dividend).toBe(2.5);
-    expect(stockData.get(today).assetOfInterest("ISIN1").dividend).toBe(1.5);
+    expect(stockData.get(beforeYesterday).quote("ISIN1").dividend).toBe(2.5);
+    expect(stockData.get(today).quote("ISIN1").dividend).toBe(1.5);
   });
 
   it('Can iterate over all dates', () => {
     let stockData: StockData = new StockData([
-      new Stock({time: beforeYesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 1.2}),
+      new Stock({time: beforeYesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 1.1}),
+        new Quote({isin: "ISIN2", partValue: 1.2}),
       ]}),
-      new Stock({time: yesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 2.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 2.2}),
+      new Stock({time: yesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 2.1}),
+        new Quote({isin: "ISIN2", partValue: 2.2}),
       ]}),
-      new Stock({time: today, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 3.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 3.2}),
+      new Stock({time: today, quotes: [
+        new Quote({isin: "ISIN1", partValue: 3.1}),
+        new Quote({isin: "ISIN2", partValue: 3.2}),
       ]})
     ]);
 
@@ -345,7 +345,7 @@ describe('StockData', () => {
     let time: Date = beforeYesterday;
     stockData.forEachDate((stock: Stock) => {
       numberOfCalls++;
-      expect(stock.assetsOfInterest.length).toBe(2);
+      expect(stock.quotes.length).toBe(2);
       expect(stock.time.valueOf()).toBeGreaterThanOrEqual(time.valueOf());
       time = stock.time;
     });
@@ -354,17 +354,17 @@ describe('StockData', () => {
 
   it('Can iterate over a range of dates', () => {
     let stockData: StockData = new StockData([
-      new Stock({time: beforeYesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 1.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 1.2}),
+      new Stock({time: beforeYesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 1.1}),
+        new Quote({isin: "ISIN2", partValue: 1.2}),
       ]}),
-      new Stock({time: yesterday, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 2.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 2.2}),
+      new Stock({time: yesterday, quotes: [
+        new Quote({isin: "ISIN1", partValue: 2.1}),
+        new Quote({isin: "ISIN2", partValue: 2.2}),
       ]}),
-      new Stock({time: today, assetsOfInterest: [
-        new AssetOfInterest({isin: "ISIN1", partValue: 3.1}),
-        new AssetOfInterest({isin: "ISIN2", partValue: 3.2}),
+      new Stock({time: today, quotes: [
+        new Quote({isin: "ISIN1", partValue: 3.1}),
+        new Quote({isin: "ISIN2", partValue: 3.2}),
       ]})
     ]);
 

@@ -1,7 +1,7 @@
 import { Account } from './account';
 import { NullStrategy } from './strategy';
 import { Stock } from './stock';
-import { Position, AssetOfInterest } from './asset';
+import { Position, Quote } from './asset';
 
 class MockStrategy extends NullStrategy {
   gotCalled: boolean = false;
@@ -36,9 +36,9 @@ describe('Account', () => {
     let strategy: MockStrategy = new MockStrategy();
     let stock: Stock = new Stock({
       time: new Date(),
-      assetsOfInterest: [
-        new AssetOfInterest({isin: "XX", partValue: 110}),
-        new AssetOfInterest({isin: "YY", partValue: 11})
+      quotes: [
+        new Quote({isin: "XX", partValue: 110}),
+        new Quote({isin: "YY", partValue: 11})
       ]
     });
     let account: Account = new Account({
@@ -66,8 +66,8 @@ describe('Account', () => {
     let strategy: MockStrategy = new MockStrategy();
     let stock: Stock = new Stock({
       time: new Date(),
-      assetsOfInterest: [
-        new AssetOfInterest({isin: "YY", partValue: 11, dividend: 10})
+      quotes: [
+        new Quote({isin: "YY", partValue: 11, dividend: 10})
       ]
     });
     let account: Account = new Account({
@@ -89,14 +89,14 @@ describe('Account', () => {
   it('Can calculate costs based on the spread', () => {
     let partValue: number = 110;
     let spread: number = 0.1;
-    let assetOfInterest: AssetOfInterest = new AssetOfInterest({
+    let quote: Quote = new Quote({
       isin: "XX",
       partValue: partValue,
       spread: spread
     });
     let account = new Account();
-    expect(account.orderCost(assetOfInterest, 2)).toBe(2 * partValue * spread / 2);
-    expect(account.orderCost(assetOfInterest, -3)).toBe(3 * partValue * spread / 2);
+    expect(account.orderCost(quote, 2)).toBe(2 * partValue * spread / 2);
+    expect(account.orderCost(quote, -3)).toBe(3 * partValue * spread / 2);
   });
 
   it('Can buy an asset taking in count the costs', () => {
@@ -104,7 +104,7 @@ describe('Account', () => {
     let spread: number = 0.1;
     let cash: number = 1000;
 
-    let assetOfInterest: AssetOfInterest = new AssetOfInterest({
+    let quote: Quote = new Quote({
       isin: "XX",
       partValue: partValue,
       spread: spread
@@ -113,10 +113,10 @@ describe('Account', () => {
       cash: cash
     });
 
-    let costs = account.orderCost(assetOfInterest, 3);
+    let costs = account.orderCost(quote, 3);
     expect(costs).toBe(3 * partValue * spread / 2);
 
-    account.order(assetOfInterest, 3);
+    account.order(quote, 3);
     expect(account.cash).toBe(cash - 3 * partValue - costs);
     expect(account.nav()).toBe(cash - costs);
   });
@@ -126,7 +126,7 @@ describe('Account', () => {
     let spread: number = 0.1;
     let cash: number = 1000;
 
-    let assetOfInterest: AssetOfInterest = new AssetOfInterest({
+    let quote: Quote = new Quote({
       isin: "XX",
       partValue: partValue,
       spread: spread
@@ -138,10 +138,10 @@ describe('Account', () => {
       ]
     });
 
-    let costs = account.orderCost(assetOfInterest, -3);
+    let costs = account.orderCost(quote, -3);
     expect(costs).toBe(3 * partValue * spread / 2);
 
-    account.order(assetOfInterest, -3);
+    account.order(quote, -3);
     expect(account.cash).toBe(cash + 3 * partValue - costs);
     expect(account.nav()).toBe(cash + 4 * partValue - costs);
   });

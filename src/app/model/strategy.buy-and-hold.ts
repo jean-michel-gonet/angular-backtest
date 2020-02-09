@@ -1,7 +1,7 @@
 import { Strategy } from './core/strategy';
 import { Stock } from './core/stock';
 import { Account } from './core/account';
-import { AssetOfInterest } from './core/asset';
+import { Quote } from './core/asset';
 import { RegularTransfer } from './core/transfer';
 import { Report } from './core/reporting';
 
@@ -32,13 +32,13 @@ export class BuyAndHoldStrategy implements Strategy {
    * Applies the Buy And Hold strategy.
    */
   applyStrategy(account: Account, stock: Stock): void {
-    let assetOfInterest: AssetOfInterest = stock.assetOfInterest(this.isin);
-    if (assetOfInterest) {
-      this.investAllYourCashInOneSingleBasket(account, assetOfInterest);
+    let quote: Quote = stock.quote(this.isin);
+    if (quote) {
+      this.investAllYourCashInOneSingleBasket(account, quote);
 
       let amountToTransfer = this.transfer.amount(stock.time);
       if (amountToTransfer > 0) {
-        this.performTransfer(account, assetOfInterest, amountToTransfer);
+        this.performTransfer(account, quote, amountToTransfer);
       }
     }
   }
@@ -47,10 +47,10 @@ export class BuyAndHoldStrategy implements Strategy {
    * Initial order consists in investing the whole
    * capital into one single ISIN.
    */
-  private investAllYourCashInOneSingleBasket(account: Account, assetOfInterest: AssetOfInterest): void {
+  private investAllYourCashInOneSingleBasket(account: Account, quote: Quote): void {
     if (account.cash > 0) {
-      let numberOfParts: number = account.cash / assetOfInterest.partValue;
-      account.order(assetOfInterest, numberOfParts);
+      let numberOfParts: number = account.cash / quote.partValue;
+      account.order(quote, numberOfParts);
     }
   }
 
@@ -58,9 +58,9 @@ export class BuyAndHoldStrategy implements Strategy {
    * Periodically withdraw the cash amount required for
    * living.
    */
-  private performTransfer(account: Account, assetOfInterest: AssetOfInterest, amountToTransfer: number): void {
-    let numberOfParts: number = amountToTransfer / assetOfInterest.partValue;
-    account.order(assetOfInterest, -numberOfParts);
+  private performTransfer(account: Account, quote: Quote, amountToTransfer: number): void {
+    let numberOfParts: number = amountToTransfer / quote.partValue;
+    account.order(quote, -numberOfParts);
     account.transfer(this.transfer.to, amountToTransfer);
   }
 

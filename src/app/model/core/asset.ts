@@ -1,7 +1,11 @@
-import { Stock } from './stock';
-
 /**
- * Base class for an asset.
+ * An asset is a resource with economic value that an individual, corporation
+ * or country owns or controls with the expectation that it will provide a
+ * future benefit.
+ * Assets are reported on a company's balance sheet and are bought or created
+ * to increase a firm's value or benefit the firm's operations.
+ * See https://www.investopedia.com/terms/a/asset.asp
+ * @class{Asset}
  */
 export class Asset {
   isin: string;
@@ -22,15 +26,17 @@ export class Asset {
 }
 
 /**
- * An asset as described by a stock provider.
- * Contains the required information
- * to buy or sell it.
+ * A quote is the last price at which a security or commodity traded, meaning
+ * the most recent price to which a buyer and seller agreed and at which some
+ * amount of the asset was transacted.
+ * See https://www.investopedia.com/terms/q/quote.asp
+ * @class{Quote}
  */
-export class AssetOfInterest extends Asset {
+export class Quote extends Asset {
   spread?: number;
   dividend?: number;
 
-  constructor(obj: AssetOfInterest = {} as AssetOfInterest) {
+  constructor(obj: Quote = {} as Quote) {
     super(obj);
     let {
       spread = 0,
@@ -55,7 +61,9 @@ class IPosition extends Asset {
 }
 
 /**
- * An asset as described when held in a portfolio.
+ * A position is the amount of a security, commodity or currency which is
+ * owned by an individual, dealer, institution, or other fiscal entity.
+ * See https://www.investopedia.com/terms/p/position.asp
  * Contains the required information to calculate
  * the NAV.
  */

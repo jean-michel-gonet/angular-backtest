@@ -1,7 +1,7 @@
 import { BuyAndHoldStrategy } from './strategy.buy-and-hold';
 import { Account } from './core/account';
 import { Stock } from './core/stock';
-import { AssetOfInterest, Position } from './core/asset';
+import { Quote, Position } from './core/asset';
 import { RegularTransfer, RegularPeriod } from './core/transfer';
 
 
@@ -23,8 +23,8 @@ describe('BuyAndHoldStrategy', () => {
 
     let stock: Stock = new Stock({
       time: new Date(2010, 10, 10),
-      assetsOfInterest: [
-        new AssetOfInterest({
+      quotes: [
+        new Quote({
           isin: "ISIN1",
           partValue: 10})
       ]
@@ -50,8 +50,8 @@ describe('BuyAndHoldStrategy', () => {
 
     let stock: Stock = new Stock({
       time: new Date(2010, 10, 10),
-      assetsOfInterest: [
-        new AssetOfInterest({
+      quotes: [
+        new Quote({
           isin: "ISIN1",
           partValue: 10,
           dividend: 5
@@ -91,8 +91,8 @@ describe('BuyAndHoldStrategy', () => {
     });
     let stock: Stock = new Stock({
       time: new Date(2010, 1, 1),
-      assetsOfInterest: [
-        new AssetOfInterest({
+      quotes: [
+        new Quote({
           isin: "ISIN1",
           partValue: 5})
       ]

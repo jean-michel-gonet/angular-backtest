@@ -1,17 +1,17 @@
-import { AssetOfInterest } from './asset';
+import { Quote } from './asset';
 import { Reporter, Report, ReportedData } from './reporting';
 
 export class IStock {
   time: Date;
-  assetsOfInterest?: AssetOfInterest[];
+  quotes?: Quote[];
 
   constructor(obj : IStock) {
     let {
       time,
-      assetsOfInterest = []
+      quotes = []
     } = obj;
     this.time = time;
-    this.assetsOfInterest = assetsOfInterest;
+    this.quotes = quotes;
   }
 }
 
@@ -32,13 +32,13 @@ export class Dividend {
 }
 
 export class Stock extends IStock {
-  private mapOfAssets: Map<String, AssetOfInterest>;
+  private mapOfQuotes: Map<String, Quote>;
 
   constructor(obj : IStock = {} as IStock) {
     super(obj);
-    this.mapOfAssets = new Map<String, AssetOfInterest>();
-    this.assetsOfInterest.forEach(assetOfInterest => {
-      this.mapOfAssets.set(assetOfInterest.isin, assetOfInterest);
+    this.mapOfQuotes = new Map<String, Quote>();
+    this.quotes.forEach(quote => {
+      this.mapOfQuotes.set(quote.isin, quote);
     });
   }
 
@@ -47,30 +47,30 @@ export class Stock extends IStock {
    * @return {IStock} An instance of a simpler class.
    */
   asIStock(): IStock {
-    return new IStock({time: this.time, assetsOfInterest: this.assetsOfInterest});
+    return new IStock({time: this.time, quotes: this.quotes});
   }
 
-  add(newAssetsOfInterest: AssetOfInterest[]): void {
-    newAssetsOfInterest.forEach(newAssetOfInterest => {
-      let existingAssetOfInterest = this.mapOfAssets.get(newAssetOfInterest.isin);
-      if (existingAssetOfInterest) {
-        let i = this.assetsOfInterest.indexOf(existingAssetOfInterest);
-        this.assetsOfInterest.splice(i, 1);
-        this.mapOfAssets.delete(existingAssetOfInterest.isin);
+  add(newAssetsOfInterest: Quote[]): void {
+    newAssetsOfInterest.forEach(newQuote => {
+      let existingQuote = this.mapOfQuotes.get(newQuote.isin);
+      if (existingQuote) {
+        let i = this.quotes.indexOf(existingQuote);
+        this.quotes.splice(i, 1);
+        this.mapOfQuotes.delete(existingQuote.isin);
       }
-      this.assetsOfInterest.push(newAssetOfInterest);
-      this.mapOfAssets.set(newAssetOfInterest.isin, newAssetOfInterest);
+      this.quotes.push(newQuote);
+      this.mapOfQuotes.set(newQuote.isin, newQuote);
     });
   }
 
   /**
-   * Returns the specified asset of interest.
+   * Returns the specified quote.
    * @param {string} isin The ISIN of the asset.
-   * @return {AssetOfInterest} The asset of interest,
+   * @return {Quote} The quote,
    * or null.
    */
-  assetOfInterest(isin: String): AssetOfInterest {
-    return this.assetsOfInterest.find(a => {
+  quote(isin: String): Quote {
+    return this.quotes.find(a => {
       return a.isin == isin;
     });
   }
@@ -104,7 +104,7 @@ export class StockData implements Reporter {
       let thisEntry = this.stock[thisIndex];
       if (thisEntry.time.valueOf() == otherEntry.time.valueOf()) {
         let mergedEntry: Stock = new Stock(thisEntry);
-        mergedEntry.add(otherEntry.assetsOfInterest);
+        mergedEntry.add(otherEntry.quotes);
         mergedStockData.push(mergedEntry);
         thisIndex++;
         otherIndex++;
@@ -178,15 +178,15 @@ export class StockData implements Reporter {
       }
 
       if (thisEntry.time.valueOf() == dividendEntry.time.valueOf()) {
-        let assetOfInterest = thisEntry.assetOfInterest(dividendEntry.isin);
-        assetOfInterest.dividend = dividendEntry.dividend;
+        let quote = thisEntry.quote(dividendEntry.isin);
+        quote.dividend = dividendEntry.dividend;
         thisIndex++;
         dividendIndex++;
       }
 
       if (thisEntry.time.valueOf() > dividendEntry.time.valueOf()) {
-        let assetOfInterest = previousEntry.assetOfInterest(dividendEntry.isin);
-        assetOfInterest.dividend = dividendEntry.dividend;
+        let quote = previousEntry.quote(dividendEntry.isin);
+        quote.dividend = dividendEntry.dividend;
         dividendIndex++;
       }
 
@@ -205,7 +205,7 @@ export class StockData implements Reporter {
     this.stock.forEach(stock => {
       iStock.push(new IStock({
         time: stock.time,
-        assetsOfInterest: stock.assetsOfInterest
+        quotes: stock.quotes
       }));
     });
 
@@ -266,10 +266,10 @@ export class StockData implements Reporter {
    * to report.
    */
   reportTo(report: Report): void {
-    this.reportingStock.assetsOfInterest.forEach(assetOfInterest => {
+    this.reportingStock.quotes.forEach(quote => {
       report.receiveData(new ReportedData({
-        y: assetOfInterest.partValue,
-        sourceName: assetOfInterest.isin + ".CLOSE"
+        y: quote.partValue,
+        sourceName: quote.isin + ".CLOSE"
       }));
     });
   }

@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { StockData, Stock, Dividend } from 'src/app/model/core/stock';
 import { map } from 'rxjs/operators';
-import { AssetOfInterest } from 'src/app/model/core/asset';
+import { Quote } from 'src/app/model/core/asset';
 import { ConnectionService } from './connection.service';
 
 
@@ -43,8 +43,8 @@ export class YahooConverter {
         if (partValue) {
           let stock: Stock = new Stock({
             time: this.convertToDate(date),
-            assetsOfInterest: [
-              new AssetOfInterest({
+            quotes: [
+              new Quote({
                 isin: this.name,
                 name: this.name,
                 partValue: this.convertToNumber(partValue),

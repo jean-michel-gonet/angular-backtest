@@ -2,7 +2,7 @@ import { Simulation } from "./simulation";
 import { Account } from './account';
 import { StockData, Stock } from './stock';
 import { NullStrategy } from './strategy';
-import { AssetOfInterest } from './asset';
+import { Quote } from './asset';
 
 /**
  * A fake strategy, just to verify that it has been called.
@@ -41,20 +41,20 @@ describe('Simulation', () => {
     stockData: new StockData([
       new Stock({
         time: tomorrow,
-        assetsOfInterest:[
-          new AssetOfInterest({isin: "ISIN1", partValue: 1})
+        quotes:[
+          new Quote({isin: "ISIN1", partValue: 1})
         ]
       }),
       new Stock({
         time: afterTomorrow,
-        assetsOfInterest:[
-          new AssetOfInterest({isin: "ISIN1", partValue: 2})
+        quotes:[
+          new Quote({isin: "ISIN1", partValue: 2})
         ]
       }),
       new Stock({
         time: today,
-        assetsOfInterest:[
-          new AssetOfInterest({isin: "ISIN1", partValue: 3})
+        quotes:[
+          new Quote({isin: "ISIN1", partValue: 3})
         ]
       })
     ])
