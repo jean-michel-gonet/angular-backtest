@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { QuotesFromYahooService, YahooConverter } from './yahoo-connection.service';
+import { QuotesFromYahooService, YahooConverter } from './quotes-from-yahoo.service';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { HistoricalQuotes, IInstantQuotes } from 'src/app/model/core/quotes';
 import { HttpRequest } from '@angular/common/http';
