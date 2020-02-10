@@ -4,7 +4,7 @@ import { Quote } from 'src/app/model/core/asset';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ConnectionService } from './connection.service';
+import { IQuotesService } from './connection.service';
 
 /**
  * Converts SIX data into HistoricalQuotes.
@@ -25,7 +25,7 @@ export class SixConverter {
   asHistoricalQuotes(): HistoricalQuotes {
     let valors:any[] = this.sixData.valors;
 
-    let stockData: InstantQuotes[] = [];
+    let historicalQuotes: InstantQuotes[] = [];
     valors.forEach(valor => {
       let name = valor.ISIN;
       let data:any = valor.data;
@@ -46,10 +46,10 @@ export class SixConverter {
               dividend: 0})
           ]
         });
-        stockData.push(stock);
+        historicalQuotes.push(stock);
       }
     });
-    return new HistoricalQuotes(stockData);
+    return new HistoricalQuotes(historicalQuotes);
   }
 
   private convertToNumber(a: any): number {
@@ -74,12 +74,12 @@ export class SixConverter {
 @Injectable({
   providedIn: 'root'
 })
-export class SixConnectionService implements ConnectionService {
+export class QuotesFromSixService implements IQuotesService {
 
   constructor(private http: HttpClient) {
   }
 
-  getQuotes(source: string, name: string): Observable<HistoricalQuotes> {
+  getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
     return this.http.get(source).pipe(map(s => {
         let sixConverter: SixConverter = new SixConverter(s);
         return sixConverter.asHistoricalQuotes();

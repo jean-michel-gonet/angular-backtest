@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { StockService } from '../services/stock/stock.service';
+import { QuotesService } from '../services/stock/stock.service';
 import { Simulation } from '../model/core/simulation';
 import { SwissQuoteAccount } from '../model/account.swissquote';
 import { BuyAndHoldStrategy } from '../model/strategy.buy-and-hold';
@@ -16,7 +16,7 @@ export class DisplayComponent implements OnInit {
   simulation: Simulation;
   ng2ChartReport: Ng2ChartReport;
 
-  constructor(private stockService:StockService) {
+  constructor(private quotesService:QuotesService) {
   }
 
   ngOnInit() {
@@ -36,7 +36,7 @@ export class DisplayComponent implements OnInit {
     ]);
 
     // Fetch the data:
-    this.stockService.getHistoricalQuotes(['SP500']).subscribe(data => {
+    this.quotesService.getHistoricalQuotes(['SP500']).subscribe(historicalQuotes => {
 
       // Set up the simulation:
       this.simulation = new Simulation({
@@ -53,7 +53,7 @@ export class DisplayComponent implements OnInit {
               every: RegularPeriod.MONTH
             })})
         }),
-        stockData: data,
+        historicalQuotes: historicalQuotes,
         report: this.ng2ChartReport
       });
 

@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { Dividend } from 'src/app/model/core/quotes';
 import { HttpRequest } from '@angular/common/http';
-import { DateYieldConnectionService, DateYieldConverter } from './date-yield-connection.service';
+import { QuotesFromSimpleCsvService, DateYieldConverter } from './date-yield-connection.service';
 
 
 var dateYieldResponse = "Date,Yield\r\n" +
@@ -12,15 +12,15 @@ var dateYieldResponse = "Date,Yield\r\n" +
   "2017-12-31,1.84\r\n" +
   "2016-12-31,2.03\r\n";
 
-describe('DateYieldConnectionService', () => {
-  let service: DateYieldConnectionService;
+describe('QuotesFromSimpleCsvService', () => {
+  let service: QuotesFromSimpleCsvService;
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports:[HttpClientTestingModule]
     });
-    service = TestBed.get(DateYieldConnectionService);
+    service = TestBed.get(QuotesFromSimpleCsvService);
     httpMock = TestBed.get(HttpTestingController);
   });
 

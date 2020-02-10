@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SixConnectionService, SixConverter } from './six-connection.service';
+import { QuotesFromSixService, SixConverter } from './six-connection.service';
 import { HistoricalQuotes, IInstantQuotes } from 'src/app/model/core/quotes';
 import { Quote } from 'src/app/model/core/asset';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
@@ -35,20 +35,20 @@ var sixResponse = {
   "elapsed":21
 };
 
-describe('SixConnectionService', () => {
-  let service: SixConnectionService;
+describe('QuotesFromSixService', () => {
+  let service: QuotesFromSixService;
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports:[HttpClientTestingModule]
     });
-    service = TestBed.get(SixConnectionService);
+    service = TestBed.get(QuotesFromSixService);
     httpMock = TestBed.get(HttpTestingController);
   });
 
   it('Can return InstantQuotes Data from SIX', () => {
-      service.getQuotes("SOURCE", "NAME").subscribe((data: HistoricalQuotes) => {
+      service.getHistoricalQuotes("SOURCE", "NAME").subscribe((data: HistoricalQuotes) => {
         expect(data).toBeTruthy();
       });
 

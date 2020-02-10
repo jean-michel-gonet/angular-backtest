@@ -83,7 +83,7 @@ describe('HistoricalQuotes', () => {
 
   it('Can return the stock of the required day', () => {
 
-    let stockData: HistoricalQuotes = new HistoricalQuotes([
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 1.2}),
@@ -101,21 +101,21 @@ describe('HistoricalQuotes', () => {
       ]})
     ]);
 
-    expect(stockData.get(beforeYesterday2).quotes)
+    expect(historicalQuotes.get(beforeYesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 1.2}),
         new Quote({name: "ISIN3", partValue: 1.3})
       ]));
 
-    expect(stockData.get(yesterday2).quotes)
+    expect(historicalQuotes.get(yesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN1", partValue: 2.1}),
         new Quote({name: "ISIN2", partValue: 2.2}),
         new Quote({name: "ISIN3", partValue: 2.3})
       ]));
 
-    expect(stockData.get(today2).quotes)
+    expect(historicalQuotes.get(today2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN1", partValue: 3.1}),
         new Quote({name: "ISIN2", partValue: 3.2}),
@@ -124,7 +124,7 @@ describe('HistoricalQuotes', () => {
   });
 
   it('Can add more data', () =>{
-    let stockData: HistoricalQuotes = new HistoricalQuotes([
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 1.2})
@@ -135,7 +135,7 @@ describe('HistoricalQuotes', () => {
       ]})
     ]);
 
-    stockData.merge(
+    historicalQuotes.merge(
       new HistoricalQuotes([
         new InstantQuotes({instant: beforeYesterday, quotes: [
           new Quote({name: "ISIN3", partValue: 1.3})
@@ -148,28 +148,28 @@ describe('HistoricalQuotes', () => {
         ]})])
     );
 
-    expect(stockData.get(beforeYesterday2).quotes)
+    expect(historicalQuotes.get(beforeYesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 1.2}),
         new Quote({name: "ISIN3", partValue: 1.3})
       ]));
 
-    expect(stockData.get(yesterday2).quotes)
+    expect(historicalQuotes.get(yesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN1", partValue: 2.1}),
         new Quote({name: "ISIN2", partValue: 2.2}),
         new Quote({name: "ISIN3", partValue: 2.3})
       ]));
 
-    expect(stockData.get(today2).quotes)
+    expect(historicalQuotes.get(today2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN3", partValue: 3.3})
       ]));
   });
 
   it('Can add more data (2)', () =>{
-    let stockData: HistoricalQuotes = new HistoricalQuotes([
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: threeDaysAgo, quotes: [
         new Quote({name: "ISIN1", partValue: 3.1}),
         new Quote({name: "ISIN2", partValue: 3.2})
@@ -180,7 +180,7 @@ describe('HistoricalQuotes', () => {
       ]})
     ]);
 
-    stockData.merge(
+    historicalQuotes.merge(
       new HistoricalQuotes([
         new InstantQuotes({instant: beforeYesterday, quotes: [
           new Quote({name: "ISIN3", partValue: 2.3})
@@ -190,24 +190,24 @@ describe('HistoricalQuotes', () => {
         ]})])
     );
 
-    expect(stockData.get(threeDaysAgo2).quotes)
+    expect(historicalQuotes.get(threeDaysAgo2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN1", partValue: 3.1}),
         new Quote({name: "ISIN2", partValue: 3.2})
       ]));
 
-    expect(stockData.get(beforeYesterday2).quotes)
+    expect(historicalQuotes.get(beforeYesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN3", partValue: 2.3})
       ]));
 
-    expect(stockData.get(yesterday2).quotes)
+    expect(historicalQuotes.get(yesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 1.2})
       ]));
 
-    expect(stockData.get(today2).quotes)
+    expect(historicalQuotes.get(today2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN3", partValue: 0.3})
       ]));
@@ -215,7 +215,7 @@ describe('HistoricalQuotes', () => {
 
   it('Can replace existing data', () => {
 
-    let stockData: HistoricalQuotes = new HistoricalQuotes([
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 1.2})
@@ -226,7 +226,7 @@ describe('HistoricalQuotes', () => {
       ]})
     ]);
 
-    stockData.merge(
+    historicalQuotes.merge(
       new HistoricalQuotes([
         new InstantQuotes({instant: beforeYesterday, quotes: [
           new Quote({name: "ISIN2", partValue: 4.4})
@@ -240,26 +240,26 @@ describe('HistoricalQuotes', () => {
       ])
     );
 
-    expect(stockData.get(beforeYesterday2).quotes)
+    expect(historicalQuotes.get(beforeYesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 4.4})
       ]));
 
-    expect(stockData.get(yesterday2).quotes)
+    expect(historicalQuotes.get(yesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN1", partValue: 2.1}),
         new Quote({name: "ISIN2", partValue: 4.5})
       ]));
 
-    expect(stockData.get(today2).quotes)
+    expect(historicalQuotes.get(today2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN2", partValue: 4.6})
       ]));
   });
 
   it('Can enrich with dividends', () => {
-    let stockData: HistoricalQuotes = new HistoricalQuotes([
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 200}),
         new Quote({name: "ISIN2", partValue: 200}),
@@ -274,17 +274,17 @@ describe('HistoricalQuotes', () => {
       ]})
     ]);
 
-    stockData.enrichWithDividends([
+    historicalQuotes.enrichWithDividends([
       new Dividend({instant: beforeYesterday, name : "ISIN1", dividend: 2.5}),
       new Dividend({instant: today, name : "ISIN1", dividend: 1.5}),
     ]);
 
-    expect(stockData.get(beforeYesterday).quote("ISIN1").dividend).toBe(2.5);
-    expect(stockData.get(today).quote("ISIN1").dividend).toBe(1.5);
+    expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").dividend).toBe(2.5);
+    expect(historicalQuotes.get(today).quote("ISIN1").dividend).toBe(1.5);
   });
 
   it('Can enrich with dividends even when dates mismatch', () => {
-    let stockData: HistoricalQuotes = new HistoricalQuotes([
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: yesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 100}),
         new Quote({name: "ISIN2", partValue: 100}),
@@ -295,17 +295,17 @@ describe('HistoricalQuotes', () => {
       ]})
     ]);
 
-    stockData.enrichWithDividends([
+    historicalQuotes.enrichWithDividends([
       new Dividend({instant: beforeYesterday, name : "ISIN1", dividend: 2.5}),
       new Dividend({instant: today, name : "ISIN1", dividend: 1.5}),
     ]);
 
-    expect(stockData.get(yesterday).quote("ISIN1").dividend).toBe(2.5);
-    expect(stockData.get(today).quote("ISIN1").dividend).toBe(1.5);
+    expect(historicalQuotes.get(yesterday).quote("ISIN1").dividend).toBe(2.5);
+    expect(historicalQuotes.get(today).quote("ISIN1").dividend).toBe(1.5);
   });
 
   it('Can enrich with dividends even when dates mismatch (2)', () => {
-    let stockData: HistoricalQuotes = new HistoricalQuotes([
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 100}),
         new Quote({name: "ISIN2", partValue: 100}),
@@ -316,17 +316,17 @@ describe('HistoricalQuotes', () => {
       ]})
     ]);
 
-    stockData.enrichWithDividends([
+    historicalQuotes.enrichWithDividends([
       new Dividend({instant: yesterday, name : "ISIN1", dividend: 2.5}),
       new Dividend({instant: today, name : "ISIN1", dividend: 1.5}),
     ]);
 
-    expect(stockData.get(beforeYesterday).quote("ISIN1").dividend).toBe(2.5);
-    expect(stockData.get(today).quote("ISIN1").dividend).toBe(1.5);
+    expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").dividend).toBe(2.5);
+    expect(historicalQuotes.get(today).quote("ISIN1").dividend).toBe(1.5);
   });
 
   it('Can iterate over all dates', () => {
-    let stockData: HistoricalQuotes = new HistoricalQuotes([
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 1.2}),
@@ -343,7 +343,7 @@ describe('HistoricalQuotes', () => {
 
     let numberOfCalls: number = 0;
     let instant: Date = beforeYesterday;
-    stockData.forEachDate((stock: InstantQuotes) => {
+    historicalQuotes.forEachDate((stock: InstantQuotes) => {
       numberOfCalls++;
       expect(stock.quotes.length).toBe(2);
       expect(stock.instant.valueOf()).toBeGreaterThanOrEqual(instant.valueOf());
@@ -353,7 +353,7 @@ describe('HistoricalQuotes', () => {
   });
 
   it('Can iterate over a range of dates', () => {
-    let stockData: HistoricalQuotes = new HistoricalQuotes([
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 1.2}),
@@ -371,19 +371,19 @@ describe('HistoricalQuotes', () => {
     let numberOfCalls: number;
 
     numberOfCalls = 0;
-    stockData.forEachDate(() => {
+    historicalQuotes.forEachDate(() => {
       numberOfCalls++;
     }, beforeYesterday, today);
     expect(numberOfCalls).toBe(3);
 
     numberOfCalls = 0;
-    stockData.forEachDate(() => {
+    historicalQuotes.forEachDate(() => {
       numberOfCalls++;
     }, yesterday, today);
     expect(numberOfCalls).toBe(2);
 
     numberOfCalls = 0;
-    stockData.forEachDate(() => {
+    historicalQuotes.forEachDate(() => {
       numberOfCalls++;
     }, beforeYesterday, beforeYesterday);
     expect(numberOfCalls).toBe(1);

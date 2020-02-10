@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HistoricalQuotes, Dividend } from 'src/app/model/core/quotes';
 import { map } from 'rxjs/operators';
-import { ConnectionService } from './connection.service';
+import { IQuotesService } from './connection.service';
 
 
 
@@ -79,11 +79,11 @@ export class DateYieldConverter {
 @Injectable({
   providedIn: 'root'
 })
-export class DateYieldConnectionService implements ConnectionService {
+export class QuotesFromSimpleCsvService implements IQuotesService {
   constructor(private http: HttpClient) {
   }
 
-  getQuotes(source: string, name: string): Observable<HistoricalQuotes> {
+  getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
     throw new Error("Method not implemented - Quotes for " + name + " from " + source);
   }
 

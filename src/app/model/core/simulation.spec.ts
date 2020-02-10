@@ -26,7 +26,7 @@ describe('Simulation', () => {
   it('Can create a new instance', () => {
     expect(new Simulation({
       account: new Account({}),
-      stockData: new HistoricalQuotes([])
+      historicalQuotes: new HistoricalQuotes([])
     })).toBeTruthy();
   });
 
@@ -38,7 +38,7 @@ describe('Simulation', () => {
 
   var simulation: Simulation = new Simulation({
     account: new Account({strategy: strategy}),
-    stockData: new HistoricalQuotes([
+    historicalQuotes: new HistoricalQuotes([
       new InstantQuotes({
         instant: tomorrow,
         quotes:[

@@ -15,12 +15,10 @@ export class QuoteSourceAndProvider extends SourceAndProvider {
 */
 import securityDescriptors from '../../../assets/quotes/configuration.json';
 
-
-
 @Injectable({
   providedIn: 'root'
 })
-export class SecuritiesConfigurationService {
+export class QuotesConfigurationService {
 
   constructor() { }
 

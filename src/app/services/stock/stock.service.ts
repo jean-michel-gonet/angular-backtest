@@ -1,25 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
-import { SixConnectionService } from './six-connection.service';
-import { YahooConnectionService } from './yahoo-connection.service';
+import { QuotesFromSixService } from './six-connection.service';
+import { QuotesFromYahooService } from './yahoo-connection.service';
 import { HistoricalQuotes, Dividend } from 'src/app/model/core/quotes';
-import { SecuritiesConfigurationService, QuoteSourceAndProvider, SourceAndProvider } from './securities-configuration.service';
-import { DateYieldConnectionService } from './date-yield-connection.service';
+import { QuotesConfigurationService, QuoteSourceAndProvider, SourceAndProvider } from './securities-configuration.service';
+import { QuotesFromSimpleCsvService } from './date-yield-connection.service';
 
 /**
  * Retrieves stock data from a provider, and then broadcasts the
  * stock updates to all subscribers.
- * @class{StockService}
+ * @class{QuotesService}
  */
  @Injectable({
    providedIn: 'root'
  })
-export class StockService {
-  constructor(private sixConnectionService: SixConnectionService,
-              private yahooConnectionService: YahooConnectionService,
-              private dateYieldConnectionService: DateYieldConnectionService,
-              private securitiesConfigurationService: SecuritiesConfigurationService) {
+export class QuotesService {
+  constructor(private quotesFromSixService: QuotesFromSixService,
+              private quotesFromYahooService: QuotesFromYahooService,
+              private quotesFromSimpleCsvService: QuotesFromSimpleCsvService,
+              private quotesConfigurationService: QuotesConfigurationService) {
   }
 
   private makeItGood(source: string): string {
@@ -31,7 +31,7 @@ export class StockService {
 
     names.forEach(name => {
       let quoteSourceAndProvider: QuoteSourceAndProvider =
-        this.securitiesConfigurationService.obtainQuoteSourceAndProvider(name);
+        this.quotesConfigurationService.obtainQuoteSourceAndProvider(name);
 
       let o: Observable<HistoricalQuotes> = this.obtainQuote(quoteSourceAndProvider)
         .pipe(mergeMap(s => {
@@ -46,15 +46,15 @@ export class StockService {
 
     return forkJoin(oo)
       .pipe(map(s => {
-        let stockData: HistoricalQuotes;
+        let historicalQuotes: HistoricalQuotes;
         s.forEach((d: HistoricalQuotes) => {
-          if (stockData) {
-            stockData.merge(d);
+          if (historicalQuotes) {
+            historicalQuotes.merge(d);
           } else {
-            stockData = d;
+            historicalQuotes = d;
           }
         });
-        return stockData;
+        return historicalQuotes;
       }));
   }
 
@@ -63,7 +63,7 @@ export class StockService {
 
     switch(sourceAndProvider.provider) {
       case "date.yield.csv":
-        return this.dateYieldConnectionService.getDividends(source, name);
+        return this.quotesFromSimpleCsvService.getDividends(source, name);
       default:
         console.warn(sourceAndProvider.provider + " - Unknown provider for dividends");
         return null;
@@ -75,9 +75,9 @@ export class StockService {
 
     switch(quoteSourceAndProvider.provider) {
       case "www.six-group.com":
-        return this.sixConnectionService.getQuotes(source, quoteSourceAndProvider.name);
+        return this.quotesFromSixService.getHistoricalQuotes(source, quoteSourceAndProvider.name);
       case "finance.yahoo.com":
-        return this.yahooConnectionService.getQuotes(source, quoteSourceAndProvider.name);
+        return this.quotesFromYahooService.getHistoricalQuotes(source, quoteSourceAndProvider.name);
       default:
         console.warn(quoteSourceAndProvider.provider + " - Unknown provider");
         return null;

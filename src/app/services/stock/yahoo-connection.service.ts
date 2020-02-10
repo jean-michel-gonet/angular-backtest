@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { HistoricalQuotes, InstantQuotes, Dividend } from 'src/app/model/core/quotes';
 import { map } from 'rxjs/operators';
 import { Quote } from 'src/app/model/core/asset';
-import { ConnectionService } from './connection.service';
+import { IQuotesService } from './connection.service';
 
 
 
@@ -25,7 +25,7 @@ export class YahooConverter {
    * @return {HistoricalQuotes} The transformed data.
    */
   asHistoricalQuotes(): HistoricalQuotes {
-    let stockData: InstantQuotes[] = [];
+    let historicalQuotes: InstantQuotes[] = [];
     let lineNumber = 0;
     let csvContent: string[] = this.yahooData.split(/\r\n|\r|\n/);
     csvContent.forEach( (line: string) => {
@@ -51,11 +51,11 @@ export class YahooConverter {
                 dividend: 0})
             ]
           });
-          stockData.push(stock);
+          historicalQuotes.push(stock);
         }
       }
     });
-    return new HistoricalQuotes(stockData);
+    return new HistoricalQuotes(historicalQuotes);
   }
 
   /**
@@ -92,11 +92,11 @@ export class YahooConverter {
 @Injectable({
   providedIn: 'root'
 })
-export class YahooConnectionService implements ConnectionService {
+export class QuotesFromYahooService implements IQuotesService {
   constructor(private http: HttpClient) {
   }
 
-  getQuotes(source: string, name: string): Observable<HistoricalQuotes> {
+  getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
     return this.http.get(source,{responseType: 'text'}).pipe(map(s => {
         let yahooConverter: YahooConverter = new YahooConverter(name, s as string);
         return yahooConverter.asHistoricalQuotes();

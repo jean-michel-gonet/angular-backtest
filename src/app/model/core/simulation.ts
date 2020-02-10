@@ -3,17 +3,17 @@ import { Account } from './account';
 import { Report, NullReport } from './reporting';
 
 class ISimulation {
-  stockData: HistoricalQuotes;
+  historicalQuotes: HistoricalQuotes;
   account: Account;
   report?: Report;
 
   constructor(obj = {} as ISimulation) {
     let {
-      stockData = new HistoricalQuotes([]),
+      historicalQuotes = new HistoricalQuotes([]),
       account = new Account(),
       report = new NullReport()
     } = obj;
-    this.stockData = stockData;
+    this.historicalQuotes = historicalQuotes;
     this.account = account;
     this.report = report;
   }
@@ -35,9 +35,9 @@ export class Simulation extends ISimulation {
    */
   run(start?:Date, end?:Date) {
     this.account.doRegister(this.report);
-    this.stockData.doRegister(this.report);
+    this.historicalQuotes.doRegister(this.report);
 
-    this.stockData.forEachDate(stock => {
+    this.historicalQuotes.forEachDate(stock => {
       this.report.startReportingCycle(stock.instant);
       this.account.process(stock);
       this.report.collectReports();

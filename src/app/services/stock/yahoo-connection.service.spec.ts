@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { YahooConnectionService, YahooConverter } from './yahoo-connection.service';
+import { QuotesFromYahooService, YahooConverter } from './yahoo-connection.service';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { HistoricalQuotes, IInstantQuotes } from 'src/app/model/core/quotes';
 import { HttpRequest } from '@angular/common/http';
@@ -15,20 +15,20 @@ var yahooResponse = "Date,Open,High,Low,Close,Adj Close,Volume\r\n" +
 "1993-04-06,2612.300049,2612.300049,2599.300049,2603.199951,2603.197266,0\r\n" +
 "1993-04-20,9798.000000,9856.099609,9535.299805,9547.500000,9547.490234,9644600\r\n";
 
-describe('YahooConnectionService', () => {
-  let service: YahooConnectionService;
+describe('QuotesFromYahooService', () => {
+  let service: QuotesFromYahooService;
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports:[HttpClientTestingModule]
     });
-    service = TestBed.get(YahooConnectionService);
+    service = TestBed.get(QuotesFromYahooService);
     httpMock = TestBed.get(HttpTestingController);
   });
 
   it('Can return InstantQuotes Data from Yahoo', () => {
-      service.getQuotes("SOURCE", "NAME").subscribe((data: HistoricalQuotes) => {
+      service.getHistoricalQuotes("SOURCE", "NAME").subscribe((data: HistoricalQuotes) => {
         expect(data).toBeTruthy();
       });
 
