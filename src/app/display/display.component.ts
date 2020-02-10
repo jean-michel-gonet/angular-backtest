@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { QuotesService } from '../services/stock/stock.service';
+import { QuotesService } from '../services/quotes/stock.service';
 import { Simulation } from '../model/core/simulation';
 import { SwissQuoteAccount } from '../model/account.swissquote';
 import { BuyAndHoldStrategy } from '../model/strategy.buy-and-hold';
