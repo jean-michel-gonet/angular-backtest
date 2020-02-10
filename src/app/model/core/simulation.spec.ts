@@ -18,7 +18,7 @@ class TestStrategy extends NullStrategy {
 
   applyStrategy(account: Account, stock: InstantQuotes): void {
     this.numberOfCalls++;
-    this.stockTimes.push(stock.time.valueOf());
+    this.stockTimes.push(stock.instant.valueOf());
   }
 }
 
@@ -40,19 +40,19 @@ describe('Simulation', () => {
     account: new Account({strategy: strategy}),
     stockData: new StockData([
       new InstantQuotes({
-        time: tomorrow,
+        instant: tomorrow,
         quotes:[
           new Quote({name: "ISIN1", partValue: 1})
         ]
       }),
       new InstantQuotes({
-        time: afterTomorrow,
+        instant: afterTomorrow,
         quotes:[
           new Quote({name: "ISIN1", partValue: 2})
         ]
       }),
       new InstantQuotes({
-        time: today,
+        instant: today,
         quotes:[
           new Quote({name: "ISIN1", partValue: 3})
         ]

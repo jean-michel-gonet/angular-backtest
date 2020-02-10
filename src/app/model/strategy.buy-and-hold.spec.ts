@@ -22,7 +22,7 @@ describe('BuyAndHoldStrategy', () => {
     });
 
     let stock: InstantQuotes = new InstantQuotes({
-      time: new Date(2010, 10, 10),
+      instant: new Date(2010, 10, 10),
       quotes: [
         new Quote({
           name: "ISIN1",
@@ -49,7 +49,7 @@ describe('BuyAndHoldStrategy', () => {
     });
 
     let stock: InstantQuotes = new InstantQuotes({
-      time: new Date(2010, 10, 10),
+      instant: new Date(2010, 10, 10),
       quotes: [
         new Quote({
           name: "ISIN1",
@@ -90,7 +90,7 @@ describe('BuyAndHoldStrategy', () => {
       ]
     });
     let stock: InstantQuotes = new InstantQuotes({
-      time: new Date(2010, 1, 1),
+      instant: new Date(2010, 1, 1),
       quotes: [
         new Quote({
           name: "ISIN1",

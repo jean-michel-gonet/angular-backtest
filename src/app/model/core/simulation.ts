@@ -38,7 +38,7 @@ export class Simulation extends ISimulation {
     this.stockData.doRegister(this.report);
 
     this.stockData.forEachDate(stock => {
-      this.report.startReportingCycle(stock.time);
+      this.report.startReportingCycle(stock.instant);
       this.account.process(stock);
       this.report.collectReports();
     }, start, end);

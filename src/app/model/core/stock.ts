@@ -2,30 +2,30 @@ import { Quote } from './asset';
 import { Reporter, Report, ReportedData } from './reporting';
 
 export class IInstantQuotes {
-  time: Date;
+  instant: Date;
   quotes?: Quote[];
 
   constructor(obj : IInstantQuotes) {
     let {
-      time,
+      instant,
       quotes = []
     } = obj;
-    this.time = time;
+    this.instant = instant;
     this.quotes = quotes;
   }
 }
 
 export class Dividend {
-  time: Date;
+  instant: Date;
   name: string;
   dividend: number;
   constructor(obj : Dividend = {} as Dividend) {
     let {
-      time,
+      instant,
       name,
       dividend
     } = obj;
-    this.time = time;
+    this.instant = instant;
     this.name = name;
     this.dividend = dividend;
   }
@@ -47,7 +47,7 @@ export class InstantQuotes extends IInstantQuotes {
    * @return {IInstantQuotes} An instance of a simpler class.
    */
   asIStock(): IInstantQuotes {
-    return new IInstantQuotes({time: this.time, quotes: this.quotes});
+    return new IInstantQuotes({instant: this.instant, quotes: this.quotes});
   }
 
   add(newAssetsOfInterest: Quote[]): void {
@@ -84,7 +84,7 @@ export class StockData implements Reporter {
       this.stock.push(new InstantQuotes(newStock));
     });
     this.stock.sort((a: InstantQuotes, b:InstantQuotes) => {
-      return a.time.valueOf() - b.time.valueOf();
+      return a.instant.valueOf() - b.instant.valueOf();
     });
   }
 
@@ -102,7 +102,7 @@ export class StockData implements Reporter {
     while(otherIndex < otherStockData.stock.length && thisIndex < this.stock.length) {
       let otherEntry = otherStockData.stock[otherIndex];
       let thisEntry = this.stock[thisIndex];
-      if (thisEntry.time.valueOf() == otherEntry.time.valueOf()) {
+      if (thisEntry.instant.valueOf() == otherEntry.instant.valueOf()) {
         let mergedEntry: InstantQuotes = new InstantQuotes(thisEntry);
         mergedEntry.add(otherEntry.quotes);
         mergedStockData.push(mergedEntry);
@@ -110,13 +110,13 @@ export class StockData implements Reporter {
         otherIndex++;
       }
 
-      if (thisEntry.time.valueOf() < otherEntry.time.valueOf()) {
+      if (thisEntry.instant.valueOf() < otherEntry.instant.valueOf()) {
         let mergedEntry: InstantQuotes = new InstantQuotes(thisEntry);
         mergedStockData.push(mergedEntry);
         thisIndex++;
       }
 
-      if (thisEntry.time.valueOf() > otherEntry.time.valueOf()) {
+      if (thisEntry.instant.valueOf() > otherEntry.instant.valueOf()) {
         let mergedEntry: InstantQuotes = new InstantQuotes(otherEntry);
         mergedStockData.push(mergedEntry);
         otherIndex++;
@@ -141,18 +141,18 @@ export class StockData implements Reporter {
   /**
    * Returns the stock at the specified date or, if date is not found,
    * then stock at the pior date.
-   * @param {Date} time The relevant date.
+   * @param {Date} instant The relevant date.
    */
-  get(time: Date): InstantQuotes {
-    let valueOf: number = time.valueOf();
+  get(instant: Date): InstantQuotes {
+    let valueOf: number = instant.valueOf();
     let index: number = this.stock.findIndex(stock => {
-      return stock.time.valueOf() >= valueOf;
+      return stock.instant.valueOf() >= valueOf;
     });
     if (index < 0) {
       return null;
     } else {
       let stockAtIndex: InstantQuotes = this.stock[index];
-      if (stockAtIndex.time.valueOf() == valueOf) {
+      if (stockAtIndex.instant.valueOf() == valueOf) {
         return stockAtIndex;
       } else {
         if (index == 0) {
@@ -173,18 +173,18 @@ export class StockData implements Reporter {
       let dividendEntry = dividends[dividendIndex];
       let thisEntry = this.stock[thisIndex];
 
-      if (thisEntry.time.valueOf() < dividendEntry.time.valueOf()) {
+      if (thisEntry.instant.valueOf() < dividendEntry.instant.valueOf()) {
         thisIndex++;
       }
 
-      if (thisEntry.time.valueOf() == dividendEntry.time.valueOf()) {
+      if (thisEntry.instant.valueOf() == dividendEntry.instant.valueOf()) {
         let quote = thisEntry.quote(dividendEntry.name);
         quote.dividend = dividendEntry.dividend;
         thisIndex++;
         dividendIndex++;
       }
 
-      if (thisEntry.time.valueOf() > dividendEntry.time.valueOf()) {
+      if (thisEntry.instant.valueOf() > dividendEntry.instant.valueOf()) {
         let quote = previousEntry.quote(dividendEntry.name);
         quote.dividend = dividendEntry.dividend;
         dividendIndex++;
@@ -204,7 +204,7 @@ export class StockData implements Reporter {
 
     this.stock.forEach(stock => {
       iStock.push(new IInstantQuotes({
-        time: stock.time,
+        instant: stock.instant,
         quotes: stock.quotes
       }));
     });
@@ -218,7 +218,7 @@ export class StockData implements Reporter {
     // Look for the index of the start date:
     if (start) {
       firstIndex = this.stock.findIndex(stock => {
-        return stock.time.valueOf() >= start.valueOf();
+        return stock.instant.valueOf() >= start.valueOf();
       });
     } else {
       firstIndex = 0;
@@ -228,8 +228,8 @@ export class StockData implements Reporter {
     let n: number;
     for(n = firstIndex; n < this.stock.length; n++) {
       let stock: InstantQuotes = this.stock[n];
-      let time: Date = stock.time;
-      if (end && time.valueOf() > end.valueOf()) {
+      let instant: Date = stock.instant;
+      if (end && instant.valueOf() > end.valueOf()) {
         break;
       }
       this.reportingStock = stock;
@@ -253,15 +253,15 @@ export class StockData implements Reporter {
 
   /**
    * Next report will be about the closing values of all the assets of interest.
-   * @param {Date} time The date to report.
+   * @param {Date} instant The date to report.
    */
-  startReportingCycle(time: Date): void {
+  startReportingCycle(instant: Date): void {
     // Let's do nothing.
   }
 
   /**
    * Reports to a data processor all assets of interest
-   * corresponding to the reporting time.
+   * corresponding to the reporting instant.
    * @param {Report} report The data processor
    * to report.
    */

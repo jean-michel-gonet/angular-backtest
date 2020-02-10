@@ -74,7 +74,7 @@ describe('SixConverter', () => {
     expect(iStock).toEqual(
       jasmine.arrayWithExactContents([
         new IInstantQuotes({
-          time: new Date(2016, 7, 21),
+          instant: new Date(2016, 7, 21),
           quotes: [
             new Quote({
               name: "LU1290894820",
@@ -85,7 +85,7 @@ describe('SixConverter', () => {
           ]
         }),
         new IInstantQuotes({
-          time: new Date(2016, 7, 22),
+          instant: new Date(2016, 7, 22),
           quotes: [
             new Quote({
               name: "LU1290894820",
@@ -96,7 +96,7 @@ describe('SixConverter', () => {
           ]
         }),
         new IInstantQuotes({
-          time: new Date(2016, 7, 23),
+          instant: new Date(2016, 7, 23),
           quotes: [
             new Quote({
               name: "LU1290894820",
@@ -107,7 +107,7 @@ describe('SixConverter', () => {
           ]
         }),
         new IInstantQuotes({
-          time: new Date(2016, 7, 26),
+          instant: new Date(2016, 7, 26),
           quotes: [
             new Quote({
               name: "LU1290894820",

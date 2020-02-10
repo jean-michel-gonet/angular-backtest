@@ -28,7 +28,7 @@ export class NullStrategy implements Strategy {
   doRegister(report: Report): void {
     // Let's do nothing.
   }
-  startReportingCycle(time: Date): void {
+  startReportingCycle(instant: Date): void {
     // Let's do nothing.
   }
   reportTo(report: Report): void {

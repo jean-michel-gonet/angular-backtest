@@ -42,7 +42,7 @@ export class YahooConverter {
         let partValue: number = this.convertToNumber(close);
         if (partValue) {
           let stock: InstantQuotes = new InstantQuotes({
-            time: this.convertToDate(date),
+            instant: this.convertToDate(date),
             quotes: [
               new Quote({
                 name: this.name,

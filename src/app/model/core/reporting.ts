@@ -30,10 +30,10 @@ export interface Reporter {
 
   /**
    * Receives notification that a new reporting cycle starts,
-   * at the specified time.
-   * @param {Date} time The date to report.
+   * at the specified instant.
+   * @param {Date} instant The date to report.
    */
-  startReportingCycle(time: Date): void;
+  startReportingCycle(instant: Date): void;
 
   /**
    * Reports to the specified data processor.
@@ -61,9 +61,9 @@ export interface Report {
 
   /**
    * Start a new reporting cycle.
-   * @param {Date} time As reports are time based, the time of this reporting cycle.
+   * @param {Date} instant As reports are instant based, the instant of this reporting cycle.
    */
-  startReportingCycle(time: Date): void;
+  startReportingCycle(instant: Date): void;
 
   /**
    * Collect reports from all reporters.
@@ -76,7 +76,7 @@ export interface Report {
  * value to avoid null pointer exceptions.
  */
 export class NullReport implements Report {
-  startReportingCycle(time: Date): void {
+  startReportingCycle(instant: Date): void {
     // Let's do nothing.
   }
 

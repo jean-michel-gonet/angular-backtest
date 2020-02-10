@@ -37,7 +37,7 @@ export class SixConverter {
         let partValue = close[i];
 
         let stock: InstantQuotes = new InstantQuotes({
-          time: date,
+          instant: date,
           quotes: [
             new Quote({
               name: name,

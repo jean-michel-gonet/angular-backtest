@@ -4,7 +4,7 @@ import { Quote } from './asset';
 describe('InstantQuotes', () => {
   it('Can create an instance', () => {
     expect(new InstantQuotes({
-      time: new Date(),
+      instant: new Date(),
       quotes: [
         new Quote(),
         new Quote()
@@ -13,7 +13,7 @@ describe('InstantQuotes', () => {
 
   it('Can obtain one quote', () => {
     let stock: InstantQuotes = new InstantQuotes({
-      time: new Date(),
+      instant: new Date(),
       quotes: [
           new Quote({name: "ISIN1", partValue: 1.1}),
           new Quote({name: "ISIN2", partValue: 1.2}),
@@ -28,7 +28,7 @@ describe('InstantQuotes', () => {
 
   it('Can add more assets of interest', () =>{
     let stock: InstantQuotes = new InstantQuotes({
-      time: new Date(),
+      instant: new Date(),
       quotes: [
           new Quote({name: "ISIN1", partValue: 1.1}),
           new Quote({name: "ISIN2", partValue: 1.2}),
@@ -75,26 +75,26 @@ describe('StockData', () => {
   it('Can create an instance', () => {
     expect(new StockData(
       [
-        new InstantQuotes({time: today}),
-        new InstantQuotes({time: yesterday}),
-        new InstantQuotes({time: beforeYesterday})
+        new InstantQuotes({instant: today}),
+        new InstantQuotes({instant: yesterday}),
+        new InstantQuotes({instant: beforeYesterday})
       ])).toBeTruthy();
   });
 
   it('Can return the stock of the required day', () => {
 
     let stockData: StockData = new StockData([
-      new InstantQuotes({time: beforeYesterday, quotes: [
+      new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 1.2}),
         new Quote({name: "ISIN3", partValue: 1.3})
       ]}),
-      new InstantQuotes({time: yesterday, quotes: [
+      new InstantQuotes({instant: yesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 2.1}),
         new Quote({name: "ISIN2", partValue: 2.2}),
         new Quote({name: "ISIN3", partValue: 2.3})
       ]}),
-      new InstantQuotes({time: today, quotes: [
+      new InstantQuotes({instant: today, quotes: [
         new Quote({name: "ISIN1", partValue: 3.1}),
         new Quote({name: "ISIN2", partValue: 3.2}),
         new Quote({name: "ISIN3", partValue: 3.3})
@@ -125,11 +125,11 @@ describe('StockData', () => {
 
   it('Can add more data', () =>{
     let stockData: StockData = new StockData([
-      new InstantQuotes({time: beforeYesterday, quotes: [
+      new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 1.2})
       ]}),
-      new InstantQuotes({time: yesterday, quotes: [
+      new InstantQuotes({instant: yesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 2.1}),
         new Quote({name: "ISIN2", partValue: 2.2})
       ]})
@@ -137,13 +137,13 @@ describe('StockData', () => {
 
     stockData.merge(
       new StockData([
-        new InstantQuotes({time: beforeYesterday, quotes: [
+        new InstantQuotes({instant: beforeYesterday, quotes: [
           new Quote({name: "ISIN3", partValue: 1.3})
         ]}),
-        new InstantQuotes({time: yesterday, quotes: [
+        new InstantQuotes({instant: yesterday, quotes: [
           new Quote({name: "ISIN3", partValue: 2.3})
         ]}),
-        new InstantQuotes({time: today, quotes: [
+        new InstantQuotes({instant: today, quotes: [
           new Quote({name: "ISIN3", partValue: 3.3})
         ]})])
     );
@@ -170,11 +170,11 @@ describe('StockData', () => {
 
   it('Can add more data (2)', () =>{
     let stockData: StockData = new StockData([
-      new InstantQuotes({time: threeDaysAgo, quotes: [
+      new InstantQuotes({instant: threeDaysAgo, quotes: [
         new Quote({name: "ISIN1", partValue: 3.1}),
         new Quote({name: "ISIN2", partValue: 3.2})
       ]}),
-      new InstantQuotes({time: yesterday, quotes: [
+      new InstantQuotes({instant: yesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 1.2})
       ]})
@@ -182,10 +182,10 @@ describe('StockData', () => {
 
     stockData.merge(
       new StockData([
-        new InstantQuotes({time: beforeYesterday, quotes: [
+        new InstantQuotes({instant: beforeYesterday, quotes: [
           new Quote({name: "ISIN3", partValue: 2.3})
         ]}),
-        new InstantQuotes({time: today, quotes: [
+        new InstantQuotes({instant: today, quotes: [
           new Quote({name: "ISIN3", partValue: 0.3})
         ]})])
     );
@@ -216,11 +216,11 @@ describe('StockData', () => {
   it('Can replace existing data', () => {
 
     let stockData: StockData = new StockData([
-      new InstantQuotes({time: beforeYesterday, quotes: [
+      new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 1.2})
       ]}),
-      new InstantQuotes({time: yesterday, quotes: [
+      new InstantQuotes({instant: yesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 2.1}),
         new Quote({name: "ISIN2", partValue: 2.2})
       ]})
@@ -228,13 +228,13 @@ describe('StockData', () => {
 
     stockData.merge(
       new StockData([
-        new InstantQuotes({time: beforeYesterday, quotes: [
+        new InstantQuotes({instant: beforeYesterday, quotes: [
           new Quote({name: "ISIN2", partValue: 4.4})
         ]}),
-        new InstantQuotes({time: yesterday, quotes: [
+        new InstantQuotes({instant: yesterday, quotes: [
           new Quote({name: "ISIN2", partValue: 4.5})
         ]}),
-        new InstantQuotes({time: today, quotes: [
+        new InstantQuotes({instant: today, quotes: [
           new Quote({name: "ISIN2", partValue: 4.6})
         ]})
       ])
@@ -260,23 +260,23 @@ describe('StockData', () => {
 
   it('Can enrich with dividends', () => {
     let stockData: StockData = new StockData([
-      new InstantQuotes({time: beforeYesterday, quotes: [
+      new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 200}),
         new Quote({name: "ISIN2", partValue: 200}),
       ]}),
-      new InstantQuotes({time: yesterday, quotes: [
+      new InstantQuotes({instant: yesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 100}),
         new Quote({name: "ISIN2", partValue: 100}),
       ]}),
-      new InstantQuotes({time: today, quotes: [
+      new InstantQuotes({instant: today, quotes: [
         new Quote({name: "ISIN1", partValue: 300}),
         new Quote({name: "ISIN2", partValue: 300}),
       ]})
     ]);
 
     stockData.enrichWithDividends([
-      new Dividend({time: beforeYesterday, name : "ISIN1", dividend: 2.5}),
-      new Dividend({time: today, name : "ISIN1", dividend: 1.5}),
+      new Dividend({instant: beforeYesterday, name : "ISIN1", dividend: 2.5}),
+      new Dividend({instant: today, name : "ISIN1", dividend: 1.5}),
     ]);
 
     expect(stockData.get(beforeYesterday).quote("ISIN1").dividend).toBe(2.5);
@@ -285,19 +285,19 @@ describe('StockData', () => {
 
   it('Can enrich with dividends even when dates mismatch', () => {
     let stockData: StockData = new StockData([
-      new InstantQuotes({time: yesterday, quotes: [
+      new InstantQuotes({instant: yesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 100}),
         new Quote({name: "ISIN2", partValue: 100}),
       ]}),
-      new InstantQuotes({time: today, quotes: [
+      new InstantQuotes({instant: today, quotes: [
         new Quote({name: "ISIN1", partValue: 300}),
         new Quote({name: "ISIN2", partValue: 300}),
       ]})
     ]);
 
     stockData.enrichWithDividends([
-      new Dividend({time: beforeYesterday, name : "ISIN1", dividend: 2.5}),
-      new Dividend({time: today, name : "ISIN1", dividend: 1.5}),
+      new Dividend({instant: beforeYesterday, name : "ISIN1", dividend: 2.5}),
+      new Dividend({instant: today, name : "ISIN1", dividend: 1.5}),
     ]);
 
     expect(stockData.get(yesterday).quote("ISIN1").dividend).toBe(2.5);
@@ -306,19 +306,19 @@ describe('StockData', () => {
 
   it('Can enrich with dividends even when dates mismatch (2)', () => {
     let stockData: StockData = new StockData([
-      new InstantQuotes({time: beforeYesterday, quotes: [
+      new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 100}),
         new Quote({name: "ISIN2", partValue: 100}),
       ]}),
-      new InstantQuotes({time: today, quotes: [
+      new InstantQuotes({instant: today, quotes: [
         new Quote({name: "ISIN1", partValue: 300}),
         new Quote({name: "ISIN2", partValue: 300}),
       ]})
     ]);
 
     stockData.enrichWithDividends([
-      new Dividend({time: yesterday, name : "ISIN1", dividend: 2.5}),
-      new Dividend({time: today, name : "ISIN1", dividend: 1.5}),
+      new Dividend({instant: yesterday, name : "ISIN1", dividend: 2.5}),
+      new Dividend({instant: today, name : "ISIN1", dividend: 1.5}),
     ]);
 
     expect(stockData.get(beforeYesterday).quote("ISIN1").dividend).toBe(2.5);
@@ -327,42 +327,42 @@ describe('StockData', () => {
 
   it('Can iterate over all dates', () => {
     let stockData: StockData = new StockData([
-      new InstantQuotes({time: beforeYesterday, quotes: [
+      new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 1.2}),
       ]}),
-      new InstantQuotes({time: yesterday, quotes: [
+      new InstantQuotes({instant: yesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 2.1}),
         new Quote({name: "ISIN2", partValue: 2.2}),
       ]}),
-      new InstantQuotes({time: today, quotes: [
+      new InstantQuotes({instant: today, quotes: [
         new Quote({name: "ISIN1", partValue: 3.1}),
         new Quote({name: "ISIN2", partValue: 3.2}),
       ]})
     ]);
 
     let numberOfCalls: number = 0;
-    let time: Date = beforeYesterday;
+    let instant: Date = beforeYesterday;
     stockData.forEachDate((stock: InstantQuotes) => {
       numberOfCalls++;
       expect(stock.quotes.length).toBe(2);
-      expect(stock.time.valueOf()).toBeGreaterThanOrEqual(time.valueOf());
-      time = stock.time;
+      expect(stock.instant.valueOf()).toBeGreaterThanOrEqual(instant.valueOf());
+      instant = stock.instant;
     });
     expect(numberOfCalls).toBe(3);
   });
 
   it('Can iterate over a range of dates', () => {
     let stockData: StockData = new StockData([
-      new InstantQuotes({time: beforeYesterday, quotes: [
+      new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 1.1}),
         new Quote({name: "ISIN2", partValue: 1.2}),
       ]}),
-      new InstantQuotes({time: yesterday, quotes: [
+      new InstantQuotes({instant: yesterday, quotes: [
         new Quote({name: "ISIN1", partValue: 2.1}),
         new Quote({name: "ISIN2", partValue: 2.2}),
       ]}),
-      new InstantQuotes({time: today, quotes: [
+      new InstantQuotes({instant: today, quotes: [
         new Quote({name: "ISIN1", partValue: 3.1}),
         new Quote({name: "ISIN2", partValue: 3.2}),
       ]})

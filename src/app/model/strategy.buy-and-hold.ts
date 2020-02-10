@@ -36,7 +36,7 @@ export class BuyAndHoldStrategy implements Strategy {
     if (quote) {
       this.investAllYourCashInOneSingleBasket(account, quote);
 
-      let amountToTransfer = this.transfer.amount(stock.time);
+      let amountToTransfer = this.transfer.amount(stock.instant);
       if (amountToTransfer > 0) {
         this.performTransfer(account, quote, amountToTransfer);
       }
@@ -78,7 +78,7 @@ export class BuyAndHoldStrategy implements Strategy {
     }
   }
 
-  startReportingCycle(time: Date): void {
+  startReportingCycle(instant: Date): void {
     // Don't care.
   }
 

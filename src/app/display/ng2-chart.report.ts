@@ -120,14 +120,14 @@ export class Ng2ChartReport implements Report {
     this.reporters.push(reporter);
   }
 
-  startReportingCycle(time: Date): void {
-    this.labels.push(time.toDateString());
+  startReportingCycle(instant: Date): void {
+    this.labels.push(instant.toDateString());
     this.dataSets.forEach(d => {
       d.data.push(0);
     });
 
     this.reporters.forEach(reporter => {
-      reporter.startReportingCycle(time);
+      reporter.startReportingCycle(instant);
     });
   }
 

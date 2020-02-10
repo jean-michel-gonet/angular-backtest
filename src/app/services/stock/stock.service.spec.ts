@@ -95,13 +95,13 @@ describe('StockService', () => {
     });
 
     let stockData: StockData = new StockData([
-      new InstantQuotes({time: beforeYesterday, quotes: [
+      new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN3", partValue: 1.3})
       ]})]);
     yahoo.whenQuotes("ISIN3", stockData);
 
     let dividends: Dividend[] = [new Dividend(
-      {name: "ISIN3", dividend: 1.5, time: beforeYesterday}
+      {name: "ISIN3", dividend: 1.5, instant: beforeYesterday}
     )];
 
     dateYield.whenDividends("ISIN3", dividends);

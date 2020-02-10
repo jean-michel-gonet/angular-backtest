@@ -52,7 +52,7 @@ describe('YahooConverter', () => {
     expect(iStock).toEqual(
       jasmine.arrayWithExactContents([
         new IInstantQuotes({
-          time: new Date(1993, 1, 15),
+          instant: new Date(1993, 1, 15),
           quotes: [
             new Quote({
               name: "ISIN1",
@@ -61,7 +61,7 @@ describe('YahooConverter', () => {
               dividend: 0
             })]}),
         new IInstantQuotes({
-          time: new Date(1993, 2, 19),
+          instant: new Date(1993, 2, 19),
           quotes: [
             new Quote({
               name: "ISIN1",
@@ -70,7 +70,7 @@ describe('YahooConverter', () => {
               dividend: 0
             })]}),
         new IInstantQuotes({
-          time: new Date(1993, 3, 6),
+          instant: new Date(1993, 3, 6),
           quotes: [
             new Quote({
               name: "ISIN1",
@@ -79,7 +79,7 @@ describe('YahooConverter', () => {
               dividend: 0
             })]}),
         new IInstantQuotes({
-          time: new Date(1993, 3, 20),
+          instant: new Date(1993, 3, 20),
           quotes: [
             new Quote({
               name: "ISIN1",

@@ -33,16 +33,16 @@ export class RegularTransfer {
     this.to = to;
   }
 
-  public amount(time: Date): number {
-    // Remove hours, minutes and seconds from the specified time:
-    let today = new Date(time.getFullYear(), time.getMonth(), time.getDate());
+  public amount(instant: Date): number {
+    // Remove hours, minutes and seconds from the specified instant:
+    let today = new Date(instant.getFullYear(), instant.getMonth(), instant.getDate());
 
     // Is it the first call?
     if (!this.lastDay) {
       this.lastDay = today;
     }
 
-    // Check each day between the last time we checked untin today.
+    // Check each day between the last instant we checked untin today.
     let totalAmount: number = 0;
     do {
       totalAmount += this.dueAmount(this.lastDay);
@@ -53,15 +53,15 @@ export class RegularTransfer {
     return totalAmount;
   }
 
-  private dueAmount(time: Date): number {
+  private dueAmount(instant: Date): number {
     switch(this.every) {
       case RegularPeriod.MONTH:
-        if (time.getDate() == 1) {
+        if (instant.getDate() == 1) {
           return this.transfer;
         }
         break;
       case RegularPeriod.YEAR:
-        if (time.getMonth() == 0 && time.getDate() == 1) {
+        if (instant.getMonth() == 0 && instant.getDate() == 1) {
           return this.transfer;
         }
         break;

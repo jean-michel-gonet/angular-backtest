@@ -179,9 +179,9 @@ export class Account extends IAccount implements Reporter {
 
   /**
    * Receives notification that a new reporting cycle starts,
-   * at the specified time.
+   * at the specified instant.
    */
-  startReportingCycle(time: Date): void {
+  startReportingCycle(instant: Date): void {
     this.accumulatedCosts = 0;
   }
 

@@ -35,7 +35,7 @@ describe('Account', () => {
   it('Can process stock updates and call the strategy', () => {
     let strategy: MockStrategy = new MockStrategy();
     let stock: InstantQuotes = new InstantQuotes({
-      time: new Date(),
+      instant: new Date(),
       quotes: [
         new Quote({name: "XX", partValue: 110}),
         new Quote({name: "YY", partValue: 11})
@@ -65,7 +65,7 @@ describe('Account', () => {
   it('Can cash the dividends coming from the positions', () => {
     let strategy: MockStrategy = new MockStrategy();
     let stock: InstantQuotes = new InstantQuotes({
-      time: new Date(),
+      instant: new Date(),
       quotes: [
         new Quote({name: "YY", partValue: 11, dividend: 10})
       ]
