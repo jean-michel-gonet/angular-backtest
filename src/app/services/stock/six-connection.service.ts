@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { StockData, Stock, Dividend } from 'src/app/model/core/stock';
+import { StockData, InstantQuotes, Dividend } from 'src/app/model/core/stock';
 import { Quote } from 'src/app/model/core/asset';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -25,7 +25,7 @@ export class SixConverter {
   asStockData(): StockData {
     let valors:any[] = this.sixData.valors;
 
-    let stockData: Stock[] = [];
+    let stockData: InstantQuotes[] = [];
     valors.forEach(valor => {
       let name = valor.ISIN;
       let data:any = valor.data;
@@ -36,7 +36,7 @@ export class SixConverter {
         let date:Date = this.convertToDate(dates[i]);
         let partValue = close[i];
 
-        let stock: Stock = new Stock({
+        let stock: InstantQuotes = new InstantQuotes({
           time: date,
           quotes: [
             new Quote({

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { StockData, Stock, Dividend } from 'src/app/model/core/stock';
+import { StockData, InstantQuotes, Dividend } from 'src/app/model/core/stock';
 import { map } from 'rxjs/operators';
 import { Quote } from 'src/app/model/core/asset';
 import { ConnectionService } from './connection.service';
@@ -25,7 +25,7 @@ export class YahooConverter {
    * @return {StockData} The transformed data.
    */
   asStockData(): StockData {
-    let stockData: Stock[] = [];
+    let stockData: InstantQuotes[] = [];
     let lineNumber = 0;
     let csvContent: string[] = this.yahooData.split(/\r\n|\r|\n/);
     csvContent.forEach( (line: string) => {
@@ -41,7 +41,7 @@ export class YahooConverter {
 
         let partValue: number = this.convertToNumber(close);
         if (partValue) {
-          let stock: Stock = new Stock({
+          let stock: InstantQuotes = new InstantQuotes({
             time: this.convertToDate(date),
             quotes: [
               new Quote({

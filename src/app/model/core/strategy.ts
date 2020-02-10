@@ -1,4 +1,4 @@
-import { Stock } from './stock';
+import { InstantQuotes } from './stock';
 import { Account } from './account';
 import { Reporter, Report } from './reporting';
 
@@ -11,9 +11,9 @@ export interface Strategy extends Reporter {
    * Receives regular stock updates, and executes trading operations
    * against an existing account.
    * @param {Account} account The account to execute the orders.
-   * @param {Stock} stock The stock updates, to take useful decisions.
+   * @param {InstantQuotes} stock The stock updates, to take useful decisions.
    */
-  applyStrategy(account: Account, stock: Stock): void;
+  applyStrategy(account: Account, stock: InstantQuotes): void;
 }
 
 /**
@@ -22,7 +22,7 @@ export interface Strategy extends Reporter {
  * @class{NullStrategy}
  */
 export class NullStrategy implements Strategy {
-  applyStrategy(account: Account, stock: Stock): void {
+  applyStrategy(account: Account, stock: InstantQuotes): void {
     // Let's do nothing.
   }
   doRegister(report: Report): void {

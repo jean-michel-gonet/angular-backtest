@@ -1,12 +1,12 @@
 import { Account } from './account';
 import { NullStrategy } from './strategy';
-import { Stock } from './stock';
+import { InstantQuotes } from './stock';
 import { Position, Quote } from './asset';
 
 class MockStrategy extends NullStrategy {
   gotCalled: boolean = false;
 
-  applyStrategy(account: Account, stock: Stock): void {
+  applyStrategy(account: Account, stock: InstantQuotes): void {
     this.gotCalled = true;
   }
 }
@@ -34,7 +34,7 @@ describe('Account', () => {
 
   it('Can process stock updates and call the strategy', () => {
     let strategy: MockStrategy = new MockStrategy();
-    let stock: Stock = new Stock({
+    let stock: InstantQuotes = new InstantQuotes({
       time: new Date(),
       quotes: [
         new Quote({name: "XX", partValue: 110}),
@@ -64,7 +64,7 @@ describe('Account', () => {
 
   it('Can cash the dividends coming from the positions', () => {
     let strategy: MockStrategy = new MockStrategy();
-    let stock: Stock = new Stock({
+    let stock: InstantQuotes = new InstantQuotes({
       time: new Date(),
       quotes: [
         new Quote({name: "YY", partValue: 11, dividend: 10})
@@ -99,7 +99,7 @@ describe('Account', () => {
     expect(account.orderCost(quote, -3)).toBe(3 * partValue * spread / 2);
   });
 
-  it('Can buy an asset taking in count the costs', () => {
+  it('Can buy an quote taking in count the costs', () => {
     let partValue: number = 110;
     let spread: number = 0.1;
     let cash: number = 1000;
@@ -121,7 +121,7 @@ describe('Account', () => {
     expect(account.nav()).toBe(cash - costs);
   });
 
-  it('Can sell an asset taking in count the costs', () => {
+  it('Can sell an quote taking in count the costs', () => {
     let partValue: number = 110;
     let spread: number = 0.1;
     let cash: number = 1000;

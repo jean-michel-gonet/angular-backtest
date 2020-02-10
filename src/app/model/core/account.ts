@@ -1,5 +1,5 @@
 import {Position, Quote} from './asset';
-import { Stock } from './stock';
+import { InstantQuotes } from './stock';
 import { Strategy, NullStrategy } from './strategy';
 import { Reporter, Report, ReportedData } from './reporting';
 
@@ -24,7 +24,7 @@ class IAccount {
 }
 
 /**
- * The account holds the cash and a list of asset positions.
+ * The account holds the cash and a list of quote positions.
  * It also handles the buy and sell operations.
  * @class Account
  */
@@ -47,9 +47,9 @@ export class Account extends IAccount implements Reporter {
   }
 
   /**
-   * Computes the net asset value of this portfolio, including
+   * Computes the net quote value of this portfolio, including
    * cash and assets positions.
-   * @return The net asset value.
+   * @return The net quote value.
    */
   nav(): number {
     let nav = this.cash;
@@ -62,9 +62,9 @@ export class Account extends IAccount implements Reporter {
   /**
    * Receives the stock updates and propagates them to the positions
    * and to the strategy.
-   * @param{Stock} stock The stock update.
+   * @param{InstantQuotes} stock The stock update.
    */
-  process(stock: Stock): void {
+  process(stock: InstantQuotes): void {
 
     // Update the positions:
     stock.quotes.forEach(quote => {
@@ -83,39 +83,39 @@ export class Account extends IAccount implements Reporter {
 
   /**
    * Calculates the absolute cost of buying or selling the specified number
-   * of parts of the specified asset. The cost is the difference between the
-   * exchanged amount of cash and the variation of net asset value.
+   * of parts of the specified quote. The cost is the difference between the
+   * exchanged amount of cash and the variation of net quote value.
    * The basic behavior is to consider only the cost of the spread.
    * Extend this method to reflect specific behavior of each
    * trending partner.
-   * @param {Quote} asset The asset to buy.
+   * @param {Quote} quote The quote to buy.
    * @param {number} parts When positive, the number of parts to buy. When
    *                       negative, the number of parts to sell.
    * @return {number} The cost, always positive.
    **/
-  orderCost(asset: Quote, parts: number): number {
-    return Math.abs(parts * asset.partValue * asset.spread / 2);
+  orderCost(quote: Quote, parts: number): number {
+    return Math.abs(parts * quote.partValue * quote.spread / 2);
   }
 
   /**
-   * Sells or buys the specified asset, updating the concerned position
+   * Sells or buys the specified quote, updating the concerned position
    * and the cash.
-   * @param {Quote} asset The asset to buy.
+   * @param {Quote} quote The quote to buy.
    * @param {number} parts When positive, the number of parts to buy. When
    *                       negative, the number of parts to sell.
    **/
-  order(asset: Quote, parts: number): void {
+  order(quote: Quote, parts: number): void {
 
     // Looks for the corresponding position:
     let position: Position = this.positions.find(p => {
-      return p.name == asset.name;
+      return p.name == quote.name;
     });
 
     // Either update or create the position:
     if (position) {
-      position.partValue = asset.partValue;
+      position.partValue = quote.partValue;
     } else {
-      position = new Position(asset);
+      position = new Position(quote);
       this.positions.push(position);
     }
 
@@ -127,10 +127,10 @@ export class Account extends IAccount implements Reporter {
 
     // Updates the cash based on the number of parts,
     // the part value and the costs:
-    let costs: number = this.orderCost(asset, parts);
+    let costs: number = this.orderCost(quote, parts);
     this.accumulatedCosts += costs;
     this.cash = this.cash -
-                parts * asset.partValue -
+                parts * quote.partValue -
                 costs;
   }
 

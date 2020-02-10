@@ -1,5 +1,5 @@
 import { Strategy } from './core/strategy';
-import { Stock } from './core/stock';
+import { InstantQuotes } from './core/stock';
 import { Account } from './core/account';
 import { Quote } from './core/asset';
 import { RegularTransfer } from './core/transfer';
@@ -31,7 +31,7 @@ export class BuyAndHoldStrategy implements Strategy {
   /**
    * Applies the Buy And Hold strategy.
    */
-  applyStrategy(account: Account, stock: Stock): void {
+  applyStrategy(account: Account, stock: InstantQuotes): void {
     let quote: Quote = stock.quote(this.name);
     if (quote) {
       this.investAllYourCashInOneSingleBasket(account, quote);

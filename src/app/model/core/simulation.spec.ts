@@ -1,6 +1,6 @@
 import { Simulation } from "./simulation";
 import { Account } from './account';
-import { StockData, Stock } from './stock';
+import { StockData, InstantQuotes } from './stock';
 import { NullStrategy } from './strategy';
 import { Quote } from './asset';
 
@@ -16,7 +16,7 @@ class TestStrategy extends NullStrategy {
     this.stockTimes = [];
   }
 
-  applyStrategy(account: Account, stock: Stock): void {
+  applyStrategy(account: Account, stock: InstantQuotes): void {
     this.numberOfCalls++;
     this.stockTimes.push(stock.time.valueOf());
   }
@@ -39,19 +39,19 @@ describe('Simulation', () => {
   var simulation: Simulation = new Simulation({
     account: new Account({strategy: strategy}),
     stockData: new StockData([
-      new Stock({
+      new InstantQuotes({
         time: tomorrow,
         quotes:[
           new Quote({name: "ISIN1", partValue: 1})
         ]
       }),
-      new Stock({
+      new InstantQuotes({
         time: afterTomorrow,
         quotes:[
           new Quote({name: "ISIN1", partValue: 2})
         ]
       }),
-      new Stock({
+      new InstantQuotes({
         time: today,
         quotes:[
           new Quote({name: "ISIN1", partValue: 3})

@@ -1,11 +1,11 @@
 import { Quote } from './asset';
 import { Reporter, Report, ReportedData } from './reporting';
 
-export class IStock {
+export class IInstantQuotes {
   time: Date;
   quotes?: Quote[];
 
-  constructor(obj : IStock) {
+  constructor(obj : IInstantQuotes) {
     let {
       time,
       quotes = []
@@ -31,10 +31,10 @@ export class Dividend {
   }
 }
 
-export class Stock extends IStock {
+export class InstantQuotes extends IInstantQuotes {
   private mapOfQuotes: Map<String, Quote>;
 
-  constructor(obj : IStock = {} as IStock) {
+  constructor(obj : IInstantQuotes = {} as IInstantQuotes) {
     super(obj);
     this.mapOfQuotes = new Map<String, Quote>();
     this.quotes.forEach(quote => {
@@ -43,11 +43,11 @@ export class Stock extends IStock {
   }
 
   /**
-   * Handy to make expectations, as IStock is a simpler class.
-   * @return {IStock} An instance of a simpler class.
+   * Handy to make expectations, as IInstantQuotes is a simpler class.
+   * @return {IInstantQuotes} An instance of a simpler class.
    */
-  asIStock(): IStock {
-    return new IStock({time: this.time, quotes: this.quotes});
+  asIStock(): IInstantQuotes {
+    return new IInstantQuotes({time: this.time, quotes: this.quotes});
   }
 
   add(newAssetsOfInterest: Quote[]): void {
@@ -65,7 +65,7 @@ export class Stock extends IStock {
 
   /**
    * Returns the specified quote.
-   * @param {string} name The ISIN of the asset.
+   * @param {string} name The ISIN of the quote.
    * @return {Quote} The quote,
    * or null.
    */
@@ -77,13 +77,13 @@ export class Stock extends IStock {
 }
 
 export class StockData implements Reporter {
-  private stock: Stock[] = [];
+  private stock: InstantQuotes[] = [];
 
-  constructor(newStocks:IStock[]) {
+  constructor(newStocks:IInstantQuotes[]) {
     newStocks.forEach(newStock => {
-      this.stock.push(new Stock(newStock));
+      this.stock.push(new InstantQuotes(newStock));
     });
-    this.stock.sort((a: Stock, b:Stock) => {
+    this.stock.sort((a: InstantQuotes, b:InstantQuotes) => {
       return a.time.valueOf() - b.time.valueOf();
     });
   }
@@ -94,7 +94,7 @@ export class StockData implements Reporter {
    * @param {StockData} otherStockData The other data.
    */
   merge(otherStockData: StockData):void {
-    let mergedStockData: Stock[] = [];
+    let mergedStockData: InstantQuotes[] = [];
     let otherIndex: number = 0;
     let thisIndex: number = 0;
 
@@ -103,7 +103,7 @@ export class StockData implements Reporter {
       let otherEntry = otherStockData.stock[otherIndex];
       let thisEntry = this.stock[thisIndex];
       if (thisEntry.time.valueOf() == otherEntry.time.valueOf()) {
-        let mergedEntry: Stock = new Stock(thisEntry);
+        let mergedEntry: InstantQuotes = new InstantQuotes(thisEntry);
         mergedEntry.add(otherEntry.quotes);
         mergedStockData.push(mergedEntry);
         thisIndex++;
@@ -111,13 +111,13 @@ export class StockData implements Reporter {
       }
 
       if (thisEntry.time.valueOf() < otherEntry.time.valueOf()) {
-        let mergedEntry: Stock = new Stock(thisEntry);
+        let mergedEntry: InstantQuotes = new InstantQuotes(thisEntry);
         mergedStockData.push(mergedEntry);
         thisIndex++;
       }
 
       if (thisEntry.time.valueOf() > otherEntry.time.valueOf()) {
-        let mergedEntry: Stock = new Stock(otherEntry);
+        let mergedEntry: InstantQuotes = new InstantQuotes(otherEntry);
         mergedStockData.push(mergedEntry);
         otherIndex++;
       }
@@ -125,13 +125,13 @@ export class StockData implements Reporter {
 
     while(otherIndex < otherStockData.stock.length) {
       let otherEntry = otherStockData.stock[otherIndex];
-      mergedStockData.push(new Stock(otherEntry));
+      mergedStockData.push(new InstantQuotes(otherEntry));
       otherIndex++;
     }
 
     while(thisIndex < this.stock.length) {
       let thisEntry = this.stock[thisIndex];
-      mergedStockData.push(new Stock(thisEntry));
+      mergedStockData.push(new InstantQuotes(thisEntry));
       thisIndex++;
     }
 
@@ -143,7 +143,7 @@ export class StockData implements Reporter {
    * then stock at the pior date.
    * @param {Date} time The relevant date.
    */
-  get(time: Date): Stock {
+  get(time: Date): InstantQuotes {
     let valueOf: number = time.valueOf();
     let index: number = this.stock.findIndex(stock => {
       return stock.time.valueOf() >= valueOf;
@@ -151,7 +151,7 @@ export class StockData implements Reporter {
     if (index < 0) {
       return null;
     } else {
-      let stockAtIndex: Stock = this.stock[index];
+      let stockAtIndex: InstantQuotes = this.stock[index];
       if (stockAtIndex.time.valueOf() == valueOf) {
         return stockAtIndex;
       } else {
@@ -197,13 +197,13 @@ export class StockData implements Reporter {
   /**
    * Transform this stock data into an array of simpler
    * data, that can be displayed as JSON.
-   * @return {IStock[]} The array of data.
+   * @return {IInstantQuotes[]} The array of data.
    */
-  asIStock():IStock[] {
-    let iStock: IStock[] = [];
+  asIStock():IInstantQuotes[] {
+    let iStock: IInstantQuotes[] = [];
 
     this.stock.forEach(stock => {
-      iStock.push(new IStock({
+      iStock.push(new IInstantQuotes({
         time: stock.time,
         quotes: stock.quotes
       }));
@@ -212,7 +212,7 @@ export class StockData implements Reporter {
     return iStock;
   }
 
-  forEachDate(callbackfn:(stock:Stock)=>void, start?:Date, end?: Date):void {
+  forEachDate(callbackfn:(stock:InstantQuotes)=>void, start?:Date, end?: Date):void {
     let firstIndex: number;
 
     // Look for the index of the start date:
@@ -227,7 +227,7 @@ export class StockData implements Reporter {
     // Simulating until specified end date:
     let n: number;
     for(n = firstIndex; n < this.stock.length; n++) {
-      let stock: Stock = this.stock[n];
+      let stock: InstantQuotes = this.stock[n];
       let time: Date = stock.time;
       if (end && time.valueOf() > end.valueOf()) {
         break;
@@ -241,7 +241,7 @@ export class StockData implements Reporter {
   // **                  DataProvider interface.                       **
   // ********************************************************************
 
-  private reportingStock: Stock;
+  private reportingStock: InstantQuotes;
 
   /**
    * Turns itself in as a data provider to the data processor.

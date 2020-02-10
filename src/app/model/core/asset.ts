@@ -1,10 +1,10 @@
 /**
- * An asset is a resource with economic value that an individual, corporation
+ * An quote is a resource with economic value that an individual, corporation
  * or country owns or controls with the expectation that it will provide a
  * future benefit.
  * Assets are reported on a company's balance sheet and are bought or created
  * to increase a firm's value or benefit the firm's operations.
- * See https://www.investopedia.com/terms/a/asset.asp
+ * See https://www.investopedia.com/terms/a/quote.asp
  * @class{Asset}
  */
 export class Asset {
@@ -25,7 +25,7 @@ export class Asset {
 /**
  * A quote is the last price at which a security or commodity traded, meaning
  * the most recent price to which a buyer and seller agreed and at which some
- * amount of the asset was transacted.
+ * amount of the quote was transacted.
  * See https://www.investopedia.com/terms/q/quote.asp
  * @class{Quote}
  */
@@ -70,7 +70,7 @@ export class Position extends IPosition {
   }
 
   /**
-   * Returns the net asset value based on the part value and
+   * Returns the net quote value based on the part value and
    * the number of parts.
    */
   nav():number {
@@ -79,10 +79,10 @@ export class Position extends IPosition {
 
   /**
    * Updates the part value of this position based on the
-   * provided asset.
-   * @param {Asset} asset The update.
+   * provided quote.
+   * @param {Asset} quote The update.
    */
-  update(asset: Asset): void {
-      this.partValue = asset.partValue;
+  update(quote: Asset): void {
+      this.partValue = quote.partValue;
   }
 }

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { SixConnectionService, SixConverter } from './six-connection.service';
-import { StockData, IStock } from 'src/app/model/core/stock';
+import { StockData, IInstantQuotes } from 'src/app/model/core/stock';
 import { Quote } from 'src/app/model/core/asset';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { HttpRequest } from '@angular/common/http';
@@ -47,7 +47,7 @@ describe('SixConnectionService', () => {
     httpMock = TestBed.get(HttpTestingController);
   });
 
-  it('Can return Stock Data from SIX', () => {
+  it('Can return InstantQuotes Data from SIX', () => {
       service.getQuotes("SOURCE", "NAME").subscribe((data: StockData) => {
         expect(data).toBeTruthy();
       });
@@ -70,10 +70,10 @@ describe('SixConverter', () => {
   it('Can convert responses from SIX into StockData', () => {
     let sixConverter: SixConverter = new SixConverter(sixResponse);
     let xx: StockData = sixConverter.asStockData();
-    let iStock: IStock[] = xx.asIStock();
+    let iStock: IInstantQuotes[] = xx.asIStock();
     expect(iStock).toEqual(
       jasmine.arrayWithExactContents([
-        new IStock({
+        new IInstantQuotes({
           time: new Date(2016, 7, 21),
           quotes: [
             new Quote({
@@ -84,7 +84,7 @@ describe('SixConverter', () => {
             })
           ]
         }),
-        new IStock({
+        new IInstantQuotes({
           time: new Date(2016, 7, 22),
           quotes: [
             new Quote({
@@ -95,7 +95,7 @@ describe('SixConverter', () => {
             })
           ]
         }),
-        new IStock({
+        new IInstantQuotes({
           time: new Date(2016, 7, 23),
           quotes: [
             new Quote({
@@ -106,7 +106,7 @@ describe('SixConverter', () => {
             })
           ]
         }),
-        new IStock({
+        new IInstantQuotes({
           time: new Date(2016, 7, 26),
           quotes: [
             new Quote({

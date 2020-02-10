@@ -1,6 +1,6 @@
 import { BuyAndHoldStrategy } from './strategy.buy-and-hold';
 import { Account } from './core/account';
-import { Stock } from './core/stock';
+import { InstantQuotes } from './core/stock';
 import { Quote, Position } from './core/asset';
 import { RegularTransfer, RegularPeriod } from './core/transfer';
 
@@ -21,7 +21,7 @@ describe('BuyAndHoldStrategy', () => {
       cash:1000
     });
 
-    let stock: Stock = new Stock({
+    let stock: InstantQuotes = new InstantQuotes({
       time: new Date(2010, 10, 10),
       quotes: [
         new Quote({
@@ -37,7 +37,7 @@ describe('BuyAndHoldStrategy', () => {
     expect(account.nav()).toBe(1000);
   });
 
-  it('Can reinvest dividends in the asset', () => {
+  it('Can reinvest dividends in the quote', () => {
     let buyAndHoldStrategy: BuyAndHoldStrategy = new BuyAndHoldStrategy({
       name: "ISIN1"
     });
@@ -48,7 +48,7 @@ describe('BuyAndHoldStrategy', () => {
       positions: [new Position({name: "ISIN1", parts: 1000})]
     });
 
-    let stock: Stock = new Stock({
+    let stock: InstantQuotes = new InstantQuotes({
       time: new Date(2010, 10, 10),
       quotes: [
         new Quote({
@@ -89,7 +89,7 @@ describe('BuyAndHoldStrategy', () => {
         })
       ]
     });
-    let stock: Stock = new Stock({
+    let stock: InstantQuotes = new InstantQuotes({
       time: new Date(2010, 1, 1),
       quotes: [
         new Quote({

@@ -6,7 +6,7 @@ import { DateYieldConnectionService } from './date-yield-connection.service';
 import { StockService } from './stock.service';
 import { ConnectionService } from './connection.service';
 import { Observable } from 'rxjs';
-import { StockData, Dividend, Stock } from 'src/app/model/core/stock';
+import { StockData, Dividend, InstantQuotes } from 'src/app/model/core/stock';
 import { QuoteSourceAndProvider, SecuritiesConfigurationService } from './securities-configuration.service';
 import { Quote } from 'src/app/model/core/asset';
 
@@ -95,7 +95,7 @@ describe('StockService', () => {
     });
 
     let stockData: StockData = new StockData([
-      new Stock({time: beforeYesterday, quotes: [
+      new InstantQuotes({time: beforeYesterday, quotes: [
         new Quote({name: "ISIN3", partValue: 1.3})
       ]})]);
     yahoo.whenQuotes("ISIN3", stockData);

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { YahooConnectionService, YahooConverter } from './yahoo-connection.service';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
-import { StockData, IStock } from 'src/app/model/core/stock';
+import { StockData, IInstantQuotes } from 'src/app/model/core/stock';
 import { HttpRequest } from '@angular/common/http';
 import { Quote } from 'src/app/model/core/asset';
 
@@ -27,7 +27,7 @@ describe('YahooConnectionService', () => {
     httpMock = TestBed.get(HttpTestingController);
   });
 
-  it('Can return Stock Data from Yahoo', () => {
+  it('Can return InstantQuotes Data from Yahoo', () => {
       service.getQuotes("SOURCE", "NAME").subscribe((data: StockData) => {
         expect(data).toBeTruthy();
       });
@@ -48,10 +48,10 @@ describe('YahooConverter', () => {
   it('Can convert responses from Yahoo into StockData', () => {
     let yahooConverter: YahooConverter = new YahooConverter("ISIN1", yahooResponse);
     let xx: StockData = yahooConverter.asStockData();
-    let iStock: IStock[] = xx.asIStock();
+    let iStock: IInstantQuotes[] = xx.asIStock();
     expect(iStock).toEqual(
       jasmine.arrayWithExactContents([
-        new IStock({
+        new IInstantQuotes({
           time: new Date(1993, 1, 15),
           quotes: [
             new Quote({
@@ -60,7 +60,7 @@ describe('YahooConverter', () => {
               spread: 0,
               dividend: 0
             })]}),
-        new IStock({
+        new IInstantQuotes({
           time: new Date(1993, 2, 19),
           quotes: [
             new Quote({
@@ -69,7 +69,7 @@ describe('YahooConverter', () => {
               spread: 0,
               dividend: 0
             })]}),
-        new IStock({
+        new IInstantQuotes({
           time: new Date(1993, 3, 6),
           quotes: [
             new Quote({
@@ -78,7 +78,7 @@ describe('YahooConverter', () => {
               spread: 0,
               dividend: 0
             })]}),
-        new IStock({
+        new IInstantQuotes({
           time: new Date(1993, 3, 20),
           quotes: [
             new Quote({
