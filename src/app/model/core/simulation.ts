@@ -1,4 +1,4 @@
-import { HistoricalQuotes } from './stock';
+import { HistoricalQuotes } from './quotes';
 import { Account } from './account';
 import { Report, NullReport } from './reporting';
 

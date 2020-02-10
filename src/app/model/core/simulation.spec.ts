@@ -1,6 +1,6 @@
 import { Simulation } from "./simulation";
 import { Account } from './account';
-import { HistoricalQuotes, InstantQuotes } from './stock';
+import { HistoricalQuotes, InstantQuotes } from './quotes';
 import { NullStrategy } from './strategy';
 import { Quote } from './asset';
 

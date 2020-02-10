@@ -6,7 +6,7 @@ import { DateYieldConnectionService } from './date-yield-connection.service';
 import { StockService } from './stock.service';
 import { ConnectionService } from './connection.service';
 import { Observable } from 'rxjs';
-import { HistoricalQuotes, Dividend, InstantQuotes } from 'src/app/model/core/stock';
+import { HistoricalQuotes, Dividend, InstantQuotes } from 'src/app/model/core/quotes';
 import { QuoteSourceAndProvider, SecuritiesConfigurationService } from './securities-configuration.service';
 import { Quote } from 'src/app/model/core/asset';
 

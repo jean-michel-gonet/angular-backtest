@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
-import { Dividend } from 'src/app/model/core/stock';
+import { Dividend } from 'src/app/model/core/quotes';
 import { HttpRequest } from '@angular/common/http';
 import { DateYieldConnectionService, DateYieldConverter } from './date-yield-connection.service';
 

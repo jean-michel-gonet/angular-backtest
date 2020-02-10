@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { HistoricalQuotes, Dividend } from 'src/app/model/core/stock';
+import { HistoricalQuotes, Dividend } from 'src/app/model/core/quotes';
 import { map } from 'rxjs/operators';
 import { ConnectionService } from './connection.service';
 

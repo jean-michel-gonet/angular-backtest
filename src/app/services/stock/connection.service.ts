@@ -1,4 +1,4 @@
-import { HistoricalQuotes, Dividend } from 'src/app/model/core/stock';
+import { HistoricalQuotes, Dividend } from 'src/app/model/core/quotes';
 import { Observable } from 'rxjs';
 
 /**

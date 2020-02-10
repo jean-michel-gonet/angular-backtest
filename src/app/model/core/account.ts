@@ -1,5 +1,5 @@
 import {Position, Quote} from './asset';
-import { InstantQuotes } from './stock';
+import { InstantQuotes } from './quotes';
 import { Strategy, NullStrategy } from './strategy';
 import { Reporter, Report, ReportedData } from './reporting';
 

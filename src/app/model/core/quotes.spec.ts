@@ -1,4 +1,4 @@
-import { InstantQuotes, HistoricalQuotes, Dividend } from './stock';
+import { InstantQuotes, HistoricalQuotes, Dividend } from './quotes';
 import { Quote } from './asset';
 
 describe('InstantQuotes', () => {

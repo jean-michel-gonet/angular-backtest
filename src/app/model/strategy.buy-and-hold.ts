@@ -1,5 +1,5 @@
 import { Strategy } from './core/strategy';
-import { InstantQuotes } from './core/stock';
+import { InstantQuotes } from './core/quotes';
 import { Account } from './core/account';
 import { Quote } from './core/asset';
 import { RegularTransfer } from './core/transfer';

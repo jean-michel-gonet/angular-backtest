@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { YahooConnectionService, YahooConverter } from './yahoo-connection.service';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
-import { HistoricalQuotes, IInstantQuotes } from 'src/app/model/core/stock';
+import { HistoricalQuotes, IInstantQuotes } from 'src/app/model/core/quotes';
 import { HttpRequest } from '@angular/common/http';
 import { Quote } from 'src/app/model/core/asset';
 

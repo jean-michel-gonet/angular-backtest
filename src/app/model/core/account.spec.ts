@@ -1,6 +1,6 @@
 import { Account } from './account';
 import { NullStrategy } from './strategy';
-import { InstantQuotes } from './stock';
+import { InstantQuotes } from './quotes';
 import { Position, Quote } from './asset';
 
 class MockStrategy extends NullStrategy {

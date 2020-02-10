@@ -1,6 +1,6 @@
 import { BuyAndHoldStrategy } from './strategy.buy-and-hold';
 import { Account } from './core/account';
-import { InstantQuotes } from './core/stock';
+import { InstantQuotes } from './core/quotes';
 import { Quote, Position } from './core/asset';
 import { RegularTransfer, RegularPeriod } from './core/transfer';
 

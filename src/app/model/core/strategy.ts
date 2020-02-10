@@ -1,4 +1,4 @@
-import { InstantQuotes } from './stock';
+import { InstantQuotes } from './quotes';
 import { Account } from './account';
 import { Reporter, Report } from './reporting';
 

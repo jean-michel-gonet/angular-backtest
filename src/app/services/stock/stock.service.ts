@@ -3,7 +3,7 @@ import { Observable, forkJoin } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { SixConnectionService } from './six-connection.service';
 import { YahooConnectionService } from './yahoo-connection.service';
-import { HistoricalQuotes, Dividend } from 'src/app/model/core/stock';
+import { HistoricalQuotes, Dividend } from 'src/app/model/core/quotes';
 import { SecuritiesConfigurationService, QuoteSourceAndProvider, SourceAndProvider } from './securities-configuration.service';
 import { DateYieldConnectionService } from './date-yield-connection.service';
 
