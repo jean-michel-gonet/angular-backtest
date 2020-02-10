@@ -7,7 +7,7 @@ import { QuotesService } from './quotes.service';
 import { IQuotesService } from './quotes.service.interface';
 import { Observable } from 'rxjs';
 import { HistoricalQuotes, Dividend, InstantQuotes } from 'src/app/model/core/quotes';
-import { QuoteSourceAndProvider, QuotesConfigurationService } from './securities-configuration.service';
+import { QuoteSourceAndProvider, QuotesConfigurationService } from './quotes-configuration.service';
 import { Quote } from 'src/app/model/core/asset';
 
 class ConnectionServiceMock implements IQuotesService {

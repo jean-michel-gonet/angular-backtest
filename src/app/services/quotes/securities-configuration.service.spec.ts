@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { QuotesConfigurationService } from './securities-configuration.service';
+import { QuotesConfigurationService } from './quotes-configuration.service';
 
 describe('QuotesConfigurationService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
