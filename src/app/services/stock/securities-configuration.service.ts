@@ -13,7 +13,7 @@ export class QuoteSourceAndProvider extends SourceAndProvider {
 /**
 * Imports the configuration file where all securities data are registered.
 */
-import securityDescriptors from '../../../assets/securities/securities-configuration.json';
+import securityDescriptors from '../../../assets/quotes/configuration.json';
 
 
 
