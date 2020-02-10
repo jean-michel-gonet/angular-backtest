@@ -31,12 +31,12 @@ export class BuyAndHoldStrategy implements Strategy {
   /**
    * Applies the Buy And Hold strategy.
    */
-  applyStrategy(account: Account, stock: InstantQuotes): void {
-    let quote: Quote = stock.quote(this.name);
+  applyStrategy(account: Account, instantQuotes: InstantQuotes): void {
+    let quote: Quote = instantQuotes.quote(this.name);
     if (quote) {
       this.investAllYourCashInOneSingleBasket(account, quote);
 
-      let amountToTransfer = this.transfer.amount(stock.instant);
+      let amountToTransfer = this.transfer.amount(instantQuotes.instant);
       if (amountToTransfer > 0) {
         this.performTransfer(account, quote, amountToTransfer);
       }

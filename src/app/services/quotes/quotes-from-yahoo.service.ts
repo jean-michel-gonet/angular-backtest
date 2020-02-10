@@ -39,7 +39,7 @@ export class YahooConverter {
 
         let partValue: number = this.convertToNumber(close);
         if (partValue) {
-          let stock: InstantQuotes = new InstantQuotes({
+          let instantQuotes: InstantQuotes = new InstantQuotes({
             instant: this.convertToDate(date),
             quotes: [
               new Quote({
@@ -49,7 +49,7 @@ export class YahooConverter {
                 dividend: 0})
             ]
           });
-          historicalQuotes.push(stock);
+          historicalQuotes.push(instantQuotes);
         }
       }
     });

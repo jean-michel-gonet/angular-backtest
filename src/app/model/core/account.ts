@@ -60,14 +60,14 @@ export class Account extends IAccount implements Reporter {
   }
 
   /**
-   * Receives the stock updates and propagates them to the positions
+   * Receives the instantQuotes updates and propagates them to the positions
    * and to the strategy.
-   * @param{InstantQuotes} stock The stock update.
+   * @param{InstantQuotes} instantQuotes The instantQuotes update.
    */
-  process(stock: InstantQuotes): void {
+  process(instantQuotes: InstantQuotes): void {
 
     // Update the positions:
-    stock.quotes.forEach(quote => {
+    instantQuotes.quotes.forEach(quote => {
       let position: Position = this.positions.find(p => {
         return p.name == quote.name;
       });
@@ -78,7 +78,7 @@ export class Account extends IAccount implements Reporter {
     });
 
     // Call the strategy:
-    this.strategy.applyStrategy(this, stock);
+    this.strategy.applyStrategy(this, instantQuotes);
   }
 
   /**

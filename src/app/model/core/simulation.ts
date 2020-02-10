@@ -20,7 +20,7 @@ class ISimulation {
 }
 
 /**
- * A class performing a back test simulation based on stock data,
+ * A class performing a back test simulation based on instantQuotes data,
  * over the specified account.
  */
 export class Simulation extends ISimulation {
@@ -37,9 +37,9 @@ export class Simulation extends ISimulation {
     this.account.doRegister(this.report);
     this.historicalQuotes.doRegister(this.report);
 
-    this.historicalQuotes.forEachDate(stock => {
-      this.report.startReportingCycle(stock.instant);
-      this.account.process(stock);
+    this.historicalQuotes.forEachDate(instantQuotes => {
+      this.report.startReportingCycle(instantQuotes.instant);
+      this.account.process(instantQuotes);
       this.report.collectReports();
     }, start, end);
   }

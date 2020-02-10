@@ -8,12 +8,12 @@ import { Reporter, Report } from './reporting';
  */
 export interface Strategy extends Reporter {
   /**
-   * Receives regular stock updates, and executes trading operations
+   * Receives regular instantQuotes updates, and executes trading operations
    * against an existing account.
    * @param {Account} account The account to execute the orders.
-   * @param {InstantQuotes} stock The stock updates, to take useful decisions.
+   * @param {InstantQuotes} instantQuotes The instantQuotes updates, to take useful decisions.
    */
-  applyStrategy(account: Account, stock: InstantQuotes): void;
+  applyStrategy(account: Account, instantQuotes: InstantQuotes): void;
 }
 
 /**
@@ -22,7 +22,7 @@ export interface Strategy extends Reporter {
  * @class{NullStrategy}
  */
 export class NullStrategy implements Strategy {
-  applyStrategy(account: Account, stock: InstantQuotes): void {
+  applyStrategy(account: Account, instantQuotes: InstantQuotes): void {
     // Let's do nothing.
   }
   doRegister(report: Report): void {

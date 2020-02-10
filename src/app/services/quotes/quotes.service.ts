@@ -8,8 +8,8 @@ import { QuotesConfigurationService, QuoteSourceAndProvider, SourceAndProvider }
 import { QuotesFromSimpleCsvService } from './quotes-from-simple-csv.service';
 
 /**
- * Retrieves stock data from a provider, and then broadcasts the
- * stock updates to all subscribers.
+ * Retrieves instantQuotes data from a provider, and then broadcasts the
+ * instantQuotes updates to all subscribers.
  * @class{QuotesService}
  */
  @Injectable({

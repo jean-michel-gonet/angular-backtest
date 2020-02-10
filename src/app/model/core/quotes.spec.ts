@@ -12,14 +12,14 @@ describe('InstantQuotes', () => {
   });
 
   it('Can obtain one quote', () => {
-    let stock: InstantQuotes = new InstantQuotes({
+    let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(),
       quotes: [
           new Quote({name: "ISIN1", partValue: 1.1}),
           new Quote({name: "ISIN2", partValue: 1.2}),
           new Quote({name: "ISIN3", partValue: 1.3})
     ]});
-    let quote: Quote = stock.quote("ISIN1");
+    let quote: Quote = instantQuotes.quote("ISIN1");
     expect(quote).toEqual(new Quote({
       name: "ISIN1",
       partValue: 1.1
@@ -27,7 +27,7 @@ describe('InstantQuotes', () => {
   });
 
   it('Can add more assets of interest', () =>{
-    let stock: InstantQuotes = new InstantQuotes({
+    let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(),
       quotes: [
           new Quote({name: "ISIN1", partValue: 1.1}),
@@ -35,24 +35,24 @@ describe('InstantQuotes', () => {
           new Quote({name: "ISIN3", partValue: 1.3})
     ]});
 
-    stock.add([
+    instantQuotes.add([
       new Quote({name: "ISIN2", partValue: 2.2}),
       new Quote({name: "ISIN3", partValue: 2.3}),
       new Quote({name: "ISIN4", partValue: 2.4})
     ]);
 
-    expect(stock.quotes).toEqual(jasmine.arrayWithExactContents([
+    expect(instantQuotes.quotes).toEqual(jasmine.arrayWithExactContents([
       new Quote({name: "ISIN1", partValue: 1.1}),
       new Quote({name: "ISIN2", partValue: 2.2}),
       new Quote({name: "ISIN3", partValue: 2.3}),
       new Quote({name: "ISIN4", partValue: 2.4})
     ]));
 
-    stock.add([
+    instantQuotes.add([
       new Quote({name: "ISIN1", partValue: 3.1})
     ]);
 
-    expect(stock.quotes).toEqual(jasmine.arrayWithExactContents([
+    expect(instantQuotes.quotes).toEqual(jasmine.arrayWithExactContents([
       new Quote({name: "ISIN1", partValue: 3.1}),
       new Quote({name: "ISIN2", partValue: 2.2}),
       new Quote({name: "ISIN3", partValue: 2.3}),
@@ -81,7 +81,7 @@ describe('HistoricalQuotes', () => {
       ])).toBeTruthy();
   });
 
-  it('Can return the stock of the required day', () => {
+  it('Can return the instantQuotes of the required day', () => {
 
     let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
@@ -343,11 +343,11 @@ describe('HistoricalQuotes', () => {
 
     let numberOfCalls: number = 0;
     let instant: Date = beforeYesterday;
-    historicalQuotes.forEachDate((stock: InstantQuotes) => {
+    historicalQuotes.forEachDate((instantQuotes: InstantQuotes) => {
       numberOfCalls++;
-      expect(stock.quotes.length).toBe(2);
-      expect(stock.instant.valueOf()).toBeGreaterThanOrEqual(instant.valueOf());
-      instant = stock.instant;
+      expect(instantQuotes.quotes.length).toBe(2);
+      expect(instantQuotes.instant.valueOf()).toBeGreaterThanOrEqual(instant.valueOf());
+      instant = instantQuotes.instant;
     });
     expect(numberOfCalls).toBe(3);
   });

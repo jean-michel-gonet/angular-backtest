@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
  */
 export interface IQuotesService {
   /**
-   * To retrieve the stock data of the specified instrument.
+   * To retrieve the instantQuotes data of the specified instrument.
    * @param {string} name The name of the instrument. This is necessary
    * as often the files do not contain the name of the instrument.
    * @param {string} source Where to find the file with data.

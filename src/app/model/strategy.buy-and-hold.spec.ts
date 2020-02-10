@@ -21,7 +21,7 @@ describe('BuyAndHoldStrategy', () => {
       cash:1000
     });
 
-    let stock: InstantQuotes = new InstantQuotes({
+    let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(2010, 10, 10),
       quotes: [
         new Quote({
@@ -30,7 +30,7 @@ describe('BuyAndHoldStrategy', () => {
       ]
     });
 
-    account.process(stock);
+    account.process(instantQuotes);
 
     expect(account.cash).toBe(0);
     expect(account.position("ISIN1").parts).toBe(100);
@@ -48,7 +48,7 @@ describe('BuyAndHoldStrategy', () => {
       positions: [new Position({name: "ISIN1", parts: 1000})]
     });
 
-    let stock: InstantQuotes = new InstantQuotes({
+    let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(2010, 10, 10),
       quotes: [
         new Quote({
@@ -58,7 +58,7 @@ describe('BuyAndHoldStrategy', () => {
         })
       ]
     });
-    account.process(stock);
+    account.process(instantQuotes);
 
     expect(account.cash).toBe(0);
     expect(account.position("ISIN1").parts).toBe(1050);
@@ -89,7 +89,7 @@ describe('BuyAndHoldStrategy', () => {
         })
       ]
     });
-    let stock: InstantQuotes = new InstantQuotes({
+    let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(2010, 1, 1),
       quotes: [
         new Quote({
@@ -98,7 +98,7 @@ describe('BuyAndHoldStrategy', () => {
       ]
     });
 
-    account.process(stock);
+    account.process(instantQuotes);
 
     expect(account.nav()).toBe(100 * 5 - monthlyOutput);
     expect(account.position("ISIN1").parts).toBe(100 - 2);

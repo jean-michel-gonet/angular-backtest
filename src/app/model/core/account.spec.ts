@@ -6,7 +6,7 @@ import { Position, Quote } from './asset';
 class MockStrategy extends NullStrategy {
   gotCalled: boolean = false;
 
-  applyStrategy(account: Account, stock: InstantQuotes): void {
+  applyStrategy(account: Account, instantQuotes: InstantQuotes): void {
     this.gotCalled = true;
   }
 }
@@ -32,9 +32,9 @@ describe('Account', () => {
     expect(account.nav()).toBe(1000 + 3 * 100 + 4 * 10);
   });
 
-  it('Can process stock updates and call the strategy', () => {
+  it('Can process instantQuotes updates and call the strategy', () => {
     let strategy: MockStrategy = new MockStrategy();
-    let stock: InstantQuotes = new InstantQuotes({
+    let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(),
       quotes: [
         new Quote({name: "XX", partValue: 110}),
@@ -57,14 +57,14 @@ describe('Account', () => {
         })
       ]
     });
-    account.process(stock);
+    account.process(instantQuotes);
     expect(strategy.gotCalled).toBeTruthy();
     expect(account.nav()).toBe(1000 + 3 * 110 + 4 * 11);
   });
 
   it('Can cash the dividends coming from the positions', () => {
     let strategy: MockStrategy = new MockStrategy();
-    let stock: InstantQuotes = new InstantQuotes({
+    let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(),
       quotes: [
         new Quote({name: "YY", partValue: 11, dividend: 10})
@@ -81,7 +81,7 @@ describe('Account', () => {
         })
       ]
     });
-    account.process(stock);
+    account.process(instantQuotes);
     expect(account.cash).toBe(1004.4);
     expect(account.nav()).toBe(1004.4 + 4 * 11);
   });

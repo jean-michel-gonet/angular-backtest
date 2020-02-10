@@ -77,20 +77,20 @@ export class InstantQuotes extends IInstantQuotes {
 }
 
 export class HistoricalQuotes implements Reporter {
-  private stock: InstantQuotes[] = [];
+  private instantQuotes: InstantQuotes[] = [];
 
-  constructor(newStocks:IInstantQuotes[]) {
-    newStocks.forEach(newStock => {
-      this.stock.push(new InstantQuotes(newStock));
+  constructor(instantQuotesArray:IInstantQuotes[]) {
+    instantQuotesArray.forEach(instantQuotes => {
+      this.instantQuotes.push(new InstantQuotes(instantQuotes));
     });
-    this.stock.sort((a: InstantQuotes, b:InstantQuotes) => {
+    this.instantQuotes.sort((a: InstantQuotes, b:InstantQuotes) => {
       return a.instant.valueOf() - b.instant.valueOf();
     });
   }
 
   /**
-   * Merge this stock data with another.
-   * This stock data gets modified.
+   * Merge this instantQuotes data with another.
+   * This instantQuotes data gets modified.
    * @param {HistoricalQuotes} otherHistoricalQuotes The other data.
    */
   merge(otherHistoricalQuotes: HistoricalQuotes):void {
@@ -99,9 +99,9 @@ export class HistoricalQuotes implements Reporter {
     let thisIndex: number = 0;
 
 
-    while(otherIndex < otherHistoricalQuotes.stock.length && thisIndex < this.stock.length) {
-      let otherEntry = otherHistoricalQuotes.stock[otherIndex];
-      let thisEntry = this.stock[thisIndex];
+    while(otherIndex < otherHistoricalQuotes.instantQuotes.length && thisIndex < this.instantQuotes.length) {
+      let otherEntry = otherHistoricalQuotes.instantQuotes[otherIndex];
+      let thisEntry = this.instantQuotes[thisIndex];
       if (thisEntry.instant.valueOf() == otherEntry.instant.valueOf()) {
         let mergedEntry: InstantQuotes = new InstantQuotes(thisEntry);
         mergedEntry.add(otherEntry.quotes);
@@ -123,42 +123,42 @@ export class HistoricalQuotes implements Reporter {
       }
     }
 
-    while(otherIndex < otherHistoricalQuotes.stock.length) {
-      let otherEntry = otherHistoricalQuotes.stock[otherIndex];
+    while(otherIndex < otherHistoricalQuotes.instantQuotes.length) {
+      let otherEntry = otherHistoricalQuotes.instantQuotes[otherIndex];
       mergedHistoricalQuotes.push(new InstantQuotes(otherEntry));
       otherIndex++;
     }
 
-    while(thisIndex < this.stock.length) {
-      let thisEntry = this.stock[thisIndex];
+    while(thisIndex < this.instantQuotes.length) {
+      let thisEntry = this.instantQuotes[thisIndex];
       mergedHistoricalQuotes.push(new InstantQuotes(thisEntry));
       thisIndex++;
     }
 
-    this.stock = mergedHistoricalQuotes;
+    this.instantQuotes = mergedHistoricalQuotes;
   }
 
   /**
-   * Returns the stock at the specified date or, if date is not found,
-   * then stock at the pior date.
+   * Returns the instantQuotes at the specified date or, if date is not found,
+   * then instantQuotes at the pior date.
    * @param {Date} instant The relevant date.
    */
   get(instant: Date): InstantQuotes {
     let valueOf: number = instant.valueOf();
-    let index: number = this.stock.findIndex(stock => {
-      return stock.instant.valueOf() >= valueOf;
+    let index: number = this.instantQuotes.findIndex(instantQuotes => {
+      return instantQuotes.instant.valueOf() >= valueOf;
     });
     if (index < 0) {
       return null;
     } else {
-      let stockAtIndex: InstantQuotes = this.stock[index];
-      if (stockAtIndex.instant.valueOf() == valueOf) {
-        return stockAtIndex;
+      let instantQuotesAtIndex: InstantQuotes = this.instantQuotes[index];
+      if (instantQuotesAtIndex.instant.valueOf() == valueOf) {
+        return instantQuotesAtIndex;
       } else {
         if (index == 0) {
           return null;
         } else {
-          return this.stock[index - 1];
+          return this.instantQuotes[index - 1];
         }
       }
     }
@@ -168,10 +168,10 @@ export class HistoricalQuotes implements Reporter {
     let thisIndex: number = 0;
     let dividendIndex: number = 0;
 
-    let previousEntry = this.stock[thisIndex];
-    while(dividendIndex < dividends.length && thisIndex < this.stock.length) {
+    let previousEntry = this.instantQuotes[thisIndex];
+    while(dividendIndex < dividends.length && thisIndex < this.instantQuotes.length) {
       let dividendEntry = dividends[dividendIndex];
-      let thisEntry = this.stock[thisIndex];
+      let thisEntry = this.instantQuotes[thisIndex];
 
       if (thisEntry.instant.valueOf() < dividendEntry.instant.valueOf()) {
         thisIndex++;
@@ -195,30 +195,30 @@ export class HistoricalQuotes implements Reporter {
   }
 
   /**
-   * Transform this stock data into an array of simpler
+   * Transform this instantQuotes data into an array of simpler
    * data, that can be displayed as JSON.
    * @return {IInstantQuotes[]} The array of data.
    */
   asIStock():IInstantQuotes[] {
     let iStock: IInstantQuotes[] = [];
 
-    this.stock.forEach(stock => {
+    this.instantQuotes.forEach(instantQuotes => {
       iStock.push(new IInstantQuotes({
-        instant: stock.instant,
-        quotes: stock.quotes
+        instant: instantQuotes.instant,
+        quotes: instantQuotes.quotes
       }));
     });
 
     return iStock;
   }
 
-  forEachDate(callbackfn:(stock:InstantQuotes)=>void, start?:Date, end?: Date):void {
+  forEachDate(callbackfn:(instantQuotes:InstantQuotes)=>void, start?:Date, end?: Date):void {
     let firstIndex: number;
 
     // Look for the index of the start date:
     if (start) {
-      firstIndex = this.stock.findIndex(stock => {
-        return stock.instant.valueOf() >= start.valueOf();
+      firstIndex = this.instantQuotes.findIndex(instantQuotes => {
+        return instantQuotes.instant.valueOf() >= start.valueOf();
       });
     } else {
       firstIndex = 0;
@@ -226,14 +226,14 @@ export class HistoricalQuotes implements Reporter {
 
     // Simulating until specified end date:
     let n: number;
-    for(n = firstIndex; n < this.stock.length; n++) {
-      let stock: InstantQuotes = this.stock[n];
-      let instant: Date = stock.instant;
+    for(n = firstIndex; n < this.instantQuotes.length; n++) {
+      let instantQuotes: InstantQuotes = this.instantQuotes[n];
+      let instant: Date = instantQuotes.instant;
       if (end && instant.valueOf() > end.valueOf()) {
         break;
       }
-      this.reportingStock = stock;
-      callbackfn(stock);
+      this.reportingStock = instantQuotes;
+      callbackfn(instantQuotes);
     }
   }
 

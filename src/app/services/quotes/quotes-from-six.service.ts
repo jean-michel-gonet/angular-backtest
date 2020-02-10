@@ -36,7 +36,7 @@ export class SixConverter {
         let date:Date = this.convertToDate(dates[i]);
         let partValue = close[i];
 
-        let stock: InstantQuotes = new InstantQuotes({
+        let instantQuotes: InstantQuotes = new InstantQuotes({
           instant: date,
           quotes: [
             new Quote({
@@ -46,7 +46,7 @@ export class SixConverter {
               dividend: 0})
           ]
         });
-        historicalQuotes.push(stock);
+        historicalQuotes.push(instantQuotes);
       }
     });
     return new HistoricalQuotes(historicalQuotes);

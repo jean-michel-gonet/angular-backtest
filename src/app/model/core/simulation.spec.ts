@@ -9,16 +9,16 @@ import { Quote } from './asset';
  */
 class TestStrategy extends NullStrategy {
   numberOfCalls: number = 0;
-  stockTimes: number[] = [];
+  instants: number[] = [];
 
   clear():void  {
     this.numberOfCalls = 0;
-    this.stockTimes = [];
+    this.instants = [];
   }
 
-  applyStrategy(account: Account, stock: InstantQuotes): void {
+  applyStrategy(account: Account, instantQuotes: InstantQuotes): void {
     this.numberOfCalls++;
-    this.stockTimes.push(stock.instant.valueOf());
+    this.instants.push(instantQuotes.instant.valueOf());
   }
 }
 
@@ -60,7 +60,7 @@ describe('Simulation', () => {
     ])
   });
 
-  it('Can run a simulation over the provided stock data', () => {
+  it('Can run a simulation over the provided instantQuotes data', () => {
     strategy.clear();
     simulation.run();
 
@@ -68,7 +68,7 @@ describe('Simulation', () => {
     expect(strategy.numberOfCalls).toBe(3);
 
     // Expect the strategy to have received the dates in the proper order:
-    expect(strategy.stockTimes).toEqual([
+    expect(strategy.instants).toEqual([
       today.valueOf(),
       tomorrow.valueOf(),
       afterTomorrow.valueOf()]);
