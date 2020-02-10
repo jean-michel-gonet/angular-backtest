@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { Dividend } from 'src/app/model/core/quotes';
 import { HttpRequest } from '@angular/common/http';
-import { QuotesFromSimpleCsvService, DateYieldConverter } from './date-yield-connection.service';
+import { QuotesFromSimpleCsvService, DateYieldConverter } from './quotes-from-simple-csv.service';
 
 
 var dateYieldResponse = "Date,Yield\r\n" +

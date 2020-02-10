@@ -3,9 +3,9 @@ import { Observable, forkJoin } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { QuotesFromSixService } from './quotes-from-six.service';
 import { QuotesFromYahooService } from './quotes-from-yahoo.service';
-import { HistoricalQuotes, Dividend } from 'src/app/model/core/quotes';
+import { QuotesFromSimpleCsvService } from './quotes-from-simple-csv.service';
 import { QuotesConfigurationService, QuoteSourceAndProvider, SourceAndProvider } from './securities-configuration.service';
-import { QuotesFromSimpleCsvService } from './date-yield-connection.service';
+import { HistoricalQuotes, Dividend } from 'src/app/model/core/quotes';
 
 /**
  * Retrieves stock data from a provider, and then broadcasts the

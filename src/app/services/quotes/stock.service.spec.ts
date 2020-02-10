@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { QuotesFromSixService } from './quotes-from-six.service';
 import { QuotesFromYahooService } from './quotes-from-yahoo.service';
-import { QuotesFromSimpleCsvService } from './date-yield-connection.service';
+import { QuotesFromSimpleCsvService } from './quotes-from-simple-csv.service';
 import { QuotesService } from './stock.service';
 import { IQuotesService } from './quotes.service.interface';
 import { Observable } from 'rxjs';
