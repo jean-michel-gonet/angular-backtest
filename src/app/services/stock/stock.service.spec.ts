@@ -6,24 +6,24 @@ import { DateYieldConnectionService } from './date-yield-connection.service';
 import { StockService } from './stock.service';
 import { ConnectionService } from './connection.service';
 import { Observable } from 'rxjs';
-import { StockData, Dividend, InstantQuotes } from 'src/app/model/core/stock';
+import { HistoricalQuotes, Dividend, InstantQuotes } from 'src/app/model/core/stock';
 import { QuoteSourceAndProvider, SecuritiesConfigurationService } from './securities-configuration.service';
 import { Quote } from 'src/app/model/core/asset';
 
 class ConnectionServiceMock implements ConnectionService {
-  private stockData: Map<string, StockData> = new Map<string, StockData>();
+  private stockData: Map<string, HistoricalQuotes> = new Map<string, HistoricalQuotes>();
   private dividends: Map<string, Dividend[]> = new Map<string, Dividend[]>();
 
-  whenQuotes(name: string, answer: StockData): void {
+  whenQuotes(name: string, answer: HistoricalQuotes): void {
     this.stockData.set(name, answer);
   }
   whenDividends(name: string, answer: Dividend[]): void {
     this.dividends.set(name, answer);
   }
 
-  getQuotes(source: string, name: string): Observable<StockData> {
-    let stockData: StockData = this.stockData.get(name);
-    return new Observable<StockData>(observer => {
+  getQuotes(source: string, name: string): Observable<HistoricalQuotes> {
+    let stockData: HistoricalQuotes = this.stockData.get(name);
+    return new Observable<HistoricalQuotes>(observer => {
       observer.next(stockData);
       observer.complete();
     });
@@ -94,7 +94,7 @@ describe('StockService', () => {
       }
     });
 
-    let stockData: StockData = new StockData([
+    let stockData: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN3", partValue: 1.3})
       ]})]);
@@ -106,7 +106,7 @@ describe('StockService', () => {
 
     dateYield.whenDividends("ISIN3", dividends);
 
-    stockService.getStockData(["ISIN3"]).subscribe(data => {
+    stockService.getHistoricalQuotes(["ISIN3"]).subscribe(data => {
       expect(data.get(beforeYesterday).quote("ISIN3").partValue).toBe(1.3);
       expect(data.get(beforeYesterday).quote("ISIN3").dividend).toBe(1.5);
       done();

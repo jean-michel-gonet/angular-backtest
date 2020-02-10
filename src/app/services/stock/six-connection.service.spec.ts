@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { SixConnectionService, SixConverter } from './six-connection.service';
-import { StockData, IInstantQuotes } from 'src/app/model/core/stock';
+import { HistoricalQuotes, IInstantQuotes } from 'src/app/model/core/stock';
 import { Quote } from 'src/app/model/core/asset';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { HttpRequest } from '@angular/common/http';
@@ -48,7 +48,7 @@ describe('SixConnectionService', () => {
   });
 
   it('Can return InstantQuotes Data from SIX', () => {
-      service.getQuotes("SOURCE", "NAME").subscribe((data: StockData) => {
+      service.getQuotes("SOURCE", "NAME").subscribe((data: HistoricalQuotes) => {
         expect(data).toBeTruthy();
       });
 
@@ -67,9 +67,9 @@ describe('SixConnectionService', () => {
 
 describe('SixConverter', () => {
 
-  it('Can convert responses from SIX into StockData', () => {
+  it('Can convert responses from SIX into HistoricalQuotes', () => {
     let sixConverter: SixConverter = new SixConverter(sixResponse);
-    let xx: StockData = sixConverter.asStockData();
+    let xx: HistoricalQuotes = sixConverter.asHistoricalQuotes();
     let iStock: IInstantQuotes[] = xx.asIStock();
     expect(iStock).toEqual(
       jasmine.arrayWithExactContents([

@@ -36,7 +36,7 @@ export class DisplayComponent implements OnInit {
     ]);
 
     // Fetch the data:
-    this.stockService.getStockData(['SP500']).subscribe(data => {
+    this.stockService.getHistoricalQuotes(['SP500']).subscribe(data => {
 
       // Set up the simulation:
       this.simulation = new Simulation({

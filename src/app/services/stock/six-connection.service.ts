@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { StockData, InstantQuotes, Dividend } from 'src/app/model/core/stock';
+import { HistoricalQuotes, InstantQuotes, Dividend } from 'src/app/model/core/stock';
 import { Quote } from 'src/app/model/core/asset';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
 import { ConnectionService } from './connection.service';
 
 /**
- * Converts SIX data into StockData.
+ * Converts SIX data into HistoricalQuotes.
  * @class{SixConverter}
  */
 export class SixConverter {
@@ -19,10 +19,10 @@ export class SixConverter {
   }
 
   /**
-   * Transforms the provided SIX data into StockData.
-   * @return {StockData} The transformed data.
+   * Transforms the provided SIX data into HistoricalQuotes.
+   * @return {HistoricalQuotes} The transformed data.
    */
-  asStockData(): StockData {
+  asHistoricalQuotes(): HistoricalQuotes {
     let valors:any[] = this.sixData.valors;
 
     let stockData: InstantQuotes[] = [];
@@ -49,7 +49,7 @@ export class SixConverter {
         stockData.push(stock);
       }
     });
-    return new StockData(stockData);
+    return new HistoricalQuotes(stockData);
   }
 
   private convertToNumber(a: any): number {
@@ -79,10 +79,10 @@ export class SixConnectionService implements ConnectionService {
   constructor(private http: HttpClient) {
   }
 
-  getQuotes(source: string, name: string): Observable<StockData> {
+  getQuotes(source: string, name: string): Observable<HistoricalQuotes> {
     return this.http.get(source).pipe(map(s => {
         let sixConverter: SixConverter = new SixConverter(s);
-        return sixConverter.asStockData();
+        return sixConverter.asHistoricalQuotes();
       }));
   }
 

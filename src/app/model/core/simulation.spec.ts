@@ -1,6 +1,6 @@
 import { Simulation } from "./simulation";
 import { Account } from './account';
-import { StockData, InstantQuotes } from './stock';
+import { HistoricalQuotes, InstantQuotes } from './stock';
 import { NullStrategy } from './strategy';
 import { Quote } from './asset';
 
@@ -26,7 +26,7 @@ describe('Simulation', () => {
   it('Can create a new instance', () => {
     expect(new Simulation({
       account: new Account({}),
-      stockData: new StockData([])
+      stockData: new HistoricalQuotes([])
     })).toBeTruthy();
   });
 
@@ -38,7 +38,7 @@ describe('Simulation', () => {
 
   var simulation: Simulation = new Simulation({
     account: new Account({strategy: strategy}),
-    stockData: new StockData([
+    stockData: new HistoricalQuotes([
       new InstantQuotes({
         instant: tomorrow,
         quotes:[

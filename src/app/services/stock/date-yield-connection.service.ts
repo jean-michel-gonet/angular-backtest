@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { StockData, Dividend } from 'src/app/model/core/stock';
+import { HistoricalQuotes, Dividend } from 'src/app/model/core/stock';
 import { map } from 'rxjs/operators';
 import { ConnectionService } from './connection.service';
 
 
 
 /**
- * Converts Date / Yield data into StockData.
+ * Converts Date / Yield data into HistoricalQuotes.
  * @class{DateYieldConverter}
  */
 export class DateYieldConverter {
@@ -20,10 +20,10 @@ export class DateYieldConverter {
   }
 
   /**
-   * Transforms the provided Yahoo Finance csv file into StockData.
-   * @return {StockData} The transformed data.
+   * Transforms the provided Yahoo Finance csv file into HistoricalQuotes.
+   * @return {HistoricalQuotes} The transformed data.
    */
-  asStockData(): Dividend[] {
+  asHistoricalQuotes(): Dividend[] {
     let dividends: Dividend[] = [];
     let lineNumber = 0;
     let csvContent: string[] = this.dateYieldData.split(/\r\n|\r|\n/);
@@ -83,14 +83,14 @@ export class DateYieldConnectionService implements ConnectionService {
   constructor(private http: HttpClient) {
   }
 
-  getQuotes(source: string, name: string): Observable<StockData> {
+  getQuotes(source: string, name: string): Observable<HistoricalQuotes> {
     throw new Error("Method not implemented - Quotes for " + name + " from " + source);
   }
 
   getDividends(source: string, name: string): Observable<Dividend[]> {
     return this.http.get(source,{responseType: 'text'}).pipe(map(s => {
         let dateYieldConverter: DateYieldConverter = new DateYieldConverter(name, s as string);
-        return dateYieldConverter.asStockData();
+        return dateYieldConverter.asHistoricalQuotes();
       }));
   }
 }

@@ -1,15 +1,15 @@
-import { StockData } from './stock';
+import { HistoricalQuotes } from './stock';
 import { Account } from './account';
 import { Report, NullReport } from './reporting';
 
 class ISimulation {
-  stockData: StockData;
+  stockData: HistoricalQuotes;
   account: Account;
   report?: Report;
 
   constructor(obj = {} as ISimulation) {
     let {
-      stockData = new StockData([]),
+      stockData = new HistoricalQuotes([]),
       account = new Account(),
       report = new NullReport()
     } = obj;

@@ -3,7 +3,7 @@ import { Observable, forkJoin } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { SixConnectionService } from './six-connection.service';
 import { YahooConnectionService } from './yahoo-connection.service';
-import { StockData, Dividend } from 'src/app/model/core/stock';
+import { HistoricalQuotes, Dividend } from 'src/app/model/core/stock';
 import { SecuritiesConfigurationService, QuoteSourceAndProvider, SourceAndProvider } from './securities-configuration.service';
 import { DateYieldConnectionService } from './date-yield-connection.service';
 
@@ -26,14 +26,14 @@ export class StockService {
     return "../../../assets/securities/" + source;
   }
 
-  getStockData(names: string[]): Observable<StockData> {
-    let oo: Observable<StockData>[] = [];
+  getHistoricalQuotes(names: string[]): Observable<HistoricalQuotes> {
+    let oo: Observable<HistoricalQuotes>[] = [];
 
     names.forEach(name => {
       let quoteSourceAndProvider: QuoteSourceAndProvider =
         this.securitiesConfigurationService.obtainQuoteSourceAndProvider(name);
 
-      let o: Observable<StockData> = this.obtainQuote(quoteSourceAndProvider)
+      let o: Observable<HistoricalQuotes> = this.obtainQuote(quoteSourceAndProvider)
         .pipe(mergeMap(s => {
           return this.obtainDividends(quoteSourceAndProvider.dividends, quoteSourceAndProvider.name)
             .pipe(map(d =>{
@@ -46,8 +46,8 @@ export class StockService {
 
     return forkJoin(oo)
       .pipe(map(s => {
-        let stockData: StockData;
-        s.forEach((d: StockData) => {
+        let stockData: HistoricalQuotes;
+        s.forEach((d: HistoricalQuotes) => {
           if (stockData) {
             stockData.merge(d);
           } else {
@@ -70,7 +70,7 @@ export class StockService {
     }
   }
 
-  private obtainQuote(quoteSourceAndProvider: QuoteSourceAndProvider): Observable<StockData> {
+  private obtainQuote(quoteSourceAndProvider: QuoteSourceAndProvider): Observable<HistoricalQuotes> {
     let source = this.makeItGood(quoteSourceAndProvider.source);
 
     switch(quoteSourceAndProvider.provider) {

@@ -76,7 +76,7 @@ export class InstantQuotes extends IInstantQuotes {
   }
 }
 
-export class StockData implements Reporter {
+export class HistoricalQuotes implements Reporter {
   private stock: InstantQuotes[] = [];
 
   constructor(newStocks:IInstantQuotes[]) {
@@ -91,51 +91,51 @@ export class StockData implements Reporter {
   /**
    * Merge this stock data with another.
    * This stock data gets modified.
-   * @param {StockData} otherStockData The other data.
+   * @param {HistoricalQuotes} otherHistoricalQuotes The other data.
    */
-  merge(otherStockData: StockData):void {
-    let mergedStockData: InstantQuotes[] = [];
+  merge(otherHistoricalQuotes: HistoricalQuotes):void {
+    let mergedHistoricalQuotes: InstantQuotes[] = [];
     let otherIndex: number = 0;
     let thisIndex: number = 0;
 
 
-    while(otherIndex < otherStockData.stock.length && thisIndex < this.stock.length) {
-      let otherEntry = otherStockData.stock[otherIndex];
+    while(otherIndex < otherHistoricalQuotes.stock.length && thisIndex < this.stock.length) {
+      let otherEntry = otherHistoricalQuotes.stock[otherIndex];
       let thisEntry = this.stock[thisIndex];
       if (thisEntry.instant.valueOf() == otherEntry.instant.valueOf()) {
         let mergedEntry: InstantQuotes = new InstantQuotes(thisEntry);
         mergedEntry.add(otherEntry.quotes);
-        mergedStockData.push(mergedEntry);
+        mergedHistoricalQuotes.push(mergedEntry);
         thisIndex++;
         otherIndex++;
       }
 
       if (thisEntry.instant.valueOf() < otherEntry.instant.valueOf()) {
         let mergedEntry: InstantQuotes = new InstantQuotes(thisEntry);
-        mergedStockData.push(mergedEntry);
+        mergedHistoricalQuotes.push(mergedEntry);
         thisIndex++;
       }
 
       if (thisEntry.instant.valueOf() > otherEntry.instant.valueOf()) {
         let mergedEntry: InstantQuotes = new InstantQuotes(otherEntry);
-        mergedStockData.push(mergedEntry);
+        mergedHistoricalQuotes.push(mergedEntry);
         otherIndex++;
       }
     }
 
-    while(otherIndex < otherStockData.stock.length) {
-      let otherEntry = otherStockData.stock[otherIndex];
-      mergedStockData.push(new InstantQuotes(otherEntry));
+    while(otherIndex < otherHistoricalQuotes.stock.length) {
+      let otherEntry = otherHistoricalQuotes.stock[otherIndex];
+      mergedHistoricalQuotes.push(new InstantQuotes(otherEntry));
       otherIndex++;
     }
 
     while(thisIndex < this.stock.length) {
       let thisEntry = this.stock[thisIndex];
-      mergedStockData.push(new InstantQuotes(thisEntry));
+      mergedHistoricalQuotes.push(new InstantQuotes(thisEntry));
       thisIndex++;
     }
 
-    this.stock = mergedStockData;
+    this.stock = mergedHistoricalQuotes;
   }
 
   /**

@@ -1,4 +1,4 @@
-import { StockData, Dividend } from 'src/app/model/core/stock';
+import { HistoricalQuotes, Dividend } from 'src/app/model/core/stock';
 import { Observable } from 'rxjs';
 
 /**
@@ -12,7 +12,7 @@ export interface ConnectionService {
    * as often the files do not contain the name of the instrument.
    * @param {string} source Where to find the file with data.
    */
-  getQuotes(source: string, name: string): Observable<StockData>;
+  getQuotes(source: string, name: string): Observable<HistoricalQuotes>;
 
   /**
    * To retrieve the dividends of the specified instrument.

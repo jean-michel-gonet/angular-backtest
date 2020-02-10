@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { StockData, InstantQuotes, Dividend } from 'src/app/model/core/stock';
+import { HistoricalQuotes, InstantQuotes, Dividend } from 'src/app/model/core/stock';
 import { map } from 'rxjs/operators';
 import { Quote } from 'src/app/model/core/asset';
 import { ConnectionService } from './connection.service';
@@ -9,7 +9,7 @@ import { ConnectionService } from './connection.service';
 
 
 /**
- * Converts Yahoo data into StockData.
+ * Converts Yahoo data into HistoricalQuotes.
  * @class{YahooConverter}
  */
 export class YahooConverter {
@@ -21,10 +21,10 @@ export class YahooConverter {
   }
 
   /**
-   * Transforms the provided Yahoo Finance csv file into StockData.
-   * @return {StockData} The transformed data.
+   * Transforms the provided Yahoo Finance csv file into HistoricalQuotes.
+   * @return {HistoricalQuotes} The transformed data.
    */
-  asStockData(): StockData {
+  asHistoricalQuotes(): HistoricalQuotes {
     let stockData: InstantQuotes[] = [];
     let lineNumber = 0;
     let csvContent: string[] = this.yahooData.split(/\r\n|\r|\n/);
@@ -55,7 +55,7 @@ export class YahooConverter {
         }
       }
     });
-    return new StockData(stockData);
+    return new HistoricalQuotes(stockData);
   }
 
   /**
@@ -96,10 +96,10 @@ export class YahooConnectionService implements ConnectionService {
   constructor(private http: HttpClient) {
   }
 
-  getQuotes(source: string, name: string): Observable<StockData> {
+  getQuotes(source: string, name: string): Observable<HistoricalQuotes> {
     return this.http.get(source,{responseType: 'text'}).pipe(map(s => {
         let yahooConverter: YahooConverter = new YahooConverter(name, s as string);
-        return yahooConverter.asStockData();
+        return yahooConverter.asHistoricalQuotes();
       }));
   }
 

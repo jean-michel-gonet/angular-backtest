@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { YahooConnectionService, YahooConverter } from './yahoo-connection.service';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
-import { StockData, IInstantQuotes } from 'src/app/model/core/stock';
+import { HistoricalQuotes, IInstantQuotes } from 'src/app/model/core/stock';
 import { HttpRequest } from '@angular/common/http';
 import { Quote } from 'src/app/model/core/asset';
 
@@ -28,7 +28,7 @@ describe('YahooConnectionService', () => {
   });
 
   it('Can return InstantQuotes Data from Yahoo', () => {
-      service.getQuotes("SOURCE", "NAME").subscribe((data: StockData) => {
+      service.getQuotes("SOURCE", "NAME").subscribe((data: HistoricalQuotes) => {
         expect(data).toBeTruthy();
       });
 
@@ -45,9 +45,9 @@ describe('YahooConnectionService', () => {
 });
 
 describe('YahooConverter', () => {
-  it('Can convert responses from Yahoo into StockData', () => {
+  it('Can convert responses from Yahoo into HistoricalQuotes', () => {
     let yahooConverter: YahooConverter = new YahooConverter("ISIN1", yahooResponse);
-    let xx: StockData = yahooConverter.asStockData();
+    let xx: HistoricalQuotes = yahooConverter.asHistoricalQuotes();
     let iStock: IInstantQuotes[] = xx.asIStock();
     expect(iStock).toEqual(
       jasmine.arrayWithExactContents([

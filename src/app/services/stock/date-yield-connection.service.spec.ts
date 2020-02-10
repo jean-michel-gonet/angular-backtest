@@ -44,7 +44,7 @@ describe('DateYieldConnectionService', () => {
 describe('DateYieldConverter', () => {
   it('Can convert responses from Date Yield pairs into Dividends', () => {
     let dateYieldConverter: DateYieldConverter = new DateYieldConverter("ISIN1", dateYieldResponse);
-    let dividends: Dividend[] = dateYieldConverter.asStockData();
+    let dividends: Dividend[] = dateYieldConverter.asHistoricalQuotes();
     expect(dividends).toEqual(
       jasmine.arrayWithExactContents([
         new Dividend({
