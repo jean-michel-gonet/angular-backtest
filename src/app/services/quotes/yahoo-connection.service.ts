@@ -6,8 +6,6 @@ import { map } from 'rxjs/operators';
 import { Quote } from 'src/app/model/core/asset';
 import { IQuotesService } from './quotes.service.interface';
 
-
-
 /**
  * Converts Yahoo data into HistoricalQuotes.
  * @class{YahooConverter}

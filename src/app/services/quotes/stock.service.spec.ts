@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { QuotesFromSixService } from './six-connection.service';
+import { QuotesFromSixService } from './quotes-from-six.service';
 import { QuotesFromYahooService } from './yahoo-connection.service';
 import { QuotesFromSimpleCsvService } from './date-yield-connection.service';
 import { QuotesService } from './stock.service';

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { QuotesFromSixService, SixConverter } from './six-connection.service';
+import { QuotesFromSixService, SixConverter } from './quotes-from-six.service';
 import { HistoricalQuotes, IInstantQuotes } from 'src/app/model/core/quotes';
 import { Quote } from 'src/app/model/core/asset';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';

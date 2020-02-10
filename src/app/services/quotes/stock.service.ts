@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
-import { QuotesFromSixService } from './six-connection.service';
+import { QuotesFromSixService } from './quotes-from-six.service';
 import { QuotesFromYahooService } from './yahoo-connection.service';
 import { HistoricalQuotes, Dividend } from 'src/app/model/core/quotes';
 import { QuotesConfigurationService, QuoteSourceAndProvider, SourceAndProvider } from './securities-configuration.service';
