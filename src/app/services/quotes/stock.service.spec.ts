@@ -4,7 +4,7 @@ import { QuotesFromSixService } from './six-connection.service';
 import { QuotesFromYahooService } from './yahoo-connection.service';
 import { QuotesFromSimpleCsvService } from './date-yield-connection.service';
 import { QuotesService } from './stock.service';
-import { IQuotesService } from './connection.service';
+import { IQuotesService } from './quotes.service.interface';
 import { Observable } from 'rxjs';
 import { HistoricalQuotes, Dividend, InstantQuotes } from 'src/app/model/core/quotes';
 import { QuoteSourceAndProvider, QuotesConfigurationService } from './securities-configuration.service';

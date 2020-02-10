@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { HistoricalQuotes, InstantQuotes, Dividend } from 'src/app/model/core/quotes';
 import { map } from 'rxjs/operators';
 import { Quote } from 'src/app/model/core/asset';
-import { IQuotesService } from './connection.service';
+import { IQuotesService } from './quotes.service.interface';
 
 
 

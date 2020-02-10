@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HistoricalQuotes, Dividend } from 'src/app/model/core/quotes';
 import { map } from 'rxjs/operators';
-import { IQuotesService } from './connection.service';
+import { IQuotesService } from './quotes.service.interface';
 
 
 

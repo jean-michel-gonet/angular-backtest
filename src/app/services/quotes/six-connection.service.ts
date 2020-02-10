@@ -4,7 +4,7 @@ import { Quote } from 'src/app/model/core/asset';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { IQuotesService } from './connection.service';
+import { IQuotesService } from './quotes.service.interface';
 
 /**
  * Converts SIX data into HistoricalQuotes.
