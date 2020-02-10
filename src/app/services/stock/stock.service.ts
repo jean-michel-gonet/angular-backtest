@@ -23,7 +23,7 @@ export class StockService {
   }
 
   private makeItGood(source: string): string {
-    return "../../../assets/securities/" + source;
+    return "../../../assets/quotes/" + source;
   }
 
   getHistoricalQuotes(names: string[]): Observable<HistoricalQuotes> {
