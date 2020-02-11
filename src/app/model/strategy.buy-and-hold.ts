@@ -8,6 +8,7 @@ import { Report } from './core/reporting';
 class IBuyAndHoldStrategy {
   name?: string;
   transfer?: RegularTransfer;
+  reinvestDividends?: boolean;
 }
 
 /**
@@ -18,14 +19,17 @@ class IBuyAndHoldStrategy {
 export class BuyAndHoldStrategy implements Strategy {
   name: string;
   transfer: RegularTransfer;
+  reinvestDividends: boolean;
 
   constructor(obj = {} as IBuyAndHoldStrategy) {
     let {
       name = "",
       transfer = new RegularTransfer(),
+      reinvestDividends = false
     } = obj;
     this.name = name;
     this.transfer = transfer;
+    this.reinvestDividends = reinvestDividends;
   }
 
   /**
@@ -34,7 +38,14 @@ export class BuyAndHoldStrategy implements Strategy {
   applyStrategy(account: Account, instantQuotes: InstantQuotes): void {
     let quote: Quote = instantQuotes.quote(this.name);
     if (quote) {
-      this.investAllYourCashInOneSingleBasket(account, quote);
+
+      if (!account.position(this.name)) {
+        this.investAllYourCashInOneSingleBasket(account, quote);
+      }
+
+      if (this.reinvestDividends && account.cash > quote.partValue) {
+        this.investAllYourCashInOneSingleBasket(account, quote);
+      }
 
       let amountToTransfer = this.transfer.amount(instantQuotes.instant);
       if (amountToTransfer > 0) {
@@ -43,15 +54,9 @@ export class BuyAndHoldStrategy implements Strategy {
     }
   }
 
-  /**
-   * Initial order consists in investing the whole
-   * capital into one single ISIN.
-   */
-  private investAllYourCashInOneSingleBasket(account: Account, quote: Quote): void {
-    if (account.cash > 0) {
-      let numberOfParts: number = account.cash / quote.partValue;
-      account.order(quote, numberOfParts);
-    }
+  private investAllYourCashInOneSingleBasket(account: Account, quote:Quote):void {
+    let numberOfParts: number = Math.floor(account.cash / quote.partValue);
+    account.order(quote, numberOfParts);
   }
 
   /**

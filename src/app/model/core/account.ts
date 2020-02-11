@@ -30,6 +30,7 @@ class IAccount {
  */
 export class Account extends IAccount implements Reporter {
   private accumulatedCosts: number;
+  private instant: Date;
 
   constructor(obj = {} as IAccount) {
     super(obj);
@@ -65,6 +66,8 @@ export class Account extends IAccount implements Reporter {
    * @param{InstantQuotes} instantQuotes The instantQuotes update.
    */
   process(instantQuotes: InstantQuotes): void {
+    // Updates current time.
+    this.instant = instantQuotes.instant;
 
     // Update the positions:
     instantQuotes.quotes.forEach(quote => {
@@ -105,6 +108,7 @@ export class Account extends IAccount implements Reporter {
    *                       negative, the number of parts to sell.
    **/
   order(quote: Quote, parts: number): void {
+    parts = Math.floor(parts);
 
     // Looks for the corresponding position:
     let position: Position = this.positions.find(p => {
@@ -132,6 +136,9 @@ export class Account extends IAccount implements Reporter {
     this.cash = this.cash -
                 parts * quote.partValue -
                 costs;
+
+    // A little log:
+    console.info("Account " + this.id + " ordered " + parts + " parts of " + quote.name + " on " + this.instant);
   }
 
   /**

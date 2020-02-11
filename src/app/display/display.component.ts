@@ -45,6 +45,7 @@ export class DisplayComponent implements OnInit {
           cash: 100000,
           strategy: new BuyAndHoldStrategy({
             name: "SP500",
+            reinvestDividends: false,
             transfer: new RegularTransfer({
               transfer: 0,
               to: new Account({
@@ -58,7 +59,7 @@ export class DisplayComponent implements OnInit {
       });
 
       // Run the simulation:
-      this.simulation.run(new Date(1996, 1, 1), new Date (2020, 12, 31));
+      this.simulation.run(new Date(1996, 0, 0), new Date (2017, 0, 0));
     });
   }
 }
