@@ -8,7 +8,7 @@ import { Reporter, Report } from './reporting';
  */
 export interface Strategy extends Reporter {
   /**
-   * Receives regular instantQuotes updates, and executes trading operations
+   * Receives regular quote updates, and executes trading operations
    * against an existing account.
    * @param {Account} account The account to execute the orders.
    * @param {InstantQuotes} instantQuotes The instantQuotes updates, to take useful decisions.
