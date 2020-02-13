@@ -1,7 +1,7 @@
 import { Strategy } from './core/strategy';
 import { InstantQuotes } from './core/quotes';
 import { Account } from './core/account';
-import { Quote } from './core/asset';
+import { Quote, Position } from './core/asset';
 import { RegularTransfer } from './core/transfer';
 import { Report } from './core/reporting';
 import { MarketTiming, EverGoodMarketTiming } from './core/market-timing';
@@ -18,7 +18,7 @@ class IBuyAndHoldStrategy {
  * the whole simulation.
  * @class {BuyAndHoldStrategy}
  */
-export class BuyAndHoldStrategy implements Strategy {
+export class BuyAndHoldStrategyWithTiming implements Strategy {
   name: string;
   transfer: RegularTransfer;
   reinvestDividends: boolean;
@@ -38,23 +38,16 @@ export class BuyAndHoldStrategy implements Strategy {
   }
 
   /**
-   * Applies the Buy And Hold strategy.
+   * Applies the Buy And Hold strategy when market timing is good,
+   * and sells everything when market is bad.
    */
   applyStrategy(account: Account, instantQuotes: InstantQuotes): void {
     let quote: Quote = instantQuotes.quote(this.name);
     if (quote) {
-
-      if (!account.position(this.name)) {
+      if (this.marketTiming.timeIsGood(instantQuotes) > 0) {
         this.investAllYourCashInOneSingleBasket(account, quote);
-      }
-
-      if (this.reinvestDividends && account.cash > quote.partValue) {
-        this.investAllYourCashInOneSingleBasket(account, quote);
-      }
-
-      let amountToTransfer = this.transfer.amount(instantQuotes.instant);
-      if (amountToTransfer > 0) {
-        this.performTransfer(account, quote, amountToTransfer);
+      } else {
+        this.sellEverything(account, quote);
       }
     }
   }
@@ -64,14 +57,11 @@ export class BuyAndHoldStrategy implements Strategy {
     account.order(quote, numberOfParts);
   }
 
-  /**
-   * Periodically withdraw the cash amount required for
-   * living.
-   */
-  private performTransfer(account: Account, quote: Quote, amountToTransfer: number): void {
-    let numberOfParts: number = amountToTransfer / quote.partValue;
-    account.order(quote, -numberOfParts);
-    account.transfer(this.transfer.to, amountToTransfer);
+  private sellEverything(account: Account, quote: Quote) {
+    let position: Position = account.position(this.name);
+    if (position && position.parts > 0) {
+      account.order(quote, -position.parts);
+    }
   }
 
   // ********************************************************************

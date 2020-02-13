@@ -6,6 +6,8 @@ import { BuyAndHoldStrategy } from '../model/strategy.buy-and-hold';
 import { Ng2ChartReport, ShowDataAs, ShowDataOn } from './ng2-chart.report';
 import { RegularTransfer, RegularPeriod } from '../model/core/transfer';
 import { Account } from '../model/core/account';
+import { BuyAndHoldStrategyWithTiming } from '../model/strategy.buy-and-hold.with-timing';
+import { SuperthonMarketTiming } from '../model/market-timing.superthon';
 
 @Component({
   selector: 'app-display',
@@ -43,16 +45,14 @@ export class DisplayComponent implements OnInit {
         account: new SwissQuoteAccount({
           id: "SQA01",
           cash: 100000,
-          strategy: new BuyAndHoldStrategy({
+          strategy: new BuyAndHoldStrategyWithTiming({
             name: "SP500",
             reinvestDividends: false,
-            transfer: new RegularTransfer({
-              transfer: 0,
-              to: new Account({
-                id: "EXPENSES"
-              }),
-              every: RegularPeriod.MONTH
-            })})
+            marketTiming: new SuperthonMarketTiming({
+              name: "SP500",
+              months: 12
+            })
+          })
         }),
         historicalQuotes: historicalQuotes,
         report: this.ng2ChartReport
