@@ -33,16 +33,21 @@ export class SuperthonMarketTiming implements MarketTiming {
     });
 
     let last12Quotes: History[] = [];
-    let distance:number = instantQuotes.instant.valueOf();
-    for (let n:number = this.history.length - 1; n >= 0; n--) {
-      if (this.history[n].instant.valueOf() > distance) {
+    let distance:Date = instantQuotes.instant;
+    let historyIndex: number;
+    for (historyIndex = this.history.length - 1; historyIndex >= 0; historyIndex--) {
+      if (this.history[historyIndex].instant.valueOf() > distance.valueOf()) {
         continue;
       }
-      last12Quotes.push(this.history[n]);
+      last12Quotes.push(this.history[historyIndex]);
       if (last12Quotes.length >= this.months) {
         break;
       }
-      distance -= 30;
+      distance = new Date(distance.getFullYear(), distance.getMonth(), distance.getDate() - 30);
+    }
+
+    if (historyIndex > 0) {
+      this.history.splice(0, historyIndex - 1);
     }
 
     let howGood = 0;
@@ -50,13 +55,17 @@ export class SuperthonMarketTiming implements MarketTiming {
     for(let n: number = 1; n < last12Quotes.length; n++) {
       let quote: number = last12Quotes[n].quote;
       if (quote > lastQuote.quote) {
-        howGood++;
-      } else {
         howGood--;
+      } else {
+        howGood++;
       }
       lastQuote = last12Quotes[n];
     }
 
     return howGood;
+  }
+
+  public getHistoryLength():number {
+    return this.history.length;
   }
 }
