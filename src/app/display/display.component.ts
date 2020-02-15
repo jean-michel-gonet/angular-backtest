@@ -2,10 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { QuotesService } from '../services/quotes/quotes.service';
 import { Simulation } from '../model/core/simulation';
 import { SwissQuoteAccount } from '../model/account.swissquote';
-import { BuyAndHoldStrategy } from '../model/strategy.buy-and-hold';
 import { Ng2ChartReport, ShowDataAs, ShowDataOn } from './ng2-chart.report';
-import { RegularTransfer, RegularPeriod } from '../model/core/transfer';
-import { Account } from '../model/core/account';
 import { BuyAndHoldStrategyWithTiming } from '../model/strategy.buy-and-hold.with-timing';
 import { SuperthonMarketTiming } from '../model/market-timing.superthon';
 
@@ -34,6 +31,11 @@ export class DisplayComponent implements OnInit {
         as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT,
         normalize: true
+      },
+      {
+        show: "SP500.SUPERTHON",
+        as: ShowDataAs.LINE,
+        on: ShowDataOn.RIGHT
       }
     ]);
 

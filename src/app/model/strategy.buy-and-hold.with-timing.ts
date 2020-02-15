@@ -4,13 +4,14 @@ import { Account } from './core/account';
 import { Quote, Position } from './core/asset';
 import { RegularTransfer } from './core/transfer';
 import { Report } from './core/reporting';
-import { MarketTiming, EverGoodMarketTiming } from './core/market-timing';
+import { MarketTiming, DefaultMarketTiming, BearBull } from './core/market-timing';
 
 class IBuyAndHoldStrategy {
   name?: string;
   transfer?: RegularTransfer;
   reinvestDividends?: boolean;
   marketTiming?: MarketTiming;
+  status?: BearBull;
 }
 
 /**
@@ -23,18 +24,21 @@ export class BuyAndHoldStrategyWithTiming implements Strategy {
   transfer: RegularTransfer;
   reinvestDividends: boolean;
   marketTiming: MarketTiming;
+  status: BearBull;
 
   constructor(obj = {} as IBuyAndHoldStrategy) {
     let {
       name = "",
       transfer = new RegularTransfer(),
       reinvestDividends = false,
-      marketTiming = new EverGoodMarketTiming()
+      marketTiming = new DefaultMarketTiming(),
+      status = BearBull.BEAR
     } = obj;
     this.name = name;
     this.transfer = transfer;
     this.reinvestDividends = reinvestDividends;
     this.marketTiming = marketTiming;
+    this.status = status;
   }
 
   /**
@@ -44,11 +48,22 @@ export class BuyAndHoldStrategyWithTiming implements Strategy {
   applyStrategy(account: Account, instantQuotes: InstantQuotes): void {
     let quote: Quote = instantQuotes.quote(this.name);
     if (quote) {
-      if (this.marketTiming.timeIsGood(instantQuotes) > 0) {
-        this.investAllYourCashInOneSingleBasket(account, quote);
-      } else {
-        this.sellEverything(account, quote);
+      this.marketTiming.record(instantQuotes.instant, quote);
+      let newStatus = this.marketTiming.bearBull();
+      switch(this.status) {
+          case BearBull.BEAR:
+            if (newStatus == BearBull.BULL) {
+              console.info(this.name + ": " + instantQuotes.instant + " - BULL - Let's invest!");
+              this.investAllYourCashInOneSingleBasket(account, quote);
+            }
+            break;
+          case BearBull.BULL:
+          if (newStatus == BearBull.BEAR) {
+              console.info(this.name + ": " + instantQuotes.instant + " - BEAR - Let's sell everything!");
+              this.sellEverything(account, quote);
+            }
       }
+      this.status = newStatus;
     }
   }
 
@@ -75,6 +90,9 @@ export class BuyAndHoldStrategyWithTiming implements Strategy {
   doRegister(report: Report): void {
     if (this.transfer.to) {
       this.transfer.to.doRegister(report);
+    }
+    if (this.marketTiming) {
+      this.marketTiming.doRegister(report);
     }
   }
 
