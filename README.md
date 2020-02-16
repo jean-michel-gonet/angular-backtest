@@ -107,3 +107,7 @@ This is some of my reference documentation:
 - https://www.positronx.io/angular-chart-js-tutorial-with-ng2-charts-examples/
 - This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.9.
 - Historical dividends for S&P500 index: https://www.multpl.com/s-p-500-dividend-yield/table/by-year
+- How to calculate MACD. Also, contains this piece of advice:
+  _It’s important to remember that an indicator showing good entries rarely shows good exits_
+  : https://www.iexplain.org/calculate-macd/
+- How to calculate Moving averages, and EMA in particular: https://en.wikipedia.org/wiki/Moving_average

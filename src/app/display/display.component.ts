@@ -5,6 +5,8 @@ import { SwissQuoteAccount } from '../model/account.swissquote';
 import { Ng2ChartReport, ShowDataAs, ShowDataOn } from './ng2-chart.report';
 import { BuyAndHoldStrategyWithTiming } from '../model/strategy.buy-and-hold.with-timing';
 import { SuperthonMarketTiming } from '../model/market-timing.superthon';
+import { MACDMarketTiming } from '../model/market-timing.macd';
+import { BearBull } from '../model/core/market-timing';
 
 @Component({
   selector: 'app-display',
@@ -33,7 +35,12 @@ export class DisplayComponent implements OnInit {
         normalize: true
       },
       {
-        show: "SP500.SUPERTHON",
+        show: "MACD.MACD",
+        as: ShowDataAs.LINE,
+        on: ShowDataOn.RIGHT
+      },
+      {
+        show: "MACD.TRIGGER",
         as: ShowDataAs.LINE,
         on: ShowDataOn.RIGHT
       }
@@ -50,9 +57,9 @@ export class DisplayComponent implements OnInit {
           strategy: new BuyAndHoldStrategyWithTiming({
             name: "SP500",
             reinvestDividends: false,
-            marketTiming: new SuperthonMarketTiming({
-              name: "SP500",
-              months: 12
+            marketTiming: new MACDMarketTiming({
+              name: "MACD",
+              status: BearBull.BULL
             })
           })
         }),
