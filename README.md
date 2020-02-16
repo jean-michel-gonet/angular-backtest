@@ -111,3 +111,4 @@ This is some of my reference documentation:
   _It’s important to remember that an indicator showing good entries rarely shows good exits_
   : https://www.iexplain.org/calculate-macd/
 - How to calculate Moving averages, and EMA in particular: https://en.wikipedia.org/wiki/Moving_average
+- https://www.liberatedstocktrader.com/top-10-rules-for-using-stock-chart-indicators-effectively/
