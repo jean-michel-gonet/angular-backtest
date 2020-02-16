@@ -4,17 +4,17 @@ import { Report, NullReport } from './reporting';
 
 class ISimulation {
   historicalQuotes: HistoricalQuotes;
-  account: Account;
+  accounts: Account[];
   report?: Report;
 
   constructor(obj = {} as ISimulation) {
     let {
       historicalQuotes = new HistoricalQuotes([]),
-      account = new Account(),
+      accounts = [],
       report = new NullReport()
     } = obj;
     this.historicalQuotes = historicalQuotes;
-    this.account = account;
+    this.accounts = accounts;
     this.report = report;
   }
 }
@@ -34,12 +34,16 @@ export class Simulation extends ISimulation {
    * @param {Date} end Ends the simulation at this date.
    */
   run(start?:Date, end?:Date) {
-    this.account.doRegister(this.report);
+    this.accounts.forEach(account => {
+      account.doRegister(this.report);
+    });
     this.historicalQuotes.doRegister(this.report);
 
     this.historicalQuotes.forEachDate(instantQuotes => {
       this.report.startReportingCycle(instantQuotes.instant);
-      this.account.process(instantQuotes);
+      this.accounts.forEach(account => {
+        account.process(instantQuotes);
+      });
       this.report.collectReports();
     }, start, end);
   }

@@ -23,7 +23,13 @@ export class DisplayComponent implements OnInit {
   ngOnInit() {
     this.ng2ChartReport = new Ng2ChartReport([
       {
-        show: "SQA01.NAV",
+        show: "SUPERTHON.NAV",
+        as: ShowDataAs.LINE,
+        on: ShowDataOn.LEFT,
+        normalize: true
+      },
+      {
+        show: "MACD.NAV",
         as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT,
         normalize: true
@@ -33,16 +39,6 @@ export class DisplayComponent implements OnInit {
         as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT,
         normalize: true
-      },
-      {
-        show: "MACD.MACD",
-        as: ShowDataAs.LINE,
-        on: ShowDataOn.RIGHT
-      },
-      {
-        show: "MACD.TRIGGER",
-        as: ShowDataAs.LINE,
-        on: ShowDataOn.RIGHT
       }
     ]);
 
@@ -51,18 +47,31 @@ export class DisplayComponent implements OnInit {
 
       // Set up the simulation:
       this.simulation = new Simulation({
-        account: new SwissQuoteAccount({
-          id: "SQA01",
-          cash: 100000,
-          strategy: new BuyAndHoldStrategyWithTiming({
-            name: "SP500",
-            reinvestDividends: false,
-            marketTiming: new MACDMarketTiming({
-              name: "MACD",
-              status: BearBull.BULL
+        accounts: [
+          new SwissQuoteAccount({
+            id: "SUPERTHON",
+            cash: 100000,
+            strategy: new BuyAndHoldStrategyWithTiming({
+              name: "SP500",
+              reinvestDividends: false,
+              marketTiming: new SuperthonMarketTiming({
+                name: "ST",
+                status: BearBull.BULL
+              })
             })
-          })
-        }),
+          }),
+          new SwissQuoteAccount({
+            id: "MACD",
+            cash: 100000,
+            strategy: new BuyAndHoldStrategyWithTiming({
+              name: "SP500",
+              reinvestDividends: false,
+              marketTiming: new MACDMarketTiming({
+                name: "MACD",
+                status: BearBull.BULL
+              })
+            })
+          })],
         historicalQuotes: historicalQuotes,
         report: this.ng2ChartReport
       });
