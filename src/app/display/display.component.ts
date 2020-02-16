@@ -24,19 +24,19 @@ export class DisplayComponent implements OnInit {
   ngOnInit() {
     this.ng2ChartReport = new Ng2ChartReport([
       {
-        show: "SQ01.NAV",
+        show: "EMA.NAV",
         as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT,
         normalize: true
       },
       {
-        show: "EMA.SEMA",
+        show: "MACD.NAV",
         as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT,
         normalize: true
       },
       {
-        show: "EMA.LEMA",
+        show: "SPT.NAV",
         as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT,
         normalize: true
@@ -56,7 +56,7 @@ export class DisplayComponent implements OnInit {
       this.simulation = new Simulation({
         accounts: [
           new SwissQuoteAccount({
-            id: "SQ01",
+            id: "EMA",
             cash: 100000,
             strategy: new BuyAndHoldStrategyWithTiming({
               name: "SP500",
@@ -66,7 +66,32 @@ export class DisplayComponent implements OnInit {
                 status: BearBull.BULL
               })
             })
-          })],
+          }),
+          new SwissQuoteAccount({
+            id: "MACD",
+            cash: 100000,
+            strategy: new BuyAndHoldStrategyWithTiming({
+              name: "SP500",
+              reinvestDividends: false,
+              marketTiming: new MACDMarketTiming({
+                name: "MACD",
+                status: BearBull.BULL
+              })
+            })
+          }),
+          new SwissQuoteAccount({
+            id: "SPT",
+            cash: 100000,
+            strategy: new BuyAndHoldStrategyWithTiming({
+              name: "SP500",
+              reinvestDividends: false,
+              marketTiming: new SuperthonMarketTiming({
+                name: "SPT",
+                status: BearBull.BULL
+              })
+            })
+          }),
+        ],
         historicalQuotes: historicalQuotes,
         report: this.ng2ChartReport
       });
