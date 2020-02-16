@@ -24,7 +24,6 @@ export interface MarketTiming extends Reporter {
    * Receives regular quote updates, and decides if time is good to invest.
    * @param {Date} instant The current instant.
    * @param {Quote} quote The releveant quote at specified instant.
-   * @return {number} A positive number if it is a good time to invest.
    */
   record(instant: Date, quote: Quote): void;
 

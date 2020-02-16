@@ -8,6 +8,7 @@ import { SuperthonMarketTiming } from '../model/market-timing.superthon';
 import { MACDMarketTiming } from '../model/market-timing.macd';
 import { BearBull } from '../model/core/market-timing';
 import { EMAMarketTiming } from '../model/market-timing.ema';
+import { DoubleMarketTiming } from '../model/market-timing.double';
 
 @Component({
   selector: 'app-display',
@@ -37,6 +38,12 @@ export class DisplayComponent implements OnInit {
       },
       {
         show: "SPT.NAV",
+        as: ShowDataAs.LINE,
+        on: ShowDataOn.LEFT,
+        normalize: true
+      },
+      {
+        show: "DOUBLE.NAV",
         as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT,
         normalize: true
@@ -75,6 +82,25 @@ export class DisplayComponent implements OnInit {
               reinvestDividends: false,
               marketTiming: new MACDMarketTiming({
                 name: "MACD",
+                status: BearBull.BULL
+              })
+            })
+          }),
+          new SwissQuoteAccount({
+            id: "DOUBLE",
+            cash: 100000,
+            strategy: new BuyAndHoldStrategyWithTiming({
+              name: "SP500",
+              reinvestDividends: false,
+              marketTiming: new DoubleMarketTiming({
+                bull: new MACDMarketTiming({
+                  name: "DMACD",
+                  status: BearBull.BULL
+                }),
+                bear: new SuperthonMarketTiming({
+                  name: "DSPT",
+                  status: BearBull.BULL
+                }),
                 status: BearBull.BULL
               })
             })
