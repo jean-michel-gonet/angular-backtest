@@ -44,6 +44,6 @@ describe('MACDMarketTiming', () => {
 
       expect(macd.shortEMA).toBeCloseTo(60.61, 2);
       expect(macd.longEMA).toBeCloseTo(59.58, 2);
-      expect(macd.macd).toBeCloseTo(1.028, 3);
+      expect(macd.difference).toBeCloseTo(1.028, 3);
   });
 });

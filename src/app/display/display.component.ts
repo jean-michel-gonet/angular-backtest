@@ -7,6 +7,7 @@ import { BuyAndHoldStrategyWithTiming } from '../model/strategy.buy-and-hold.wit
 import { SuperthonMarketTiming } from '../model/market-timing.superthon';
 import { MACDMarketTiming } from '../model/market-timing.macd';
 import { BearBull } from '../model/core/market-timing';
+import { EMAMarketTiming } from '../model/market-timing.ema';
 
 @Component({
   selector: 'app-display',
@@ -23,13 +24,19 @@ export class DisplayComponent implements OnInit {
   ngOnInit() {
     this.ng2ChartReport = new Ng2ChartReport([
       {
-        show: "SUPERTHON.NAV",
+        show: "SQ01.NAV",
         as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT,
         normalize: true
       },
       {
-        show: "MACD.NAV",
+        show: "EMA.SEMA",
+        as: ShowDataAs.LINE,
+        on: ShowDataOn.LEFT,
+        normalize: true
+      },
+      {
+        show: "EMA.LEMA",
         as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT,
         normalize: true
@@ -49,25 +56,13 @@ export class DisplayComponent implements OnInit {
       this.simulation = new Simulation({
         accounts: [
           new SwissQuoteAccount({
-            id: "SUPERTHON",
+            id: "SQ01",
             cash: 100000,
             strategy: new BuyAndHoldStrategyWithTiming({
               name: "SP500",
               reinvestDividends: false,
-              marketTiming: new SuperthonMarketTiming({
-                name: "ST",
-                status: BearBull.BULL
-              })
-            })
-          }),
-          new SwissQuoteAccount({
-            id: "MACD",
-            cash: 100000,
-            strategy: new BuyAndHoldStrategyWithTiming({
-              name: "SP500",
-              reinvestDividends: false,
-              marketTiming: new MACDMarketTiming({
-                name: "MACD",
+              marketTiming: new EMAMarketTiming({
+                name: "EMA",
                 status: BearBull.BULL
               })
             })

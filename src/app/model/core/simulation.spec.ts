@@ -25,7 +25,7 @@ class TestStrategy extends NullStrategy {
 describe('Simulation', () => {
   it('Can create a new instance', () => {
     expect(new Simulation({
-      account: new Account({}),
+      accounts: [new Account({})],
       historicalQuotes: new HistoricalQuotes([])
     })).toBeTruthy();
   });
@@ -37,7 +37,7 @@ describe('Simulation', () => {
   var strategy: TestStrategy = new TestStrategy();
 
   var simulation: Simulation = new Simulation({
-    account: new Account({strategy: strategy}),
+    accounts: [new Account({strategy: strategy})],
     historicalQuotes: new HistoricalQuotes([
       new InstantQuotes({
         instant: tomorrow,

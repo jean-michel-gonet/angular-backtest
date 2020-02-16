@@ -169,6 +169,61 @@ describe('Ng2ChartReport', () => {
     ]);
   });
 
+  it('Can normalize outputs even if one set starts at zero', () => {
+    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport([
+      {
+        show: "VALUE1",
+        as: ShowDataAs.LINE,
+        on: ShowDataOn.LEFT,
+        normalize: true
+      }, {
+        show: "VALUE2",
+        as: ShowDataAs.BAR,
+        on: ShowDataOn.LEFT,
+        normalize: true
+      }
+    ]);
+
+    ng2ChartReport.startReportingCycle(today);
+    ng2ChartReport.receiveData(new ReportedData({
+      sourceName: "VALUE1",
+      y: 1000
+    }));
+    ng2ChartReport.receiveData(new ReportedData({
+      sourceName: "VALUE2",
+      y: 0
+    }));
+    ng2ChartReport.startReportingCycle(tomorrow);
+    ng2ChartReport.receiveData(new ReportedData({
+      sourceName: "VALUE1",
+      y: 1010
+    }));
+    ng2ChartReport.receiveData(new ReportedData({
+      sourceName: "VALUE2",
+      y: 20
+    }));
+
+    expect(ng2ChartReport.dataSets).toEqual(jasmine.arrayWithExactContents([
+      {
+        data: [100, 101],
+        label: "VALUE1",
+        yAxisID: "y-axis-left",
+        type: "line",
+        pointRadius: 0
+      }, {
+        data: [0/0, 100],
+        label: "VALUE2",
+        yAxisID: "y-axis-left",
+        type: "bar",
+        pointRadius: 0
+      }
+    ]));
+    expect(ng2ChartReport.labels).toEqual([
+      today.toDateString(),
+      tomorrow.toDateString()
+    ]);
+  });
+
   it('Can hide the left axis when not used', () => {
     let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport([
       {
