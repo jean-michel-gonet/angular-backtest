@@ -78,6 +78,10 @@ or add the dividends as a separated file.
 - Make out your cost scheme.
 - Are you investing in a different currency?
 
+## Code structure
+
+![angular-backtest class diagram](angular-backtest-class-diagram-1.png)
+
 ## Troubleshooting
 
 Those are some common errors you may stumble upon when you start using this
