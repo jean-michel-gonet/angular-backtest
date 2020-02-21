@@ -64,19 +64,56 @@ just because economy evolves.
 
 ## How to use the library
 
-[STUB]
+Let's imagine you want to run a simulation based on a passive ETF that follows
+the IBEX-35 index.
 
-- Find the financial source: f.e. The S&P500 index quotes.
-- Include the file in the project.
-- Configure it in securities-configuration.json
-- Create a graph to display it.
-- Don't forget the dividends. Either use a Total return version of the index,
-or add the dividends as a separated file.
-- Devise your strategy.
-- Configure your strategy.
-- Test your strategy with other indexes.
-- Make out your cost scheme.
-- Are you investing in a different currency?
+### Find the historical quotes
+
+The first step is finding the financial data to execute the simulation. Look in
+project folder ``src/app/services/quotes`` for the list of compatible sources:
+- _finance.yahoo.com_ - CSV files downloaded from https://finance.yahoo.com
+- _www.six-group.com_ - JSON files downloaded from https://www.six-group.com/exchanges/shares/overview_en.html
+
+We find the IBEX-35 in https://finance.yahoo.com/quote/%5EIBEX, we click on
+_Historical Data_ and select the following options:
+- Time Period: Max
+- Show: Historical Prices
+- Frequency: Daily
+- Click on Apply.
+- And Download data
+
+You should obtain a CSV file.
+
+### Include the historical quotes in the project
+Copy that file in project folder ``src/assets/quotes/indexes`` (you could
+save it in a different folder, as long as you provide the correct path in
+the next step).
+
+Give it an appropriate name, like ``ibex35-yahoo.csv``.
+
+To make it available, you must edit ``src/assets/quotes/configuration.json``, and
+add an entry similar to the following:
+```
+{
+  "name": "IBEX-35",
+  "source": "indexes/ibex35-yahoo.csv",
+  "provider": "finance.yahoo.com"
+},
+```
+
+### Make a simulation with your data
+Just to see your data,
+
+### Understand what's happening
+Angular is not a difficult language, and you don't need to master it to go further.
+Nonetheless, you will need to make some effort. Start by investing some time in
+learning the very basics of the language.
+
+- Follow one of those crash courses in internet.
+- Follow the _tour_of_heroes_ official tutorial.
+
+Now that you understand the very basics of the language, you can follow how the ``simulation``
+component works:
 
 ## Code structure
 
@@ -86,7 +123,7 @@ or add the dividends as a separated file.
 
 To install and run this project, you need _Git_, _Node.js_ and _npm_:
 * _Git_ is a distributed version-control system for tracking changes in source code during software development. It is designed for coordinating work among programmers, but it can be used to track changes in any set of files (see https://en.wikipedia.org/wiki/Git). You will use to retrieve sources from _GitHub_ and copy them on your machine.
-* _Node.js_ is an open-source, cross-platform, JavaScript library that executes JavaScript code outside of a browser (see https://en.wikipedia.org/wiki/Node.js). 
+* _Node.js_ is an open-source, cross-platform, JavaScript library that executes JavaScript code outside of a browser (see https://en.wikipedia.org/wiki/Node.js).
 * _npm_, originally short for _Node Package Manager_, is a package manager for the JavaScript programming language. It is the default package manager for the JavaScript runtime environment _Node.js._ (see https://en.wikipedia.org/wiki/Npm_(software) ) and it is shipped with it.
 
 ### In Windows
@@ -121,7 +158,7 @@ When the compilation is finshed, you should see an indication that the program i
 ```
 ...
 ...
-Angular Live Development Server is listening on localhost:4200, open 
+Angular Live Development Server is listening on localhost:4200, open
 your browser on http://localhost:4200/
 ```
 
