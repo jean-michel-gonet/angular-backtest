@@ -82,13 +82,12 @@ or add the dividends as a separated file.
 
 ![angular-backtest class diagram](angular-backtest-class-diagram-1.png)
 
-## Installing and running
+## Running the application
 
-To install and run this project, you need Git, Node.js and npm:
-* Git: https://git-scm.com/download/win - This is a version control tool that you will use to retrieve sources from _GitHub_ and copy them on your machine.
-* Node.js: https://nodejs.org/en/download/ - This is an open-source, cross-platform, JavaScript library that executes JavaScript code outside of a browser (see https://en.wikipedia.org/wiki/Node.js). 
-* _npm_ is shipped with _Node.js_. Originally short for Node Package Manager, is a package manager for the JavaScript programming language. It is the default package manager for the JavaScript runtime environment _Node.js._ (see https://en.wikipedia.org/wiki/Npm_(software) )
-
+To install and run this project, you need _Git_, _Node.js_ and _npm_:
+* _Git_ is a distributed version-control system for tracking changes in source code during software development. It is designed for coordinating work among programmers, but it can be used to track changes in any set of files (see https://en.wikipedia.org/wiki/Git). You will use to retrieve sources from _GitHub_ and copy them on your machine.
+* _Node.js_ is an open-source, cross-platform, JavaScript library that executes JavaScript code outside of a browser (see https://en.wikipedia.org/wiki/Node.js). 
+* _npm_, originally short for _Node Package Manager_, is a package manager for the JavaScript programming language. It is the default package manager for the JavaScript runtime environment _Node.js._ (see https://en.wikipedia.org/wiki/Npm_(software) ) and it is shipped with it.
 
 ### In Windows
 Download and install the required tools from the official sites:
@@ -106,22 +105,26 @@ npm --version
 
 Later on, to update _Node.js_, simply reinstall it from the same source.
 
-Look for an appropriate folder where to install the project, 
+### Compile and run the program (all platforms)
+Look for or create an appropriate folder where to install the project, then open the command prompt, navigate to it, and use _Git_ to clone the sources:
 
 ```
 cd Documents
 git clone https://github.com/jean-michel-gonet/angular-backtest.git
+cd angular-backtest
 npm install
 npm start
 ```
 
-Typing ``npm start`` compiles the ation of the program, 
+When the compilation is finshed, you should see an indication that the program is running and available as a local web site:
 
 ```
+...
+...
 Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/
 ```
 
-Open a browser on that address, and you should be fine.
+Open a browser on that address, and you should see the main page.
 
 ## Troubleshooting
 
