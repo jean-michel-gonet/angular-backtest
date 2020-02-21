@@ -121,7 +121,8 @@ When the compilation is finshed, you should see an indication that the program i
 ```
 ...
 ...
-Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/
+Angular Live Development Server is listening on localhost:4200, open 
+your browser on http://localhost:4200/
 ```
 
 Open a browser on that address, and you should see the main page.
