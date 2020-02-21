@@ -82,6 +82,47 @@ or add the dividends as a separated file.
 
 ![angular-backtest class diagram](angular-backtest-class-diagram-1.png)
 
+## Installing and running
+
+To install and run this project, you need Git, Node.js and npm:
+* Git: https://git-scm.com/download/win - This is a version control tool that you will use to retrieve sources from _GitHub_ and copy them on your machine.
+* Node.js: https://nodejs.org/en/download/ - This is an open-source, cross-platform, JavaScript library that executes JavaScript code outside of a browser (see https://en.wikipedia.org/wiki/Node.js). 
+* _npm_ is shipped with _Node.js_. Originally short for Node Package Manager, is a package manager for the JavaScript programming language. It is the default package manager for the JavaScript runtime environment _Node.js._ (see https://en.wikipedia.org/wiki/Npm_(software) )
+
+
+### In Windows
+Download and install the required tools from the official sites:
+
+* Git: https://git-scm.com/download/win
+* Node.js: https://nodejs.org/en/download/
+
+After installation, open a comand prompt (click on start, and then type ``cmd`` and ``[ENTER]``) and verify that all three tools are there:
+
+```
+git --version
+node --version
+npm --version
+```
+
+Later on, to update _Node.js_, simply reinstall it from the same source.
+
+Look for an appropriate folder where to install the project, 
+
+```
+cd Documents
+git clone https://github.com/jean-michel-gonet/angular-backtest.git
+npm install
+npm start
+```
+
+Typing ``npm start`` compiles the ation of the program, 
+
+```
+Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/
+```
+
+Open a browser on that address, and you should be fine.
+
 ## Troubleshooting
 
 Those are some common errors you may stumble upon when you start using this
