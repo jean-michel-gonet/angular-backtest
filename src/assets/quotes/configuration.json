@@ -23,4 +23,9 @@
     "source": "instruments/ch0017810976-six.json",
     "provider": "www.six-group.com"
   }
+    {
+    "name": "SMI",
+    "source": "instruments/SMI.csv",
+    "provider": "www.six-group.com"
+  }
 ]
