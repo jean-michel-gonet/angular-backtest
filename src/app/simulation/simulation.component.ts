@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { QuotesService } from '../services/quotes/quotes.service';
 import { Simulation } from '../model/core/simulation';
 import { SwissQuoteAccount } from '../model/account.swissquote';
-import { Ng2ChartReport, ShowDataAs, ShowDataOn } from './ng2-chart.report';
+import { Ng2ChartReport, ShowDataAs, ShowDataOn } from '../display/ng2-chart.report';
 import { BuyAndHoldStrategyWithTiming } from '../model/strategy.buy-and-hold.with-timing';
 import { SuperthonMarketTiming } from '../model/market-timing.superthon';
 import { MACDMarketTiming } from '../model/market-timing.macd';
@@ -11,11 +11,11 @@ import { EMAMarketTiming } from '../model/market-timing.ema';
 import { DoubleMarketTiming } from '../model/market-timing.double';
 
 @Component({
-  selector: 'app-display',
-  templateUrl: './display.component.html',
-  styleUrls: ['./display.component.css']
+  selector: 'app-simulation',
+  templateUrl: './simulation.component.html',
+  styleUrls: ['./simulation.component.css']
 })
-export class DisplayComponent implements OnInit {
+export class SimulationComponent implements OnInit {
   simulation: Simulation;
   ng2ChartReport: Ng2ChartReport;
 

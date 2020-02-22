@@ -102,7 +102,9 @@ add an entry similar to the following:
 ```
 
 ### Make a simulation with your data
-Just to see your data,
+Just to see your data:
+- Open the component ``src/app/simulation/simulation.component.ts``.
+- Spend a little time understanding 
 
 ### Understand what's happening
 Angular is not a difficult language, and you don't need to master it to go further.
