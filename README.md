@@ -35,16 +35,16 @@ Retire Early, as it addresses some of the issues common to these individuals:
   may loose their financial independence.
 
 More generally, this project is for anyone who wonders if the strategies
-described in all those youtube channels are as wonderful as it looks like,
+described in all those youtube channels are as wonderful they look,
 and if they're feasible in practical life.
 
-Ah, and also, to use this project you need some knowledge of programming
+Oh, and also, to use this project you need some knowledge of programming
 language. Not a lot, but some. Because you need to configure your strategy,
 download the financial data, and make it work.
 
 ### Beware of over fit
 Besides having bugs in the calculation, the most immediate danger of backtesting
-is called overfitting
+is called overfitting.
 
 In statistics, overfitting is _the production of an analysis that corresponds
 too closely or exactly to a particular set of data, and may therefore fail to
@@ -53,7 +53,7 @@ fit additional data or predict future observations reliably_
 
 When they show you documentation about an investment instrument at the bank, you
 often can see, in small letters, a statement saying _Past Performance Is No
-Guarantee of Future Results_, it is also a warning agains overfitting.
+Guarantee of Future Results_, it is also a warning against overfitting.
 
 Imagine that you spot some instrument A you want to invest into, and you discover
 that some other instrument B tends to rise a couple of months before. Astutely, you
@@ -64,8 +64,8 @@ just because economy evolves.
 
 ## How to use the library
 
-Let's imagine you want to run a simulation based on a passive ETF that follows
-the IBEX-35 index.
+Here is an simple example on how to run a simulation based on an hypothetic
+passive ETF that follows the IBEX-35 index.
 
 ### Find the historical quotes
 
@@ -74,15 +74,18 @@ project folder ``src/app/services/quotes`` for the list of compatible sources:
 - _finance.yahoo.com_ - CSV files downloaded from https://finance.yahoo.com
 - _www.six-group.com_ - JSON files downloaded from https://www.six-group.com/exchanges/shares/overview_en.html
 
-We find the IBEX-35 in https://finance.yahoo.com/quote/%5EIBEX, we click on
-_Historical Data_ and select the following options:
-- Time Period: Max
-- Show: Historical Prices
-- Frequency: Daily
-- Click on Apply.
-- And Download data
+_Yahoo Finance_ provides the IBEX-35 in https://finance.yahoo.com/quote/%5EIBEX.
+Click on _Historical Data_ and select the following options:
+- _Time Period_: Max
+- _Show_: Historical Prices
+- _Frequency_: Daily
 
-You should obtain a CSV file.
+Then click on _Apply_ and _Download_ the data. You should obtain a CSV file.
+
+As a side note, the index itself is not a passive ETF. Un initial stages
+it is acceptable to simulate using the index as if it were your fund.
+In later stages you need to find your actual fund, and see important details
+like TER, liquidity, buying and selling costs etc.
 
 ### Include the historical quotes in the project
 Copy that file in project folder ``src/assets/quotes/indexes`` (you could
@@ -231,7 +234,7 @@ cash along this whole period:
 ![Buy & Hold on IBEX-35, with market timing since 1996](src/assets/doc/buy-and-hold-on-ibex35-with-market-timing.png)
 
 Looks really nice. However, if you want to scare yourself, try
-starting the simulation in 2006.
+starting the simulation in 2006. Or worse, in 2008.
 
 ### Understand what's happening
 Angular is not a difficult language, and you don't need to master it to go further.
