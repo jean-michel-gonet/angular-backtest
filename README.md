@@ -227,11 +227,11 @@ this.ng2ChartReport = new Ng2ChartReport([
   }
 ]);
 ```
-At the beginning, the NAV is lower than the index because of the transfers of
+At the beginning the NAV is lower than the index because of the transfers of
 660 we execute every month. Then market timing saves us from the worst, and we
 sell all our positions in 2000, 2007, 2010, and a couple of other times that we
 could have skipped but seemed dangerous at the time. While we are out of the
-market, the NAV becomes a straight decreasing line because of the regular
+market the NAV becomes a straight decreasing line because of the regular
 transfers that we keep doing. In the end, we managed to increase 3 fold the
 value of our portfolio, plus extracting nearly 190'000 in cash along this
 whole period.
@@ -266,10 +266,10 @@ To install and run this project, you need _Git_, _Node.js_ and _npm_:
 ### In Windows
 Download and install the required tools from the official sites:
 
-* Git: https://git-scm.com/download/win
-* Node.js: https://nodejs.org/en/download/
+* _Git_: https://git-scm.com/download/win
+* _Node.js_ and _npm_: https://nodejs.org/en/download/
 
-After installation, open a comand prompt (click on start, and then type ``cmd`` and ``[ENTER]``) and verify that all three tools are there:
+After installation, open a command prompt (click on start, and then type ``cmd`` and ``[ENTER]``) and verify that all three tools are there:
 
 ```
 git --version
@@ -277,7 +277,7 @@ node --version
 npm --version
 ```
 
-Later on, to update _Node.js_, simply reinstall it from the same source.
+To update _Node.js_, simply reinstall it from the same source.
 
 ### Compile and run the program (all platforms)
 Look for or create an appropriate folder where to install the project, then open the command prompt, navigate to it, and use _Git_ to clone the sources:
@@ -290,7 +290,8 @@ npm install
 npm start
 ```
 
-When the compilation is finshed, you should see an indication that the program is running and available as a local web site:
+When the compilation is finished, you should see an indication that the
+program is running and available as a local web site:
 
 ```
 ...
