@@ -82,9 +82,9 @@ Click on _Historical Data_ and select the following options:
 
 Then click on _Apply_ and _Download_ the data. You should obtain a CSV file.
 
-As a side note, the index itself is not a passive ETF. Un initial stages
+As a side note, the index itself is not a passive ETF. In initial stages
 it is acceptable to simulate using the index as if it were your fund.
-In later stages you need to find your actual fund, and see important details
+Later on, you need to find your actual fund, and see important details
 like TER, liquidity, buying and selling costs etc.
 
 ### Include the historical quotes in the project
@@ -141,7 +141,7 @@ to the ``LEFT`` axis.
 - ``Shows`` The daily NAV of our ``PORTFOLIO`` account, as a ``LINE`` referred
 to the ``LEFT`` axis.
 - Mind the ``normalize`` flag that is set to ``true``: it means that the
-concerned values all be divided by a factor so they start the chart at 100.
+concerned values are all be divided by a factor so they start the chart at 100.
 
 ```
 this.ng2ChartReport = new Ng2ChartReport([
@@ -168,7 +168,8 @@ this.simulation
   .run(new Date(1996, 0, 0), new Date (2020, 0, 1));
 ```
 
-Unsurprisingly, your portfolio's NAV is following the IBEX35 index:
+Unsurprisingly, your portfolio's NAV is following the IBEX35 index. It is so
+close that you can't actually see the blue line:
 
 ![Buy & Hold on IBEX-35 since 1996](src/assets/doc/buy-and-hold-on-ibex35-since-1996.png)
 
