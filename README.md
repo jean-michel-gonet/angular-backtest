@@ -141,7 +141,7 @@ to the ``LEFT`` axis.
 - ``Shows`` The daily NAV of our ``PORTFOLIO`` account, as a ``LINE`` referred
 to the ``LEFT`` axis.
 - Mind the ``normalize`` flag that is set to ``true``: it means that the
-concerned values are all be divided by a factor so they start the chart at 100.
+concerned values are divided by a factor so they start the chart at 100.
 
 ```
 this.ng2ChartReport = new Ng2ChartReport([
@@ -174,12 +174,12 @@ close that you can't actually see the blue line:
 ![Buy & Hold on IBEX-35 since 1996](src/assets/doc/buy-and-hold-on-ibex35-since-1996.png)
 
 ### A second simulation with your data
-Although IBEX35 seems grim, but Spain is one of the top 20 economies in the
-world, and I believe it is a good sanity check to confront your investment
-strategy.
+Although IBEX35 seems grim, I believe it provides a good sanity check to
+confront your investment strategy to bad time. Also, Spain is one of the top 20
+economies in the world, so this could also happen to your chosen index.
 
 Let's see some additions to the B&H strategy:
-- We could use some sort of timing. Market Timing considers the recent past
+- We could use some sort of timing. Market timing considers the recent past
 and tells you when to enter or exit the market.
 - If this is a retirement fund, we should be retiring some money
 from it, because we need to live.
@@ -227,10 +227,12 @@ this.ng2ChartReport = new Ng2ChartReport([
   }
 ]);
 ```
-
-The result shows that the market timing saved us from the worst, so we managed
-to increase 3 fold the value of our portfolio, plus extracting nearly 190'000 in
-cash along this whole period:
+At the beginning, the NAV is lower than the index because of the transfers of
+660 we execute every month. Then we see how market timing saves us from the
+worse, and we sell all our positions. The NAV becomes a straight decreasing line
+because of the regular transfers. In the end, we managed to increase 3 fold the
+value of our portfolio, plus extracting nearly 190'000 in cash along this
+whole period.
 
 ![Buy & Hold on IBEX-35, with market timing since 1996](src/assets/doc/buy-and-hold-on-ibex35-with-market-timing.png)
 
