@@ -228,16 +228,18 @@ this.ng2ChartReport = new Ng2ChartReport([
 ]);
 ```
 At the beginning, the NAV is lower than the index because of the transfers of
-660 we execute every month. Then we see how market timing saves us from the
-worse, and we sell all our positions. The NAV becomes a straight decreasing line
-because of the regular transfers. In the end, we managed to increase 3 fold the
+660 we execute every month. Then market timing saves us from the worst, and we
+sell all our positions in 2000, 2007, 2010, and a couple of other times that we
+could have skipped but seemed dangerous at the time. While we are out of the
+market, the NAV becomes a straight decreasing line because of the regular
+transfers that we keep doing. In the end, we managed to increase 3 fold the
 value of our portfolio, plus extracting nearly 190'000 in cash along this
 whole period.
 
 ![Buy & Hold on IBEX-35, with market timing since 1996](src/assets/doc/buy-and-hold-on-ibex35-with-market-timing.png)
 
-Looks really nice. However, if you want to scare yourself, try
-starting the simulation in 2006. Or worse, in 2008.
+It looks really nice. If you want to scare yourself try starting the
+simulation in 2006.
 
 ### Understand what's happening
 Angular is not a difficult language, and you don't need to master it to go further.
