@@ -5,10 +5,7 @@ import { SwissQuoteAccount } from '../model/account.swissquote';
 import { Ng2ChartReport, ShowDataAs, ShowDataOn } from '../display/ng2-chart.report';
 import { BuyAndHoldStrategyWithTiming } from '../model/strategy.buy-and-hold.with-timing';
 import { SuperthonMarketTiming } from '../model/market-timing.superthon';
-import { MACDMarketTiming } from '../model/market-timing.macd';
-import { BearBull } from '../model/core/market-timing';
-import { EMAMarketTiming } from '../model/market-timing.ema';
-import { DoubleMarketTiming } from '../model/market-timing.double';
+import { RegularPeriod, RegularTransfer } from '../model/core/transfer';
 
 @Component({
   selector: 'app-simulation',
@@ -25,105 +22,52 @@ export class SimulationComponent implements OnInit {
   ngOnInit() {
     this.ng2ChartReport = new Ng2ChartReport([
       {
-        show: "EMA.NAV",
+        show: "IBEX35.CLOSE",
         as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT,
         normalize: true
       },
       {
-        show: "MACD.NAV",
+        show: "PORTFOLIO.NAV",
         as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT,
         normalize: true
       },
       {
-        show: "SPT.NAV",
+        show: "LIFESTYLE.CASH",
         as: ShowDataAs.LINE,
-        on: ShowDataOn.LEFT,
-        normalize: true
-      },
-      {
-        show: "DOUBLE.NAV",
-        as: ShowDataAs.LINE,
-        on: ShowDataOn.LEFT,
-        normalize: true
-      },
-      {
-        show: "SP500.CLOSE",
-        as: ShowDataAs.LINE,
-        on: ShowDataOn.LEFT,
-        normalize: true
+        on: ShowDataOn.RIGHT
       }
     ]);
 
     // Fetch the data:
-    this.quotesService.getHistoricalQuotes(['SP500']).subscribe(historicalQuotes => {
-
-      // Set up the simulation:
-      this.simulation = new Simulation({
-        accounts: [
-          new SwissQuoteAccount({
-            id: "EMA",
-            cash: 100000,
-            strategy: new BuyAndHoldStrategyWithTiming({
-              name: "SP500",
-              reinvestDividends: false,
-              marketTiming: new EMAMarketTiming({
-                name: "EMA",
-                status: BearBull.BULL
+    this.quotesService.getHistoricalQuotes(['IBEX35'])
+      .subscribe(historicalQuotes => {
+        // Set up the simulation:
+        this.simulation = new Simulation({
+          accounts: [
+            new SwissQuoteAccount({
+              id: "PORTFOLIO",
+              cash: 100000,
+              strategy: new BuyAndHoldStrategyWithTiming({
+                assetName: "IBEX35",
+                marketTiming: new SuperthonMarketTiming(),
+                transfer: new RegularTransfer({
+                  transfer: 660,
+                  every: RegularPeriod.MONTH,
+                  to: new SwissQuoteAccount({
+                    id: "LIFESTYLE"
+                  })
+                })
               })
-            })
-          }),
-          new SwissQuoteAccount({
-            id: "MACD",
-            cash: 100000,
-            strategy: new BuyAndHoldStrategyWithTiming({
-              name: "SP500",
-              reinvestDividends: false,
-              marketTiming: new MACDMarketTiming({
-                name: "MACD",
-                status: BearBull.BULL
-              })
-            })
-          }),
-          new SwissQuoteAccount({
-            id: "DOUBLE",
-            cash: 100000,
-            strategy: new BuyAndHoldStrategyWithTiming({
-              name: "SP500",
-              reinvestDividends: false,
-              marketTiming: new DoubleMarketTiming({
-                bull: new MACDMarketTiming({
-                  name: "DMACD",
-                  status: BearBull.BULL
-                }),
-                bear: new SuperthonMarketTiming({
-                  name: "DSPT",
-                  status: BearBull.BULL
-                }),
-                status: BearBull.BULL
-              })
-            })
-          }),
-          new SwissQuoteAccount({
-            id: "SPT",
-            cash: 100000,
-            strategy: new BuyAndHoldStrategyWithTiming({
-              name: "SP500",
-              reinvestDividends: false,
-              marketTiming: new SuperthonMarketTiming({
-                name: "SPT",
-                status: BearBull.BULL
-              })
-            })
-          }),
-        ],
-        historicalQuotes: historicalQuotes,
-        report: this.ng2ChartReport
-      });
-
-      // Run the simulation:
-      this.simulation.run(new Date(1996, 0, 0), new Date (2017, 0, 0));
+            }),
+          ],
+          historicalQuotes: historicalQuotes,
+          report: this.ng2ChartReport
+        });
+        // Run the simulation:
+        this.simulation
+          .run(new Date(1996, 0, 0), new Date (2020, 0, 1));
     });
   }
 }

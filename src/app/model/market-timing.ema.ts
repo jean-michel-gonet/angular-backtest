@@ -9,7 +9,7 @@ export enum PeriodLength {
 }
 
 export class IEMAMarketTiming {
-  name: string;
+  id?: string;
   periodLength?: PeriodLength;
   shortPeriod?: number;
   longPeriod?: number;
@@ -24,7 +24,7 @@ export class IEMAMarketTiming {
  * @class {EMAMarketTiming}
  */
 export class EMAMarketTiming implements MarketTiming {
-  name: string;
+  id: string;
   periodLength?: PeriodLength;
   shortPeriod: number;
   longPeriod: number;
@@ -39,13 +39,13 @@ export class EMAMarketTiming implements MarketTiming {
 
   constructor(obj = {} as IEMAMarketTiming){
     let {
-      name,
+      id = "EMA",
       periodLength = PeriodLength.MONTH,
       shortPeriod = 5,
       longPeriod = 15,
       status = BearBull.BEAR
     } = obj;
-    this.name = name;
+    this.id = id;
     this.periodLength = periodLength;
     this.shortPeriod = shortPeriod;
     this.longPeriod = longPeriod;
@@ -125,15 +125,15 @@ export class EMAMarketTiming implements MarketTiming {
 
   reportTo(report: Report): void {
     report.receiveData(new ReportedData({
-      sourceName: this.name + ".DIFF",
+      sourceName: this.id + ".DIFF",
       y: this.difference
     }));
     report.receiveData(new ReportedData({
-      sourceName: this.name + ".SEMA",
+      sourceName: this.id + ".SEMA",
       y: this.shortEMA
     }));
     report.receiveData(new ReportedData({
-      sourceName: this.name + ".LEMA",
+      sourceName: this.id + ".LEMA",
       y: this.longEMA
     }));
   }

@@ -1,6 +1,6 @@
 [
   {
-    "name": "IBEX-35",
+    "name": "IBEX35",
     "source": "indexes/ibex35-yahoo.csv",
     "provider": "finance.yahoo.com"
   },

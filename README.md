@@ -102,9 +102,136 @@ add an entry similar to the following:
 ```
 
 ### Make a simulation with your data
-Just to see your data:
-- Open the component ``src/app/simulation/simulation.component.ts``.
-- Spend a little time understanding 
+To configure the simulation, open the component ``src/app/simulation/simulation.component.ts``,
+and look at the code. There are three distinct parts:
+
+Even if it is not the first part, let's have a look at the simulation set up. This
+example simulates:
+- A ``SwissQuoteAccount``, we will name it ``PORTFOLIO``, as it represents
+  exactly this, our portfolio.
+- Initially it contains 100'000 in cash.
+- We're going to apply a B&H strategy (see https://www.investopedia.com/terms/b/buyandhold.asp), which consists in investing all cash into one asset.
+- Our asset of choice is the IBEX35.
+- And we're going to report the results to this ``ng2ChartReport``.
+
+Here is the code snippet:
+
+```
+this.simulation = new Simulation({
+  accounts: [
+    new SwissQuoteAccount({
+      id: "PORTFOLIO",
+      cash: 100000,
+      strategy: new BuyAndHoldStrategyWithTiming({
+        assetName: "IBEX35",
+      })
+    }),
+  ],
+  historicalQuotes: historicalQuotes,
+  report: this.ng2ChartReport
+});
+```
+
+Next is to check the reporting component, ``ng2ChartReport``. In this example,
+- ``Shows`` The daily closing quote for the ``IBEX35`` as a ``LINE`` referred
+to the ``LEFT`` axis.
+- ``Shows`` The daily NAV of our ``PORTFOLIO`` account, as a ``LINE`` referred
+to the ``LEFT`` axis.
+- Mind the ``normalize`` flag that is set to ``true``: it means that the
+concerned values all be divided by a factor so they start the chart at 100.
+
+```
+this.ng2ChartReport = new Ng2ChartReport([
+  {
+    show: "IBEX35.CLOSE",
+    as: ShowDataAs.LINE,
+    on: ShowDataOn.LEFT,
+    normalize: true
+  },
+  {
+    show: "PORTFOLIO.NAV",
+    as: ShowDataAs.LINE,
+    on: ShowDataOn.LEFT,
+    normalize: true
+  }
+]);
+```
+
+Finally, running the simulation is executed in one single line containing the
+start date and the end date:
+
+```
+this.simulation
+  .run(new Date(1996, 0, 0), new Date (2020, 0, 1));
+```
+
+Unsurprisingly, your portfolio's NAV is following the IBEX35 index:
+
+![Buy & Hold on IBEX-35 since 1996](src/assets/doc/buy-and-hold-on-ibex35-since-1996.png)
+
+### A second simulation with your data
+Although IBEX35 seems grim, but Spain is one of the top 20 economies in the
+world, and I believe it is a good sanity check to confront your investment
+strategy.
+
+Let's see some additions to the B&H strategy:
+- We could use some sort of timing. Market Timing considers the recent past
+and tells you when to enter or exit the market.
+- If this is a retirement fund, we should be retiring some money
+from it, because we need to live.
+
+Below is the new snippet for the simulation. You can probably spot where
+we use the _Superthon_ as a market timing. Also, see how we transfer 660
+in cash every month (that would be a yearly 8%) to a second account
+identified by ``LIFESTYLE`` :
+
+```
+this.simulation = new Simulation({
+  accounts: [
+    new SwissQuoteAccount({
+      id: "PORTFOLIO",
+      cash: 100000,
+      strategy: new BuyAndHoldStrategyWithTiming({
+        assetName: "IBEX35",
+        marketTiming: new SuperthonMarketTiming(),
+        transfer: new RegularTransfer({
+          transfer: 660,
+          every: RegularPeriod.MONTH,
+          to: new SwissQuoteAccount({
+            id: "LIFESTYLE"
+          })
+        })
+      })
+    }),
+  ],
+  historicalQuotes: historicalQuotes,
+  report: this.ng2ChartReport
+});
+```
+
+To see the cash transfers, we need to add it to the report. This time we
+refer it to the right axis, and not normalize it:
+
+```
+this.ng2ChartReport = new Ng2ChartReport([
+  ...
+  ...
+  {
+    show: "LIFESTYLE.CASH",
+    as: ShowDataAs.LINE,
+    on: ShowDataOn.RIGHT
+  }
+]);
+```
+
+The result shows that the market timing saved us from the worst, so we managed
+to increase 3 fold the value of our portfolio, plus extracting nearly 190'000 in
+cash along this whole period:
+
+![Buy & Hold on IBEX-35, with market timing since 1996](src/assets/doc/buy-and-hold-on-ibex35-with-market-timing.png)
+
+Looks really nice. However, if you want to scare yourself, try
+starting the simulation in 2006.
 
 ### Understand what's happening
 Angular is not a difficult language, and you don't need to master it to go further.
@@ -119,7 +246,7 @@ component works:
 
 ## Code structure
 
-![angular-backtest class diagram](angular-backtest-class-diagram-1.png)
+![angular-backtest class diagram](src/assets/doc/angular-backtest-class-diagram-1.png)
 
 ## Running the application
 

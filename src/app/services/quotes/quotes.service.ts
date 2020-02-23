@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, of, forkJoin } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { QuotesFromSixService } from './quotes-from-six.service';
 import { QuotesFromYahooService } from './quotes-from-yahoo.service';
@@ -59,15 +59,16 @@ export class QuotesService {
   }
 
   private obtainDividends(sourceAndProvider: SourceAndProvider, name: string): Observable<Dividend[]> {
-    let source = this.makeItGood(sourceAndProvider.source);
-
-    switch(sourceAndProvider.provider) {
-      case "date.yield.csv":
-        return this.quotesFromSimpleCsvService.getDividends(source, name);
-      default:
-        console.warn(sourceAndProvider.provider + " - Unknown provider for dividends");
-        return null;
+    if (sourceAndProvider) {
+      let source = this.makeItGood(sourceAndProvider.source);
+      switch(sourceAndProvider.provider) {
+        case "date.yield.csv":
+          return this.quotesFromSimpleCsvService.getDividends(source, name);
+        default:
+          console.warn(sourceAndProvider.provider + " - Unknown provider for dividends");
+      }
     }
+    return of([]);
   }
 
   private obtainQuote(quoteSourceAndProvider: QuoteSourceAndProvider): Observable<HistoricalQuotes> {

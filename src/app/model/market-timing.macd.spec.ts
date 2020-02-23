@@ -5,13 +5,12 @@ import { MACDMarketTiming, PeriodLength } from './market-timing.macd';
 describe('MACDMarketTiming', () => {
   it('Can create a new instance', () => {
     expect(new MACDMarketTiming({
-      name: "ISIN1"
     })).toBeTruthy();
   });
 
   let makeMacd = function(start: Date, values:number[]): MACDMarketTiming {
     let macd: MACDMarketTiming = new MACDMarketTiming({
-      name: "ISIN1",
+      id: "MACD",
       periodLength: PeriodLength.DAY,
       longPeriod: 26,
       shortPeriod: 12,
