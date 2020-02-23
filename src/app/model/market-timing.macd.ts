@@ -67,11 +67,11 @@ export class MACDMarketTiming extends EMAMarketTiming implements MarketTiming {
 
   reportTo(report: Report): void {
     report.receiveData(new ReportedData({
-      sourceName: this.name + ".MACD",
+      sourceName: this.id + ".MACD",
       y: this.difference
     }));
     report.receiveData(new ReportedData({
-      sourceName: this.name + ".TRIGGER",
+      sourceName: this.id + ".TRIGGER",
       y: this.triggerEMA
     }));
   }

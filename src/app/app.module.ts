@@ -5,12 +5,12 @@ import { ChartsModule } from 'ng2-charts';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { DisplayComponent } from './display/display.component';
+import { SimulationComponent } from './simulation/simulation.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DisplayComponent
+    SimulationComponent
   ],
   imports: [
     BrowserModule,

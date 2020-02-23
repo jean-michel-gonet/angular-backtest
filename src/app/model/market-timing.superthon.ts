@@ -49,7 +49,7 @@ class Candle {
 }
 
 class ISuperthonMarketTiming {
-  name: string;
+  id?: string;
   months?: number;
   status?: BearBull;
 }
@@ -60,7 +60,7 @@ class ISuperthonMarketTiming {
  * See http://www.loscanalesdesuperthon.com/p/mis-indicadores.html
  */
 export class SuperthonMarketTiming implements MarketTiming {
-  private name: string;
+  private id: string;
   private months: number;
   private candles: Candle[] = [];
   private status: BearBull;
@@ -70,11 +70,11 @@ export class SuperthonMarketTiming implements MarketTiming {
 
   constructor(obj = {} as ISuperthonMarketTiming){
     let {
-      name = "",
+      id = "SPT",
       months = 12,
       status = BearBull.BULL
     } = obj;
-    this.name = name;
+    this.id = id;
     this.months = months;
     this.status = status;
   }
@@ -151,7 +151,7 @@ export class SuperthonMarketTiming implements MarketTiming {
 
   reportTo(report: Report): void {
     report.receiveData(new ReportedData({
-      sourceName: this.name + ".SUPERTHON",
+      sourceName: this.id + ".SUPERTHON",
       y: this.numericalStatus
     }));
   }
