@@ -14,6 +14,15 @@
     }
   },
   {
+    "name": "AGG",
+    "source": "instruments/ishares-core-us-aggregate-bond-etf.csv",
+    "provider": "finance.yahoo.com",
+    "dividends": {
+      "source": "instruments/ishares-core-us-aggregate-bond-dividends.csv",
+      "provider": "finance.yahoo.com"
+    }
+  },
+  {
     "name": "LU1290894820",
     "source": "instruments/lu1290894820-six.json",
     "provider": "www.six-group.com"
