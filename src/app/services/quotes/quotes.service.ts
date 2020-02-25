@@ -63,6 +63,7 @@ export class QuotesService {
       let source = this.makeItGood(sourceAndProvider.source);
       switch(sourceAndProvider.provider) {
         case "date.yield.csv":
+        case "finance.yahoo.com":
           return this.quotesFromSimpleCsvService.getDividends(source, name);
         default:
           console.warn(sourceAndProvider.provider + " - Unknown provider for dividends");

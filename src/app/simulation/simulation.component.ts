@@ -28,6 +28,12 @@ export class SimulationComponent implements OnInit {
         normalize: true
       },
       {
+        show: "AGG.CLOSE",
+        as: ShowDataAs.LINE,
+        on: ShowDataOn.LEFT,
+        normalize: false
+      },
+      {
         show: "PORTFOLIO.NAV",
         as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT,
@@ -68,7 +74,7 @@ export class SimulationComponent implements OnInit {
         });
         // Run the simulation:
         this.simulation
-          .run(new Date(1996, 0, 0), new Date (2020, 0, 1));
+          .run(new Date(2006, 0, 0), new Date (2020, 0, 1));
     });
   }
 }

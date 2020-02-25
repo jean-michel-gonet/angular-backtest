@@ -60,13 +60,13 @@ export class BuyAndHoldStrategy implements Strategy {
     switch(this.marketTiming.bearBull()) {
         case BearBull.BEAR:
           this.sellEverything(account, quote);
-          this.investAllYourCashInOneSingleBasket(account, quoteDuringBear);
           this.payRegularTransfers(account, instantQuotes.instant, quoteDuringBear);
+          this.investAllYourCashInOneSingleBasket(account, quoteDuringBear);
           break;
         case BearBull.BULL:
           this.sellEverything(account, quoteDuringBear);
-          this.investAllYourCashInOneSingleBasket(account, quote);
           this.payRegularTransfers(account, instantQuotes.instant, quote);
+          this.investAllYourCashInOneSingleBasket(account, quote);
           break;
     }
   }
@@ -76,7 +76,7 @@ export class BuyAndHoldStrategy implements Strategy {
     if (dueAmount > 0) {
       let missingCash = dueAmount - account.cash;
       if (missingCash > 0 && quote) {
-        let partsToSell = missingCash / quote.partValue;
+        let partsToSell = Math.ceil(missingCash / quote.partValue);
         account.order(quote, -partsToSell);
       }
       account.transfer(this.transfer.to, dueAmount);

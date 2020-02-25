@@ -109,6 +109,9 @@ export class Account extends IAccount implements Reporter {
    **/
   order(quote: Quote, parts: number): void {
     parts = Math.floor(parts);
+    if (parts == 0) {
+      return;
+    }
 
     // Looks for the corresponding position:
     let position: Position = this.positions.find(p => {
