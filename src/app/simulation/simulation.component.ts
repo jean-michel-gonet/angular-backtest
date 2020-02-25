@@ -22,7 +22,7 @@ export class SimulationComponent implements OnInit {
   ngOnInit() {
     this.ng2ChartReport = new Ng2ChartReport([
       {
-        show: "IBEX35.CLOSE",
+        show: "SP500.CLOSE",
         as: ShowDataAs.LINE,
         on: ShowDataOn.LEFT,
         normalize: true
@@ -47,7 +47,7 @@ export class SimulationComponent implements OnInit {
     ]);
 
     // Fetch the data:
-    this.quotesService.getHistoricalQuotes(['IBEX35', 'AGG'])
+    this.quotesService.getHistoricalQuotes(['SP500', 'AGG'])
       .subscribe(historicalQuotes => {
         // Set up the simulation:
         this.simulation = new Simulation({
@@ -56,7 +56,7 @@ export class SimulationComponent implements OnInit {
               id: "PORTFOLIO",
               cash: 100000,
               strategy: new BuyAndHoldStrategy({
-                assetName: "IBEX35",
+                assetName: "SP500",
                 assetNameDuringBear: "AGG",
                 marketTiming: new SuperthonMarketTiming(),
                 transfer: new RegularTransfer({
@@ -74,7 +74,7 @@ export class SimulationComponent implements OnInit {
         });
         // Run the simulation:
         this.simulation
-          .run(new Date(2006, 0, 0), new Date (2020, 0, 1));
+          .run(new Date(1996, 0, 0), new Date (2020, 0, 1));
     });
   }
 }
