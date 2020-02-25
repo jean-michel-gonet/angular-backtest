@@ -80,21 +80,23 @@ export class SuperthonMarketTiming implements MarketTiming {
   }
 
   record(instant: Date, quote: Quote): void {
-    this.recordCandles(instant, quote);
-    this.numericalStatus = this.countCandles();
+    if (quote) {
+      this.recordCandles(instant, quote);
+      this.numericalStatus = this.countCandles();
 
-    switch(this.status) {
-      case BearBull.BEAR:
-        if (this.numericalStatus >= 1) {
-          this.status = BearBull.BULL;
+      switch(this.status) {
+        case BearBull.BEAR:
+          if (this.numericalStatus >= 1) {
+            this.status = BearBull.BULL;
+          }
+          break;
+
+        case BearBull.BULL:
+        if (this.numericalStatus <= -1) {
+          this.status = BearBull.BEAR;
         }
         break;
-
-      case BearBull.BULL:
-      if (this.numericalStatus <= -1) {
-        this.status = BearBull.BEAR;
       }
-      break;
     }
   }
 

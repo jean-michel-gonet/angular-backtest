@@ -3,7 +3,7 @@ import { QuotesService } from '../services/quotes/quotes.service';
 import { Simulation } from '../model/core/simulation';
 import { SwissQuoteAccount } from '../model/account.swissquote';
 import { Ng2ChartReport, ShowDataAs, ShowDataOn } from '../display/ng2-chart.report';
-import { BuyAndHoldStrategyWithTiming } from '../model/strategy.buy-and-hold.with-timing';
+import { BuyAndHoldStrategy } from '../model/strategies/strategy.buy-and-hold';
 import { SuperthonMarketTiming } from '../model/market-timing.superthon';
 import { RegularPeriod, RegularTransfer } from '../model/core/transfer';
 
@@ -41,7 +41,7 @@ export class SimulationComponent implements OnInit {
     ]);
 
     // Fetch the data:
-    this.quotesService.getHistoricalQuotes(['IBEX35'])
+    this.quotesService.getHistoricalQuotes(['IBEX35', 'AGG'])
       .subscribe(historicalQuotes => {
         // Set up the simulation:
         this.simulation = new Simulation({
@@ -49,8 +49,9 @@ export class SimulationComponent implements OnInit {
             new SwissQuoteAccount({
               id: "PORTFOLIO",
               cash: 100000,
-              strategy: new BuyAndHoldStrategyWithTiming({
+              strategy: new BuyAndHoldStrategy({
                 assetName: "IBEX35",
+                assetNameDuringBear: "AGG",
                 marketTiming: new SuperthonMarketTiming(),
                 transfer: new RegularTransfer({
                   transfer: 660,

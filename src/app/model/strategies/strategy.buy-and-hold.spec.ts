@@ -1,8 +1,9 @@
 import { BuyAndHoldStrategy } from './strategy.buy-and-hold';
-import { Account } from './core/account';
-import { InstantQuotes } from './core/quotes';
-import { Quote, Position } from './core/asset';
-import { RegularTransfer, RegularPeriod } from './core/transfer';
+import { Account } from '../core/account';
+import { InstantQuotes } from '../core/quotes';
+import { Quote, Position } from '../core/asset';
+import { RegularTransfer, RegularPeriod } from '../core/transfer';
+import { DefaultMarketTiming, BearBull } from '../core/market-timing';
 
 
 describe('BuyAndHoldStrategy', () => {
@@ -13,7 +14,7 @@ describe('BuyAndHoldStrategy', () => {
 
   it('Can perform the initial investment', () => {
     let buyAndHoldStrategy: BuyAndHoldStrategy = new BuyAndHoldStrategy({
-      name: "ISIN1"
+      assetName: "ISIN1"
     });
 
     let account: Account = new Account({
@@ -39,8 +40,7 @@ describe('BuyAndHoldStrategy', () => {
 
   it('Can reinvest dividends in the quote', () => {
     let buyAndHoldStrategy: BuyAndHoldStrategy = new BuyAndHoldStrategy({
-      name: "ISIN1",
-      reinvestDividends: true
+      assetName: "ISIN1"
     });
 
     let account: Account = new Account({
@@ -67,15 +67,32 @@ describe('BuyAndHoldStrategy', () => {
 
   });
 
-  it('Only reinvest dividends if reinversion is enabled', () => {
+  class MarketTimingMock extends DefaultMarketTiming {
+    constructor(private _bearBull: BearBull){
+      super();
+    }
+    public setBearBull(bearBull: BearBull = BearBull.BEAR): void {
+      this._bearBull = bearBull;
+    };
+    public bearBull(): BearBull {
+      return this._bearBull;
+    }
+  }
+
+  it('Can sell everything on Bear period', () => {
     let buyAndHoldStrategy: BuyAndHoldStrategy = new BuyAndHoldStrategy({
-      name: "ISIN1"
+      assetName: "ISIN1",
+      marketTiming: new MarketTimingMock(BearBull.BEAR)
     });
 
     let account: Account = new Account({
       strategy: buyAndHoldStrategy,
-      cash:0,
-      positions: [new Position({name: "ISIN1", parts: 1000})]
+      cash: 0,
+      positions: [
+        new Position({
+          name: "ISIN1",
+          partValue: 10,
+          parts: 100})]
     });
 
     let instantQuotes: InstantQuotes = new InstantQuotes({
@@ -83,23 +100,56 @@ describe('BuyAndHoldStrategy', () => {
       quotes: [
         new Quote({
           name: "ISIN1",
-          partValue: 10,
-          dividend: 5
-        })
+          partValue: 10})
       ]
     });
+
     account.process(instantQuotes);
 
-    expect(account.cash).toBe(500);
-    expect(account.position("ISIN1").parts).toBe(1000);
-    expect(account.nav()).toBe(10500);
+    expect(account.cash).toBe(1000);
+    expect(account.position("ISIN1").parts).toBe(0);
+    expect(account.nav()).toBe(1000);
   });
+
+  it('Can reinvest everything in asset for Bear period', () => {
+    let buyAndHoldStrategy: BuyAndHoldStrategy = new BuyAndHoldStrategy({
+      assetName: "ISIN1",
+      assetNameDuringBear: "ISIN2",
+      marketTiming: new MarketTimingMock(BearBull.BEAR)
+    });
+
+    let account: Account = new Account({
+      strategy: buyAndHoldStrategy,
+      cash: 0,
+      positions: [
+        new Position({
+          name: "ISIN1",
+          partValue: 10,
+          parts: 100})]
+    });
+
+    let instantQuotes: InstantQuotes = new InstantQuotes({
+      instant: new Date(2010, 10, 10),
+      quotes: [
+        new Quote({name: "ISIN1", partValue: 10}),
+        new Quote({name: "ISIN2", partValue: 20})
+      ]
+    });
+
+    account.process(instantQuotes);
+
+    expect(account.cash).toBe(0);
+    expect(account.position("ISIN1").parts).toBe(0);
+    expect(account.position("ISIN2").parts).toBe(50);
+    expect(account.nav()).toBe(1000);
+  });
+
 
   it('Can output the monthly amount', () => {
     let monthlyOutput: number = 10;
     let accountOutput: Account = new Account();
     let buyAndHoldStrategy: BuyAndHoldStrategy = new BuyAndHoldStrategy({
-      name: "ISIN1",
+      assetName: "ISIN1",
       transfer: new RegularTransfer({
         transfer: monthlyOutput,
         every: RegularPeriod.MONTH,
