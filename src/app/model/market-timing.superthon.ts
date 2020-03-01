@@ -2,6 +2,12 @@ import { MarketTiming, BearBull } from './core/market-timing';
 import { Quote } from './core/asset';
 import { Report, ReportedData } from './core/reporting';
 
+export enum SuperthonPeriodLength {
+  MONTHLY,
+  SEMIMONTHLY,
+  WEEKLY
+}
+
 interface ICandle {
   trend?: number,
   firstDay: Date;
@@ -50,18 +56,20 @@ class Candle {
 
 class ISuperthonMarketTiming {
   id?: string;
-  months?: number;
+  periods?: number;
+  periodLength?: SuperthonPeriodLength;
   status?: BearBull;
 }
 
 /**
  * The Superthon Market Timing works by the number of monthly candles
- * that were positive in the last months (usually 12).
+ * that were positive in the last periods (usually 12).
  * See http://www.loscanalesdesuperthon.com/p/mis-indicadores.html
  */
 export class SuperthonMarketTiming implements MarketTiming {
   private id: string;
-  private months: number;
+  private periods: number;
+  private periodLength?: SuperthonPeriodLength;
   private candles: Candle[] = [];
   private status: BearBull;
   private numericalStatus: number;
@@ -71,11 +79,13 @@ export class SuperthonMarketTiming implements MarketTiming {
   constructor(obj = {} as ISuperthonMarketTiming){
     let {
       id = "SPT",
-      months = 12,
+      periods = 12,
+      periodLength = SuperthonPeriodLength.MONTHLY,
       status = BearBull.BULL
     } = obj;
     this.id = id;
-    this.months = months;
+    this.periods = periods;
+    this.periodLength = periodLength;
     this.status = status;
   }
 
@@ -103,7 +113,7 @@ export class SuperthonMarketTiming implements MarketTiming {
   private recordCandles(instant: Date, quote: Quote): void {
 
     // At first day of the month...
-    if (!this.lastInstant || instant.getMonth() != this.lastInstant.getMonth()) {
+    if (this.changeOfPeriod(instant)) {
 
       // ... Close the current candle.
       if (this.currentCandle) {
@@ -117,21 +127,50 @@ export class SuperthonMarketTiming implements MarketTiming {
         quoteAtFirstDay: quote.partValue
       });
     }
+  }
+
+  private changeOfPeriod(instant: Date): boolean {
+    let periodChanged: boolean;
+
+    // If this is the first iteration, then it is also the beginning of
+    // the first period:
+    if (!this.lastInstant) {
+      periodChanged = true;
+    }
+    // If this is not the first iteration, then we compare this instant
+    // with previous instant:
+    else {
+      switch(this.periodLength) {
+        case SuperthonPeriodLength.WEEKLY:
+          periodChanged = instant.getDay() < this.lastInstant.getDay();
+          break;
+        case SuperthonPeriodLength.SEMIMONTHLY:
+          periodChanged = (instant.getDate() >= 15 && this.lastInstant.getDate() < 15) ||
+                          (instant.getDate() < this.lastInstant.getDate())
+          break;
+        default:
+        case SuperthonPeriodLength.MONTHLY:
+          periodChanged = !this.lastInstant || instant.getMonth() != this.lastInstant.getMonth();
+          break;
+      }
+    }
 
     // Remember this day:
     this.lastInstant = instant;
+
+    return periodChanged;
   }
 
   private countCandles(): number {
-    if (this.candles.length >= this.months) {
+    if (this.candles.length >= this.periods) {
       let positiveCandles = 0;
-      let relevantCandles: Candle[] = this.candles.slice(-this.months);
+      let relevantCandles: Candle[] = this.candles.slice(-this.periods);
       relevantCandles.forEach(c => {
         if (c.trend > 0) {
           positiveCandles += 1;
         }
       });
-      return positiveCandles - 6;
+      return positiveCandles - this.periods / 2;
     }
   }
 

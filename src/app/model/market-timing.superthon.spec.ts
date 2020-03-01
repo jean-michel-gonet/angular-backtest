@@ -5,13 +5,13 @@ import { BearBull } from './core/market-timing';
 describe('SuperthonMarketTiming', () => {
   it('Can create a new instance', () => {
     expect(new SuperthonMarketTiming({
-      months: 12
+      periods: 12
     })).toBeTruthy();
   });
 
   let makeSuperthon = function(start: Date, values:number[]): SuperthonMarketTiming {
     let superthon: SuperthonMarketTiming = new SuperthonMarketTiming({
-      months: 12
+      periods: 12
     });
     for (let n: number = 0; n < values.length; n++){
       let instant =  new Date(start.getFullYear(), start.getMonth() + n, 1);
