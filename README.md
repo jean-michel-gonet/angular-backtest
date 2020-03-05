@@ -336,3 +336,6 @@ This is some of my reference documentation:
   : https://www.iexplain.org/calculate-macd/
 - How to calculate Moving averages, and EMA in particular: https://en.wikipedia.org/wiki/Moving_average
 - https://www.liberatedstocktrader.com/top-10-rules-for-using-stock-chart-indicators-effectively/
+- https://www.trackingdifferences.com/
+- https://www.mustachianpost.com/
+- https://indexfundinvestor.eu/2019/07/11/what-is-the-best-msci-world-uctis-etf-for-you/
