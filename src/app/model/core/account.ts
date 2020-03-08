@@ -97,7 +97,7 @@ export class Account extends IAccount implements Reporter {
    * @return {number} The cost, always positive.
    **/
   orderCost(quote: Quote, parts: number): number {
-    return Math.abs(parts * quote.partValue * quote.spread / 2);
+    return Math.abs(parts * quote.partValue.close * quote.spread / 2);
   }
 
   /**
@@ -137,7 +137,7 @@ export class Account extends IAccount implements Reporter {
     let costs: number = this.orderCost(quote, parts);
     this.accumulatedCosts += costs;
     this.cash = this.cash -
-                parts * quote.partValue -
+                parts * quote.partValue.close -
                 costs;
 
     // A little log:

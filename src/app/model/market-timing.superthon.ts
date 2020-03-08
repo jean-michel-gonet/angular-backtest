@@ -117,14 +117,14 @@ export class SuperthonMarketTiming implements MarketTiming {
 
       // ... Close the current candle.
       if (this.currentCandle) {
-        this.currentCandle.close(instant, quote.partValue);
+        this.currentCandle.close(instant, quote.partValue.close);
         this.candles.push(this.currentCandle);
       }
 
       // ... Open the next candle.
       this.currentCandle = new Candle({
         firstDay: instant,
-        quoteAtFirstDay: quote.partValue
+        quoteAtFirstDay: quote.partValue.close
       });
     }
   }

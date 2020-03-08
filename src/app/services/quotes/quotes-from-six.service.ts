@@ -31,17 +31,24 @@ export class SixConverter {
       let data:any = valor.data;
       let dates:number[] = data.Date;
       let close:number[] = data.Close;
+      let open: number[] = data.Open;
+      let high: number[] = data.High;
+      let low: number[] = data.Low;
 
       for(let i = 0; i<dates.length; i++) {
         let date:Date = this.convertToDate(dates[i]);
-        let partValue = close[i];
 
         let instantQuotes: InstantQuotes = new InstantQuotes({
           instant: date,
           quotes: [
             new Quote({
               name: name,
-              partValue: this.convertToNumber(partValue),
+              partValue: {
+                close: this.convertToNumber(close[i]),
+                open: this.convertToNumber(open[i]),
+                high: this.convertToNumber(high[i]),
+                low: this.convertToNumber(low[i])
+              },
               spread: 0,
               dividend: 0})
           ]
@@ -67,7 +74,7 @@ export class SixConverter {
     let month:number = Math.floor(monthDay / 100);
     let day = monthDay % 100;
 
-    return new Date(year, month, day);
+    return new Date(year, month - 1, day);
   }
 }
 

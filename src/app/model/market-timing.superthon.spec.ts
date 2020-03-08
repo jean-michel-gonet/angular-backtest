@@ -15,7 +15,7 @@ describe('SuperthonMarketTiming', () => {
     });
     for (let n: number = 0; n < values.length; n++){
       let instant =  new Date(start.getFullYear(), start.getMonth() + n, 1);
-      let quote = new Quote({name: "ISIN1", partValue: values[n]});
+      let quote = new Quote({name: "ISIN1", partValue: {close: values[n]}});
       superthon.record(instant, quote);
     }
     return superthon;

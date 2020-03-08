@@ -96,7 +96,7 @@ describe('QuotesService', () => {
 
     let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
-        new Quote({name: "ISIN3", partValue: 1.3})
+        new Quote({name: "ISIN3", partValue: {close: 1.3}})
       ]})]);
     yahoo.whenQuotes("ISIN3", historicalQuotes);
 
@@ -107,7 +107,7 @@ describe('QuotesService', () => {
     dateYield.whenDividends("ISIN3", dividends);
 
     quotesService.getHistoricalQuotes(["ISIN3"]).subscribe(data => {
-      expect(data.get(beforeYesterday).quote("ISIN3").partValue).toBe(1.3);
+      expect(data.get(beforeYesterday).quote("ISIN3").partValue.close).toBe(1.3);
       expect(data.get(beforeYesterday).quote("ISIN3").dividend).toBe(1.5);
       done();
     });

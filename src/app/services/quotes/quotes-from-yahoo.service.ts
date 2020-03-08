@@ -37,14 +37,19 @@ export class YahooConverter {
         let adjustedClose = tokens[5];
         let volume        = tokens[6];
 
-        let partValue: number = this.convertToNumber(close);
-        if (partValue) {
+        let closePrice: number = this.convertToNumber(close);
+        if (closePrice) {
           let instantQuotes: InstantQuotes = new InstantQuotes({
             instant: this.convertToDate(date),
             quotes: [
               new Quote({
                 name: this.name,
-                partValue: this.convertToNumber(partValue),
+                partValue: {
+                  open: this.convertToNumber(open),
+                  close: closePrice,
+                  high: this.convertToNumber(high),
+                  low: this.convertToNumber(low)
+                },
                 spread: 0,
                 dividend: 0})
             ]

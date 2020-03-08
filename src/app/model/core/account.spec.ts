@@ -19,12 +19,12 @@ describe('Account', () => {
       positions: [
         new Position({
           name: "XX",
-          partValue: 100,
+          partValue: {close: 100},
           parts: 3
         }),
         new Position({
           name: "XX",
-          partValue: 10,
+          partValue: {close: 10},
           parts: 4
         })
       ]
@@ -37,8 +37,8 @@ describe('Account', () => {
     let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(),
       quotes: [
-        new Quote({name: "XX", partValue: 110}),
-        new Quote({name: "YY", partValue: 11})
+        new Quote({name: "XX", partValue: {close: 110}}),
+        new Quote({name: "YY", partValue: {close: 11}})
       ]
     });
     let account: Account = new Account({
@@ -47,12 +47,12 @@ describe('Account', () => {
       positions: [
         new Position({
           name: "XX",
-          partValue: 100,
+          partValue: {close: 100},
           parts: 3
         }),
         new Position({
           name: "YY",
-          partValue: 10,
+          partValue: {close: 10},
           parts: 4
         })
       ]
@@ -67,7 +67,7 @@ describe('Account', () => {
     let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(),
       quotes: [
-        new Quote({name: "YY", partValue: 11, dividend: 10})
+        new Quote({name: "YY", partValue: {close: 11}, dividend: 10})
       ]
     });
     let account: Account = new Account({
@@ -76,7 +76,7 @@ describe('Account', () => {
       positions: [
         new Position({
           name: "YY",
-          partValue: 10,
+          partValue: {close: 10},
           parts: 4
         })
       ]
@@ -91,7 +91,9 @@ describe('Account', () => {
     let spread: number = 0.1;
     let quote: Quote = new Quote({
       name: "XX",
-      partValue: partValue,
+      partValue: {
+        close: partValue
+      },
       spread: spread
     });
     let account = new Account();
@@ -106,7 +108,9 @@ describe('Account', () => {
 
     let quote: Quote = new Quote({
       name: "XX",
-      partValue: partValue,
+      partValue: {
+        close: partValue
+      },
       spread: spread
     });
     let account: Account = new Account({
@@ -128,7 +132,9 @@ describe('Account', () => {
 
     let quote: Quote = new Quote({
       name: "XX",
-      partValue: partValue,
+      partValue: {
+        close: partValue
+      },
       spread: spread
     });
     let account: Account = new Account({
@@ -153,12 +159,12 @@ describe('Account', () => {
       positions: [
         new Position({
           name: "XX",
-          partValue: 100,
+          partValue: {close: 100},
           parts: 3
         }),
         new Position({
           name: "YY",
-          partValue: 10,
+          partValue: {close: 10},
           parts: 4
         })
       ]
@@ -166,7 +172,7 @@ describe('Account', () => {
     let position: Position = account.position("XX");
     expect(position).toEqual(new Position({
       name: "XX",
-      partValue: 100,
+      partValue: {close: 100},
       parts: 3
     }));
   });

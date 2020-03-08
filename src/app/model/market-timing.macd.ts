@@ -61,7 +61,7 @@ export class MACDMarketTiming extends EMAMarketTiming implements MarketTiming {
         this.periodQuotes = [];
     }
 
-    this.periodQuotes.push(quote.partValue);
+    this.periodQuotes.push(quote.partValue.close);
     this.lastInstant = instant;
   }
 

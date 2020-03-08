@@ -1,5 +1,22 @@
 /**
- * An quote is a resource with economic value that an individual, corporation
+ * A candlestick describes the part value of an asset over a period of time.
+ * It is composed of four components:
+ * - The opening price.
+ * - The closing price.
+ * - The highest price.
+ * - The lowest price.
+ * see https://en.wikipedia.org/wiki/Candlestick_chart
+ * @class{Candlestick}
+ */
+export class Candlestick {
+  open?: number;
+  high?: number;
+  low?: number;
+  close: number;
+}
+
+/**
+ * An asset is a resource with economic value that an individual, corporation
  * or country owns or controls with the expectation that it will provide a
  * future benefit.
  * Assets are reported on a company's balance sheet and are bought or created
@@ -9,12 +26,17 @@
  */
 export class Asset {
   name: string;
-  partValue?: number;
+  partValue?: Candlestick;
 
   constructor(obj: Asset = {} as Asset) {
     let {
       name = "",
-      partValue = 0
+      partValue = {
+        open: 0,
+        close: 0,
+        high: 0,
+        low: 0
+      }
     } = obj;
 
     this.name = name;
@@ -70,11 +92,11 @@ export class Position extends IPosition {
   }
 
   /**
-   * Returns the net quote value based on the part value and
+   * Returns the net quote value based on the closing price of part value and
    * the number of parts.
    */
   nav():number {
-    return this.partValue * this.parts;
+    return this.partValue.close * this.parts;
   }
 
   /**

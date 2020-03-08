@@ -12,28 +12,29 @@ var sixResponse = {
   "protocolVersion":"fqs.json#17x",
   "nettingMinutes":1440,
   "delayMinutes":15,
-  "delayedMillis":1575097265002,
-  "delayedDateTime":"20191130T08:01:05.002",
-  "requestURL":"/itf/fqs/delayed/charts.json?netting=1440&columns=Date,Time,Close,Open,Low,High,TotalVolume&fromdate=19880630&where=ValorId=LU1290894820CHF4&select=ISIN,ClosingPrice,ClosingPerformance,PreviousClosingPrice",
-  "copyRight":"(c) Copyright by SIX Group Ltd 2019. All rights reserved.",
+  "delayedMillis":1583649059819,
+  "delayedDateTime":"20200308T07:30:59.819",
+  "requestURL":"/itf/fqs/delayed/charts.json?netting=1440&columns=Date,Time,Close,Open,Low,High,TotalVolume&fromdate=19880630&where=ValorId=CH0008899764CHF4&select=ISIN,ClosingPrice,ClosingPerformance,PreviousClosingPrice",
+  "copyRight":"(c) Copyright by SIX Group Ltd 2020. All rights reserved.",
   "valors":[
     {
-      "ISIN":"LU1290894820",
-      "ClosingPrice":141.5,
-      "ClosingPerformance":0,
-      "PreviousClosingPrice":141.5,
+      "ISIN":"CH0008899764",
+      "ClosingPrice":101.14,
+      "ClosingPerformance":-3.44,
+      "PreviousClosingPrice":104.74,
       "data":{
-        "Date":        [20160721, 20160722, 20160723, 20160726],
-        "Time":        [120000,   120000,   120000,   120000  ],
-        "Close":       [109.39,   108.19,       "",   109.97  ],
-        "Open":        [109.39,   108.19,   108.82,   109.97  ],
-        "High":        [109.39,   108.19,   108.82,   109.97  ],
-        "TotalVolume": [0,        70,       12,       0       ]
+        "Date":       [20010315,20010316,20010319,20010320],
+        "Time":       [  120000,  120000,  120000,  120000],
+        "Close":      [      73,    71.7,   70.25,   71.15],
+        "Open":       [   72.85,    73.3,   71.05,   70.35],
+        "Low":        [    71.2,    70.9,   70.25,    70.3],
+        "High":       [      73,    73.3,   71.95,   71.35],
+        "TotalVolume":[   41965,   30255,    9144,   15863]
       }
     }
   ],
-  "elapsed":21
-};
+  "elapsed":26
+}
 
 describe('QuotesFromSixService', () => {
   let service: QuotesFromSixService;
@@ -74,44 +75,64 @@ describe('SixConverter', () => {
     expect(iStock).toEqual(
       jasmine.arrayWithExactContents([
         new IInstantQuotes({
-          instant: new Date(2016, 7, 21),
+          instant: new Date(2001, 2, 15),
           quotes: [
             new Quote({
-              name: "LU1290894820",
-              partValue: 109.39,
+              name: "CH0008899764",
+              partValue: {
+                close: 73,
+                open: 72.85,
+                low: 71.2,
+                high: 73
+              },
               spread: 0,
               dividend: 0
             })
           ]
         }),
         new IInstantQuotes({
-          instant: new Date(2016, 7, 22),
+          instant: new Date(2001, 2, 16),
           quotes: [
             new Quote({
-              name: "LU1290894820",
-              partValue: 108.19,
+              name: "CH0008899764",
+              partValue: {
+                close: 71.7,
+                open: 73.3,
+                low: 70.9,
+                high: 73.3
+              },
               spread: 0,
               dividend: 0
             })
           ]
         }),
         new IInstantQuotes({
-          instant: new Date(2016, 7, 23),
+          instant: new Date(2001, 2, 19),
           quotes: [
             new Quote({
-              name: "LU1290894820",
-              partValue: 0,
+              name: "CH0008899764",
+              partValue: {
+                close: 70.25,
+                open: 71.05,
+                low: 70.25,
+                high: 71.95
+              },
               spread: 0,
               dividend: 0
             })
           ]
         }),
         new IInstantQuotes({
-          instant: new Date(2016, 7, 26),
+          instant: new Date(2001, 2, 20),
           quotes: [
             new Quote({
-              name: "LU1290894820",
-              partValue: 109.97,
+              name: "CH0008899764",
+              partValue: {
+                close: 71.15,
+                open: 70.35,
+                low: 70.3,
+                high: 71.35
+              },
               spread: 0,
               dividend: 0
             })

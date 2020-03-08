@@ -56,7 +56,12 @@ describe('YahooConverter', () => {
           quotes: [
             new Quote({
               name: "ISIN1",
-              partValue: 9865.299805,
+              partValue: {
+                open: 9834.599609,
+                high: 9913.400391,
+                low: 9764.099609,
+                close: 9865.299805
+              },
               spread: 0,
               dividend: 0
             })]}),
@@ -65,7 +70,12 @@ describe('YahooConverter', () => {
           quotes: [
             new Quote({
               name: "ISIN1",
-              partValue: 9251.299805,
+              partValue: {
+                open: 9393.299805,
+                high: 9393.299805,
+                low: 9243.000000,
+                close: 9251.299805
+              },
               spread: 0,
               dividend: 0
             })]}),
@@ -74,7 +84,12 @@ describe('YahooConverter', () => {
           quotes: [
             new Quote({
               name: "ISIN1",
-              partValue: 2603.199951,
+              partValue: {
+                open: 2612.300049,
+                high: 2612.300049,
+                low: 2599.300049,
+                close: 2603.199951
+              },
               spread: 0,
               dividend: 0
             })]}),
@@ -83,7 +98,12 @@ describe('YahooConverter', () => {
           quotes: [
             new Quote({
               name: "ISIN1",
-              partValue: 9547.500000,
+              partValue: {
+                open: 9798.000000,
+                high: 9856.099609,
+                low: 9535.299805,
+                close: 9547.500000
+              },
               spread: 0,
               dividend: 0
             })]})
