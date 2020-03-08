@@ -1,7 +1,7 @@
 import { Account } from './account';
 import { NullStrategy } from './strategy';
 import { InstantQuotes } from './quotes';
-import { Position, Quote } from './asset';
+import { Position, Quote, Candlestick } from './asset';
 
 class MockStrategy extends NullStrategy {
   gotCalled: boolean = false;
@@ -19,12 +19,12 @@ describe('Account', () => {
       positions: [
         new Position({
           name: "XX",
-          partValue: {close: 100},
+          partValue: new Candlestick({close: 100}),
           parts: 3
         }),
         new Position({
           name: "XX",
-          partValue: {close: 10},
+          partValue: new Candlestick({close: 10}),
           parts: 4
         })
       ]
@@ -37,8 +37,8 @@ describe('Account', () => {
     let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(),
       quotes: [
-        new Quote({name: "XX", partValue: {close: 110}}),
-        new Quote({name: "YY", partValue: {close: 11}})
+        new Quote({name: "XX", partValue: new Candlestick({close: 110})}),
+        new Quote({name: "YY", partValue: new Candlestick({close: 11})})
       ]
     });
     let account: Account = new Account({
@@ -47,12 +47,12 @@ describe('Account', () => {
       positions: [
         new Position({
           name: "XX",
-          partValue: {close: 100},
+          partValue: new Candlestick({close: 100}),
           parts: 3
         }),
         new Position({
           name: "YY",
-          partValue: {close: 10},
+          partValue: new Candlestick({close: 10}),
           parts: 4
         })
       ]
@@ -67,7 +67,7 @@ describe('Account', () => {
     let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(),
       quotes: [
-        new Quote({name: "YY", partValue: {close: 11}, dividend: 10})
+        new Quote({name: "YY", partValue: new Candlestick({close: 11}), dividend: 10})
       ]
     });
     let account: Account = new Account({
@@ -76,7 +76,7 @@ describe('Account', () => {
       positions: [
         new Position({
           name: "YY",
-          partValue: {close: 10},
+          partValue: new Candlestick({close: 10}),
           parts: 4
         })
       ]
@@ -91,9 +91,9 @@ describe('Account', () => {
     let spread: number = 0.1;
     let quote: Quote = new Quote({
       name: "XX",
-      partValue: {
+      partValue: new Candlestick({
         close: partValue
-      },
+      }),
       spread: spread
     });
     let account = new Account();
@@ -108,9 +108,9 @@ describe('Account', () => {
 
     let quote: Quote = new Quote({
       name: "XX",
-      partValue: {
+      partValue: new Candlestick({
         close: partValue
-      },
+      }),
       spread: spread
     });
     let account: Account = new Account({
@@ -132,9 +132,9 @@ describe('Account', () => {
 
     let quote: Quote = new Quote({
       name: "XX",
-      partValue: {
+      partValue: new Candlestick({
         close: partValue
-      },
+      }),
       spread: spread
     });
     let account: Account = new Account({
@@ -159,12 +159,12 @@ describe('Account', () => {
       positions: [
         new Position({
           name: "XX",
-          partValue: {close: 100},
+          partValue: new Candlestick({close: 100}),
           parts: 3
         }),
         new Position({
           name: "YY",
-          partValue: {close: 10},
+          partValue: new Candlestick({close: 10}),
           parts: 4
         })
       ]
@@ -172,7 +172,7 @@ describe('Account', () => {
     let position: Position = account.position("XX");
     expect(position).toEqual(new Position({
       name: "XX",
-      partValue: {close: 100},
+      partValue: new Candlestick({close: 100}),
       parts: 3
     }));
   });

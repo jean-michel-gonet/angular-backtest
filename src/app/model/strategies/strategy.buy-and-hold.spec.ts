@@ -1,7 +1,7 @@
 import { BuyAndHoldStrategy } from './strategy.buy-and-hold';
 import { Account } from '../core/account';
 import { InstantQuotes } from '../core/quotes';
-import { Quote, Position } from '../core/asset';
+import { Quote, Position, Candlestick } from '../core/asset';
 import { RegularTransfer, RegularPeriod } from '../core/transfer';
 import { DefaultMarketTiming, BearBull } from '../core/market-timing';
 
@@ -27,7 +27,7 @@ describe('BuyAndHoldStrategy', () => {
       quotes: [
         new Quote({
           name: "ISIN1",
-          partValue: {close: 10}})
+          partValue: new Candlestick({close: 10})})
       ]
     });
 
@@ -54,7 +54,7 @@ describe('BuyAndHoldStrategy', () => {
       quotes: [
         new Quote({
           name: "ISIN1",
-          partValue: {close: 10},
+          partValue: new Candlestick({close: 10}),
           dividend: 5
         })
       ]
@@ -91,7 +91,7 @@ describe('BuyAndHoldStrategy', () => {
       positions: [
         new Position({
           name: "ISIN1",
-          partValue: {close: 10},
+          partValue: new Candlestick({close: 10}),
           parts: 100})]
     });
 
@@ -100,7 +100,7 @@ describe('BuyAndHoldStrategy', () => {
       quotes: [
         new Quote({
           name: "ISIN1",
-          partValue: {close: 10}})
+          partValue: new Candlestick({close: 10})})
       ]
     });
 
@@ -124,15 +124,15 @@ describe('BuyAndHoldStrategy', () => {
       positions: [
         new Position({
           name: "ISIN1",
-          partValue: {close: 10},
+          partValue: new Candlestick({close: 10}),
           parts: 100})]
     });
 
     let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(2010, 10, 10),
       quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 10}}),
-        new Quote({name: "ISIN2", partValue: {close: 20}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 10})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 20})})
       ]
     });
 
@@ -164,7 +164,7 @@ describe('BuyAndHoldStrategy', () => {
         new Position({
           name: "ISIN1",
           parts: 100,
-          partValue: {close: 5}
+          partValue: new Candlestick({close: 5})
         })
       ]
     });
@@ -173,7 +173,7 @@ describe('BuyAndHoldStrategy', () => {
       quotes: [
         new Quote({
           name: "ISIN1",
-          partValue: {close: 5}})
+          partValue: new Candlestick({close: 5})})
       ]
     });
 

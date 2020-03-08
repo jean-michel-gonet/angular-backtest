@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HistoricalQuotes, InstantQuotes, Dividend } from 'src/app/model/core/quotes';
-import { Quote } from 'src/app/model/core/asset';
+import { Quote, Candlestick } from 'src/app/model/core/asset';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -43,12 +43,12 @@ export class SixConverter {
           quotes: [
             new Quote({
               name: name,
-              partValue: {
+              partValue: new Candlestick({
                 close: this.convertToNumber(close[i]),
                 open: this.convertToNumber(open[i]),
                 high: this.convertToNumber(high[i]),
                 low: this.convertToNumber(low[i])
-              },
+              }),
               spread: 0,
               dividend: 0})
           ]

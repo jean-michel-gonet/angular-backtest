@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { QuotesFromSixService, SixConverter } from './quotes-from-six.service';
 import { HistoricalQuotes, IInstantQuotes } from 'src/app/model/core/quotes';
-import { Quote } from 'src/app/model/core/asset';
+import { Quote, Candlestick } from 'src/app/model/core/asset';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { HttpRequest } from '@angular/common/http';
 
@@ -79,12 +79,12 @@ describe('SixConverter', () => {
           quotes: [
             new Quote({
               name: "CH0008899764",
-              partValue: {
+              partValue: new Candlestick({
                 close: 73,
                 open: 72.85,
                 low: 71.2,
                 high: 73
-              },
+              }),
               spread: 0,
               dividend: 0
             })
@@ -95,12 +95,12 @@ describe('SixConverter', () => {
           quotes: [
             new Quote({
               name: "CH0008899764",
-              partValue: {
+              partValue: new Candlestick({
                 close: 71.7,
                 open: 73.3,
                 low: 70.9,
                 high: 73.3
-              },
+              }),
               spread: 0,
               dividend: 0
             })
@@ -111,12 +111,12 @@ describe('SixConverter', () => {
           quotes: [
             new Quote({
               name: "CH0008899764",
-              partValue: {
+              partValue: new Candlestick({
                 close: 70.25,
                 open: 71.05,
                 low: 70.25,
                 high: 71.95
-              },
+              }),
               spread: 0,
               dividend: 0
             })
@@ -127,12 +127,12 @@ describe('SixConverter', () => {
           quotes: [
             new Quote({
               name: "CH0008899764",
-              partValue: {
+              partValue: new Candlestick({
                 close: 71.15,
                 open: 70.35,
                 low: 70.3,
                 high: 71.35
-              },
+              }),
               spread: 0,
               dividend: 0
             })

@@ -1,3 +1,10 @@
+class ICandle {
+  open?: number;
+  high?: number;
+  low?: number;
+  close: number;
+}
+
 /**
  * A candlestick describes the part value of an asset over a period of time.
  * It is composed of four components:
@@ -9,10 +16,53 @@
  * @class{Candlestick}
  */
 export class Candlestick {
-  open?: number;
-  high?: number;
-  low?: number;
+  open: number;
+  high: number;
+  low: number;
   close: number;
+
+  /**
+   * Class constructor.
+   */
+  constructor(obj: ICandle = {} as ICandle) {
+    let {
+      open,
+      high,
+      low,
+      close
+    } = obj;
+    this.close = close;
+    if (open) {
+      this.open = open;
+    } else {
+      this.open = close;
+    }
+    if (high) {
+      this.high = high;
+    } else {
+      this.high = Math.max(this.open, this.close);
+    }
+    if (low) {
+      this.low = low;
+    } else {
+      this.low = Math.min(this.open, this.close);
+    }
+  }
+
+  /**
+   * Returns a new candlestick instance representing the merge
+   * of this candle and another one.
+   * @param {Candlestick} other The other candlestick.
+   * @return A new instance.
+   */
+  merge(other: Candlestick): Candlestick {
+    return new Candlestick({
+      open: this.open,
+      close: other.close,
+      high: Math.max(this.high, other.high),
+      low: Math.min(this.low, other.low)
+    })
+  }
 }
 
 /**
@@ -31,12 +81,12 @@ export class Asset {
   constructor(obj: Asset = {} as Asset) {
     let {
       name = "",
-      partValue = {
+      partValue = new Candlestick({
         open: 0,
         close: 0,
         high: 0,
         low: 0
-      }
+      })
     } = obj;
 
     this.name = name;

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HistoricalQuotes, InstantQuotes, Dividend } from 'src/app/model/core/quotes';
 import { map } from 'rxjs/operators';
-import { Quote } from 'src/app/model/core/asset';
+import { Quote, Candlestick } from 'src/app/model/core/asset';
 import { IQuotesService } from './quotes.service.interface';
 
 /**
@@ -44,12 +44,12 @@ export class YahooConverter {
             quotes: [
               new Quote({
                 name: this.name,
-                partValue: {
+                partValue: new Candlestick({
                   open: this.convertToNumber(open),
                   close: closePrice,
                   high: this.convertToNumber(high),
                   low: this.convertToNumber(low)
-                },
+                }),
                 spread: 0,
                 dividend: 0})
             ]

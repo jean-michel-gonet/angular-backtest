@@ -1,5 +1,5 @@
 import { InstantQuotes, HistoricalQuotes, Dividend } from './quotes';
-import { Quote } from './asset';
+import { Quote, Candlestick } from './asset';
 
 describe('InstantQuotes', () => {
   it('Can create an instance', () => {
@@ -15,16 +15,16 @@ describe('InstantQuotes', () => {
     let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(),
       quotes: [
-          new Quote({name: "ISIN1", partValue: {close: 1.1}}),
-          new Quote({name: "ISIN2", partValue: {close: 1.2}}),
-          new Quote({name: "ISIN3", partValue: {close: 1.3}})
+          new Quote({name: "ISIN1", partValue: new Candlestick({close: 1.1})}),
+          new Quote({name: "ISIN2", partValue: new Candlestick({close: 1.2})}),
+          new Quote({name: "ISIN3", partValue: new Candlestick({close: 1.3})})
     ]});
     let quote: Quote = instantQuotes.quote("ISIN1");
     expect(quote).toEqual(new Quote({
       name: "ISIN1",
-      partValue: {
+      partValue: new Candlestick({
         close: 1.1
-      }
+      })
     }));
   });
 
@@ -32,33 +32,33 @@ describe('InstantQuotes', () => {
     let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(),
       quotes: [
-          new Quote({name: "ISIN1", partValue: {close: 1.1}}),
-          new Quote({name: "ISIN2", partValue: {close: 1.2}}),
-          new Quote({name: "ISIN3", partValue: {close: 1.3}})
+          new Quote({name: "ISIN1", partValue: new Candlestick({close: 1.1})}),
+          new Quote({name: "ISIN2", partValue: new Candlestick({close: 1.2})}),
+          new Quote({name: "ISIN3", partValue: new Candlestick({close: 1.3})})
     ]});
 
     instantQuotes.add([
-      new Quote({name: "ISIN2", partValue: {close: 2.2}}),
-      new Quote({name: "ISIN3", partValue: {close: 2.3}}),
-      new Quote({name: "ISIN4", partValue: {close: 2.4}})
+      new Quote({name: "ISIN2", partValue: new Candlestick({close: 2.2})}),
+      new Quote({name: "ISIN3", partValue: new Candlestick({close: 2.3})}),
+      new Quote({name: "ISIN4", partValue: new Candlestick({close: 2.4})})
     ]);
 
     expect(instantQuotes.quotes).toEqual(jasmine.arrayWithExactContents([
-      new Quote({name: "ISIN1", partValue: {close: 1.1}}),
-      new Quote({name: "ISIN2", partValue: {close: 2.2}}),
-      new Quote({name: "ISIN3", partValue: {close: 2.3}}),
-      new Quote({name: "ISIN4", partValue: {close: 2.4}})
+      new Quote({name: "ISIN1", partValue: new Candlestick({close: 1.1})}),
+      new Quote({name: "ISIN2", partValue: new Candlestick({close: 2.2})}),
+      new Quote({name: "ISIN3", partValue: new Candlestick({close: 2.3})}),
+      new Quote({name: "ISIN4", partValue: new Candlestick({close: 2.4})})
     ]));
 
     instantQuotes.add([
-      new Quote({name: "ISIN1", partValue: {close: 3.1}})
+      new Quote({name: "ISIN1", partValue: new Candlestick({close: 3.1})})
     ]);
 
     expect(instantQuotes.quotes).toEqual(jasmine.arrayWithExactContents([
-      new Quote({name: "ISIN1", partValue: {close: 3.1}}),
-      new Quote({name: "ISIN2", partValue: {close: 2.2}}),
-      new Quote({name: "ISIN3", partValue: {close: 2.3}}),
-      new Quote({name: "ISIN4", partValue: {close: 2.4}})
+      new Quote({name: "ISIN1", partValue: new Candlestick({close: 3.1})}),
+      new Quote({name: "ISIN2", partValue: new Candlestick({close: 2.2})}),
+      new Quote({name: "ISIN3", partValue: new Candlestick({close: 2.3})}),
+      new Quote({name: "ISIN4", partValue: new Candlestick({close: 2.4})})
     ]));
   });
 });
@@ -87,131 +87,131 @@ describe('HistoricalQuotes', () => {
 
     let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 1.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 1.2}}),
-        new Quote({name: "ISIN3", partValue: {close: 1.3}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 1.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 1.2})}),
+        new Quote({name: "ISIN3", partValue: new Candlestick({close: 1.3})})
       ]}),
       new InstantQuotes({instant: yesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 2.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 2.2}}),
-        new Quote({name: "ISIN3", partValue: {close: 2.3}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 2.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 2.2})}),
+        new Quote({name: "ISIN3", partValue: new Candlestick({close: 2.3})})
       ]}),
       new InstantQuotes({instant: today, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 3.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 3.2}}),
-        new Quote({name: "ISIN3", partValue: {close: 3.3}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 3.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 3.2})}),
+        new Quote({name: "ISIN3", partValue: new Candlestick({close: 3.3})})
       ]})
     ]);
 
     expect(historicalQuotes.get(beforeYesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new Quote({name: "ISIN1", partValue: {close: 1.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 1.2}}),
-        new Quote({name: "ISIN3", partValue: {close: 1.3}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 1.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 1.2})}),
+        new Quote({name: "ISIN3", partValue: new Candlestick({close: 1.3})})
       ]));
 
     expect(historicalQuotes.get(yesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new Quote({name: "ISIN1", partValue: {close: 2.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 2.2}}),
-        new Quote({name: "ISIN3", partValue: {close: 2.3}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 2.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 2.2})}),
+        new Quote({name: "ISIN3", partValue: new Candlestick({close: 2.3})})
       ]));
 
     expect(historicalQuotes.get(today2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new Quote({name: "ISIN1", partValue: {close: 3.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 3.2}}),
-        new Quote({name: "ISIN3", partValue: {close: 3.3}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 3.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 3.2})}),
+        new Quote({name: "ISIN3", partValue: new Candlestick({close: 3.3})})
       ]));
   });
 
   it('Can add more data', () =>{
     let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 1.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 1.2}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 1.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 1.2})})
       ]}),
       new InstantQuotes({instant: yesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 2.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 2.2}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 2.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 2.2})})
       ]})
     ]);
 
     historicalQuotes.merge(
       new HistoricalQuotes([
         new InstantQuotes({instant: beforeYesterday, quotes: [
-          new Quote({name: "ISIN3", partValue: {close: 1.3}})
+          new Quote({name: "ISIN3", partValue: new Candlestick({close: 1.3})})
         ]}),
         new InstantQuotes({instant: yesterday, quotes: [
-          new Quote({name: "ISIN3", partValue: {close: 2.3}})
+          new Quote({name: "ISIN3", partValue: new Candlestick({close: 2.3})})
         ]}),
         new InstantQuotes({instant: today, quotes: [
-          new Quote({name: "ISIN3", partValue: {close: 3.3}})
+          new Quote({name: "ISIN3", partValue: new Candlestick({close: 3.3})})
         ]})])
     );
 
     expect(historicalQuotes.get(beforeYesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new Quote({name: "ISIN1", partValue: {close: 1.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 1.2}}),
-        new Quote({name: "ISIN3", partValue: {close: 1.3}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 1.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 1.2})}),
+        new Quote({name: "ISIN3", partValue: new Candlestick({close: 1.3})})
       ]));
 
     expect(historicalQuotes.get(yesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new Quote({name: "ISIN1", partValue: {close: 2.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 2.2}}),
-        new Quote({name: "ISIN3", partValue: {close: 2.3}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 2.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 2.2})}),
+        new Quote({name: "ISIN3", partValue: new Candlestick({close: 2.3})})
       ]));
 
     expect(historicalQuotes.get(today2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new Quote({name: "ISIN3", partValue: {close: 3.3}})
+        new Quote({name: "ISIN3", partValue: new Candlestick({close: 3.3})})
       ]));
   });
 
   it('Can add more data (2)', () =>{
     let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: threeDaysAgo, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 3.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 3.2}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 3.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 3.2})})
       ]}),
       new InstantQuotes({instant: yesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 1.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 1.2}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 1.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 1.2})})
       ]})
     ]);
 
     historicalQuotes.merge(
       new HistoricalQuotes([
         new InstantQuotes({instant: beforeYesterday, quotes: [
-          new Quote({name: "ISIN3", partValue: {close: 2.3}})
+          new Quote({name: "ISIN3", partValue: new Candlestick({close: 2.3})})
         ]}),
         new InstantQuotes({instant: today, quotes: [
-          new Quote({name: "ISIN3", partValue: {close: 0.3}})
+          new Quote({name: "ISIN3", partValue: new Candlestick({close: 0.3})})
         ]})])
     );
 
     expect(historicalQuotes.get(threeDaysAgo2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new Quote({name: "ISIN1", partValue: {close: 3.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 3.2}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 3.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 3.2})})
       ]));
 
     expect(historicalQuotes.get(beforeYesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new Quote({name: "ISIN3", partValue: {close: 2.3}})
+        new Quote({name: "ISIN3", partValue: new Candlestick({close: 2.3})})
       ]));
 
     expect(historicalQuotes.get(yesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new Quote({name: "ISIN1", partValue: {close: 1.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 1.2}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 1.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 1.2})})
       ]));
 
     expect(historicalQuotes.get(today2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new Quote({name: "ISIN3", partValue: {close: 0.3}})
+        new Quote({name: "ISIN3", partValue: new Candlestick({close: 0.3})})
       ]));
   });
 
@@ -219,60 +219,60 @@ describe('HistoricalQuotes', () => {
 
     let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 1.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 1.2}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 1.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 1.2})})
       ]}),
       new InstantQuotes({instant: yesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 2.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 2.2}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 2.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 2.2})})
       ]})
     ]);
 
     historicalQuotes.merge(
       new HistoricalQuotes([
         new InstantQuotes({instant: beforeYesterday, quotes: [
-          new Quote({name: "ISIN2", partValue: {close: 4.4}})
+          new Quote({name: "ISIN2", partValue: new Candlestick({close: 4.4})})
         ]}),
         new InstantQuotes({instant: yesterday, quotes: [
-          new Quote({name: "ISIN2", partValue: {close: 4.5}})
+          new Quote({name: "ISIN2", partValue: new Candlestick({close: 4.5})})
         ]}),
         new InstantQuotes({instant: today, quotes: [
-          new Quote({name: "ISIN2", partValue: {close: 4.6}})
+          new Quote({name: "ISIN2", partValue: new Candlestick({close: 4.6})})
         ]})
       ])
     );
 
     expect(historicalQuotes.get(beforeYesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new Quote({name: "ISIN1", partValue: {close: 1.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 4.4}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 1.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 4.4})})
       ]));
 
     expect(historicalQuotes.get(yesterday2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new Quote({name: "ISIN1", partValue: {close: 2.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 4.5}})
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 2.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 4.5})})
       ]));
 
     expect(historicalQuotes.get(today2).quotes)
       .toEqual(jasmine.arrayWithExactContents([
-        new Quote({name: "ISIN2", partValue: {close: 4.6}})
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 4.6})})
       ]));
   });
 
   it('Can enrich with dividends', () => {
     let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 200}}),
-        new Quote({name: "ISIN2", partValue: {close: 200}}),
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 200})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 200})}),
       ]}),
       new InstantQuotes({instant: yesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 100}}),
-        new Quote({name: "ISIN2", partValue: {close: 100}}),
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 100})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 100})}),
       ]}),
       new InstantQuotes({instant: today, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 300}}),
-        new Quote({name: "ISIN2", partValue: {close: 300}}),
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 300})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 300})}),
       ]})
     ]);
 
@@ -288,12 +288,12 @@ describe('HistoricalQuotes', () => {
   it('Can enrich with dividends even when dates mismatch', () => {
     let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: yesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 100}}),
-        new Quote({name: "ISIN2", partValue: {close: 100}}),
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 100})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 100})}),
       ]}),
       new InstantQuotes({instant: today, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 300}}),
-        new Quote({name: "ISIN2", partValue: {close: 300}}),
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 300})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 300})}),
       ]})
     ]);
 
@@ -309,12 +309,12 @@ describe('HistoricalQuotes', () => {
   it('Can enrich with dividends even when dates mismatch (2)', () => {
     let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 100}}),
-        new Quote({name: "ISIN2", partValue: {close: 100}}),
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 100})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 100})}),
       ]}),
       new InstantQuotes({instant: today, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 300}}),
-        new Quote({name: "ISIN2", partValue: {close: 300}}),
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 300})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 300})}),
       ]})
     ]);
 
@@ -330,16 +330,16 @@ describe('HistoricalQuotes', () => {
   it('Can iterate over all dates', () => {
     let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 1.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 1.2}}),
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 1.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 1.2})}),
       ]}),
       new InstantQuotes({instant: yesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 2.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 2.2}}),
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 2.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 2.2})}),
       ]}),
       new InstantQuotes({instant: today, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 3.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 3.2}}),
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 3.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 3.2})}),
       ]})
     ]);
 
@@ -357,16 +357,16 @@ describe('HistoricalQuotes', () => {
   it('Can iterate over a range of dates', () => {
     let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 1.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 1.2}}),
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 1.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 1.2})}),
       ]}),
       new InstantQuotes({instant: yesterday, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 2.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 2.2}}),
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 2.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 2.2})}),
       ]}),
       new InstantQuotes({instant: today, quotes: [
-        new Quote({name: "ISIN1", partValue: {close: 3.1}}),
-        new Quote({name: "ISIN2", partValue: {close: 3.2}}),
+        new Quote({name: "ISIN1", partValue: new Candlestick({close: 3.1})}),
+        new Quote({name: "ISIN2", partValue: new Candlestick({close: 3.2})}),
       ]})
     ]);
 

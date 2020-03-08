@@ -1,5 +1,5 @@
 import { SuperthonMarketTiming } from "./market-timing.superthon";
-import { Quote } from './core/asset'
+import { Quote, Candlestick } from './core/asset'
 import { BearBull } from './core/market-timing';
 
 describe('SuperthonMarketTiming', () => {
@@ -15,7 +15,7 @@ describe('SuperthonMarketTiming', () => {
     });
     for (let n: number = 0; n < values.length; n++){
       let instant =  new Date(start.getFullYear(), start.getMonth() + n, 1);
-      let quote = new Quote({name: "ISIN1", partValue: {close: values[n]}});
+      let quote = new Quote({name: "ISIN1", partValue: new Candlestick({close: values[n]})});
       superthon.record(instant, quote);
     }
     return superthon;

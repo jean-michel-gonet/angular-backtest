@@ -8,7 +8,7 @@ import { IQuotesService } from './quotes.service.interface';
 import { Observable } from 'rxjs';
 import { HistoricalQuotes, Dividend, InstantQuotes } from 'src/app/model/core/quotes';
 import { QuoteSourceAndProvider, QuotesConfigurationService } from './quotes-configuration.service';
-import { Quote } from 'src/app/model/core/asset';
+import { Quote, Candlestick } from 'src/app/model/core/asset';
 
 class ConnectionServiceMock implements IQuotesService {
   private historicalQuotes: Map<string, HistoricalQuotes> = new Map<string, HistoricalQuotes>();
@@ -96,7 +96,7 @@ describe('QuotesService', () => {
 
     let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
       new InstantQuotes({instant: beforeYesterday, quotes: [
-        new Quote({name: "ISIN3", partValue: {close: 1.3}})
+        new Quote({name: "ISIN3", partValue: new Candlestick({close: 1.3})})
       ]})]);
     yahoo.whenQuotes("ISIN3", historicalQuotes);
 
