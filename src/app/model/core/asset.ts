@@ -5,6 +5,11 @@ class ICandle {
   close: number;
 }
 
+export enum CandlestickType {
+  GREEN = +1,
+  RED = -1
+};
+
 /**
  * A candlestick describes the part value of an asset over a period of time.
  * It is composed of four components:
@@ -63,6 +68,21 @@ export class Candlestick {
       low: Math.min(this.low, other.low)
     })
   }
+
+  /**
+   * Returns the type of candle.
+   * GREEN candles have a closing price higher or equal to opening price.
+   * Otherwise, the candle is red.
+   * @return {CandlestickType} The candle type.
+   */
+  type(): CandlestickType {
+    if (this.close >= this.open) {
+      return CandlestickType.GREEN;
+    } else {
+      return CandlestickType.RED;
+    }
+  }
+
 }
 
 /**
