@@ -1,4 +1,4 @@
-import { Quote, Candlestick } from './core/asset'
+import { Quote } from './core/quotes'
 import { BearBull } from './core/market-timing';
 import { MACDMarketTiming, PeriodLength } from './market-timing.macd';
 

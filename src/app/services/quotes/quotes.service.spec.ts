@@ -6,9 +6,8 @@ import { QuotesFromSimpleCsvService } from './quotes-from-simple-csv.service';
 import { QuotesService } from './quotes.service';
 import { IQuotesService } from './quotes.service.interface';
 import { Observable } from 'rxjs';
-import { HistoricalQuotes, Dividend, InstantQuotes } from 'src/app/model/core/quotes';
+import { HistoricalQuotes, Dividend, InstantQuotes, Quote } from 'src/app/model/core/quotes';
 import { QuoteSourceAndProvider, QuotesConfigurationService } from './quotes-configuration.service';
-import { Quote } from 'src/app/model/core/asset';
 
 class ConnectionServiceMock implements IQuotesService {
   private historicalQuotes: Map<string, HistoricalQuotes> = new Map<string, HistoricalQuotes>();

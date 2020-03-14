@@ -1,5 +1,5 @@
 import { MarketTiming, BearBull } from './core/market-timing';
-import { Quote } from './core/asset';
+import { Quote } from './core/quotes';
 import { Report } from './core/reporting';
 
 interface IDoubleMarketTiming {

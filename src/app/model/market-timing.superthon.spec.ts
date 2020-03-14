@@ -1,5 +1,5 @@
 import { SuperthonMarketTiming } from "./market-timing.superthon";
-import { Quote, Candlestick } from './core/asset'
+import { Quote } from './core/quotes'
 import { BearBull } from './core/market-timing';
 
 describe('SuperthonMarketTiming', () => {

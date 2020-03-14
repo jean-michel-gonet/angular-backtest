@@ -1,6 +1,6 @@
 import { MarketTiming, BearBull } from './core/market-timing';
-import { Quote } from './core/asset';
 import { Report, ReportedData } from './core/reporting';
+import { Quote } from './core/quotes';
 
 export enum SuperthonPeriodLength {
   MONTHLY,

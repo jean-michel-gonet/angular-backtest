@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HistoricalQuotes, InstantQuotes, Dividend } from 'src/app/model/core/quotes';
-import { Quote } from 'src/app/model/core/asset';
+import { HistoricalQuotes, InstantQuotes, Dividend, Quote } from 'src/app/model/core/quotes';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';

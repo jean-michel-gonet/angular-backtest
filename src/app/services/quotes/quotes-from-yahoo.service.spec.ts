@@ -1,11 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-
 import { QuotesFromYahooService, YahooConverter } from './quotes-from-yahoo.service';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
-import { HistoricalQuotes, IInstantQuotes } from 'src/app/model/core/quotes';
+import { HistoricalQuotes, IInstantQuotes, Quote } from 'src/app/model/core/quotes';
 import { HttpRequest } from '@angular/common/http';
-import { Quote } from 'src/app/model/core/asset';
-
 
 var yahooResponse = "Date,Open,High,Low,Close,Adj Close,Volume\r\n" +
 "1993-02-15,9834.599609,9913.400391,9764.099609,9865.299805,9865.290039,10256100\r\n" +

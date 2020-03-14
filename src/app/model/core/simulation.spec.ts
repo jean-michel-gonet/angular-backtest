@@ -2,7 +2,7 @@ import { Simulation } from "./simulation";
 import { Account } from './account';
 import { HistoricalQuotes, InstantQuotes } from './quotes';
 import { NullStrategy } from './strategy';
-import { Quote, Candlestick } from './asset';
+import { Quote } from './quotes';
 
 /**
  * A fake strategy, just to verify that it has been called.

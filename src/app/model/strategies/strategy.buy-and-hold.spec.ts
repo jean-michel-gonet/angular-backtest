@@ -1,7 +1,6 @@
 import { BuyAndHoldStrategy } from './strategy.buy-and-hold';
-import { Account } from '../core/account';
-import { InstantQuotes } from '../core/quotes';
-import { Quote, Position, Candlestick } from '../core/asset';
+import { Account, Position } from '../core/account';
+import { InstantQuotes, Quote } from '../core/quotes';
 import { RegularTransfer, RegularPeriod } from '../core/transfer';
 import { DefaultMarketTiming, BearBull } from '../core/market-timing';
 

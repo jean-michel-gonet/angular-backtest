@@ -1,5 +1,5 @@
 import { MarketTiming, BearBull } from './core/market-timing';
-import { Quote } from './core/asset';
+import { Quote } from './core/quotes';
 import { Report, ReportedData } from './core/reporting';
 
 export enum PeriodLength {

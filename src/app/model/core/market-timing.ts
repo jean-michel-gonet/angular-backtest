@@ -1,4 +1,4 @@
-import { Quote } from './asset';
+import { Quote } from './quotes';
 import { Reporter, Report } from './reporting';
 
 /**

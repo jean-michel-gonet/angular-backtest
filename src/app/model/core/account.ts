@@ -1,7 +1,78 @@
-import {Position, Quote} from './asset';
-import { InstantQuotes } from './quotes';
+import { InstantQuotes, Quote } from './quotes';
 import { Strategy, NullStrategy } from './strategy';
 import { Reporter, Report, ReportedData } from './reporting';
+
+class IPosition {
+  name: string;
+  parts?: number;
+  partValue?: number;
+  aquisitionCosts?: number;
+  sellingCosts?: number;
+}
+
+/**
+ * A position is the amount of a security, commodity or currency which is
+ * owned by an individual, dealer, institution, or other fiscal entity.
+ * See https://www.investopedia.com/terms/p/position.asp
+ * Contains the required information to calculate
+ * the NAV, and also profit and losses.
+ */
+export class Position {
+  /** The asset name. */
+  name: string;
+
+  /** The number of parts. */
+  parts?: number;
+
+  /** The part value, according to the last quotation. */
+  partValue?: number;
+
+  /** The accumulated costs invested to aquire the position. */
+  aquisitionCosts?: number;
+
+  /** The costs that would be involved in selling this position.*/
+  sellingCosts?: number;
+
+  /** Class constructor.
+   * @param {IPosition} obj The object properties.
+   */
+  constructor(obj: IPosition = {} as IPosition) {
+    let {
+      name,
+      parts = 0,
+      partValue = 0,
+      aquisitionCosts = 0
+    } = obj;
+    this.name = name;
+    this.parts = parts;
+    this.partValue = partValue;
+    this.aquisitionCosts = aquisitionCosts;
+  }
+
+  /**
+   * Returns the net quote value based on the closing price of part value and
+   * the number of parts.
+   */
+  nav():number {
+    return this.partValue * this.parts;
+  }
+
+  /**
+   * Returns the balance of this position.
+   */
+  profitAndLoss(): number {
+    return this.nav() - this.aquisitionCosts - this.sellingCosts;
+  }
+
+  /**
+   * Updates the part value of this position based on the
+   * closing price in the provided quote.
+   * @param {Asset} quote The update.
+   */
+  update(quote: Quote): void {
+      this.partValue = quote.close;
+  }
+}
 
 class IAccount {
   id?: string;

@@ -1,7 +1,6 @@
 import { Strategy } from '../core/strategy';
-import { InstantQuotes } from '../core/quotes';
-import { Account } from '../core/account';
-import { Quote, Position } from '../core/asset';
+import { InstantQuotes, Quote } from '../core/quotes';
+import { Account, Position } from '../core/account';
 import { RegularTransfer } from '../core/transfer';
 import { Report } from '../core/reporting';
 import { MarketTiming, DefaultMarketTiming, BearBull } from '../core/market-timing';

@@ -1,7 +1,28 @@
-import { Account } from './account';
+import { Account, Position } from './account';
 import { NullStrategy } from './strategy';
-import { InstantQuotes } from './quotes';
-import { Position, Quote, Candlestick } from './asset';
+import { InstantQuotes, Quote } from './quotes';
+
+
+describe('Position', () => {
+  it('Can calculate the NAV', () => {
+    let position = new Position({
+      name: "XX",
+      partValue: 1.5,
+      parts: 3
+    });
+    expect(position.nav()).toBe(4.5);
+  });
+
+  it('Can update its part value', () => {
+    let position = new Position({
+      name: "XX",
+      parts: 6
+    });
+
+    position.update(new Quote({name: "XX", close: 1.5}));
+    expect(position.nav()).toBe(9);
+  });
+});
 
 class MockStrategy extends NullStrategy {
   gotCalled: boolean = false;

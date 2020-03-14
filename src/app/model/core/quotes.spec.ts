@@ -1,5 +1,61 @@
-import { InstantQuotes, HistoricalQuotes, Dividend } from './quotes';
-import { Quote, Candlestick } from './asset';
+import { InstantQuotes, HistoricalQuotes, Dividend, Candlestick, CandlestickType, Quote } from './quotes';
+
+describe('Candlestick', () => {
+  it('Can be green when open price is lesser than close price', () =>{
+    let candlestick: Candlestick = new Candlestick({
+      open: 10,
+      close: 20
+    });
+    expect(candlestick.type()).toBe(CandlestickType.GREEN);
+  });
+  it('Can be green when open and close price are equal', () =>{
+    let candlestick: Candlestick = new Candlestick({
+      open: 10,
+      close: 10
+    });
+    expect(candlestick.type()).toBe(CandlestickType.GREEN);
+  });
+  it('Can be red when open price is greater than close price', () =>{
+    let candlestick: Candlestick = new Candlestick({
+      open: 20,
+      close: 10
+    });
+    expect(candlestick.type()).toBe(CandlestickType.RED);
+  });
+
+  it('Can merge with another candlestick', () =>{
+    let candlestick1 = new Candlestick({
+      open: 10,
+      high: 23,
+      low: 9,
+      close: 20
+    });
+    let candlestick2 = new Candlestick({
+      open: 19,
+      high: 25,
+      low: 15,
+      close: 22
+    });
+    let candlestick = candlestick1.merge(candlestick2);
+    expect(candlestick).toEqual(new Candlestick({
+      open: 10,
+      high: 25,
+      low: 9,
+      close: 22
+    }));
+  });
+});
+
+describe('Quote', () => {
+  it('Can create a new instance', () => {
+    expect(new Quote({
+      name: "XX",
+      close: 1.5,
+      spread: 0.01,
+      dividend: 0.01
+    })).toBeTruthy();
+  });
+});
 
 describe('InstantQuotes', () => {
   it('Can create an instance', () => {

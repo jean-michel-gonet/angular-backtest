@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { HistoricalQuotes, InstantQuotes, Dividend } from 'src/app/model/core/quotes';
+import { HistoricalQuotes, InstantQuotes, Dividend, Quote } from 'src/app/model/core/quotes';
 import { map } from 'rxjs/operators';
-import { Quote, Candlestick } from 'src/app/model/core/asset';
 import { IQuotesService } from './quotes.service.interface';
 
 /**
