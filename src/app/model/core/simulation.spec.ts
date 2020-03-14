@@ -42,19 +42,19 @@ describe('Simulation', () => {
       new InstantQuotes({
         instant: tomorrow,
         quotes:[
-          new Quote({name: "ISIN1", partValue: new Candlestick({close: 1})})
+          new Quote({name: "ISIN1", close: 1})
         ]
       }),
       new InstantQuotes({
         instant: afterTomorrow,
         quotes:[
-          new Quote({name: "ISIN1", partValue: new Candlestick({close: 2})})
+          new Quote({name: "ISIN1", close: 2})
         ]
       }),
       new InstantQuotes({
         instant: today,
         quotes:[
-          new Quote({name: "ISIN1", partValue: new Candlestick({close: 3})})
+          new Quote({name: "ISIN1", close: 3})
         ]
       })
     ])

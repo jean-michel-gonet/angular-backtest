@@ -268,7 +268,7 @@ export class HistoricalQuotes implements Reporter {
   reportTo(report: Report): void {
     this.reportingStock.quotes.forEach(quote => {
       report.receiveData(new ReportedData({
-        y: quote.partValue.close,
+        y: quote.close,
         sourceName: quote.name + ".CLOSE"
       }));
     });

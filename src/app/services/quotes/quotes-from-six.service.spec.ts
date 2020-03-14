@@ -79,12 +79,11 @@ describe('SixConverter', () => {
           quotes: [
             new Quote({
               name: "CH0008899764",
-              partValue: new Candlestick({
-                close: 73,
-                open: 72.85,
-                low: 71.2,
-                high: 73
-              }),
+              close: 73,
+              open: 72.85,
+              low: 71.2,
+              high: 73,
+              volume: 41965,
               spread: 0,
               dividend: 0
             })
@@ -95,12 +94,11 @@ describe('SixConverter', () => {
           quotes: [
             new Quote({
               name: "CH0008899764",
-              partValue: new Candlestick({
-                close: 71.7,
-                open: 73.3,
-                low: 70.9,
-                high: 73.3
-              }),
+              close: 71.7,
+              open: 73.3,
+              low: 70.9,
+              high: 73.3,
+              volume: 30255,
               spread: 0,
               dividend: 0
             })
@@ -111,12 +109,11 @@ describe('SixConverter', () => {
           quotes: [
             new Quote({
               name: "CH0008899764",
-              partValue: new Candlestick({
-                close: 70.25,
-                open: 71.05,
-                low: 70.25,
-                high: 71.95
-              }),
+              close: 70.25,
+              open: 71.05,
+              low: 70.25,
+              high: 71.95,
+              volume: 9144,
               spread: 0,
               dividend: 0
             })
@@ -127,12 +124,11 @@ describe('SixConverter', () => {
           quotes: [
             new Quote({
               name: "CH0008899764",
-              partValue: new Candlestick({
-                close: 71.15,
-                open: 70.35,
-                low: 70.3,
-                high: 71.35
-              }),
+              close: 71.15,
+              open: 70.35,
+              low: 70.3,
+              high: 71.35,
+              volume: 15863,
               spread: 0,
               dividend: 0
             })

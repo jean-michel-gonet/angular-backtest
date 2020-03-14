@@ -19,12 +19,12 @@ describe('Account', () => {
       positions: [
         new Position({
           name: "XX",
-          partValue: new Candlestick({close: 100}),
+          partValue: 100,
           parts: 3
         }),
         new Position({
           name: "XX",
-          partValue: new Candlestick({close: 10}),
+          partValue: 10,
           parts: 4
         })
       ]
@@ -37,8 +37,8 @@ describe('Account', () => {
     let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(),
       quotes: [
-        new Quote({name: "XX", partValue: new Candlestick({close: 110})}),
-        new Quote({name: "YY", partValue: new Candlestick({close: 11})})
+        new Quote({name: "XX", close: 110}),
+        new Quote({name: "YY", close: 11})
       ]
     });
     let account: Account = new Account({
@@ -47,12 +47,12 @@ describe('Account', () => {
       positions: [
         new Position({
           name: "XX",
-          partValue: new Candlestick({close: 100}),
+          partValue: 100,
           parts: 3
         }),
         new Position({
           name: "YY",
-          partValue: new Candlestick({close: 10}),
+          partValue: 10,
           parts: 4
         })
       ]
@@ -67,7 +67,7 @@ describe('Account', () => {
     let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(),
       quotes: [
-        new Quote({name: "YY", partValue: new Candlestick({close: 11}), dividend: 10})
+        new Quote({name: "YY", close: 11, dividend: 10})
       ]
     });
     let account: Account = new Account({
@@ -76,7 +76,7 @@ describe('Account', () => {
       positions: [
         new Position({
           name: "YY",
-          partValue: new Candlestick({close: 10}),
+          partValue: 10,
           parts: 4
         })
       ]
@@ -91,9 +91,7 @@ describe('Account', () => {
     let spread: number = 0.1;
     let quote: Quote = new Quote({
       name: "XX",
-      partValue: new Candlestick({
-        close: partValue
-      }),
+      close: partValue,
       spread: spread
     });
     let account = new Account();
@@ -101,16 +99,14 @@ describe('Account', () => {
     expect(account.orderCost(quote, -3)).toBe(3 * partValue * spread / 2);
   });
 
-  it('Can buy an quote taking in count the costs', () => {
+  it('Can buy a quote taking in count the costs', () => {
     let partValue: number = 110;
     let spread: number = 0.1;
     let cash: number = 1000;
 
     let quote: Quote = new Quote({
       name: "XX",
-      partValue: new Candlestick({
-        close: partValue
-      }),
+      close: partValue,
       spread: spread
     });
     let account: Account = new Account({
@@ -132,9 +128,7 @@ describe('Account', () => {
 
     let quote: Quote = new Quote({
       name: "XX",
-      partValue: new Candlestick({
-        close: partValue
-      }),
+      close: partValue,
       spread: spread
     });
     let account: Account = new Account({
@@ -159,12 +153,12 @@ describe('Account', () => {
       positions: [
         new Position({
           name: "XX",
-          partValue: new Candlestick({close: 100}),
+          partValue: 100,
           parts: 3
         }),
         new Position({
           name: "YY",
-          partValue: new Candlestick({close: 10}),
+          partValue: 10,
           parts: 4
         })
       ]
@@ -172,7 +166,7 @@ describe('Account', () => {
     let position: Position = account.position("XX");
     expect(position).toEqual(new Position({
       name: "XX",
-      partValue: new Candlestick({close: 100}),
+      partValue: 100,
       parts: 3
     }));
   });

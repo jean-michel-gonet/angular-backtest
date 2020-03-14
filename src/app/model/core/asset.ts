@@ -1,23 +1,31 @@
-class ICandle {
+
+class ICandleStick {
+  close: number;
   open?: number;
   high?: number;
   low?: number;
-  close: number;
 }
 
+/**
+ * The wide part of the candlestick is called the "real body" and tells
+ * investors whether the closing price was higher or lower than the opening
+ * price (black/red if the stock closed lower, white/green if the
+ * stock closed higher).
+ * see https://www.investopedia.com/terms/c/candlestick.asp
+ * @class{CandlestickType}
+ */
 export enum CandlestickType {
   GREEN = +1,
   RED = -1
 };
 
 /**
- * A candlestick describes the part value of an asset over a period of time.
- * It is composed of four components:
- * - The opening price.
- * - The closing price.
- * - The highest price.
- * - The lowest price.
- * see https://en.wikipedia.org/wiki/Candlestick_chart
+ * A candlestick is a type of price chart used that displays the high,
+ * low, open, and closing prices of a security for a specific period.
+ * It originated from Japanese rice merchants and traders to track market
+ * prices and daily momentum hundreds of years before becoming popularized
+ * in the United States.
+ * see https://www.investopedia.com/terms/c/candlestick.asp
  * @class{Candlestick}
  */
 export class Candlestick {
@@ -29,7 +37,7 @@ export class Candlestick {
   /**
    * Class constructor.
    */
-  constructor(obj: ICandle = {} as ICandle) {
+  constructor(obj: ICandleStick = {} as ICandleStick) {
     let {
       open,
       high,
@@ -82,36 +90,13 @@ export class Candlestick {
       return CandlestickType.RED;
     }
   }
-
 }
 
-/**
- * An asset is a resource with economic value that an individual, corporation
- * or country owns or controls with the expectation that it will provide a
- * future benefit.
- * Assets are reported on a company's balance sheet and are bought or created
- * to increase a firm's value or benefit the firm's operations.
- * See https://www.investopedia.com/terms/a/quote.asp
- * @class{Asset}
- */
-export class Asset {
+class IQuote extends ICandleStick {
   name: string;
-  partValue?: Candlestick;
-
-  constructor(obj: Asset = {} as Asset) {
-    let {
-      name = "",
-      partValue = new Candlestick({
-        open: 0,
-        close: 0,
-        high: 0,
-        low: 0
-      })
-    } = obj;
-
-    this.name = name;
-    this.partValue = partValue;
-  }
+  volume?: number;
+  spread?: number;
+  dividend?: number;
 }
 
 /**
@@ -121,32 +106,54 @@ export class Asset {
  * See https://www.investopedia.com/terms/q/quote.asp
  * @class{Quote}
  */
-export class Quote extends Asset {
+export class Quote extends Candlestick {
+  /** The asset name. */
+  name: string;
+
+  /**
+   * The number of shares or contracts traded in a security or an
+   * entire market during a given period of time.
+   * While volume is not directly used when performing operations,
+   * it is important to estimate the dividends.
+   * see https://www.investopedia.com/terms/v/volume.asp
+   */
+  volume?: number;
+
+  /**
+  * The spread is the gap between the bid and the ask prices of a security
+  * or asset, like a stock, bond or commodity.
+  * This is known as a bid-ask spread.
+  * see https://www.investopedia.com/terms/s/spread.asp
+  */
   spread?: number;
+
+  /**
+   * A dividend is the distribution of reward from a portion of the company's
+   * earnings and is paid to a class of its shareholders.
+   */
   dividend?: number;
 
-  constructor(obj: Quote = {} as Quote) {
+  constructor(obj: IQuote = {} as IQuote) {
     super(obj);
     let {
+      name = "",
+      volume = 0,
       spread = 0,
       dividend = 0
     } = obj;
-
+    this.name = name;
+    this.volume = volume;
     this.spread = spread;
     this.dividend = dividend;
   }
 }
 
-class IPosition extends Asset {
+class IPosition {
+  name: string;
   parts?: number;
-
-  constructor(obj: IPosition = {} as IPosition) {
-    super(obj);
-    let {
-      parts = 0
-    } = obj;
-    this.parts = parts;
-  }
+  partValue?: number;
+  aquisitionCosts?: number;
+  sellingCosts?: number;
 }
 
 /**
@@ -154,11 +161,38 @@ class IPosition extends Asset {
  * owned by an individual, dealer, institution, or other fiscal entity.
  * See https://www.investopedia.com/terms/p/position.asp
  * Contains the required information to calculate
- * the NAV.
+ * the NAV, and also profit and losses.
  */
-export class Position extends IPosition {
+export class Position {
+  /** The asset name. */
+  name: string;
+
+  /** The number of parts. */
+  parts?: number;
+
+  /** The part value, according to the last quotation. */
+  partValue?: number;
+
+  /** The accumulated costs invested to aquire the position. */
+  aquisitionCosts?: number;
+
+  /** The costs that would be involved in selling this position.*/
+  sellingCosts?: number;
+
+  /** Class constructor.
+   * @param {IPosition} obj The object properties.
+   */
   constructor(obj: IPosition = {} as IPosition) {
-    super(obj);
+    let {
+      name,
+      parts = 0,
+      partValue = 0,
+      aquisitionCosts = 0
+    } = obj;
+    this.name = name;
+    this.parts = parts;
+    this.partValue = partValue;
+    this.aquisitionCosts = aquisitionCosts;
   }
 
   /**
@@ -166,15 +200,22 @@ export class Position extends IPosition {
    * the number of parts.
    */
   nav():number {
-    return this.partValue.close * this.parts;
+    return this.partValue * this.parts;
+  }
+
+  /**
+   * Returns the balance of this position.
+   */
+  profitAndLoss(): number {
+    return this.nav() - this.aquisitionCosts - this.sellingCosts;
   }
 
   /**
    * Updates the part value of this position based on the
-   * provided quote.
+   * closing price in the provided quote.
    * @param {Asset} quote The update.
    */
-  update(quote: Asset): void {
-      this.partValue = quote.partValue;
+  update(quote: Quote): void {
+      this.partValue = quote.close;
   }
 }

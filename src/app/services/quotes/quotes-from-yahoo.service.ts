@@ -44,12 +44,11 @@ export class YahooConverter {
             quotes: [
               new Quote({
                 name: this.name,
-                partValue: new Candlestick({
-                  open: this.convertToNumber(open),
-                  close: closePrice,
-                  high: this.convertToNumber(high),
-                  low: this.convertToNumber(low)
-                }),
+                open: this.convertToNumber(open),
+                close: closePrice,
+                high: this.convertToNumber(high),
+                low: this.convertToNumber(low),
+                volume: this.convertToNumber(volume),
                 spread: 0,
                 dividend: 0})
             ]
