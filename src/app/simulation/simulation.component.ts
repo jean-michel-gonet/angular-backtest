@@ -57,15 +57,15 @@ export class SimulationComponent implements OnInit {
               cash: 100000,
               strategy: new BuyAndHoldStrategy({
                 assetName: "SP500",
-                assetNameDuringBear: "AGG",
+                //assetNameDuringBear: "AGG",
                 marketTiming: new SuperthonMarketTiming(),
-                transfer: new RegularTransfer({
+/*                transfer: new RegularTransfer({
                   transfer: 660,
                   every: RegularPeriod.MONTH,
                   to: new SwissQuoteAccount({
                     id: "LIFESTYLE"
                   })
-                })
+                })*/
               })
             }),
           ],

@@ -1,4 +1,4 @@
-import { Quote } from './quotes';
+import { Candlestick } from './quotes';
 import { Reporter, Report } from './reporting';
 
 /**
@@ -23,9 +23,9 @@ export interface MarketTiming extends Reporter {
   /**
    * Receives regular quote updates, and decides if time is good to invest.
    * @param {Date} instant The current instant.
-   * @param {Quote} quote The releveant quote at specified instant.
+   * @param {Candlestick} candlestick The relevant quote at specified instant.
    */
-  record(instant: Date, quote: Quote): void;
+  record(instant: Date, candlestick: Candlestick): void;
 
   /**
    * Indicates if market is bearish (better sell everything) or bullish
@@ -53,7 +53,7 @@ export class DefaultMarketTiming implements MarketTiming {
   /**
    * Does nothing with the instant quotes.
    */
-   record(instant: Date, quote: Quote): void {
+   record(instant: Date, candlestick: Candlestick): void {
     // Do nothing.
   }
 
