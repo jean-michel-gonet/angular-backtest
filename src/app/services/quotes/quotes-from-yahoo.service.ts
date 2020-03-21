@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { HistoricalQuotes, InstantQuotes, Dividend, Quote } from 'src/app/model/core/quotes';
+import { HistoricalQuotes, InstantQuotes, Quote } from 'src/app/model/core/quotes';
 import { map } from 'rxjs/operators';
 import { IQuotesService } from './quotes.service.interface';
 
@@ -103,9 +103,4 @@ export class QuotesFromYahooService implements IQuotesService {
         return yahooConverter.asHistoricalQuotes();
       }));
   }
-
-  getDividends(source: string): Observable<Dividend[]> {
-    throw new Error("Method not implemented.");
-  }
-
 }

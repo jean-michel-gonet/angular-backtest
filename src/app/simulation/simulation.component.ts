@@ -47,7 +47,7 @@ export class SimulationComponent implements OnInit {
     ]);
 
     // Fetch the data:
-    this.quotesService.getHistoricalQuotes(['SP500', 'AGG'])
+    this.quotesService.getQuotes(['SP500', 'AGG'])
       .subscribe(historicalQuotes => {
         // Set up the simulation:
         this.simulation = new Simulation({

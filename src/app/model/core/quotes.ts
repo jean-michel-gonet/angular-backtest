@@ -1,5 +1,16 @@
 import { Reporter, Report, ReportedData } from './reporting';
 
+/**
+ * A pair of date / value, to represent any historized value.
+ * Typically used for dividends.
+ * @class {HistoricalValue}
+ */
+export class HistoricalValue {
+  instant: Date;
+  value: number;
+}
+
+
 class ICandleStick {
   close: number;
   open?: number;
@@ -164,22 +175,6 @@ export class IInstantQuotes {
   }
 }
 
-export class Dividend {
-  instant: Date;
-  name: string;
-  dividend: number;
-  constructor(obj : Dividend = {} as Dividend) {
-    let {
-      instant,
-      name,
-      dividend
-    } = obj;
-    this.instant = instant;
-    this.name = name;
-    this.dividend = dividend;
-  }
-}
-
 export class InstantQuotes extends IInstantQuotes {
   private mapOfQuotes: Map<String, Quote>;
 
@@ -313,7 +308,7 @@ export class HistoricalQuotes implements Reporter {
     }
   }
 
-  enrichWithDividends(dividends: Dividend[]):void {
+  enrichWithDividends(name: string, dividends: HistoricalValue[]):void {
     let thisIndex: number = 0;
     let dividendIndex: number = 0;
 
@@ -327,15 +322,15 @@ export class HistoricalQuotes implements Reporter {
       }
 
       if (thisEntry.instant.valueOf() == dividendEntry.instant.valueOf()) {
-        let quote = thisEntry.quote(dividendEntry.name);
-        quote.dividend = dividendEntry.dividend;
+        let quote = thisEntry.quote(name);
+        quote.dividend = dividendEntry.value;
         thisIndex++;
         dividendIndex++;
       }
 
       if (thisEntry.instant.valueOf() > dividendEntry.instant.valueOf()) {
-        let quote = previousEntry.quote(dividendEntry.name);
-        quote.dividend = dividendEntry.dividend;
+        let quote = previousEntry.quote(name);
+        quote.dividend = dividendEntry.value;
         dividendIndex++;
       }
 

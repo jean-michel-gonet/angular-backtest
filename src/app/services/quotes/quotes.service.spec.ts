@@ -2,55 +2,68 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { QuotesFromSixService } from './quotes-from-six.service';
 import { QuotesFromYahooService } from './quotes-from-yahoo.service';
-import { QuotesFromSimpleCsvService } from './quotes-from-simple-csv.service';
 import { QuotesService } from './quotes.service';
 import { IQuotesService } from './quotes.service.interface';
 import { Observable } from 'rxjs';
-import { HistoricalQuotes, Dividend, InstantQuotes, Quote } from 'src/app/model/core/quotes';
-import { QuoteSourceAndProvider, QuotesConfigurationService } from './quotes-configuration.service';
+import { HistoricalQuotes, InstantQuotes, Quote, HistoricalValue } from 'src/app/model/core/quotes';
+import { QuotesConfigurationService, NamedQuoteSource, QuoteProvider, DataFormat, IQuotesConfigurationService } from './quotes-configuration.service';
+import { PlainDataService, IPlainDataService } from './plain-data.service';
+
+class PlainDataServiceMock implements IPlainDataService {
+  private dividends: Map<string, HistoricalValue[]> = new Map<string, HistoricalValue[]>();
+
+  getHistoricalValues(uri: string): Observable<HistoricalValue[]> {
+    let historicalValue: HistoricalValue[] = this.dividends.get(uri);
+    if (!historicalValue) {
+      throw new Error("No historical values for " + uri);
+    }
+    return new Observable<HistoricalValue[]>(observer => {
+      observer.next(historicalValue);
+      observer.complete();
+    });
+  }
+
+  whenDividends(uri: string, answer: HistoricalValue[]): void {
+    this.dividends.set(uri, answer);
+  }
+}
 
 class ConnectionServiceMock implements IQuotesService {
   private historicalQuotes: Map<string, HistoricalQuotes> = new Map<string, HistoricalQuotes>();
-  private dividends: Map<string, Dividend[]> = new Map<string, Dividend[]>();
 
-  whenQuotes(name: string, answer: HistoricalQuotes): void {
-    this.historicalQuotes.set(name, answer);
-  }
-  whenDividends(name: string, answer: Dividend[]): void {
-    this.dividends.set(name, answer);
+  whenQuotes(uri: string, answer: HistoricalQuotes): void {
+    this.historicalQuotes.set(uri, answer);
   }
 
-  getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
-    let historicalQuotes: HistoricalQuotes = this.historicalQuotes.get(name);
+  getHistoricalQuotes(uri: string, name: string): Observable<HistoricalQuotes> {
+    let historicalQuotes: HistoricalQuotes = this.historicalQuotes.get(uri);
+    if (!historicalQuotes) {
+      throw new Error("No historical quotes for " + uri);
+    }
     return new Observable<HistoricalQuotes>(observer => {
       observer.next(historicalQuotes);
       observer.complete();
     });
   }
-  getDividends(source: string, name: string): Observable<Dividend[]> {
-    return new Observable<Dividend[]>(observer => {
-      observer.next(this.dividends.get(name));
-      observer.complete();
-    });
-  }
 }
 
-class SecuritiesConfigurationServiceMock {
-  map: Map<string, QuoteSourceAndProvider> = new Map();
+class QuotesConfigurationServiceMock implements IQuotesConfigurationService {
+  map: Map<string, NamedQuoteSource> = new Map();
 
-  when(name: string, answer: QuoteSourceAndProvider): void {
-    this.map.set(name, answer);
-  }
-  obtainQuoteSourceAndProvider(name: string): QuoteSourceAndProvider {
+  obtainNamedQuoteSource(name: string): NamedQuoteSource {
     return this.map.get(name);
+  }
+
+  when(name: string, answer: NamedQuoteSource): void {
+    this.map.set(name, answer);
   }
 }
 
 describe('QuotesService', () => {
   let six: ConnectionServiceMock;
   let yahoo: ConnectionServiceMock;
-  let dateYield: ConnectionServiceMock;
-  let configurationService: SecuritiesConfigurationServiceMock;
+  let painData: PlainDataServiceMock;
+  let configurationService: QuotesConfigurationServiceMock;
   let quotesService: QuotesService;
 
   let now: Date = new Date();
@@ -66,13 +79,13 @@ describe('QuotesService', () => {
       providers: [
         {provide: QuotesFromSixService, useClass: ConnectionServiceMock},
         {provide: QuotesFromYahooService, useClass: ConnectionServiceMock},
-        {provide: QuotesFromSimpleCsvService, useClass: ConnectionServiceMock},
-        {provide: QuotesConfigurationService, useClass: SecuritiesConfigurationServiceMock }
+        {provide: PlainDataService, useClass: PlainDataServiceMock},
+        {provide: QuotesConfigurationService, useClass: QuotesConfigurationServiceMock }
       ]
     });
     six = TestBed.get(QuotesFromSixService);
     yahoo = TestBed.get(QuotesFromYahooService);
-    dateYield = TestBed.get(QuotesFromSimpleCsvService);
+    painData = TestBed.get(PlainDataService);
     configurationService = TestBed.get(QuotesConfigurationService);
 
     quotesService = TestBed.get(QuotesService);
@@ -85,11 +98,16 @@ describe('QuotesService', () => {
   it('Can retrieve from Yahoo data', (done: DoneFn) => {
     configurationService.when("ISIN3", {
       name: "ISIN3",
-      provider: "finance.yahoo.com",
-      source: "xx",
+      quote: {
+        provider: QuoteProvider.YAHOO,
+        uri: "xx",
+      },
       dividends: {
-        provider: "date.yield.csv",
-        source: "yy",
+        level1TaxWitholding: 0.34,
+        directDividends: {
+          format: DataFormat.DATE_VALUE_CSV,
+          uri: "yy"
+        }
       }
     });
 
@@ -97,15 +115,12 @@ describe('QuotesService', () => {
       new InstantQuotes({instant: beforeYesterday, quotes: [
         new Quote({name: "ISIN3", close: 1.3})
       ]})]);
-    yahoo.whenQuotes("ISIN3", historicalQuotes);
+    let dividends: HistoricalValue[] = [{value: 1.5, instant: beforeYesterday}];
 
-    let dividends: Dividend[] = [new Dividend(
-      {name: "ISIN3", dividend: 1.5, instant: beforeYesterday}
-    )];
+    yahoo.whenQuotes(quotesService.makeRelativePath("xx"), historicalQuotes);
+    painData.whenDividends(quotesService.makeRelativePath("yy"), dividends);
 
-    dateYield.whenDividends("ISIN3", dividends);
-
-    quotesService.getHistoricalQuotes(["ISIN3"]).subscribe(data => {
+    quotesService.getQuotes(["ISIN3"]).subscribe(data => {
       expect(data.get(beforeYesterday).quote("ISIN3").close).toBe(1.3);
       expect(data.get(beforeYesterday).quote("ISIN3").dividend).toBe(1.5);
       done();

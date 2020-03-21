@@ -1,10 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
-import { Dividend } from 'src/app/model/core/quotes';
 import { HttpRequest } from '@angular/common/http';
-import { QuotesFromSimpleCsvService, DateYieldConverter } from './quotes-from-simple-csv.service';
-
+import { PlainDataService, DateYieldCsvConverter } from './plain-data.service';
+import { HistoricalValue } from 'src/app/model/core/quotes';
 
 var dateYieldResponse = "Date,Yield\r\n" +
   "2019-12-31,1.81\r\n" +
@@ -13,19 +12,19 @@ var dateYieldResponse = "Date,Yield\r\n" +
   "2016-12-31,2.03\r\n";
 
 describe('QuotesFromSimpleCsvService', () => {
-  let service: QuotesFromSimpleCsvService;
+  let service: PlainDataService;
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports:[HttpClientTestingModule]
     });
-    service = TestBed.get(QuotesFromSimpleCsvService);
+    service = TestBed.get(PlainDataService);
     httpMock = TestBed.get(HttpTestingController);
   });
 
   it('Can return Dividends Data from a date yield source', () => {
-      service.getDividends("SOURCE", "NAME").subscribe((data: Dividend[]) => {
+      service.getHistoricalValues("SOURCE").subscribe((data: HistoricalValue[]) => {
         expect(data).toBeTruthy();
       });
 
@@ -43,26 +42,25 @@ describe('QuotesFromSimpleCsvService', () => {
 
 describe('DateYieldConverter', () => {
   it('Can convert responses from Date Yield pairs into Dividends', () => {
-    let dateYieldConverter: DateYieldConverter = new DateYieldConverter("ISIN1", dateYieldResponse);
-    let dividends: Dividend[] = dateYieldConverter.asHistoricalQuotes();
-    expect(dividends).toEqual(
+    let dateYieldConverter: DateYieldCsvConverter = new DateYieldCsvConverter(dateYieldResponse);
+    let historicalValues: HistoricalValue[] = dateYieldConverter.asHistoricalValues();
+    expect(historicalValues).toEqual(
       jasmine.arrayWithExactContents([
-        new Dividend({
+        {
           instant: new Date(2019, 11, 31),
-          name: "ISIN1",
-          dividend: 1.81}),
-        new Dividend({
+          value: 1.81
+        },
+        {
           instant: new Date(2018, 11, 31),
-          name: "ISIN1",
-          dividend: 2.09}),
-        new Dividend({
+          value: 2.09
+        },
+        {
           instant: new Date(2017, 11, 31),
-          name: "ISIN1",
-          dividend: 1.84}),
-        new Dividend({
+          value: 1.84
+        },
+        {
           instant: new Date(2016, 11, 31),
-          name: "ISIN1",
-          dividend: 2.03})
+          value: 2.03}
       ]));
   });
 });

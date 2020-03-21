@@ -1,4 +1,4 @@
-import { HistoricalQuotes, Dividend } from 'src/app/model/core/quotes';
+import { HistoricalQuotes } from 'src/app/model/core/quotes';
 import { Observable } from 'rxjs';
 
 /**
@@ -13,10 +13,4 @@ export interface IQuotesService {
    * @param {string} source Where to find the file with data.
    */
   getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes>;
-
-  /**
-   * To retrieve the dividends of the specified instrument.
-   * @param {string} source Where to find the file with data.
-   */
-  getDividends(source: string, name:string): Observable<Dividend[]>;
 }

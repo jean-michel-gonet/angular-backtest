@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, forkJoin } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { QuotesFromSixService } from './quotes-from-six.service';
 import { QuotesFromYahooService } from './quotes-from-yahoo.service';
-import { HistoricalQuotes, Dividend } from 'src/app/model/core/quotes';
-import { QuotesConfigurationService, QuoteSourceAndProvider, SourceAndProvider } from './quotes-configuration.service';
-import { QuotesFromSimpleCsvService } from './quotes-from-simple-csv.service';
+import { HistoricalQuotes } from 'src/app/model/core/quotes';
+import { QuotesConfigurationService, NamedQuoteSource, QuoteProvider, QuoteSource, DividendSource, DataSource } from './quotes-configuration.service';
+import { PlainDataService } from './plain-data.service';
+
 
 /**
  * Retrieves instantQuotes data from a provider, and then broadcasts the
@@ -18,71 +19,94 @@ import { QuotesFromSimpleCsvService } from './quotes-from-simple-csv.service';
 export class QuotesService {
   constructor(private quotesFromSixService: QuotesFromSixService,
               private quotesFromYahooService: QuotesFromYahooService,
-              private quotesFromSimpleCsvService: QuotesFromSimpleCsvService,
+              private plainDataService: PlainDataService,
               private quotesConfigurationService: QuotesConfigurationService) {
   }
 
-  private makeItGood(source: string): string {
-    return "../../../assets/quotes/" + source;
-  }
-
-  getHistoricalQuotes(names: string[]): Observable<HistoricalQuotes> {
-    let oo: Observable<HistoricalQuotes>[] = [];
+  public getQuotes(names: string[]): Observable<HistoricalQuotes> {
+    let quoteRetrievers: Observable<HistoricalQuotes>[] = [];
 
     names.forEach(name => {
-      let quoteSourceAndProvider: QuoteSourceAndProvider =
-        this.quotesConfigurationService.obtainQuoteSourceAndProvider(name);
+      let namedQuoteSource: NamedQuoteSource =
+        this.quotesConfigurationService.obtainNamedQuoteSource(name);
 
-      let o: Observable<HistoricalQuotes> = this.obtainQuote(quoteSourceAndProvider)
-        .pipe(mergeMap(s => {
-          return this.obtainDividends(quoteSourceAndProvider.dividends, quoteSourceAndProvider.name)
-            .pipe(map(d =>{
-              s.enrichWithDividends(d);
-              return s;
-            }));
-        }));
-      oo.push(o);
+      let quoteRetriever: Observable<HistoricalQuotes> = new Observable<HistoricalQuotes>(observer => {
+        this.retrieveQuote(
+          namedQuoteSource.name,
+          namedQuoteSource.quote).subscribe(h1 => {
+            this.obtainDividends(h1, namedQuoteSource).subscribe(h2 => {
+              observer.next(h2);
+              observer.complete();
+            });
+          });
+      });
+      quoteRetrievers.push(quoteRetriever);
     });
 
-    return forkJoin(oo)
-      .pipe(map(s => {
-        let historicalQuotes: HistoricalQuotes;
-        s.forEach((d: HistoricalQuotes) => {
-          if (historicalQuotes) {
-            historicalQuotes.merge(d);
+    return forkJoin(quoteRetrievers)
+      .pipe(map((separatedHistoricalQuotes: HistoricalQuotes[]) => {
+        let mergedHistoricalQuotes: HistoricalQuotes;
+        separatedHistoricalQuotes.forEach((singleHistoricalQuotes: HistoricalQuotes) => {
+          if (mergedHistoricalQuotes) {
+            mergedHistoricalQuotes.merge(singleHistoricalQuotes);
           } else {
-            historicalQuotes = d;
+            mergedHistoricalQuotes = singleHistoricalQuotes;
           }
         });
-        return historicalQuotes;
+        return mergedHistoricalQuotes;
       }));
   }
 
-  private obtainDividends(sourceAndProvider: SourceAndProvider, name: string): Observable<Dividend[]> {
-    if (sourceAndProvider) {
-      let source = this.makeItGood(sourceAndProvider.source);
-      switch(sourceAndProvider.provider) {
-        case "date.yield.csv":
-        case "finance.yahoo.com":
-          return this.quotesFromSimpleCsvService.getDividends(source, name);
-        default:
-          console.warn(sourceAndProvider.provider + " - Unknown provider for dividends");
-      }
+  private retrieveQuote(name: string, quoteSource: QuoteSource): Observable<HistoricalQuotes> {
+    let uri = this.makeRelativePath(quoteSource.uri);
+
+    switch(quoteSource.provider) {
+      case QuoteProvider.SIX:
+        return this.quotesFromSixService.getHistoricalQuotes(uri, name);
+      case QuoteProvider.YAHOO:
+        return this.quotesFromYahooService.getHistoricalQuotes(uri, name);
+      case QuoteProvider.INVESTING:
+      default:
+        console.warn(quoteSource.provider + " - Unsupported provider");
+        return null;
     }
-    return of([]);
   }
 
-  private obtainQuote(quoteSourceAndProvider: QuoteSourceAndProvider): Observable<HistoricalQuotes> {
-    let source = this.makeItGood(quoteSourceAndProvider.source);
+  private obtainDividends(historicalQuotes: HistoricalQuotes, namedQuoteSource: NamedQuoteSource): Observable<HistoricalQuotes> {
+    let dividendsSource: DividendSource = namedQuoteSource.dividends;
+    if (dividendsSource) {
+      let directDividendsSource: DataSource = dividendsSource.directDividends;
+      if (directDividendsSource) {
+        let uri = this.makeRelativePath(directDividendsSource.uri);
+        return new Observable<HistoricalQuotes>(observer => {
+          this.plainDataService.getHistoricalValues(uri).subscribe(directDividends => {
+            historicalQuotes.enrichWithDividends(namedQuoteSource.name, directDividends);
+            observer.next(historicalQuotes);
+            observer.complete();
+          });
+        });
+      } else {
+        let totalReturnSource: QuoteSource = namedQuoteSource.dividends.totalReturn;
+        if (totalReturnSource) {
+          return new Observable<HistoricalQuotes>(observer => {
+            this.retrieveQuote("TR", totalReturnSource).subscribe(totalReturnQuotes => {
+              // historicalQuotes.enrichWithDividends(totalReturnQuotes);
+              observer.next(historicalQuotes);
+              observer.complete();
+            });
+          });
+        }
+      }
+    } else {
+      return of(historicalQuotes);
+    }
+  }
 
-    switch(quoteSourceAndProvider.provider) {
-      case "www.six-group.com":
-        return this.quotesFromSixService.getHistoricalQuotes(source, quoteSourceAndProvider.name);
-      case "finance.yahoo.com":
-        return this.quotesFromYahooService.getHistoricalQuotes(source, quoteSourceAndProvider.name);
-      default:
-        console.warn(quoteSourceAndProvider.provider + " - Unknown provider");
-        return null;
+  public makeRelativePath(uri: string): string {
+    if (uri.startsWith('/')) {
+      return uri;
+    } else {
+      return "../../../assets/quotes/" + uri;
     }
   }
 }

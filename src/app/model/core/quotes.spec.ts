@@ -1,4 +1,4 @@
-import { InstantQuotes, HistoricalQuotes, Dividend, Candlestick, CandlestickType, Quote } from './quotes';
+import { InstantQuotes, HistoricalQuotes, Candlestick, CandlestickType, Quote } from './quotes';
 
 describe('Candlestick', () => {
   it('Can be green when open price is lesser than close price', () =>{
@@ -330,9 +330,9 @@ describe('HistoricalQuotes', () => {
       ]})
     ]);
 
-    historicalQuotes.enrichWithDividends([
-      new Dividend({instant: beforeYesterday, name : "ISIN1", dividend: 2.5}),
-      new Dividend({instant: today, name : "ISIN1", dividend: 1.5}),
+    historicalQuotes.enrichWithDividends("ISIN1", [
+      {instant: beforeYesterday, value: 2.5},
+      {instant: today, value: 1.5},
     ]);
 
     expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").dividend).toBe(2.5);
@@ -351,9 +351,9 @@ describe('HistoricalQuotes', () => {
       ]})
     ]);
 
-    historicalQuotes.enrichWithDividends([
-      new Dividend({instant: beforeYesterday, name : "ISIN1", dividend: 2.5}),
-      new Dividend({instant: today, name : "ISIN1", dividend: 1.5}),
+    historicalQuotes.enrichWithDividends("ISIN1", [
+      {instant: beforeYesterday, value: 2.5},
+      {instant: today, value: 1.5},
     ]);
 
     expect(historicalQuotes.get(yesterday).quote("ISIN1").dividend).toBe(2.5);
@@ -372,9 +372,9 @@ describe('HistoricalQuotes', () => {
       ]})
     ]);
 
-    historicalQuotes.enrichWithDividends([
-      new Dividend({instant: yesterday, name : "ISIN1", dividend: 2.5}),
-      new Dividend({instant: today, name : "ISIN1", dividend: 1.5}),
+    historicalQuotes.enrichWithDividends("ISIN1", [
+      {instant: yesterday, value: 2.5},
+      {instant: today, value: 1.5},
     ]);
 
     expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").dividend).toBe(2.5);

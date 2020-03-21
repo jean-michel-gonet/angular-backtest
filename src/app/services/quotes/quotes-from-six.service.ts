@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HistoricalQuotes, InstantQuotes, Dividend, Quote } from 'src/app/model/core/quotes';
+import { HistoricalQuotes, InstantQuotes, Quote } from 'src/app/model/core/quotes';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -90,9 +90,5 @@ export class QuotesFromSixService implements IQuotesService {
         let sixConverter: SixConverter = new SixConverter(s);
         return sixConverter.asHistoricalQuotes();
       }));
-  }
-
-  getDividends(source: string): Observable<Dividend[]> {
-    throw new Error("Method not implemented.");
   }
 }

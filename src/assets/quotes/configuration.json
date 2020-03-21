@@ -1,40 +1,37 @@
 [
   {
     "name": "IBEX35",
-    "source": "indexes/ibex35-yahoo.csv",
-    "provider": "finance.yahoo.com"
+    "quote": {
+      "provider": "finance.yahoo.com",
+      "uri": "indexes/ibex35-yahoo.csv"
+    }
   },
   {
     "name": "SP500",
-    "source": "indexes/sp500-yahoo.csv",
-    "provider": "finance.yahoo.com",
+    "quote": {
+      "provider": "finance.yahoo.com",
+      "uri": "indexes/sp500-yahoo.csv"
+    },
     "dividends": {
-      "source": "indexes/sp500-dividends.csv",
-      "provider": "date.yield.csv"
+      "level1TaxWitholding": 0.34,
+      "directDividends": {
+        "provider": "date.value.csv",
+        "uri": "indexes/sp500-dividends.csv"
+      }
     }
   },
   {
     "name": "AGG",
-    "source": "instruments/ishares-core-us-aggregate-bond-etf.csv",
-    "provider": "finance.yahoo.com",
+    "quote": {
+      "provider": "finance.yahoo.com",
+      "uri": "instruments/ishares-core-us-aggregate-bond-etf.csv"
+    },
     "dividends": {
-      "source": "instruments/ishares-core-us-aggregate-bond-dividends.csv",
-      "provider": "finance.yahoo.com"
+      "level1TaxWitholding": 0.34,
+      "directDividends": {
+        "provider": "date.value.csv",
+        "uri": "instruments/ishares-core-us-aggregate-bond-dividends.csv"
+      }
     }
-  },
-  {
-    "name": "LU1290894820",
-    "source": "instruments/lu1290894820-six.json",
-    "provider": "www.six-group.com"
-  },
-  {
-    "name": "CH0017810976",
-    "source": "instruments/ch0017810976-six.json",
-    "provider": "www.six-group.com"
-  },
-  {
-    "name": "SMI",
-    "source": "instruments/SMI.csv",
-    "provider": "www.six-group.com"
   }
 ]
