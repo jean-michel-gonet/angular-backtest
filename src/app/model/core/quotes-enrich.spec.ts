@@ -1,12 +1,13 @@
 import { HistoricalQuotes, InstantQuotes, Quote } from "./quotes";
 import { EnrichWithDividends } from './quotes-enrich';
 
+let now: Date = new Date();
+let tomorrow: Date =        new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+let today: Date =           new Date(now.getFullYear(), now.getMonth(), now.getDate() + 0);
+let yesterday: Date =       new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+let beforeYesterday: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 2);
+
 describe('EnrichWithDividends', () => {
-  let now: Date = new Date();
-  let tomorrow: Date =        new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-  let today: Date =           new Date(now.getFullYear(), now.getMonth(), now.getDate() + 0);
-  let yesterday: Date =       new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
-  let beforeYesterday: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 2);
 
   it('Can enrich with dividends', () => {
     let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
@@ -25,11 +26,11 @@ describe('EnrichWithDividends', () => {
     ]);
 
     let enrichWithDividends: EnrichWithDividends =
-      new EnrichWithDividends("ISIN1", [
+      new EnrichWithDividends([
           {instant: beforeYesterday, value: 2.5},
           {instant: today, value: 1.5}
         ]);
-    enrichWithDividends.enrich(historicalQuotes);
+    enrichWithDividends.enrich("ISIN1", historicalQuotes);
 
     expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").dividend).toBe(2.5);
     expect(historicalQuotes.get(yesterday).quote("ISIN1").dividend).toBe(0);
@@ -49,11 +50,11 @@ describe('EnrichWithDividends', () => {
     ]);
 
     let enrichWithDividends: EnrichWithDividends =
-      new EnrichWithDividends("ISIN1", [
+      new EnrichWithDividends([
         {instant: beforeYesterday, value: 2.5},
         {instant: today, value: 1.5},
       ]);
-    enrichWithDividends.enrich(historicalQuotes);
+    enrichWithDividends.enrich("ISIN1", historicalQuotes);
 
     expect(historicalQuotes.get(yesterday).quote("ISIN1").dividend).toBe(2.5);
     expect(historicalQuotes.get(today).quote("ISIN1").dividend).toBe(1.5);
@@ -75,11 +76,11 @@ describe('EnrichWithDividends', () => {
       ]})
     ]);
     let enrichWithDividends: EnrichWithDividends =
-      new EnrichWithDividends("ISIN1", [
+      new EnrichWithDividends([
         {instant: yesterday, value: 2.5},
         {instant: today, value: 1.5},
       ]);
-    enrichWithDividends.enrich(historicalQuotes);
+    enrichWithDividends.enrich("ISIN1", historicalQuotes);
 
     expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").dividend).toBe(0);
     expect(historicalQuotes.get(today).quote("ISIN1").dividend).toBe(2.5);
@@ -102,14 +103,20 @@ describe('EnrichWithDividends', () => {
       ]})
     ]);
     let enrichWithDividends: EnrichWithDividends =
-      new EnrichWithDividends("ISIN1", [
+      new EnrichWithDividends([
         {instant: beforeYesterday, value: 2.5},
         {instant: yesterday, value: 1.5},
       ]);
-    enrichWithDividends.enrich(historicalQuotes);
+    enrichWithDividends.enrich("ISIN1", historicalQuotes);
 
     expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").dividend).toBe(2.5);
     expect(historicalQuotes.get(yesterday).quote("ISIN1").dividend).toBe(1.5);
     expect(historicalQuotes.get(today).quote("ISIN1").dividend).toBe(0);
+  });
+});
+
+describe('EnrichWithTotalReturn', () => {
+  it('Can enrich with total return', () => {
+
   });
 });

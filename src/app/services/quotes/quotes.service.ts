@@ -3,7 +3,7 @@ import { Observable, of, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { QuotesFromSixService } from './quotes-from-six.service';
 import { QuotesFromYahooService } from './quotes-from-yahoo.service';
-import { HistoricalQuotes, HistoricalValue, InstantQuotes } from 'src/app/model/core/quotes';
+import { HistoricalQuotes } from 'src/app/model/core/quotes';
 import { QuotesConfigurationService, NamedQuoteSource, QuoteProvider,
   QuoteSource, DividendSource, DataSource } from './quotes-configuration.service';
 import { PlainDataService } from './plain-data.service';
@@ -83,8 +83,8 @@ export class QuotesService {
         return new Observable<HistoricalQuotes>(observer => {
           this.plainDataService.getHistoricalValues(uri).subscribe(directDividends => {
             let enrichWithDividends: EnrichWithDividends =
-              new EnrichWithDividends(namedQuoteSource.name, directDividends);
-            enrichWithDividends.enrich(historicalQuotes);
+              new EnrichWithDividends(directDividends);
+            enrichWithDividends.enrich(namedQuoteSource.name, historicalQuotes);
             observer.next(historicalQuotes);
             observer.complete();
           });
