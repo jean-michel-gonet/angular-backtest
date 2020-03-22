@@ -3,9 +3,11 @@ import { Observable, of, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { QuotesFromSixService } from './quotes-from-six.service';
 import { QuotesFromYahooService } from './quotes-from-yahoo.service';
-import { HistoricalQuotes } from 'src/app/model/core/quotes';
-import { QuotesConfigurationService, NamedQuoteSource, QuoteProvider, QuoteSource, DividendSource, DataSource } from './quotes-configuration.service';
+import { HistoricalQuotes, HistoricalValue, InstantQuotes } from 'src/app/model/core/quotes';
+import { QuotesConfigurationService, NamedQuoteSource, QuoteProvider,
+  QuoteSource, DividendSource, DataSource } from './quotes-configuration.service';
 import { PlainDataService } from './plain-data.service';
+import { EnrichWithDividends } from 'src/app/model/core/quotes-enrich';
 
 
 /**
@@ -80,7 +82,9 @@ export class QuotesService {
         let uri = this.makeRelativePath(directDividendsSource.uri);
         return new Observable<HistoricalQuotes>(observer => {
           this.plainDataService.getHistoricalValues(uri).subscribe(directDividends => {
-            historicalQuotes.enrichWithDividends(namedQuoteSource.name, directDividends);
+            let enrichWithDividends: EnrichWithDividends =
+              new EnrichWithDividends(namedQuoteSource.name, directDividends);
+            enrichWithDividends.enrich(historicalQuotes);
             observer.next(historicalQuotes);
             observer.complete();
           });

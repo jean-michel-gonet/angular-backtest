@@ -308,36 +308,6 @@ export class HistoricalQuotes implements Reporter {
     }
   }
 
-  enrichWithDividends(name: string, dividends: HistoricalValue[]):void {
-    let thisIndex: number = 0;
-    let dividendIndex: number = 0;
-
-    let previousEntry = this.instantQuotes[thisIndex];
-    while(dividendIndex < dividends.length && thisIndex < this.instantQuotes.length) {
-      let dividendEntry = dividends[dividendIndex];
-      let thisEntry = this.instantQuotes[thisIndex];
-
-      if (thisEntry.instant.valueOf() < dividendEntry.instant.valueOf()) {
-        thisIndex++;
-      }
-
-      if (thisEntry.instant.valueOf() == dividendEntry.instant.valueOf()) {
-        let quote = thisEntry.quote(name);
-        quote.dividend = dividendEntry.value;
-        thisIndex++;
-        dividendIndex++;
-      }
-
-      if (thisEntry.instant.valueOf() > dividendEntry.instant.valueOf()) {
-        let quote = previousEntry.quote(name);
-        quote.dividend = dividendEntry.value;
-        dividendIndex++;
-      }
-
-      previousEntry = thisEntry;
-    }
-  }
-
   /**
    * Transform this instantQuotes data into an array of simpler
    * data, that can be displayed as JSON.
