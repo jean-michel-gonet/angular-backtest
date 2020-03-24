@@ -100,9 +100,10 @@ export class EnrichWithTotalReturn {
     let dividend:number = 0;
 
     if (this.lastPriceValue) {
-      let a: number = totalReturnValue / this.lastTotalReturnValue;
-      let b: number = a * this.lastPriceValue;
-      dividend = b - priceValue;
+      let tr = (totalReturnValue  - this.lastTotalReturnValue) / totalReturnValue;
+      let pr = (priceValue - this.lastPriceValue) / priceValue;
+      let d = tr - pr;
+      dividend = d * 100;
     }
 
     this.lastPriceValue = priceValue;
