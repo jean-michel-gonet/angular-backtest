@@ -1,4 +1,4 @@
-import { HistoricalQuotes, InstantQuotes, Quote, HistoricalValue } from "./quotes";
+import { HistoricalQuotes, InstantQuotes, Quote } from "./quotes";
 import { EnrichWithDividends, EnrichWithTotalReturn } from './quotes-enrich';
 
 let now: Date = new Date();
@@ -284,5 +284,4 @@ describe('EnrichWithTotalReturn', () => {
     // Downloaded from: https://www.multpl.com/s-p-500-dividend-yield/table/by-month
     expect(calculatedDividends).toBe(2.1);
   });
-
 });

@@ -42,8 +42,9 @@ export class EnrichWithDividends {
  */
 export class EnrichWithTotalReturn {
   private totalReturn: HistoricalValue[];
-  private lastPriceValue: number;
-  private lastTotalReturnValue: number;
+  private initialPriceValue: number;
+  private initialTotalReturnValue: number;
+  private distributedDividends: number;
 
   /**
    * Class constructor.
@@ -93,22 +94,31 @@ export class EnrichWithTotalReturn {
   /**
    * Calculates the dividend by comparing the increase of the
    * total return index with the increase of the price index.
-   * TRn = TR(n-1) * (PR(n) + D(n)) / PR(n-1)
-   * see: https://www.indexologyblog.com/2017/02/07/index-basics-calculating-an-indexs-total-return/
+   * Uses the following formula:
+   * <pre>
+   * (TR(n) - TR(n-1)) / TR(n)  = (PR(n) - PR(n-1) + D(n)) / PR(n-1)
+   * </pre>
    */
   private computeDividend(priceValue: number, totalReturnValue: number): number {
-    let dividend:number = 0;
+    let dividends:number = 0;
 
-    if (this.lastPriceValue) {
-      let tr = Math.round(10000 * (totalReturnValue  - this.lastTotalReturnValue) / totalReturnValue);
-      let pr = Math.round(10000 * (priceValue - this.lastPriceValue) / priceValue);
-      let d = tr - pr;
-      dividend = d / 100;
+    if (this.initialPriceValue) {
+      // To avoid accumulating rounding error at each dividend distribution,
+      // calculates the total dividends since inception date:
+      let tr = Math.round(10000 * (totalReturnValue  - this.initialTotalReturnValue) / totalReturnValue);
+      let pr = Math.round(10000 * (priceValue - this.initialPriceValue) / priceValue);
+      let totalDividends = (tr - pr) / 100;
+
+      // And compares the total dividends with the distributed dividends:
+      dividends = totalDividends - this.distributedDividends;
+      this.distributedDividends = totalDividends;
+    }
+    else {
+      this.initialPriceValue = priceValue;
+      this.initialTotalReturnValue = totalReturnValue;
+      this.distributedDividends = 0;
     }
 
-    this.lastPriceValue = priceValue;
-    this.lastTotalReturnValue = totalReturnValue;
-
-    return dividend;
+    return dividends;
   }
 }
