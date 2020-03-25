@@ -62,6 +62,67 @@ backtest this strategy, and it does wonders. Jackpot! Or is it? The fact that
 B is correlated to A may be consequence of a thousand factors, and they may change
 just because economy evolves.
 
+## Running the application
+
+To install and run this project, you need _Git_, _Node.js_ and _npm_:
+* _Git_ is a distributed version-control system for tracking changes in source code during software development. It is designed for coordinating work among programmers, but it can be used to track changes in any set of files (see https://en.wikipedia.org/wiki/Git). You will use to retrieve sources from _GitHub_ and copy them on your machine.
+* _Node.js_ is an open-source, cross-platform, JavaScript library that executes JavaScript code outside of a browser (see https://en.wikipedia.org/wiki/Node.js).
+* _npm_, originally short for _Node Package Manager_, is a package manager for the JavaScript programming language. It is the default package manager for the JavaScript runtime environment _Node.js._ (see https://en.wikipedia.org/wiki/Npm_(software) ) and it is shipped with it.
+
+### In Windows
+Download and install the required tools from the official sites:
+
+* _Git_: https://git-scm.com/download/win
+* _Node.js_ and _npm_: https://nodejs.org/en/download/
+
+After installation, open a command prompt (click on start, and then type ``cmd`` and ``[ENTER]``) and verify that all three tools are there:
+
+```
+git --version
+node --version
+npm --version
+```
+
+To update _Node.js_, simply reinstall it from the same source.
+
+### Compile and run the program (all platforms)
+Look for or create an appropriate folder where to install the project, then open the command prompt, navigate to it, and use _Git_ to clone the sources:
+
+```
+cd Documents
+git clone https://github.com/jean-michel-gonet/angular-backtest.git
+cd angular-backtest
+npm install
+npm start
+```
+
+When the compilation is finished, you should see an indication that the
+program is running and available as a local web site:
+
+```
+...
+...
+Angular Live Development Server is listening on localhost:4200, open
+your browser on http://localhost:4200/
+```
+
+Open a browser on that address, and you should see the main page.
+
+## Development environment
+My favourite development environment is Atom. Download and install it from the
+official web site:
+- https://atom.io/
+
+Then, install the _atom-typescript_ plugin using the _Atom Package Manager_ that
+is shipped with atom (see https://atom.io/packages/atom-typescript).
+
+Open a command terminal and type:
+
+```
+apm install atom-ide-ui
+apm install atom-typescript
+```
+
 ## How to use the library
 
 Here is an simple example on how to run a simulation based on an hypothetic
@@ -214,7 +275,7 @@ this.simulation = new Simulation({
 ```
 
 To see the cash transfers, we need to add it to the report. This time we
-refer it to the right axis, and not normalize it:
+refer it to the right axis, and not normalise it:
 
 ```
 this.ng2ChartReport = new Ng2ChartReport([
@@ -255,52 +316,6 @@ component works:
 ## Code structure
 
 ![angular-backtest class diagram](src/assets/doc/angular-backtest-class-diagram-1.png)
-
-## Running the application
-
-To install and run this project, you need _Git_, _Node.js_ and _npm_:
-* _Git_ is a distributed version-control system for tracking changes in source code during software development. It is designed for coordinating work among programmers, but it can be used to track changes in any set of files (see https://en.wikipedia.org/wiki/Git). You will use to retrieve sources from _GitHub_ and copy them on your machine.
-* _Node.js_ is an open-source, cross-platform, JavaScript library that executes JavaScript code outside of a browser (see https://en.wikipedia.org/wiki/Node.js).
-* _npm_, originally short for _Node Package Manager_, is a package manager for the JavaScript programming language. It is the default package manager for the JavaScript runtime environment _Node.js._ (see https://en.wikipedia.org/wiki/Npm_(software) ) and it is shipped with it.
-
-### In Windows
-Download and install the required tools from the official sites:
-
-* _Git_: https://git-scm.com/download/win
-* _Node.js_ and _npm_: https://nodejs.org/en/download/
-
-After installation, open a command prompt (click on start, and then type ``cmd`` and ``[ENTER]``) and verify that all three tools are there:
-
-```
-git --version
-node --version
-npm --version
-```
-
-To update _Node.js_, simply reinstall it from the same source.
-
-### Compile and run the program (all platforms)
-Look for or create an appropriate folder where to install the project, then open the command prompt, navigate to it, and use _Git_ to clone the sources:
-
-```
-cd Documents
-git clone https://github.com/jean-michel-gonet/angular-backtest.git
-cd angular-backtest
-npm install
-npm start
-```
-
-When the compilation is finished, you should see an indication that the
-program is running and available as a local web site:
-
-```
-...
-...
-Angular Live Development Server is listening on localhost:4200, open
-your browser on http://localhost:4200/
-```
-
-Open a browser on that address, and you should see the main page.
 
 ## Troubleshooting
 
