@@ -252,4 +252,38 @@ describe('EnrichWithTotalReturn', () => {
     expect(calculatedDividends)
       .toBeCloseTo(1.96, 2);
   });
+
+  it('Can enrich with total return (2)', () => {
+
+    // Given S&P 500 Growth Total Return (weekly)
+    // Downloaded from https://www.investing.com/indices/s-p-500-tr-historical-data
+    let totalReturn: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: new Date(2017, 12 - 1, 31), quotes: [new Quote({name:"SP500TR", close: 5349.69})]}),
+      new InstantQuotes({instant: new Date(2018, 12 - 1, 30), quotes: [new Quote({name:"SP500TR", close: 5035.45})]}),
+    ]);
+
+    // Given S&P 500 Historical Data (weely)
+    // Downloaded from https://www.investing.com/indices/us-spx-500-historical-data
+    let price: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: new Date(2017, 12 - 1, 31), quotes: [new Quote({name:"SP500", close: 2743.15})]}),
+      new InstantQuotes({instant: new Date(2018, 12 - 1, 30), quotes: [new Quote({name:"SP500", close: 2531.94})]}),
+    ]);
+
+    // When enriching the price quote with total return quote:
+    let enrichWithTotalReturn: EnrichWithTotalReturn =
+      new EnrichWithTotalReturn("SP500TR", totalReturn);
+    enrichWithTotalReturn.enrich("SP500", price);
+
+    // Then calculated dividends should be actual dividends
+    let calculatedDividends: number = 0;
+    price.forEachDate(instantQuotes => {
+      let quote: Quote = instantQuotes.quote("SP500");
+      calculatedDividends += quote.dividend;
+    });
+
+    // Downloaded from: https://www.multpl.com/s-p-500-dividend-yield/table/by-month
+    expect(calculatedDividends)
+      .toBeCloseTo(2.09, 2);
+  });
+
 });
