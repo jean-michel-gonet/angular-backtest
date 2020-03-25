@@ -250,7 +250,7 @@ describe('EnrichWithTotalReturn', () => {
 
     // Downloaded from: https://www.multpl.com/s-p-500-dividend-yield/table/by-month
     expect(calculatedDividends)
-      .toBeCloseTo(1.96, 2);
+      .toBeCloseTo(2.1, 1);
   });
 
   it('Can enrich with total return (2)', () => {
@@ -282,8 +282,7 @@ describe('EnrichWithTotalReturn', () => {
     });
 
     // Downloaded from: https://www.multpl.com/s-p-500-dividend-yield/table/by-month
-    expect(calculatedDividends)
-      .toBeCloseTo(2.09, 2);
+    expect(calculatedDividends).toBe(2.1);
   });
 
 });
