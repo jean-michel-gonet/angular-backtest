@@ -118,7 +118,40 @@ describe('EnrichWithDividends', () => {
 // 0*([0-9]+)\/0*([0-9]+)\/18\s([0-9]+)\,([0-9]+)
 // new InstantQuotes({instant: new Date(2018, $2 - 1, $1), quotes: [new Quote({name:"SP500", close: $3.$4})]}),
 describe('EnrichWithTotalReturn', () => {
-  it('Can enrich with total return', () => {
+
+  it('Can calculate dividends of SP500 in 2018', () => {
+
+    // Given S&P 500 Growth Total Return (weekly)
+    // Downloaded from https://www.investing.com/indices/s-p-500-tr-historical-data
+    let totalReturn: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: new Date(2017, 12 - 1, 31), quotes: [new Quote({name:"SP500TR", close: 5349.69})]}),
+      new InstantQuotes({instant: new Date(2018, 12 - 1, 30), quotes: [new Quote({name:"SP500TR", close: 5035.45})]}),
+    ]);
+
+    // Given S&P 500 Historical Data (weely)
+    // Downloaded from https://www.investing.com/indices/us-spx-500-historical-data
+    let price: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: new Date(2017, 12 - 1, 31), quotes: [new Quote({name:"SP500", close: 2743.15})]}),
+      new InstantQuotes({instant: new Date(2018, 12 - 1, 30), quotes: [new Quote({name:"SP500", close: 2531.94})]}),
+    ]);
+
+    // When enriching the price quote with total return quote:
+    let enrichWithTotalReturn: EnrichWithTotalReturn =
+      new EnrichWithTotalReturn("SP500TR", totalReturn);
+    enrichWithTotalReturn.enrich("SP500", price);
+
+    // Then calculated dividends should be actual dividends
+    let calculatedDividends: number = 0;
+    price.forEachDate(instantQuotes => {
+      let quote: Quote = instantQuotes.quote("SP500");
+      calculatedDividends += quote.dividend;
+    });
+
+    // Downloaded from: https://www.multpl.com/s-p-500-dividend-yield/table/by-month
+    expect(calculatedDividends).toBe(2.1);
+  });
+
+  it('Can calculate dividends over a period of time without rounding error', () => {
 
     // Given S&P 500 Growth Total Return (weekly)
     // Downloaded from https://www.investing.com/indices/s-p-500-tr-historical-data
@@ -253,35 +286,68 @@ describe('EnrichWithTotalReturn', () => {
       .toBeCloseTo(2.1, 1);
   });
 
-  it('Can enrich with total return (2)', () => {
-
-    // Given S&P 500 Growth Total Return (weekly)
-    // Downloaded from https://www.investing.com/indices/s-p-500-tr-historical-data
+  it('Can handle TR starting and finishing before PR', () => {
+    // Given a TR increasing 20% per month:
     let totalReturn: HistoricalQuotes = new HistoricalQuotes([
-      new InstantQuotes({instant: new Date(2017, 12 - 1, 31), quotes: [new Quote({name:"SP500TR", close: 5349.69})]}),
-      new InstantQuotes({instant: new Date(2018, 12 - 1, 30), quotes: [new Quote({name:"SP500TR", close: 5035.45})]}),
+      new InstantQuotes({instant: new Date(2018, 1 - 1, 1), quotes: [new Quote({name:"TR", close: 1000})]}),
+      new InstantQuotes({instant: new Date(2018, 2 - 1, 1), quotes: [new Quote({name:"TR", close: 1200})]}),
+      new InstantQuotes({instant: new Date(2018, 3 - 1, 1), quotes: [new Quote({name:"TR", close: 1440})]}),
+      new InstantQuotes({instant: new Date(2018, 4 - 1, 1), quotes: [new Quote({name:"TR", close: 1728})]}),
     ]);
 
-    // Given S&P 500 Historical Data (weely)
-    // Downloaded from https://www.investing.com/indices/us-spx-500-historical-data
+    // Given a PR increasing 10% per month:
     let price: HistoricalQuotes = new HistoricalQuotes([
-      new InstantQuotes({instant: new Date(2017, 12 - 1, 31), quotes: [new Quote({name:"SP500", close: 2743.15})]}),
-      new InstantQuotes({instant: new Date(2018, 12 - 1, 30), quotes: [new Quote({name:"SP500", close: 2531.94})]}),
+      new InstantQuotes({instant: new Date(2018, 3 - 1, 1), quotes: [new Quote({name:"PR", close: 100.0})]}),
+      new InstantQuotes({instant: new Date(2018, 4 - 1, 1), quotes: [new Quote({name:"PR", close: 110.0})]}),
+      new InstantQuotes({instant: new Date(2018, 5 - 1, 1), quotes: [new Quote({name:"PR", close: 121.0})]}),
+      new InstantQuotes({instant: new Date(2018, 6 - 1, 1), quotes: [new Quote({name:"PR", close: 133.1})]}),
     ]);
 
     // When enriching the price quote with total return quote:
     let enrichWithTotalReturn: EnrichWithTotalReturn =
-      new EnrichWithTotalReturn("SP500TR", totalReturn);
-    enrichWithTotalReturn.enrich("SP500", price);
+      new EnrichWithTotalReturn("TR", totalReturn);
+    enrichWithTotalReturn.enrich("PR", price);
 
-    // Then calculated dividends should be actual dividends
+    // Then calculated dividends should be 10% per month:
     let calculatedDividends: number = 0;
     price.forEachDate(instantQuotes => {
-      let quote: Quote = instantQuotes.quote("SP500");
+      let quote: Quote = instantQuotes.quote("PR");
       calculatedDividends += quote.dividend;
     });
+    expect(calculatedDividends).toBe(7.58);
 
-    // Downloaded from: https://www.multpl.com/s-p-500-dividend-yield/table/by-month
-    expect(calculatedDividends).toBe(2.1);
+  });
+
+  it('Can handle TR starting and finishing after PR', () => {
+    // Given a TR increasing 20% per month:
+    let totalReturn: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: new Date(2018, 3 - 1, 1), quotes: [new Quote({name:"TR", close: 1000})]}),
+      new InstantQuotes({instant: new Date(2018, 4 - 1, 1), quotes: [new Quote({name:"TR", close: 1200})]}),
+      new InstantQuotes({instant: new Date(2018, 5 - 1, 1), quotes: [new Quote({name:"TR", close: 1440})]}),
+      new InstantQuotes({instant: new Date(2018, 6 - 1, 1), quotes: [new Quote({name:"TR", close: 1728})]}),
+    ]);
+
+    // Given a PR increasing 10% per month:
+    let price: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: new Date(2018, 1 - 1, 1), quotes: [new Quote({name:"PR", close: 100.0})]}),
+      new InstantQuotes({instant: new Date(2018, 2 - 1, 1), quotes: [new Quote({name:"PR", close: 110.0})]}),
+      new InstantQuotes({instant: new Date(2018, 3 - 1, 1), quotes: [new Quote({name:"PR", close: 121.0})]}),
+      new InstantQuotes({instant: new Date(2018, 4 - 1, 1), quotes: [new Quote({name:"PR", close: 133.1})]}),
+    ]);
+
+    // When enriching the price quote with total return quote:
+    let enrichWithTotalReturn: EnrichWithTotalReturn =
+      new EnrichWithTotalReturn("TR", totalReturn);
+    enrichWithTotalReturn.enrich("PR", price);
+
+    // Then calculated dividends should be 10% per month:
+    let calculatedDividends: number = 0;
+    price.forEachDate(instantQuotes => {
+      let quote: Quote = instantQuotes.quote("PR");
+      calculatedDividends += quote.dividend;
+    });
+    expect(calculatedDividends).toBe(7.58);
+
+
   });
 });

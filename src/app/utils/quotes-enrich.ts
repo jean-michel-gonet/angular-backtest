@@ -45,6 +45,9 @@ export class EnrichWithTotalReturn {
   private initialPriceValue: number;
   private initialTotalReturnValue: number;
   private distributedDividends: number;
+  private lastTotalReturnInstant: number;
+  private totalReturnIndex: number;
+
 
   /**
    * Class constructor.
@@ -54,6 +57,7 @@ export class EnrichWithTotalReturn {
    */
   constructor(totalReturnName: string, totalReturnHistoricalQuotes: HistoricalQuotes) {
     this.totalReturn = [];
+    this.totalReturnIndex = 0;
     totalReturnHistoricalQuotes.forEachDate(instantQuotes => {
       let quote: Quote = instantQuotes.quote(totalReturnName);
       if (quote) {
@@ -61,6 +65,7 @@ export class EnrichWithTotalReturn {
           instant: instantQuotes.instant,
           value: quote.close
         });
+        this.lastTotalReturnInstant = instantQuotes.instant.valueOf();
       }
     });
   }
@@ -72,23 +77,33 @@ export class EnrichWithTotalReturn {
    * the instrument to enrich.
    */
   public enrich(name: string, priceHistoricalQuotes: HistoricalQuotes): void  {
-    let totalReturnIndex: number = 0;
     priceHistoricalQuotes.forEachDate(priceInstantQuotes => {
+      let instant:Date = priceInstantQuotes.instant;
+
+      // If current instant is within total return available data:
+      if ( instant.valueOf() <= this.lastTotalReturnInstant) {
         let priceQuote: Quote = priceInstantQuotes.quote(name);
+
+        // If the quote to enrich is present:
         if (priceQuote) {
-
-          // Find the corresponding entry in the total return values:
-          let totalReturnEntry: HistoricalValue;
-          do {
-            totalReturnEntry = this.totalReturn[totalReturnIndex++];
-          } while (priceInstantQuotes.instant.valueOf() < totalReturnEntry.instant.valueOf());
-
-          // If we've found matching dates, we can make a calculation:
-          if (priceInstantQuotes.instant.valueOf() == totalReturnEntry.instant.valueOf()) {
-            priceQuote.dividend = this.computeDividend(priceQuote.close, totalReturnEntry.value);
-          }
+          this.enrichQuote(instant, priceQuote);
         }
+      }
     });
+  }
+
+  private enrichQuote(instant: Date, priceQuote: Quote): void {
+
+    // Looks for a matching date:
+    let totalReturnEntry: HistoricalValue = this.totalReturn[this.totalReturnIndex];
+    while(totalReturnEntry.instant.valueOf() < instant.valueOf()) {
+      totalReturnEntry = this.totalReturn[this.totalReturnIndex++]
+    }
+
+    // If we've found matching dates, we can make a calculation:
+    if (instant.valueOf() == totalReturnEntry.instant.valueOf()) {
+      priceQuote.dividend = this.computeDividend(priceQuote.close, totalReturnEntry.value);
+    }
   }
 
   /**
