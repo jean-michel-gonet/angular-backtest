@@ -68,7 +68,7 @@ describe('QuotesFromSixService', () => {
 describe('SixConverter', () => {
 
   it('Can convert responses from SIX into HistoricalQuotes', () => {
-    let sixConverter: SixConverter = new SixConverter(sixResponse);
+    let sixConverter: SixConverter = new SixConverter("ISIN", sixResponse);
     let xx: HistoricalQuotes = sixConverter.asHistoricalQuotes();
     let iStock: IInstantQuotes[] = xx.asIStock();
     expect(iStock).toEqual(
@@ -77,7 +77,7 @@ describe('SixConverter', () => {
           instant: new Date(2001, 2, 15),
           quotes: [
             new Quote({
-              name: "CH0008899764",
+              name: "ISIN",
               close: 73,
               open: 72.85,
               low: 71.2,
@@ -92,7 +92,7 @@ describe('SixConverter', () => {
           instant: new Date(2001, 2, 16),
           quotes: [
             new Quote({
-              name: "CH0008899764",
+              name: "ISIN",
               close: 71.7,
               open: 73.3,
               low: 70.9,
@@ -107,7 +107,7 @@ describe('SixConverter', () => {
           instant: new Date(2001, 2, 19),
           quotes: [
             new Quote({
-              name: "CH0008899764",
+              name: "ISIN",
               close: 70.25,
               open: 71.05,
               low: 70.25,
@@ -122,7 +122,7 @@ describe('SixConverter', () => {
           instant: new Date(2001, 2, 20),
           quotes: [
             new Quote({
-              name: "CH0008899764",
+              name: "ISIN",
               close: 71.15,
               open: 70.35,
               low: 70.3,

@@ -7,7 +7,7 @@ import { HistoricalQuotes } from 'src/app/model/core/quotes';
 import { QuotesConfigurationService, NamedQuoteSource, QuoteProvider,
   QuoteSource, DividendSource, DataSource } from './quotes-configuration.service';
 import { PlainDataService } from './plain-data.service';
-import { EnrichWithDividends } from 'src/app/utils/quotes-enrich';
+import { EnrichWithDividends, EnrichWithTotalReturn } from 'src/app/utils/quotes-enrich';
 
 
 /**
@@ -94,7 +94,9 @@ export class QuotesService {
         if (totalReturnSource) {
           return new Observable<HistoricalQuotes>(observer => {
             this.retrieveQuote("TR", totalReturnSource).subscribe(totalReturnQuotes => {
-              // historicalQuotes.enrichWithDividends(totalReturnQuotes);
+              let enrichWithTotalReturn: EnrichWithTotalReturn =
+                new EnrichWithTotalReturn("TR", totalReturnQuotes);
+              enrichWithTotalReturn.enrich(namedQuoteSource.name, historicalQuotes);
               observer.next(historicalQuotes);
               observer.complete();
             });

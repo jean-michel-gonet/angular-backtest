@@ -126,4 +126,54 @@ describe('QuotesService', () => {
       done();
     });
   });
+  it('Can retrieve quotes from Six data and total return from Yahoo', (done: DoneFn) => {
+    configurationService.when("ISIN3", {
+      name: "ISIN3",
+      quote: {
+        provider: QuoteProvider.SIX,
+        uri: "xx",
+      },
+      dividends: {
+        level1TaxWitholding: 0.34,
+        totalReturn: {
+          provider: QuoteProvider.YAHOO,
+          uri: "yy"
+        }
+      }
+    });
+
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: threeDaysAgo, quotes: [
+        new Quote({name: "ISIN3", close: 1.3})
+      ]}),
+      new InstantQuotes({instant: beforeYesterday, quotes: [
+        new Quote({name: "ISIN3", close: 1.4})
+      ]}),
+      new InstantQuotes({instant: yesterday, quotes: [
+        new Quote({name: "ISIN3", close: 1.5})
+      ]}),
+    ]);
+
+    let totalReturnQuotes: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: threeDaysAgo, quotes: [
+        new Quote({name: "TR", close: 13})
+      ]}),
+      new InstantQuotes({instant: beforeYesterday, quotes: [
+        new Quote({name: "TR", close: 15})
+      ]}),
+      new InstantQuotes({instant: yesterday, quotes: [
+        new Quote({name: "TR", close: 16})
+      ]}),
+    ]);
+
+    six.whenQuotes(quotesService.makeRelativePath("xx"), historicalQuotes);
+    yahoo.whenQuotes(quotesService.makeRelativePath("yy"), totalReturnQuotes);
+
+    quotesService.getQuotes(["ISIN3"]).subscribe(data => {
+      expect(data.get(threeDaysAgo).quote("ISIN3").close).toBe(1.3);
+      expect(data.get(threeDaysAgo).quote("ISIN3").dividend).toBe(0);
+      done();
+    });
+  });
+
 });

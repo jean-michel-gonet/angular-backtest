@@ -14,7 +14,7 @@ export class SixConverter {
    * Class constructor.
    * @param{any} sixData The raw data returned by SIX.
    */
-  constructor(private sixData: any) {
+  constructor(private name: string, private sixData: any) {
   }
 
   /**
@@ -26,7 +26,6 @@ export class SixConverter {
 
     let historicalQuotes: InstantQuotes[] = [];
     valors.forEach(valor => {
-      let name = valor.ISIN;
       let data:any = valor.data;
       let dates:number[] = data.Date;
       let close:number[] = data.Close;
@@ -42,7 +41,7 @@ export class SixConverter {
           instant: date,
           quotes: [
             new Quote({
-              name: name,
+              name: this.name,
               close: this.convertToNumber(close[i]),
               open: this.convertToNumber(open[i]),
               high: this.convertToNumber(high[i]),
@@ -86,8 +85,8 @@ export class QuotesFromSixService implements IQuotesService {
   }
 
   getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
-    return this.http.get(source).pipe(map(s => {
-        let sixConverter: SixConverter = new SixConverter(s);
+    return this.http.get(source).pipe(map(sixData => {
+        let sixConverter: SixConverter = new SixConverter(name, sixData);
         return sixConverter.asHistoricalQuotes();
       }));
   }
