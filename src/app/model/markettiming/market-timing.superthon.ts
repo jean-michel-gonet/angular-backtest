@@ -1,7 +1,7 @@
-import { MarketTiming, BearBull } from './core/market-timing';
-import { Report, ReportedData } from './core/reporting';
-import { Candlestick, CandlestickType } from './core/quotes';
-import { PeriodLength, Period } from './core/period';
+import { MarketTiming, BearBull } from '../core/market-timing';
+import { Report, ReportedData } from '../core/reporting';
+import { Candlestick, CandlestickType } from '../core/quotes';
+import { PeriodLength, Period } from '../core/period';
 
 class ISuperthonMarketTiming {
   id?: string;
@@ -16,8 +16,9 @@ class ISuperthonMarketTiming {
  * See http://www.loscanalesdesuperthon.com/p/mis-indicadores.html
  */
 export class SuperthonMarketTiming implements MarketTiming {
-  private id: string;
-  private periods: number;
+  id: string;
+  periods: number;
+  periodLength: PeriodLength;
   private period?: Period;
   private candles: Candlestick[] = [];
   private status: BearBull;
@@ -33,6 +34,7 @@ export class SuperthonMarketTiming implements MarketTiming {
     } = obj;
     this.id = id;
     this.periods = periods;
+    this.periodLength = periodLength;
     this.period = new Period(periodLength);
     this.status = status;
   }

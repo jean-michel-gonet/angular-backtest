@@ -1,13 +1,7 @@
-import { MarketTiming, BearBull } from './core/market-timing';
-import { Quote } from './core/quotes';
-import { Report, ReportedData } from './core/reporting';
+import { MarketTiming, BearBull } from '../core/market-timing';
+import { Quote } from '../core/quotes';
+import { Report, ReportedData } from '../core/reporting';
 import { IEMAMarketTiming, EMAMarketTiming } from './market-timing.ema';
-
-export enum PeriodLength {
-  DAY,
-  WEEK,
-  MONTH
-}
 
 class IMACDMarketTiming extends IEMAMarketTiming {
   triggerPeriod?: number;
@@ -37,7 +31,7 @@ export class MACDMarketTiming extends EMAMarketTiming implements MarketTiming {
   }
 
   record(instant: Date, quote: Quote): void {
-    if (this.endOfPeriod(instant, this.lastInstant)) {
+    if (this.period.changeOfPeriod(instant)) {
         let periodMean = this.mean(this.periodQuotes);
         this.shortEMA = this.ema(this.shortEMA, this.shortPeriod, periodMean);
         this.longEMA  = this.ema(this.longEMA , this.longPeriod , periodMean);
@@ -62,7 +56,6 @@ export class MACDMarketTiming extends EMAMarketTiming implements MarketTiming {
     }
 
     this.periodQuotes.push(quote.close);
-    this.lastInstant = instant;
   }
 
   reportTo(report: Report): void {
@@ -75,5 +68,4 @@ export class MACDMarketTiming extends EMAMarketTiming implements MarketTiming {
       y: this.triggerEMA
     }));
   }
-
 }

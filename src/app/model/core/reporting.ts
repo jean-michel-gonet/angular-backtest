@@ -69,6 +69,11 @@ export interface Report {
    * Collect reports from all reporters.
    */
   collectReports(): void;
+
+  /**
+   * The report is finished.
+   */
+   completeReport(): void;
 }
 
 /**
@@ -89,6 +94,10 @@ export class NullReport implements Report {
   }
 
   receiveData(): void {
+    // Let's do nothing.
+  }
+
+  completeReport(): void {
     // Let's do nothing.
   }
 }

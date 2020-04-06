@@ -1,4 +1,4 @@
-import { HistoricalQuotes, InstantQuotes, Quote } from "../model/core/quotes";
+import { HistoricalQuotes, InstantQuotes, Quote } from "../core/quotes";
 import { EnrichWithDividends, EnrichWithTotalReturn } from './quotes-enrich';
 
 let now: Date = new Date();

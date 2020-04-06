@@ -1,7 +1,7 @@
 import { SuperthonMarketTiming } from "./market-timing.superthon";
-import { Candlestick } from './core/quotes'
-import { BearBull } from './core/market-timing';
-import { PeriodLength } from './core/period';
+import { Candlestick } from '../core/quotes'
+import { BearBull } from '../core/market-timing';
+import { PeriodLength } from '../core/period';
 
 describe('SuperthonMarketTiming', () => {
   it('Can create a new instance', () => {

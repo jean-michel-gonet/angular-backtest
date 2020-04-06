@@ -1,8 +1,9 @@
 export enum PeriodLength {
-  YEARLY,
-  MONTHLY,
-  SEMIMONTHLY,
-  WEEKLY
+  YEARLY = 'YEARLY',
+  MONTHLY = 'MONTHLY',
+  SEMIMONTHLY = 'SEMIMONTHLY',
+  WEEKLY = 'WEEKLY',
+  DAILY = 'DAILY'
 }
 
 /**
@@ -38,12 +39,18 @@ export class Period {
 
   private periodNumber(instant: Date): number {
     switch(this.periodLength) {
+      case PeriodLength.DAILY:
+        return Math.floor(instant.valueOf() / 86400000);
+
       case PeriodLength.WEEKLY:
         return this.weekNumber(instant);
+
       case PeriodLength.SEMIMONTHLY:
         return this.semiMonthNumber(instant);
+
       case PeriodLength.MONTHLY:
         return this.monthNumber(instant);
+
       case PeriodLength.YEARLY:
         return instant.getFullYear();
     }

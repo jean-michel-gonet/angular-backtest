@@ -354,3 +354,31 @@ This is some of my reference documentation:
 - https://www.trackingdifferences.com/
 - https://www.mustachianpost.com/
 - https://indexfundinvestor.eu/2019/07/11/what-is-the-best-msci-world-uctis-etf-for-you/
+
+On technical matters:
+* **Angular ``ng-content`` and Content Projection: A Complete Guide: How To Use ``ng-content`` To Improve Component API Design**
+  * An explanation of ``ng-content``, what it is, what problems it solve, and some examples.
+  * https://blog.angular-university.io/angular-ng-content/
+* **Understanding ViewChildren, ContentChildren, and QueryList in Angular**
+  * A very important difference between ``@ViewChildren`` and ``@ContentChildren``.
+  * https://netbasal.com/understanding-viewchildren-contentchildren-and-querylist-in-angular-896b0c689f6e
+* **ExpressionChangedAfterItHasBeenCheckedError in Angular — What, Why and How To Fix It?**
+  * How to overcome the unsavoury ``ExpressionChangedAfterItHasBeenCheckedError``  
+  * https://medium.com/better-programming/expressionchangedafterithasbeencheckederror-in-angular-what-why-and-how-to-fix-it-c6bdc0b22787
+* **A Comprehensive Guide to Angular onPush Change Detection Strategy**
+  * How to use the ``OnPush`` change detection, which is one of the solutions to overcome the ``ExpressionChangedAfterItHasBeenCheckedError``.
+  * https://netbasal.com/a-comprehensive-guide-to-angular-onpush-change-detection-strategy-5bac493074a4
+* **What are all the valid selectors for ViewChild and ContentChild?**
+  * A great answer to the questions of what can you specify in the ``string`` argument
+    of ViewChild / ContentChild modifiers.
+  * https://stackoverflow.com/questions/49162473/what-are-all-the-valid-selectors-for-viewchild-and-contentchild
+* **Angular 2 unit testing component, mocking ContentChildren**
+  * Question and answers about how to unit test components that use transclusion ``ng-content``.
+  * https://stackoverflow.com/questions/38479704/angular-2-unit-testing-component-mocking-contentchildren/48086106#48086106
+* **Angular 2 Component Testing Template Using TestBed**
+  * Explains how to change the component's template for unit testing, which is important when
+    you're using transclusion ``ng-content``
+  * https://kendaleiv.com/angular-2-component-testing-template-using-testbed/
+* **In-app navigation with routing**
+  * Official guide to use routing.
+  * https://angular.io/guide/router

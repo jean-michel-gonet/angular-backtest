@@ -1,18 +1,19 @@
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Label } from 'ng2-charts';
-import { Report, Reporter, ReportedData } from '../model/core/reporting';
+import { Report, Reporter, ReportedData } from '../core/reporting';
+import { Injectable } from '@angular/core';
 
 export enum ShowDataAs {
-  LINE,
-  BAR
+  LINE = 'LINE',
+  BAR = 'BAR'
 };
 
 export enum ShowDataOn {
-  LEFT,
-  RIGHT
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT'
 };
 
-export class Show {
+export class Ng2ChartConfiguration {
   show: string;
   as: ShowDataAs;
   on: ShowDataOn;
@@ -24,6 +25,12 @@ export class Show {
  * be displayed in a Ng2 Chart.
  * @class {Ng2ChartReport}
  */
+ @Injectable({
+   providedIn: 'root',
+   useFactory: () => {
+     return new Ng2ChartReport();
+   }
+ })
 export class Ng2ChartReport implements Report {
   public dataSets: ChartDataSets[];
   public labels: Label[];
@@ -41,12 +48,16 @@ export class Ng2ChartReport implements Report {
       }
     };
   private mapOfDatasets: Map<String, ChartDataSets>;
-  private mapOfShows: Map<String, Show>;
+  private mapOfConfigurations: Map<String, Ng2ChartConfiguration>;
   private reporters: Reporter[] = [];
 
-  constructor(obj = [] as Show[]) {
+  constructor(obj = [] as Ng2ChartConfiguration[]) {
+    this.initialize(obj);
+  }
+
+  public initialize(obj = [] as Ng2ChartConfiguration[]): void {
     this.mapOfDatasets = new Map<String, ChartDataSets>();
-    this.mapOfShows = new Map<String, Show>();
+    this.mapOfConfigurations = new Map<String, Ng2ChartConfiguration>();
     this.dataSets = [];
     this.labels = [];
     obj.forEach(show => {
@@ -59,11 +70,10 @@ export class Ng2ChartReport implements Report {
         pointRadius: 0
       };
       this.mapOfDatasets.set(show.show, dataSet);
-      this.mapOfShows.set(show.show, show);
+      this.mapOfConfigurations.set(show.show, show);
       this.dataSets.push(dataSet);
     });
   }
-
   private leftAxisIsUsed:boolean = false;
   private rightAxisIsUsed: boolean = false;
 
@@ -145,13 +155,17 @@ export class Ng2ChartReport implements Report {
     }
   }
 
+  completeReport(): void {
+    // Nothing specia to do.
+  }
+
   private normalizationMap: Map<string, number> = new Map<string, number>();
 
   private normalize(sourceName: string, y: number): number {
-    let show: Show = this.mapOfShows.get(sourceName);
-    if (show) {
-      if (show.normalize) {
-        let normalizationId: string = sourceName + ":" + show.on;
+    let configuration: Ng2ChartConfiguration = this.mapOfConfigurations.get(sourceName);
+    if (configuration) {
+      if (configuration.normalize) {
+        let normalizationId: string = sourceName + ":" + configuration.on;
         let normalizationScale:number = this.normalizationMap.get(normalizationId);
         if (!normalizationScale && y != 0) {
           normalizationScale = 100 / y;

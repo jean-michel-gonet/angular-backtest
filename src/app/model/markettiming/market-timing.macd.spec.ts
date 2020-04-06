@@ -1,6 +1,7 @@
-import { Quote } from './core/quotes'
-import { BearBull } from './core/market-timing';
-import { MACDMarketTiming, PeriodLength } from './market-timing.macd';
+import { Quote } from '../core/quotes'
+import { BearBull } from '../core/market-timing';
+import { MACDMarketTiming } from './market-timing.macd';
+import { PeriodLength } from '../core/period';
 
 describe('MACDMarketTiming', () => {
   it('Can create a new instance', () => {
@@ -11,7 +12,7 @@ describe('MACDMarketTiming', () => {
   let makeMacd = function(start: Date, values:number[]): MACDMarketTiming {
     let macd: MACDMarketTiming = new MACDMarketTiming({
       id: "MACD",
-      periodLength: PeriodLength.DAY,
+      periodLength: PeriodLength.DAILY,
       longPeriod: 26,
       shortPeriod: 12,
       triggerPeriod: 9,

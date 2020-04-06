@@ -1,4 +1,4 @@
-import { HistoricalValue, HistoricalQuotes, Quote } from '../model/core/quotes';
+import { HistoricalValue, HistoricalQuotes, Quote } from '../core/quotes';
 
 /**
  * A utility class to enrich historical quotes with dividends.

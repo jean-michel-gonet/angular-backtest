@@ -1,12 +1,7 @@
-import { MarketTiming, BearBull } from './core/market-timing';
-import { Quote } from './core/quotes';
-import { Report, ReportedData } from './core/reporting';
-
-export enum PeriodLength {
-  DAY,
-  WEEK,
-  MONTH
-}
+import { MarketTiming, BearBull } from '../core/market-timing';
+import { Quote } from '../core/quotes';
+import { Report, ReportedData } from '../core/reporting';
+import { PeriodLength, Period } from '../core/period';
 
 export class IEMAMarketTiming {
   id?: string;
@@ -30,17 +25,17 @@ export class EMAMarketTiming implements MarketTiming {
   longPeriod: number;
   status: BearBull;
 
+  period: Period;
   shortEMA: number;
   longEMA: number;
   difference: number;
 
-  protected lastInstant: Date;
   protected periodQuotes: number[] = [];
 
   constructor(obj = {} as IEMAMarketTiming){
     let {
       id = "EMA",
-      periodLength = PeriodLength.MONTH,
+      periodLength = PeriodLength.MONTHLY,
       shortPeriod = 5,
       longPeriod = 15,
       status = BearBull.BEAR
@@ -50,10 +45,12 @@ export class EMAMarketTiming implements MarketTiming {
     this.shortPeriod = shortPeriod;
     this.longPeriod = longPeriod;
     this.status = status;
+
+    this.period = new Period(periodLength);
   }
 
   record(instant: Date, quote: Quote): void {
-    if (this.endOfPeriod(instant, this.lastInstant)) {
+    if (this.period.changeOfPeriod(instant)) {
         let periodMean = this.mean(this.periodQuotes);
         this.shortEMA = this.ema(this.shortEMA, this.shortPeriod, periodMean);
         this.longEMA  = this.ema(this.longEMA , this.longPeriod , periodMean);
@@ -69,7 +66,6 @@ export class EMAMarketTiming implements MarketTiming {
     }
 
     this.periodQuotes.push(quote.close);
-    this.lastInstant = instant;
   }
 
   bearBull(): BearBull {
@@ -78,23 +74,6 @@ export class EMAMarketTiming implements MarketTiming {
 
   magnitude(): number {
     return this.difference;
-  }
-
-  protected endOfPeriod(instant: Date, instantBefore: Date): boolean {
-    if (this.lastInstant) {
-      switch(this.periodLength) {
-        case PeriodLength.MONTH:
-          return instant.getMonth() != instantBefore.getMonth();
-
-        case PeriodLength.WEEK:
-          return instant.getDay() < instantBefore.getDay();
-
-        case PeriodLength.DAY:
-          return instant.getDate() != instantBefore.getDate();
-      }
-    } else {
-      return false;
-    }
   }
 
   protected mean(values: number[]):number {

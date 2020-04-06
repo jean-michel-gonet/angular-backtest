@@ -1,0 +1,23 @@
+<h1>What is the best market timing</h1>
+<simulation start="1996-1-1" end="2020-1-1" quotes="SP500, AGG">
+  <chart-report>
+    <chart-report-configuration show="SP500.CLOSE"    showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
+    <chart-report-configuration show="AGG.CLOSE"      showDataAs="LINE" showDataOn="LEFT"  normalize="false"></chart-report-configuration>
+    <chart-report-configuration show="PORTFOLIO.NAV"  showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
+    <chart-report-configuration show="LIFESTYLE.CASH" showDataAs="LINE" showDataOn="RIGHT" normalize="false"></chart-report-configuration>
+  </chart-report>
+  <accounts>
+    <swiss-quote id="PORTFOLIO" cash="100000">
+      <strategy>
+        <buy-and-hold assetName="SP500" assetNameDuringBear="AGG">
+          <market-timing>
+            <candle-filter></candle-filter>
+          </market-timing>
+          <regular-transfer transfer="660" every="MONTH">
+            <to-account id="LIFESTYLE" cash="0"></to-account>
+          </regular-transfer>
+        </buy-and-hold>
+      </strategy>
+    </swiss-quote>
+  </accounts>
+</simulation>

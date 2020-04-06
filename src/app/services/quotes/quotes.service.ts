@@ -7,8 +7,7 @@ import { HistoricalQuotes } from 'src/app/model/core/quotes';
 import { QuotesConfigurationService, NamedQuoteSource, QuoteProvider,
   QuoteSource, DividendSource, DataSource } from './quotes-configuration.service';
 import { PlainDataService } from './plain-data.service';
-import { EnrichWithDividends, EnrichWithTotalReturn } from 'src/app/utils/quotes-enrich';
-
+import { EnrichWithDividends, EnrichWithTotalReturn } from 'src/app/model/utils/quotes-enrich';
 
 /**
  * Retrieves instantQuotes data from a provider, and then broadcasts the

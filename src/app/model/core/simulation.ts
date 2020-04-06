@@ -46,5 +46,7 @@ export class Simulation extends ISimulation {
       });
       this.report.collectReports();
     }, start, end);
+
+    this.report.completeReport();
   }
 }

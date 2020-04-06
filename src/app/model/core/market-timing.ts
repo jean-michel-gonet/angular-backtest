@@ -6,8 +6,8 @@ import { Reporter, Report } from './reporting';
  * @enum {BearBull}
  */
 export enum BearBull {
-  BULL = 1,
-  BEAR = -1
+  BULL = 'BULL',
+  BEAR = 'BEAR'
 }
 
 /**

@@ -1,5 +1,5 @@
 import { Ng2ChartReport, ShowDataAs, ShowDataOn } from "./ng2-chart.report";
-import { ReportedData } from '../model/core/reporting';
+import { ReportedData } from '../core/reporting';
 
 describe('Ng2ChartReport', () => {
   it('should create an instance', () => {

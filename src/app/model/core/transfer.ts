@@ -1,8 +1,8 @@
 import { Account } from './account';
 
 export enum RegularPeriod {
-  MONTH,
-  YEAR
+  MONTH = 'MONTH',
+  YEAR = 'YEAR'
 }
 
 interface IRegularTransfer {
