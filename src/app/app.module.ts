@@ -18,12 +18,10 @@ import {
 import { TransferToComponent } from './components/accounts/transfer-to.component';
 import { SwissQuoteAccountComponent } from './components/accounts/swiss-quote-account.component';
 
-import {
-  RegularTransferComponent } from './components/transfer/regular-transfer.component';
+import { RegularTransferComponent } from './components/transfer/regular-transfer.component';
 
-import {
-  BuyAndHoldStrategyComponent,
-  StrategyComponent } from './components/strategies/strategy.component';
+import { StrategyComponent } from './components/strategies/strategy.component';
+import { BuyAndHoldStrategyComponent } from './components/strategies/b-a-h.strategy.component';
 
 import {SimulationComponent } from './components/simulation/simulation.component';
 import { HomePage } from './pages/home/home.page';
