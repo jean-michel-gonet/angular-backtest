@@ -1,6 +1,14 @@
-<h1>{{title}}</h1>
-<nav>
-  <a routerLink="/home"          routerLinkActive="active">Home</a>
-  <a routerLink="/market-timing" routerLinkActive="active">Market Timing</a>
-</nav>
-<router-outlet></router-outlet>
+<div class="container">
+  <h1>{{title}}</h1>
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/market-timing" routerLinkActive="active">Market Timing</a>
+    </li>
+  </ul>
+</div>
+<div class="container">
+  <router-outlet></router-outlet>
+</div>
