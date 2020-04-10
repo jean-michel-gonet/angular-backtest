@@ -28,6 +28,9 @@ import { HomePage } from './pages/home/home.page';
 import { MarketTimingPage } from './pages/market-timing/market-timing.page';
 import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear.page';
 
+import 'hammerjs';
+import 'chartjs-plugin-zoom';
+
 @NgModule({
   declarations: [
     AppComponent,

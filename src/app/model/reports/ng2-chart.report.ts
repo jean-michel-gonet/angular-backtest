@@ -1,11 +1,11 @@
-import { ChartDataSets, ChartOptions } from 'chart.js';
+import { ChartDataSets, ChartOptions, ChartPoint } from 'chart.js';
 import { Label } from 'ng2-charts';
 import { Report, Reporter, ReportedData } from '../core/reporting';
 import { Injectable } from '@angular/core';
 
 export enum ShowDataAs {
   LINE = 'LINE',
-  BAR = 'BAR'
+  SCATTER = 'SCATTER'
 };
 
 export enum ShowDataOn {
@@ -41,10 +41,25 @@ export class Ng2ChartReport implements Report {
       scales: {
         yAxes: [],
         xAxes: [{
+          type: 'linear',
+          position: 'bottom',
           ticks: {
+            callback: this.formatAsDate,
             display: true,
           }
         }],
+      },
+      plugins: {
+        zoom: {
+          pan: {
+            enabled: true,
+            mode: 'x'
+          },
+          zoom: {
+            enabled: true,
+            mode: 'x'
+          }
+        }
       }
     };
   private mapOfDatasets: Map<String, ChartDataSets>;
@@ -67,7 +82,7 @@ export class Ng2ChartReport implements Report {
         label: show.show,
         yAxisID: yAxisID,
         type: this.showAs(show.as),
-        pointRadius: 0
+        pointRadius: 1
       };
       this.mapOfDatasets.set(show.show, dataSet);
       this.mapOfConfigurations.set(show.show, show);
@@ -115,12 +130,36 @@ export class Ng2ChartReport implements Report {
     switch(showAs) {
       case ShowDataAs.LINE:
         return "line";
-      case ShowDataAs.BAR:
-        return "bar";
+      case ShowDataAs.SCATTER:
+        return "scatter";
       default:
         console.warn("showAs=" + showAs + ": unknown literal of ShowDataAs");
         return "";
     }
+  }
+
+  /**
+   * Formats the provided number as a date
+   */
+  formatAsDate(value: any): string {
+    let date: Date = new Date(value);
+    let sYear: string = "" + date.getFullYear();
+    let month: number = date.getMonth() + 1;
+    let sMonth: string;
+    if (month < 10) {
+      sMonth = "0" + month;
+    } else {
+      sMonth = "" + month;
+    }
+    let day: number = date.getDate();
+    let sDay: string;
+    if (day < 10) {
+      sDay = "0" + day;
+    } else {
+      sDay = "" + day;
+    }
+    let s = sYear + "." + sMonth + "." + sDay
+    return s;
   }
 
   /**
@@ -130,11 +169,10 @@ export class Ng2ChartReport implements Report {
     this.reporters.push(reporter);
   }
 
+  private x: number;
+
   startReportingCycle(instant: Date): void {
-    this.labels.push(instant.toDateString());
-    this.dataSets.forEach(d => {
-      d.data.push(0);
-    });
+    this.x = instant.valueOf();
 
     this.reporters.forEach(reporter => {
       reporter.startReportingCycle(instant);
@@ -150,8 +188,10 @@ export class Ng2ChartReport implements Report {
   receiveData(providedData: ReportedData): void {
     let dataSet: ChartDataSets = this.mapOfDatasets.get(providedData.sourceName);
     if (dataSet) {
+      let data: ChartPoint[] = dataSet.data as ChartPoint[];
       let normalizedY: number = this.normalize(providedData.sourceName, providedData.y);
-      dataSet.data[dataSet.data.length - 1] = normalizedY;
+      let chartPoint: ChartPoint = {x: this.x, y: normalizedY};
+      data.push(chartPoint);
     }
   }
 
