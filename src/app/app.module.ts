@@ -26,6 +26,7 @@ import { BuyAndHoldStrategyComponent } from './components/strategies/b-a-h.strat
 import {SimulationComponent } from './components/simulation/simulation.component';
 import { HomePage } from './pages/home/home.page';
 import { MarketTimingPage } from './pages/market-timing/market-timing.page';
+import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear.page';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { MarketTimingPage } from './pages/market-timing/market-timing.page';
     SimulationComponent,
 
     HomePage,
-    MarketTimingPage
+    MarketTimingPage,
+    InvestingInBearPage
   ],
   imports: [
     BrowserModule,

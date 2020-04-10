@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-market-timing',
+  selector: 'market-timing-page',
   templateUrl: './market-timing.page.html',
   styleUrls: ['./market-timing.page.css']
 })
