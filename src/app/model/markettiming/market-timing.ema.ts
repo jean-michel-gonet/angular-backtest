@@ -1,7 +1,8 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
 import { Quote } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
-import { PeriodLength, Period } from '../core/period';
+import { PeriodLength } from '../core/period';
+import { EMACalculator } from '../utils/ema';
 
 export class IEMAMarketTiming {
   id?: string;
@@ -20,17 +21,11 @@ export class IEMAMarketTiming {
  */
 export class EMAMarketTiming implements MarketTiming {
   id: string;
-  periodLength?: PeriodLength;
-  shortPeriod: number;
-  longPeriod: number;
+  shortEMA: EMACalculator;
+  longEMA: EMACalculator;
+
   status: BearBull;
-
-  period: Period;
-  shortEMA: number;
-  longEMA: number;
   difference: number;
-
-  protected periodQuotes: number[] = [];
 
   constructor(obj = {} as IEMAMarketTiming){
     let {
@@ -41,31 +36,22 @@ export class EMAMarketTiming implements MarketTiming {
       status = BearBull.BEAR
     } = obj;
     this.id = id;
-    this.periodLength = periodLength;
-    this.shortPeriod = shortPeriod;
-    this.longPeriod = longPeriod;
     this.status = status;
-
-    this.period = new Period(periodLength);
+    this.longEMA = new EMACalculator(longPeriod, periodLength);
+    this.shortEMA = new EMACalculator(shortPeriod, periodLength);
   }
 
   record(instant: Date, quote: Quote): void {
-    if (this.period.changeOfPeriod(instant)) {
-        let periodMean = this.mean(this.periodQuotes);
-        this.shortEMA = this.ema(this.shortEMA, this.shortPeriod, periodMean);
-        this.longEMA  = this.ema(this.longEMA , this.longPeriod , periodMean);
-        this.difference = this.shortEMA - this.longEMA;
-
-        if (this.difference > 0) {
-          this.status = BearBull.BULL;
-        } else {
-          this.status = BearBull.BEAR;
-        }
-
-        this.periodQuotes = [];
+    let longEMA = this.longEMA.ema(instant, quote);
+    let shortEMA = this.shortEMA.ema(instant, quote);
+    if (longEMA) {
+      this.difference = shortEMA - longEMA;
+      if (this.difference > 0) {
+        this.status = BearBull.BULL;
+      } else {
+        this.status = BearBull.BEAR;
+      }
     }
-
-    this.periodQuotes.push(quote.close);
   }
 
   bearBull(): BearBull {
@@ -74,24 +60,6 @@ export class EMAMarketTiming implements MarketTiming {
 
   magnitude(): number {
     return this.difference;
-  }
-
-  protected mean(values: number[]):number {
-    let mean: number = 0;
-    for (let n: number = 0; n < values.length; n++) {
-      mean += values[n];
-    }
-    mean /= values.length;
-    return mean;
-  }
-
-  protected ema(previousEma: number, numberOfPeriods: number, latestQuote: number) {
-    if (previousEma) {
-      let k: number = 2 / (numberOfPeriods + 1);
-      return latestQuote * k + previousEma * (1 - k);
-    } else {
-      return latestQuote;
-    }
   }
 
   doRegister(report :Report): void {
@@ -109,11 +77,11 @@ export class EMAMarketTiming implements MarketTiming {
     }));
     report.receiveData(new ReportedData({
       sourceName: this.id + ".SEMA",
-      y: this.shortEMA
+      y: this.shortEMA.lastValue
     }));
     report.receiveData(new ReportedData({
       sourceName: this.id + ".LEMA",
-      y: this.longEMA
+      y: this.longEMA.lastValue
     }));
   }
 

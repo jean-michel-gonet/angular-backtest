@@ -75,9 +75,10 @@ describe('MarketTimingComponent', () => {
       let emaFilter = component.asMarketTiming() as EMAMarketTiming;
       expect(emaFilter.id).toBe("XX");
       expect(emaFilter.bearBull()).toBe(BearBull.BEAR);
-      expect(emaFilter.shortPeriod).toBe(7);
-      expect(emaFilter.longPeriod).toBe(14);
-      expect(emaFilter.periodLength).toBe(PeriodLength.WEEKLY);
+      expect(emaFilter.shortEMA.numberOfPeriods).toBe(7);
+      expect(emaFilter.shortEMA.periodLength).toBe(PeriodLength.WEEKLY);
+      expect(emaFilter.longEMA.numberOfPeriods).toBe(14);
+      expect(emaFilter.longEMA.periodLength).toBe(PeriodLength.WEEKLY);
   });
 
   it('Can instantiate a MACD filter', () => {
@@ -101,9 +102,9 @@ describe('MarketTimingComponent', () => {
       let macdFilter = component.asMarketTiming() as MACDMarketTiming;
       expect(macdFilter.id).toBe("XX");
       expect(macdFilter.bearBull()).toBe(BearBull.BEAR);
-      expect(macdFilter.shortPeriod).toBe(9);
-      expect(macdFilter.longPeriod).toBe(14);
-      expect(macdFilter.triggerPeriod).toBe(16);
-      expect(macdFilter.periodLength).toBe(PeriodLength.SEMIMONTHLY);
+      expect(macdFilter.shortEMA.numberOfPeriods).toBe(9);
+      expect(macdFilter.longEMA.numberOfPeriods).toBe(14);
+      expect(macdFilter.triggerEMA.numberOfPeriods).toBe(16);
+      expect(macdFilter.shortEMA.periodLength).toBe(PeriodLength.SEMIMONTHLY);
   });
 });

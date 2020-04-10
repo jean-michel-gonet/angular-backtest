@@ -17,7 +17,7 @@ import { Quote } from '../core/quotes';
  */
 export class EMACalculator {
   private periodValues: number[];
-  public previousEma: number;
+  public lastValue: number;
   private period: Period;
 
   /**
@@ -43,22 +43,12 @@ export class EMACalculator {
     if (this.period.changeOfPeriod(instant)) {
       if (this.periodValues) {
         let mean = this.meanOf(this.periodValues);
-        ema = this.emaOf(this.previousEma, this.numberOfPeriods, mean);
-        this.previousEma = ema;
+        ema = this.emaOf(mean);
       }
       this.periodValues = [];
     }
     this.periodValues.push(quote.close)
     return ema;
-  }
-
-  private emaOf(previousEma: number, numberOfPeriods: number, latestQuote: number) {
-    if (previousEma) {
-      let k: number = 2 / (numberOfPeriods + 1);
-      return latestQuote * k + previousEma * (1 - k);
-    } else {
-      return latestQuote;
-    }
   }
 
   private meanOf(values: number[]):number {
@@ -68,5 +58,17 @@ export class EMACalculator {
     }
     mean /= values.length;
     return mean;
+  }
+
+  emaOf(latestQuote: number) {
+    let ema: number;
+    if (this.lastValue) {
+      let k: number = 2 / (this.numberOfPeriods + 1);
+      ema = latestQuote * k + this.lastValue * (1 - k);
+    } else {
+      ema = latestQuote;
+    }
+    this.lastValue = ema;
+    return ema;
   }
 }

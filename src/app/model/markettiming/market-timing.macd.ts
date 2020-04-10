@@ -1,10 +1,18 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
 import { Quote } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
-import { IEMAMarketTiming, EMAMarketTiming } from './market-timing.ema';
+import { PeriodLength } from '../core/period';
+import { EMACalculator } from '../utils/ema';
 
-class IMACDMarketTiming extends IEMAMarketTiming {
+class IMACDMarketTiming {
+  id?: string;
+  periodLength?: PeriodLength;
+
+  shortPeriod?: number;
+  longPeriod?: number;
   triggerPeriod?: number;
+
+  status?: BearBull;
 }
 
 /**
@@ -18,44 +26,51 @@ class IMACDMarketTiming extends IEMAMarketTiming {
  * See also https://investsolver.com/calculate-macd-in-excel/
  * @class {MACDMarketTiming}
  */
-export class MACDMarketTiming extends EMAMarketTiming implements MarketTiming {
-  triggerPeriod: number;
-  triggerEMA: number;
+export class MACDMarketTiming implements MarketTiming {
+  id: string;
+  status: BearBull;
+  longEMA: EMACalculator;
+  shortEMA: EMACalculator;
+  triggerEMA: EMACalculator;
+  difference: number;
 
   constructor(obj = {} as IMACDMarketTiming){
-    super(obj);
     let {
+      id = "MACD",
+      periodLength = PeriodLength.MONTHLY,
+      shortPeriod = 5,
+      longPeriod = 15,
       triggerPeriod = 9,
+      status = BearBull.BULL
     } = obj;
-    this.triggerPeriod = triggerPeriod;
+    this.id = id;
+    this.status = status;
+    this.longEMA = new EMACalculator(longPeriod, periodLength);
+    this.shortEMA = new EMACalculator(shortPeriod, periodLength);
+    this.triggerEMA = new EMACalculator(triggerPeriod, periodLength);
   }
 
   record(instant: Date, quote: Quote): void {
-    if (this.period.changeOfPeriod(instant)) {
-        let periodMean = this.mean(this.periodQuotes);
-        this.shortEMA = this.ema(this.shortEMA, this.shortPeriod, periodMean);
-        this.longEMA  = this.ema(this.longEMA , this.longPeriod , periodMean);
-        this.difference = this.shortEMA - this.longEMA;
-        this.triggerEMA = this.ema(this.triggerEMA, this.triggerPeriod, this.difference);
+    let longEMA = this.longEMA.ema(instant, quote);
+    let shortEMA = this.shortEMA.ema(instant, quote);
+    if (longEMA) {
+        this.difference = shortEMA - longEMA;
+        let triggerEMA = this.triggerEMA.emaOf(this.difference);
 
         switch(this.status) {
           case BearBull.BEAR:
-            if (this.triggerEMA < this.difference) {
+            if (triggerEMA < this.difference) {
               this.status = BearBull.BULL;
             }
             break;
 
           case BearBull.BULL:
-          if (this.triggerEMA > this.difference) {
+          if (triggerEMA > this.difference) {
             this.status = BearBull.BEAR;
           }
           break;
         }
-
-        this.periodQuotes = [];
     }
-
-    this.periodQuotes.push(quote.close);
   }
 
   reportTo(report: Report): void {
@@ -65,7 +80,24 @@ export class MACDMarketTiming extends EMAMarketTiming implements MarketTiming {
     }));
     report.receiveData(new ReportedData({
       sourceName: this.id + ".TRIGGER",
-      y: this.triggerEMA
+      y: this.triggerEMA.lastValue
     }));
   }
+
+  bearBull(): BearBull {
+    return this.status;
+  }
+
+  magnitude(): number {
+    return this.difference;
+  }
+
+  doRegister(report :Report): void {
+    report.register(this);
+  }
+
+  startReportingCycle(instant: Date): void {
+    // Nothing to do.
+  }
+
 }

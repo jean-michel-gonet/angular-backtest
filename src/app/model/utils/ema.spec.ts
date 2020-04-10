@@ -15,12 +15,12 @@ describe('EMACalculator', () => {
     expect(ema.ema(new Date(2019, 7 - 1, 25), new Quote({name: 'xx', close: 40.75}))).toBeUndefined();
     expect(ema.ema(new Date(2019, 7 - 1, 26), new Quote({name: 'xx', close: 40.77}))).toBeUndefined();
 
-    expect(ema.ema(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 40.77}))).toBe(mean);    
+    expect(ema.ema(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 40.77}))).toBe(mean);
   });
 
   it('Can calculate daily EMA as in https://investsolver.com/exponential-moving-average-in-excel/', () => {
     let ema = new EMACalculator(13, PeriodLength.DAILY);
-    ema.previousEma = 38.68;
+    ema.lastValue = 38.68;
 
     expect(ema.ema(new Date(2019, 7 - 1, 19), new Quote({name: 'xx', close: 39.48}))).toBeUndefined();
 
