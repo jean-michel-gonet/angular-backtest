@@ -33,15 +33,6 @@ export interface MarketTiming extends Reporter {
    * @return {BearBull} The market status.
    */
   bearBull(): BearBull;
-
-  /**
-   * Indicates how bullish or bearish is the market with a numerical magnitude.
-   * As each market timing will use it differently, this magnitude is
-   * not a standard value. It is more an internal indicator for debugging
-   * purposes.
-   * @return {number} A numerical assessment of the market trend.
-   */
-  magnitude(): number;
 }
 
 /**
@@ -62,13 +53,6 @@ export class DefaultMarketTiming implements MarketTiming {
    */
   bearBull(): BearBull {
     return BearBull.BULL;
-  }
-
-  /**
-   * Clueless about market bullishness magnitude.
-   */
-  magnitude(): number {
-    return 0;
   }
 
   doRegister(report: Report): void {

@@ -88,10 +88,6 @@ export class MACDMarketTiming implements MarketTiming {
     return this.status;
   }
 
-  magnitude(): number {
-    return this.difference;
-  }
-
   doRegister(report :Report): void {
     report.register(this);
   }
