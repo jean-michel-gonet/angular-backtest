@@ -35,6 +35,7 @@ export class EMAMarketTiming implements MarketTiming {
       longPeriod = 15,
       status = BearBull.BEAR
     } = obj;
+    console.log("Starting EMAMarketTiming", id, periodLength, shortPeriod, longPeriod, status);
     this.id = id;
     this.status = status;
     this.longEMA = new EMACalculator(longPeriod, periodLength);

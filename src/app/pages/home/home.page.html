@@ -1,2 +1,22 @@
 <h1>This is the home page</h1>
-<p>Hi, there, I'm the home page</p>
+<simulation start="2019-4-1" end="2020-4-9" quotes="SP500">
+  <chart-report>
+    <chart-report-configuration show="SP500.CLOSE" showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
+    <chart-report-configuration show="EMAF1.SEMA"  showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
+    <chart-report-configuration show="EMAF1.LEMA"  showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
+  </chart-report>
+  <accounts>
+    <swiss-quote id="EMA1" cash="100000">
+      <strategy>
+        <buy-and-hold assetName="SP500">
+          <market-timing>
+            <ema-filter id="EMAF1"
+                        longPeriod="21"
+                        shortPeriod="9"
+                        periodLength="DAILY"></ema-filter>
+          </market-timing>
+        </buy-and-hold>
+      </strategy>
+    </swiss-quote>
+  </accounts>
+</simulation>
