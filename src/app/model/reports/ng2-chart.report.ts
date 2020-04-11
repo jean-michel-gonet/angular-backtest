@@ -21,6 +21,54 @@ export class Ng2ChartConfiguration {
 }
 
 /**
+ * Formats the provided number as a date
+ */
+let formatAsDate = function(value: any): string {
+  let date: Date = new Date(value);
+  let sYear: string = "" + date.getFullYear();
+  let month: number = date.getMonth() + 1;
+  let sMonth: string;
+  if (month < 10) {
+    sMonth = "0" + month;
+  } else {
+    sMonth = "" + month;
+  }
+  let day: number = date.getDate();
+  let sDay: string;
+  if (day < 10) {
+    sDay = "0" + day;
+  } else {
+    sDay = "" + day;
+  }
+  let s = sYear + "." + sMonth + "." + sDay
+  return s;
+}
+
+/**
+ * Formats the title of the tooltip.
+ */
+let formatTooltipTitle = function(tooltipItems: any[]): string {
+  let tooltipItem = tooltipItems[0];
+  let value = parseInt(tooltipItem.label);
+  return formatAsDate(value);
+}
+
+/**
+ * Formats the label of the tooltip.
+ * Which is actually the value.
+ */
+let formatLabel = function(tooltipItem: Chart.ChartTooltipItem, data: Chart.ChartData): string {
+  let dataSet: ChartDataSets = data.datasets[tooltipItem.datasetIndex];
+  let dataName: string = dataSet.label;
+
+  let value: number = parseFloat(tooltipItem.value);
+  let dataValue: number = Math.round(value * 100) / 100;
+
+  return dataName + ": " + dataValue;
+}
+
+
+/**
  * Receives the data and formats them into Ng2 data, so they can directly
  * be displayed in a Ng2 Chart.
  * @class {Ng2ChartReport}
@@ -35,8 +83,21 @@ export class Ng2ChartReport implements Report {
   public dataSets: ChartDataSets[];
   public labels: Label[];
   public options: ChartOptions = {
+      animation: {
+        duration: 0
+      },
+      hover: {
+        animationDuration: 0
+      },
+      responsiveAnimationDuration: 0,
       legend: {
         display: true
+      },
+      tooltips: {
+        callbacks: {
+          title: formatTooltipTitle,
+          label: formatLabel,
+        }
       },
       scales: {
         yAxes: [],
@@ -44,7 +105,7 @@ export class Ng2ChartReport implements Report {
           type: 'linear',
           position: 'bottom',
           ticks: {
-            callback: this.formatAsDate,
+            callback: formatAsDate,
             display: true,
           }
         }],
@@ -53,11 +114,11 @@ export class Ng2ChartReport implements Report {
         zoom: {
           pan: {
             enabled: true,
-            mode: 'x'
+            mode: 'xy'
           },
           zoom: {
             enabled: true,
-            mode: 'x'
+            mode: 'xy'
           }
         }
       }
@@ -82,7 +143,8 @@ export class Ng2ChartReport implements Report {
         label: show.show,
         yAxisID: yAxisID,
         type: this.showAs(show.as),
-        pointRadius: 1
+        borderWidth: 1,
+        pointRadius: 1.2
       };
       this.mapOfDatasets.set(show.show, dataSet);
       this.mapOfConfigurations.set(show.show, show);
@@ -136,30 +198,6 @@ export class Ng2ChartReport implements Report {
         console.warn("showAs=" + showAs + ": unknown literal of ShowDataAs");
         return "";
     }
-  }
-
-  /**
-   * Formats the provided number as a date
-   */
-  formatAsDate(value: any): string {
-    let date: Date = new Date(value);
-    let sYear: string = "" + date.getFullYear();
-    let month: number = date.getMonth() + 1;
-    let sMonth: string;
-    if (month < 10) {
-      sMonth = "0" + month;
-    } else {
-      sMonth = "" + month;
-    }
-    let day: number = date.getDate();
-    let sDay: string;
-    if (day < 10) {
-      sDay = "0" + day;
-    } else {
-      sDay = "" + day;
-    }
-    let s = sYear + "." + sMonth + "." + sDay
-    return s;
   }
 
   /**
