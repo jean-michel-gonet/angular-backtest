@@ -8,6 +8,7 @@ import { QuotesConfigurationService, NamedQuoteSource, QuoteProvider,
   QuoteSource, DividendSource, DataSource } from './quotes-configuration.service';
 import { PlainDataService } from './plain-data.service';
 import { EnrichWithDividends, EnrichWithTotalReturn } from 'src/app/model/utils/quotes-enrich';
+import { QuotesFromInvestingService } from './quotes-from-investing.service';
 
 /**
  * Retrieves instantQuotes data from a provider, and then broadcasts the
@@ -20,6 +21,7 @@ import { EnrichWithDividends, EnrichWithTotalReturn } from 'src/app/model/utils/
 export class QuotesService {
   constructor(private quotesFromSixService: QuotesFromSixService,
               private quotesFromYahooService: QuotesFromYahooService,
+              private quotesFromInvestingService: QuotesFromInvestingService,
               private plainDataService: PlainDataService,
               private quotesConfigurationService: QuotesConfigurationService) {
   }
@@ -67,6 +69,7 @@ export class QuotesService {
       case QuoteProvider.YAHOO:
         return this.quotesFromYahooService.getHistoricalQuotes(uri, name);
       case QuoteProvider.INVESTING:
+        return this.quotesFromInvestingService.getHistoricalQuotes(uri, name);
       default:
         console.warn(quoteSource.provider + " - Unsupported provider");
         return null;

@@ -53,7 +53,8 @@ describe('Ng2ChartReport', () => {
       label: "SQA01.NAV",
       yAxisID: "y-axis-left",
       type: "line",
-      pointRadius: 1
+      borderWidth: 1,
+      pointRadius: 1.2
     }]));
     expect(ng2ChartReport.labels.length).toBe(0);
   });
@@ -96,13 +97,15 @@ describe('Ng2ChartReport', () => {
         label: "SQA01.NAV",
         yAxisID: "y-axis-left",
         type: "line",
-        pointRadius: 1
+        borderWidth: 1,
+        pointRadius: 1.2
       }, {
         data: [{x: today.valueOf(), y: 1}, {x: tomorrow.valueOf(), y: 2}],
         label: "SQA01.COSTS",
         yAxisID: "y-axis-right",
         type: "scatter",
-        pointRadius: 1
+        borderWidth: 1,
+        pointRadius: 1.2
       }
     ]));
     expect(ng2ChartReport.labels.length).toBe(0);
@@ -148,13 +151,15 @@ describe('Ng2ChartReport', () => {
         label: "VALUE1",
         yAxisID: "y-axis-left",
         type: "line",
-        pointRadius: 1
+        borderWidth: 1,
+        pointRadius: 1.2
       }, {
         data: [{x: today.valueOf(), y: 100}, {x: tomorrow.valueOf(), y: 200}],
         label: "VALUE2",
         yAxisID: "y-axis-left",
         type: "scatter",
-        pointRadius: 1
+        borderWidth: 1,
+        pointRadius: 1.2
       }
     ]));
     expect(ng2ChartReport.labels.length).toBe(0);
@@ -200,13 +205,15 @@ describe('Ng2ChartReport', () => {
         label: "VALUE1",
         yAxisID: "y-axis-left",
         type: "line",
-        pointRadius: 1
+        borderWidth: 1,
+        pointRadius: 1.2
       }, {
         data: [{x: today.valueOf(), y: 0/0}, {x: tomorrow.valueOf(), y: 100}],
         label: "VALUE2",
         yAxisID: "y-axis-left",
         type: "scatter",
-        pointRadius: 1
+        borderWidth: 1,
+        pointRadius: 1.2
       }
     ]));
     expect(ng2ChartReport.labels.length).toBe(0);
