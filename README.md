@@ -354,6 +354,10 @@ This is some of my reference documentation:
 - https://www.trackingdifferences.com/
 - https://www.mustachianpost.com/
 - https://indexfundinvestor.eu/2019/07/11/what-is-the-best-msci-world-uctis-etf-for-you/
+* **Selecting A Long-Term Moving Average**
+  * Shows how the different moving average work on a specific example. Also, it is one
+    of the very few places where it mentions the weekly and monthly moving averages.
+  * https://incrediblecharts.com/indicators/moving_average_selection.php
 
 On technical matters:
 * **Angular ``ng-content`` and Content Projection: A Complete Guide: How To Use ``ng-content`` To Improve Component API Design**

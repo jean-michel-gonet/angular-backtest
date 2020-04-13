@@ -21,6 +21,13 @@
     }
   },
   {
+    "name": "SPY",
+    "quote": {
+      "provider": "www.investing.com",
+      "uri": "instruments/spy-investing.csv"
+    }
+  },
+  {
     "name": "AGG",
     "quote": {
       "provider": "finance.yahoo.com",

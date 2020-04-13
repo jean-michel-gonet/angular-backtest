@@ -52,6 +52,8 @@ export class EMAMarketTiming implements MarketTiming {
       } else {
         this.status = BearBull.BEAR;
       }
+    } else {
+      this.difference = null;
     }
   }
 
@@ -68,18 +70,20 @@ export class EMAMarketTiming implements MarketTiming {
   }
 
   reportTo(report: Report): void {
-    report.receiveData(new ReportedData({
-      sourceName: this.id + ".DIFF",
-      y: this.difference
-    }));
-    report.receiveData(new ReportedData({
-      sourceName: this.id + ".SEMA",
-      y: this.shortEMA.lastValue
-    }));
-    report.receiveData(new ReportedData({
-      sourceName: this.id + ".LEMA",
-      y: this.longEMA.lastValue
-    }));
+    if (this.difference) {
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".DIFF",
+        y: this.difference
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".SEMA",
+        y: this.shortEMA.lastValue
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".LEMA",
+        y: this.longEMA.lastValue
+      }));
+    }
   }
 
 }
