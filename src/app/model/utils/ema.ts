@@ -1,6 +1,21 @@
 import { PeriodLength, Period } from '../core/period';
 import { Quote } from '../core/quotes';
 
+export enum EmaPreprocessing {
+  TYPICAL,
+  MEDIAN,
+  LAST,
+  FIRST
+}
+
+export enum EmaSource {
+  OPEN,
+  CLOSE,
+  HIGH,
+  LOW,
+  MID
+}
+
 /**
  * Calculates the Exponential Moving Average of the quotes provided
  * along time.
@@ -16,9 +31,11 @@ import { Quote } from '../core/quotes';
  * period. In this case, the first day of each month.
  */
 export class EMACalculator {
-  private periodValues: number[];
+  private sourceValues: number[];
   public lastValue: number;
   private period: Period;
+  private source: EmaSource = EmaSource.CLOSE;
+  private preprocessing: EmaPreprocessing = EmaPreprocessing.LAST;
 
   /**
    * Class constructor.
@@ -41,23 +58,75 @@ export class EMACalculator {
   ema(instant: Date, quote: Quote): number {
     let ema: number;
     if (this.period.changeOfPeriod(instant)) {
-      if (this.periodValues) {
-        let mean = this.meanOf(this.periodValues);
-        ema = this.emaOf(mean);
+      if (this.sourceValues) {
+        let preprocessedValue = this.preprocess(this.sourceValues);
+        ema = this.emaOf(preprocessedValue);
       }
-      this.periodValues = [];
+      this.sourceValues = [];
     }
-    this.periodValues.push(quote.close)
+    let sourceValue = this.extractSourceValue(quote);
+    this.sourceValues.push(sourceValue);
     return ema;
   }
 
-  private meanOf(values: number[]):number {
+  /**
+   * Extracs from the provided quote the value that is going to be used
+   * as source for subsequent calculations.
+   * @param {Quote} quote The Quote.
+   * @return {number} The value to use as source.
+   */
+  private extractSourceValue(quote: Quote): number {
+    switch(this.source) {
+      case EmaSource.CLOSE:
+        return quote.close;
+
+      case EmaSource.HIGH:
+        return quote.high;
+
+      case EmaSource.LOW:
+        return quote.low;
+
+      case EmaSource.OPEN:
+        return quote.open;
+
+      case EmaSource.MID:
+        return (quote.high + quote.low) / 2;
+    }
+  }
+
+  /**
+   * Preprocess the values according to the algorithm
+   * selected in {@link #preprocessing}.
+   * @param {number[]} values The source values.
+   * @param {number} The value resulting of pre-processing.
+   */
+  private preprocess(values: number[]):number {
+    switch(this.preprocessing) {
+      case EmaPreprocessing.LAST:
+        return values[values.length - 1];
+
+      case EmaPreprocessing.FIRST:
+        return values[0];
+
+      case EmaPreprocessing.TYPICAL:
+        return this.meanOf(values);
+
+      case EmaPreprocessing.MEDIAN:
+        return this.medianOf(values);
+    }
+  }
+
+  private meanOf(values: number[]): number {
     let mean: number = 0;
     for (let n: number = 0; n < values.length; n++) {
       mean += values[n];
     }
     mean /= values.length;
     return mean;
+  }
+
+  private medianOf(values: number[]): number {
+    return 0; // TODO
   }
 
   emaOf(latestQuote: number) {

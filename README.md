@@ -358,6 +358,16 @@ This is some of my reference documentation:
   * Shows how the different moving average work on a specific example. Also, it is one
     of the very few places where it mentions the weekly and monthly moving averages.
   * https://incrediblecharts.com/indicators/moving_average_selection.php
+* **The ASX Market Filter**
+  * How to Apply a Basic Market Filter to the S&P/ASX 200 to Reduce Portfolio Risk and Limit Losses.
+  * https://www.marketindex.com.au/asx-filter
+* **3 EMA Crossover Trading**
+  * The three moving average crossover strategy is an approach to trading that uses
+    3 exponential moving averages of various lengths.
+  * https://www.netpicks.com/three-moving-average-crossover/
+* **Tax optimisation for ETF investing**
+  * This is a collection of information on taxation of dividends for swiss investors.
+  * https://forum.mustachianpost.com/t/tax-optimisation-for-etf-investing/67
 
 On technical matters:
 * **Angular ``ng-content`` and Content Projection: A Complete Guide: How To Use ``ng-content`` To Improve Component API Design**
