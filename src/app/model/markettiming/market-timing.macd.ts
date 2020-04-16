@@ -115,6 +115,10 @@ export class MACDMarketTiming implements MarketTiming {
       sourceName: this.id + ".SIGNAL",
       y: this.signal
     }));
+    report.receiveData(new ReportedData({
+      sourceName: this.id + ".HISTOGRAM",
+      y: this.macd - this.signal
+    }));
   }
 
   bearBull(): BearBull {
