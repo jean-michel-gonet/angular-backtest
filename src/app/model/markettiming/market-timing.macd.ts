@@ -10,31 +10,36 @@ class IMACDMarketTiming {
   source?: MovingAverageSource;
   preprocessing?: MovingAveragePreprocessing;
 
-  shortPeriod?: number;
-  longPeriod?: number;
-  triggerPeriod?: number;
+  fastPeriod?: number;
+  slowPeriod?: number;
+  signalPeriod?: number;
 
   status?: BearBull;
 }
 
 /**
- * The MACD indicator measures the difference between two moving averages
- * (EMA) and is depicted as a line. The usual representation of the MACD
- * indicator has another line – a short 9-day EMA of MACD – plotted together
- * with the MACD in the chart, to act as a trigger indicator.
- * A buying signal is gotten from MACD when the MACD line crosses the 9-day
- * trigger EMA. In turn, a sell signal is gotten from the reverse.
- * See https://www.iexplain.org/calculate-macd/
- * See also https://investsolver.com/calculate-macd-in-excel/
+ * Moving Average Convergence Divergence (MACD) is a trend-following momentum
+ * indicator that shows the relationship between two moving averages of a
+ * security’s price.
+ * The MACD is calculated by subtracting the 26-period Exponential
+ * Moving Average (EMA) from the 12-period EMA. The result of that calculation
+ * is the MACD line. A nine-day EMA of the MACD called the "signal line,"
+ * is then plotted on top of the MACD line, which can function as a trigger
+ * for buy and sell signals.
+ * Traders may buy the security when the MACD crosses above its signal line
+ * and sell - or short - the security when the MACD crosses below the
+ * signal line.
+ * see https://www.investopedia.com/terms/m/macd.asp
  * @class {MACDMarketTiming}
  */
 export class MACDMarketTiming implements MarketTiming {
   id: string;
   status: BearBull;
-  longEMA: EmaCalculator;
-  shortEMA: EmaCalculator;
-  triggerEMA: EmaCalculator;
-  difference: number;
+  slowEma: EmaCalculator;
+  fastEma: EmaCalculator;
+  signalEma: EmaCalculator;
+  macd: number;
+  signal: number;
 
   constructor(obj = {} as IMACDMarketTiming){
     let {
@@ -42,64 +47,73 @@ export class MACDMarketTiming implements MarketTiming {
       source = MovingAverageSource.CLOSE,
       preprocessing = MovingAveragePreprocessing.LAST,
       periodLength = PeriodLength.MONTHLY,
-      shortPeriod = 5,
-      longPeriod = 15,
-      triggerPeriod = 9,
+      fastPeriod = 12,
+      slowPeriod = 26,
+      signalPeriod = 9,
       status = BearBull.BULL
     } = obj;
     this.id = id;
     this.status = status;
-    this.longEMA = new EmaCalculator({
-      numberOfPeriods: longPeriod,
+    this.slowEma = new EmaCalculator({
+      numberOfPeriods: slowPeriod,
       periodLength: periodLength,
       source: source,
       preprocessing: preprocessing,
     });
-    this.shortEMA = new EmaCalculator({
-      numberOfPeriods: shortPeriod,
+    this.fastEma = new EmaCalculator({
+      numberOfPeriods: fastPeriod,
       periodLength: periodLength,
       source: source,
       preprocessing: preprocessing,
     });
-    this.triggerEMA = new EmaCalculator({
-      numberOfPeriods: triggerPeriod,
-      periodLength: periodLength,
-      source: source,
-      preprocessing: preprocessing,
+    this.signalEma = new EmaCalculator({
+      numberOfPeriods: signalPeriod,
+      periodLength: periodLength
     });
   }
 
   record(instant: Date, quote: Quote): void {
-    let longEMA = this.longEMA.ema(instant, quote);
-    let shortEMA = this.shortEMA.ema(instant, quote);
-    if (longEMA) {
-        this.difference = shortEMA - longEMA;
-        let triggerEMA = this.triggerEMA.emaOf(this.difference);
+    let slowEma = this.slowEma.ema(instant, quote);
+    let fastEma = this.fastEma.ema(instant, quote);
+    if (slowEma) {
+        this.macd = fastEma - slowEma;
+        this.signal = this.signalEma.emaOf(this.macd);
 
         switch(this.status) {
           case BearBull.BEAR:
-            if (triggerEMA < this.difference) {
+            if (this.signal < this.macd) {
               this.status = BearBull.BULL;
             }
             break;
 
           case BearBull.BULL:
-          if (triggerEMA > this.difference) {
+          if (this.signal > this.macd) {
             this.status = BearBull.BEAR;
           }
           break;
         }
+    } else {
+      this.macd = null;
+      this.signal = null;
     }
   }
 
   reportTo(report: Report): void {
     report.receiveData(new ReportedData({
-      sourceName: this.id + ".MACD",
-      y: this.difference
+      sourceName: this.id + ".SLOW",
+      y: this.slowEma.lastValue
     }));
     report.receiveData(new ReportedData({
-      sourceName: this.id + ".TRIGGER",
-      y: this.triggerEMA.lastValue
+      sourceName: this.id + ".FAST",
+      y: this.fastEma.lastValue
+    }));
+    report.receiveData(new ReportedData({
+      sourceName: this.id + ".MACD",
+      y: this.macd
+    }));
+    report.receiveData(new ReportedData({
+      sourceName: this.id + ".SIGNAL",
+      y: this.signal
     }));
   }
 

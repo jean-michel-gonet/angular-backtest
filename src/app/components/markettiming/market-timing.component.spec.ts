@@ -99,9 +99,9 @@ describe('MarketTimingComponent', () => {
             <macd-filter id="XX"
                          source="OPEN"
                          preprocessing="MEDIAN"
-                         shortPeriod="9"
-                         longPeriod="14"
-                         triggerPeriod="16"
+                         fastPeriod="9"
+                         slowPeriod="14"
+                         signalPeriod="16"
                          periodLength="SEMIMONTHLY"
                          status="BEAR"></macd-filter>
           </market-timing>`
@@ -114,19 +114,17 @@ describe('MarketTimingComponent', () => {
       let macdFilter = component.asMarketTiming() as MACDMarketTiming;
       expect(macdFilter.id).toBe("XX");
       expect(macdFilter.bearBull()).toBe(BearBull.BEAR);
-      expect(macdFilter.shortEMA.numberOfPeriods).toBe(9);
-      expect(macdFilter.shortEMA.periodLength).toBe(PeriodLength.SEMIMONTHLY);
-      expect(macdFilter.shortEMA.source).toBe(MovingAverageSource.OPEN);
-      expect(macdFilter.shortEMA.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
+      expect(macdFilter.fastEma.numberOfPeriods).toBe(9);
+      expect(macdFilter.fastEma.periodLength).toBe(PeriodLength.SEMIMONTHLY);
+      expect(macdFilter.fastEma.source).toBe(MovingAverageSource.OPEN);
+      expect(macdFilter.fastEma.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
 
-      expect(macdFilter.longEMA.numberOfPeriods).toBe(14);
-      expect(macdFilter.longEMA.periodLength).toBe(PeriodLength.SEMIMONTHLY);
-      expect(macdFilter.longEMA.source).toBe(MovingAverageSource.OPEN);
-      expect(macdFilter.longEMA.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
+      expect(macdFilter.slowEma.numberOfPeriods).toBe(14);
+      expect(macdFilter.slowEma.periodLength).toBe(PeriodLength.SEMIMONTHLY);
+      expect(macdFilter.slowEma.source).toBe(MovingAverageSource.OPEN);
+      expect(macdFilter.slowEma.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
 
-      expect(macdFilter.triggerEMA.numberOfPeriods).toBe(16);
-      expect(macdFilter.triggerEMA.periodLength).toBe(PeriodLength.SEMIMONTHLY);
-      expect(macdFilter.triggerEMA.source).toBe(MovingAverageSource.OPEN);
-      expect(macdFilter.triggerEMA.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
+      expect(macdFilter.signalEma.numberOfPeriods).toBe(16);
+      expect(macdFilter.signalEma.periodLength).toBe(PeriodLength.SEMIMONTHLY);
   });
 });

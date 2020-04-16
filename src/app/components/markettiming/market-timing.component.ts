@@ -142,43 +142,43 @@ export class SuperthonMarketTimingComponent extends BaseMarketTimingComponent {
 })
 export class MACDMarketTimingComponent extends BaseMarketTimingComponent {
 
-  private _shortPeriod: number;
+  private _fastPeriod: number;
   @Input()
-  set shortPeriod(value: number) {
+  set fastPeriod(value: number) {
     if (typeof value == 'string') {
-      this._shortPeriod = parseInt(value);
+      this._fastPeriod = parseInt(value);
     } else {
-      this._shortPeriod = value;
+      this._fastPeriod = value;
     }
   }
-  get shortPeriod() {
-    return this._shortPeriod;
+  get fastPeriod() {
+    return this._fastPeriod;
   }
 
-  private _longPeriod: number;
+  private _slowPeriod: number;
   @Input()
-  set longPeriod(value: number) {
+  set slowPeriod(value: number) {
     if (typeof value == 'string') {
-      this._longPeriod = parseInt(value);
+      this._slowPeriod = parseInt(value);
     } else {
-      this._longPeriod = value;
+      this._slowPeriod = value;
     }
   }
-  get longPeriod() {
-    return this._longPeriod;
+  get slowPeriod() {
+    return this._slowPeriod;
   }
 
-  private _triggerPeriod: number;
+  private _signalPeriod: number;
   @Input()
-  set triggerPeriod(value: number) {
+  set signalPeriod(value: number) {
     if (typeof value == 'string') {
-      this._triggerPeriod = parseInt(value);
+      this._signalPeriod = parseInt(value);
     } else {
-      this._triggerPeriod = value;
+      this._signalPeriod = value;
     }
   }
-  get triggerPeriod() {
-    return this._triggerPeriod;
+  get signalPeriod() {
+    return this._signalPeriod;
   }
 
   asMACDMarketTiming(): MACDMarketTiming {
@@ -187,9 +187,9 @@ export class MACDMarketTimingComponent extends BaseMarketTimingComponent {
       source: this._source,
       preprocessing: this._preprocessing,
       periodLength: this.periodLength,
-      shortPeriod: this.shortPeriod,
-      longPeriod: this.longPeriod,
-      triggerPeriod: this.triggerPeriod,
+      fastPeriod: this.fastPeriod,
+      slowPeriod: this.slowPeriod,
+      signalPeriod: this.signalPeriod,
       status: this.status
     });
   }
