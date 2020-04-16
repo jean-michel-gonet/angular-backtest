@@ -5,13 +5,42 @@ import { SuperthonMarketTiming } from 'src/app/model/markettiming/market-timing.
 import { EMAMarketTiming } from 'src/app/model/markettiming/market-timing.ema';
 import { MACDMarketTiming } from 'src/app/model/markettiming/market-timing.macd';
 
+class BaseMarketTimingComponent {
+  @Input()
+  protected id: string;
+
+  protected _periodLength: PeriodLength;
+  @Input()
+  set periodLength(value: PeriodLength) {
+    if (typeof value == 'string') {
+      this._periodLength = PeriodLength[value];
+    } else {
+      this._periodLength = value;
+    }
+  }
+  get periodLength() {
+    return this._periodLength;
+  }
+
+  protected _status: BearBull;
+  @Input()
+  set status(value: BearBull) {
+    if (typeof value == 'string') {
+      this._status = BearBull[value];
+    } else {
+      this._status = value;
+    }
+  }
+  get status() {
+    return this._status;
+  }
+}
+
 @Component({
   selector: 'ema-filter',
   template: ''
 })
-export class EMAMarketTimingComponent {
-  @Input()
-  private id: string;
+export class EMAMarketTimingComponent extends BaseMarketTimingComponent {
 
   private _shortPeriod: number;
   @Input()
@@ -39,32 +68,6 @@ export class EMAMarketTimingComponent {
     return this._longPeriod;
   }
 
-  private _periodLength: PeriodLength;
-  @Input()
-  set periodLength(value: PeriodLength) {
-    if (typeof value == 'string') {
-      this._periodLength = PeriodLength[value];
-    } else {
-      this._periodLength = value;
-    }
-  }
-  get periodLength() {
-    return this._periodLength;
-  }
-
-  private _status: BearBull;
-  @Input()
-  set status(value: BearBull) {
-    if (typeof value == 'string') {
-      this._status = BearBull[value];
-    } else {
-      this._status = value;
-    }
-  }
-  get status() {
-    return this._status;
-  }
-
   asEmaMarketTiming(): EMAMarketTiming {
     return new EMAMarketTiming({
       id: this.id,
@@ -80,10 +83,7 @@ export class EMAMarketTimingComponent {
   selector: 'candle-filter',
   template: ''
 })
-export class SuperthonMarketTimingComponent {
-  @Input()
-  private id: string;
-
+export class SuperthonMarketTimingComponent extends BaseMarketTimingComponent {
   private _periods: number;
   @Input()
   set periods(value: number) {
@@ -95,32 +95,6 @@ export class SuperthonMarketTimingComponent {
   }
   get periods() {
     return this._periods;
-  }
-
-  private _periodLength: PeriodLength;
-  @Input()
-  set periodLength(value: PeriodLength) {
-    if (typeof value == 'string') {
-      this._periodLength = PeriodLength[value];
-    } else {
-      this._periodLength = value;
-    }
-  }
-  get periodLength(): PeriodLength {
-    return this._periodLength;
-  }
-
-  private _status: BearBull;
-  @Input()
-  set status(value: BearBull) {
-    if (typeof value == 'string') {
-      this._status = BearBull[value];
-    } else {
-      this._status = value;
-    }
-  }
-  get status() {
-    return this._status;
   }
 
   asSuperthonMarketTimingComponent(): SuperthonMarketTiming {
@@ -137,9 +111,7 @@ export class SuperthonMarketTimingComponent {
   selector: 'macd-filter',
   template: ''
 })
-export class MACDMarketTimingComponent {
-  @Input()
-  private id: string;
+export class MACDMarketTimingComponent extends BaseMarketTimingComponent {
 
   private _shortPeriod: number;
   @Input()
@@ -178,32 +150,6 @@ export class MACDMarketTimingComponent {
   }
   get triggerPeriod() {
     return this._triggerPeriod;
-  }
-
-  private _periodLength: PeriodLength;
-  @Input()
-  set periodLength(value: PeriodLength) {
-    if (typeof value == 'string') {
-      this._periodLength = PeriodLength[value];
-    } else {
-      this._periodLength = value;
-    }
-  }
-  get periodLength(): PeriodLength {
-    return this._periodLength;
-  }
-
-  private _status: BearBull;
-  @Input()
-  set status(value: BearBull) {
-    if (typeof value == 'string') {
-      this._status = BearBull[value];
-    } else {
-      this._status = value;
-    }
-  }
-  get status() {
-    return this._status;
   }
 
   asMACDMarketTiming(): MACDMarketTiming {

@@ -16,6 +16,13 @@ export enum EmaSource {
   MID
 }
 
+class IEmaCalculator {
+  numberOfPeriods: number;
+  periodLength: PeriodLength;
+  source?: EmaSource;
+  preprocessing?: EmaPreprocessing;
+}
+
 /**
  * Calculates the Exponential Moving Average of the quotes provided
  * along time.
@@ -30,12 +37,16 @@ export enum EmaSource {
  * {@code undefined} most of the time, except when there is a change of
  * period. In this case, the first day of each month.
  */
-export class EMACalculator {
-  private sourceValues: number[];
+export class EmaCalculator {
+  public numberOfPeriods: number;
+  public periodLength: PeriodLength;
+  public source: EmaSource;
+  public preprocessing: EmaPreprocessing;
+
   public lastValue: number;
+
+  private sourceValues: number[];
   private period: Period;
-  private source: EmaSource = EmaSource.CLOSE;
-  private preprocessing: EmaPreprocessing = EmaPreprocessing.LAST;
 
   /**
    * Class constructor.
@@ -43,7 +54,19 @@ export class EMACalculator {
    * the moving average.
    * @param {PeriodLength} periodLength The period period length.
    */
-  constructor(public numberOfPeriods: number, public periodLength: PeriodLength) {
+  constructor(obj = {} as IEmaCalculator) {
+    let {
+      numberOfPeriods,
+      periodLength,
+      source = EmaSource.CLOSE,
+      preprocessing = EmaPreprocessing.LAST
+    } = obj;
+
+    this.numberOfPeriods = numberOfPeriods;
+    this.periodLength = periodLength;
+    this.source = source;
+    this.preprocessing = preprocessing;
+
     this.period = new Period(periodLength);
   }
 
@@ -126,7 +149,16 @@ export class EMACalculator {
   }
 
   private medianOf(values: number[]): number {
-    return 0; // TODO
+    let sortedValues = values.sort((a: number, b: number) => a - b);
+    if (sortedValues.length % 2 == 0) {
+      let middle = Math.floor(sortedValues.length / 2);
+      let a = sortedValues[middle - 1];
+      let b = sortedValues[middle];
+      return (a + b) / 2;      
+    } else {
+      let middle = Math.ceil(sortedValues.length / 2);
+      return sortedValues[middle - 1];
+    }
   }
 
   emaOf(latestQuote: number) {

@@ -1,25 +1,185 @@
-import { EMACalculator } from './ema';
+import { EmaCalculator, EmaSource, EmaPreprocessing } from './ema';
 import { PeriodLength } from '../core/period';
 import { Quote } from '../core/quotes';
 
 describe('EMACalculator', () => {
-  it('Can give the simple mean at the end of the first period', () => {
-    let firstWeekValues: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
-    let total = firstWeekValues.reduce((accumulator, value) => accumulator + value);
-    let mean = total / firstWeekValues.length;
+  it('Can use the closing price as input ', () => {
+    let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
 
-    let ema = new EMACalculator(5, PeriodLength.WEEKLY);
-    expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: 39.86}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 23), new Quote({name: 'xx', close: 40.71}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 24), new Quote({name: 'xx', close: 40.88}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 25), new Quote({name: 'xx', close: 40.75}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 26), new Quote({name: 'xx', close: 40.77}))).toBeUndefined();
+    let ema = new EmaCalculator({
+      numberOfPeriods:5,
+      periodLength: PeriodLength.WEEKLY,
+      source: EmaSource.CLOSE,
+      preprocessing: EmaPreprocessing.LAST
+    });
 
-    expect(ema.ema(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 40.77}))).toBe(mean);
+    expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 23), new Quote({name: 'xx', close: values[1]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 24), new Quote({name: 'xx', close: values[2]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 25), new Quote({name: 'xx', close: values[3]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 26), new Quote({name: 'xx', close: values[4]}))).toBeUndefined();
+
+    expect(ema.ema(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 0}))).toBe(values[4]);
+  });
+
+  it('Can use the open price as input ', () => {
+    let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
+
+    let ema = new EmaCalculator({
+      numberOfPeriods:5,
+      periodLength: PeriodLength.WEEKLY,
+      source: EmaSource.OPEN,
+      preprocessing: EmaPreprocessing.LAST
+    });
+
+    expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: 0, open: values[0]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 23), new Quote({name: 'xx', close: 0, open: values[1]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 24), new Quote({name: 'xx', close: 0, open: values[2]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 25), new Quote({name: 'xx', close: 0, open: values[3]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 26), new Quote({name: 'xx', close: 0, open: values[4]}))).toBeUndefined();
+
+    expect(ema.ema(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 0}))).toBe(values[4]);
+  });
+
+  it('Can use the high price as input ', () => {
+    let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
+
+    let ema = new EmaCalculator({
+      numberOfPeriods:5,
+      periodLength: PeriodLength.WEEKLY,
+      source: EmaSource.HIGH,
+      preprocessing: EmaPreprocessing.LAST
+    });
+
+    expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: 0, high: values[0]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 23), new Quote({name: 'xx', close: 0, high: values[1]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 24), new Quote({name: 'xx', close: 0, high: values[2]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 25), new Quote({name: 'xx', close: 0, high: values[3]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 26), new Quote({name: 'xx', close: 0, high: values[4]}))).toBeUndefined();
+
+    expect(ema.ema(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 0}))).toBe(values[4]);
+  });
+
+  it('Can use the low price as input ', () => {
+    let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
+
+    let ema = new EmaCalculator({
+      numberOfPeriods:5,
+      periodLength: PeriodLength.WEEKLY,
+      source: EmaSource.LOW,
+      preprocessing: EmaPreprocessing.LAST
+    });
+
+    expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: 0, low: values[0]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 23), new Quote({name: 'xx', close: 0, low: values[1]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 24), new Quote({name: 'xx', close: 0, low: values[2]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 25), new Quote({name: 'xx', close: 0, low: values[3]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 26), new Quote({name: 'xx', close: 0, low: values[4]}))).toBeUndefined();
+
+    expect(ema.ema(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 0}))).toBe(values[4]);
+  });
+
+  it('Can use the mid price as input ', () => {
+    let highValues: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
+    let lowValues: number[] = [38.86, 39.71, 38.88, 38.75, 38.77];
+
+    let ema = new EmaCalculator({
+      numberOfPeriods:5,
+      periodLength: PeriodLength.WEEKLY,
+      source: EmaSource.MID,
+      preprocessing: EmaPreprocessing.LAST
+    });
+
+    expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: 0, high: highValues[0], low: lowValues[0]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 23), new Quote({name: 'xx', close: 0, high: highValues[1], low: lowValues[1]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 24), new Quote({name: 'xx', close: 0, high: highValues[2], low: lowValues[2]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 25), new Quote({name: 'xx', close: 0, high: highValues[3], low: lowValues[3]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 26), new Quote({name: 'xx', close: 0, high: highValues[4], low: lowValues[4]}))).toBeUndefined();
+
+    expect(ema.ema(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 0}))).toBe((highValues[4] + lowValues[4])/2);
+  });
+
+  it('Can preprocess input as first value', () => {
+    let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
+
+    let ema = new EmaCalculator({
+      numberOfPeriods:5,
+      periodLength: PeriodLength.WEEKLY,
+      source: EmaSource.CLOSE,
+      preprocessing: EmaPreprocessing.FIRST
+    });
+
+    expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 23), new Quote({name: 'xx', close: values[1]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 24), new Quote({name: 'xx', close: values[2]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 25), new Quote({name: 'xx', close: values[3]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 26), new Quote({name: 'xx', close: values[4]}))).toBeUndefined();
+
+    expect(ema.ema(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 0}))).toBe(values[0]);
+  });
+
+  it('Can preprocess input as mean (typical) value', () => {
+    let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
+    let total = values.reduce((accumulator, value) => accumulator + value);
+    let mean = total / values.length;
+
+    let ema = new EmaCalculator({
+      numberOfPeriods:5,
+      periodLength: PeriodLength.WEEKLY,
+      source: EmaSource.CLOSE,
+      preprocessing: EmaPreprocessing.TYPICAL
+    });
+
+    expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 23), new Quote({name: 'xx', close: values[1]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 24), new Quote({name: 'xx', close: values[2]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 25), new Quote({name: 'xx', close: values[3]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 26), new Quote({name: 'xx', close: values[4]}))).toBeUndefined();
+
+    expect(ema.ema(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 0}))).toBe(mean);
+  });
+
+  it('Can preprocess input as median value when there is an odd number of values', () => {
+    let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
+
+    let ema = new EmaCalculator({
+      numberOfPeriods:5,
+      periodLength: PeriodLength.WEEKLY,
+      source: EmaSource.CLOSE,
+      preprocessing: EmaPreprocessing.MEDIAN
+    });
+
+    expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 23), new Quote({name: 'xx', close: values[1]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 24), new Quote({name: 'xx', close: values[2]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 25), new Quote({name: 'xx', close: values[3]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 26), new Quote({name: 'xx', close: values[4]}))).toBeUndefined();
+
+    expect(ema.ema(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 0}))).toBe(40.75);
+  });
+
+  it('Can preprocess input as median value when there is an even number of values', () => {
+    let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77, 39.93];
+
+    let ema = new EmaCalculator({
+      numberOfPeriods:5,
+      periodLength: PeriodLength.WEEKLY,
+      source: EmaSource.CLOSE,
+      preprocessing: EmaPreprocessing.MEDIAN
+    });
+
+    expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 23), new Quote({name: 'xx', close: values[1]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 24), new Quote({name: 'xx', close: values[2]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 25), new Quote({name: 'xx', close: values[3]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 26), new Quote({name: 'xx', close: values[4]}))).toBeUndefined();
+    expect(ema.ema(new Date(2019, 7 - 1, 27), new Quote({name: 'xx', close: values[5]}))).toBeUndefined();
+
+    expect(ema.ema(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 0}))).toBeCloseTo(40.73, 3);
   });
 
   it('Can calculate daily EMA as in https://investsolver.com/exponential-moving-average-in-excel/', () => {
-    let ema = new EMACalculator(13, PeriodLength.DAILY);
+    let ema = new EmaCalculator({numberOfPeriods: 13, periodLength: PeriodLength.DAILY});
     ema.lastValue = 38.68;
 
     expect(ema.ema(new Date(2019, 7 - 1, 19), new Quote({name: 'xx', close: 39.48}))).toBeUndefined();
@@ -43,7 +203,11 @@ describe('EMACalculator', () => {
    * - Add Indicators -> EMA, 21, Colsed
    */
   it('Can calculate weekly 21 period EMA based on last closing price', () => {
-    let ema = new EMACalculator(21, PeriodLength.WEEKLY);
+    let ema = new EmaCalculator({
+      numberOfPeriods: 21,
+      periodLength: PeriodLength.WEEKLY,
+      source: EmaSource.CLOSE,
+      preprocessing: EmaPreprocessing.LAST});
     ema.lastValue = 278.79;
 
     expect(ema.ema(new Date(2019, 4 - 1, 29), new Quote({name: 'xx', close: 293.87}))).toBeUndefined();
@@ -98,52 +262,5 @@ describe('EMACalculator', () => {
     expect(ema.ema(new Date(2019, 6 - 1, 26), new Quote({name: 'xx', close: 290.47}))).toBeUndefined();
     expect(ema.ema(new Date(2019, 6 - 1, 27), new Quote({name: 'xx', close: 291.50}))).toBeUndefined();
     expect(ema.ema(new Date(2019, 6 - 1, 28), new Quote({name: 'xx', close: 293.00}))).toBeUndefined();
-
-    /*
-    expect(ema.ema(new Date(2019, 7 - 1,  1), new Quote({name: 'xx', close: 295.66}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1,  2), new Quote({name: 'xx', close: 296.43}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1,  3), new Quote({name: 'xx', close: 298.80}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1,  5), new Quote({name: 'xx', close: 298.46}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1,  8), new Quote({name: 'xx', close: 296.82}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1,  9), new Quote({name: 'xx', close: 297.19}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 10), new Quote({name: 'xx', close: 298.61}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 11), new Quote({name: 'xx', close: 299.31}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 12), new Quote({name: 'xx', close: 300.65}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 15), new Quote({name: 'xx', close: 300.75}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 16), new Quote({name: 'xx', close: 299.71}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 17), new Quote({name: 'xx', close: 297.74}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 18), new Quote({name: 'xx', close: 298.83}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 19), new Quote({name: 'xx', close: 297.17}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: 297.90}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 23), new Quote({name: 'xx', close: 300.03}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 24), new Quote({name: 'xx', close: 301.44}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 25), new Quote({name: 'xx', close: 300.00}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 26), new Quote({name: 'xx', close: 302.01}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 301.46}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 30), new Quote({name: 'xx', close: 300.72}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 7 - 1, 31), new Quote({name: 'xx', close: 297.43}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1,  1), new Quote({name: 'xx', close: 294.84}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1,  2), new Quote({name: 'xx', close: 292.62}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1,  5), new Quote({name: 'xx', close: 283.82}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1,  6), new Quote({name: 'xx', close: 287.80}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1,  7), new Quote({name: 'xx', close: 287.97}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1,  8), new Quote({name: 'xx', close: 293.62}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1,  9), new Quote({name: 'xx', close: 291.62}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 12), new Quote({name: 'xx', close: 288.07}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 13), new Quote({name: 'xx', close: 292.55}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 14), new Quote({name: 'xx', close: 283.90}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 15), new Quote({name: 'xx', close: 284.65}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 16), new Quote({name: 'xx', close: 288.85}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 19), new Quote({name: 'xx', close: 292.33}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 20), new Quote({name: 'xx', close: 290.09}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 21), new Quote({name: 'xx', close: 292.45}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 22), new Quote({name: 'xx', close: 292.36}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 23), new Quote({name: 'xx', close: 284.85}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 26), new Quote({name: 'xx', close: 288.00}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 27), new Quote({name: 'xx', close: 286.87}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 28), new Quote({name: 'xx', close: 288.89}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 29), new Quote({name: 'xx', close: 292.58}))).toBeUndefined();
-    expect(ema.ema(new Date(2019, 8 - 1, 30), new Quote({name: 'xx', close: 292.45}))).toBeUndefined();
-    */
   });
 });

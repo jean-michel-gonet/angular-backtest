@@ -2,7 +2,7 @@ import { MarketTiming, BearBull } from '../core/market-timing';
 import { Quote } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { PeriodLength } from '../core/period';
-import { EMACalculator } from '../utils/ema';
+import { EmaCalculator } from '../utils/ema';
 
 export class IEMAMarketTiming {
   id?: string;
@@ -21,8 +21,8 @@ export class IEMAMarketTiming {
  */
 export class EMAMarketTiming implements MarketTiming {
   id: string;
-  shortEMA: EMACalculator;
-  longEMA: EMACalculator;
+  shortEMA: EmaCalculator;
+  longEMA: EmaCalculator;
 
   status: BearBull;
   difference: number;
@@ -38,8 +38,8 @@ export class EMAMarketTiming implements MarketTiming {
     console.log("Starting EMAMarketTiming", id, periodLength, shortPeriod, longPeriod, status);
     this.id = id;
     this.status = status;
-    this.longEMA = new EMACalculator(longPeriod, periodLength);
-    this.shortEMA = new EMACalculator(shortPeriod, periodLength);
+    this.longEMA = new EmaCalculator({numberOfPeriods: longPeriod, periodLength: periodLength});
+    this.shortEMA = new EmaCalculator({numberOfPeriods: shortPeriod, periodLength: periodLength});
   }
 
   record(instant: Date, quote: Quote): void {

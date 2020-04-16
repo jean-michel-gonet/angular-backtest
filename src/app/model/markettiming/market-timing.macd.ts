@@ -2,7 +2,7 @@ import { MarketTiming, BearBull } from '../core/market-timing';
 import { Quote } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { PeriodLength } from '../core/period';
-import { EMACalculator } from '../utils/ema';
+import { EmaCalculator } from '../utils/ema';
 
 class IMACDMarketTiming {
   id?: string;
@@ -29,9 +29,9 @@ class IMACDMarketTiming {
 export class MACDMarketTiming implements MarketTiming {
   id: string;
   status: BearBull;
-  longEMA: EMACalculator;
-  shortEMA: EMACalculator;
-  triggerEMA: EMACalculator;
+  longEMA: EmaCalculator;
+  shortEMA: EmaCalculator;
+  triggerEMA: EmaCalculator;
   difference: number;
 
   constructor(obj = {} as IMACDMarketTiming){
@@ -45,9 +45,9 @@ export class MACDMarketTiming implements MarketTiming {
     } = obj;
     this.id = id;
     this.status = status;
-    this.longEMA = new EMACalculator(longPeriod, periodLength);
-    this.shortEMA = new EMACalculator(shortPeriod, periodLength);
-    this.triggerEMA = new EMACalculator(triggerPeriod, periodLength);
+    this.longEMA = new EmaCalculator({numberOfPeriods: longPeriod, periodLength: periodLength});
+    this.shortEMA = new EmaCalculator({numberOfPeriods: shortPeriod, periodLength: periodLength});
+    this.triggerEMA = new EmaCalculator({numberOfPeriods: triggerPeriod, periodLength: periodLength});
   }
 
   record(instant: Date, quote: Quote): void {
