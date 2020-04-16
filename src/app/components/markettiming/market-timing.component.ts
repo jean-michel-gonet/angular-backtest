@@ -4,10 +4,37 @@ import { BearBull, MarketTiming } from 'src/app/model/core/market-timing';
 import { SuperthonMarketTiming } from 'src/app/model/markettiming/market-timing.superthon';
 import { EMAMarketTiming } from 'src/app/model/markettiming/market-timing.ema';
 import { MACDMarketTiming } from 'src/app/model/markettiming/market-timing.macd';
+import { MovingAverageSource, MovingAveragePreprocessing } from 'src/app/model/core/moving-average';
 
 class BaseMarketTimingComponent {
   @Input()
   protected id: string;
+
+  protected _source: MovingAverageSource;
+  @Input()
+  set source(value: MovingAverageSource) {
+    if (typeof value == 'string') {
+      this._source = MovingAverageSource[value];
+    } else {
+      this._source = value;
+    }
+  }
+  get source() {
+    return this._source;
+  }
+
+  protected _preprocessing: MovingAveragePreprocessing;
+  @Input()
+  set preprocessing(value: MovingAveragePreprocessing) {
+    if (typeof value == 'string') {
+      this._preprocessing = MovingAveragePreprocessing[value];
+    } else {
+      this._preprocessing = value;
+    }
+  }
+  get preprocessing() {
+    return this._preprocessing;
+  }
 
   protected _periodLength: PeriodLength;
   @Input()
@@ -71,6 +98,8 @@ export class EMAMarketTimingComponent extends BaseMarketTimingComponent {
   asEmaMarketTiming(): EMAMarketTiming {
     return new EMAMarketTiming({
       id: this.id,
+      source: this._source,
+      preprocessing: this._preprocessing,
       periodLength: this.periodLength,
       shortPeriod: this.shortPeriod,
       longPeriod: this.longPeriod,
@@ -155,6 +184,8 @@ export class MACDMarketTimingComponent extends BaseMarketTimingComponent {
   asMACDMarketTiming(): MACDMarketTiming {
     return new MACDMarketTiming({
       id: this.id,
+      source: this._source,
+      preprocessing: this._preprocessing,
       periodLength: this.periodLength,
       shortPeriod: this.shortPeriod,
       longPeriod: this.longPeriod,

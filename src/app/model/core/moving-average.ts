@@ -1,26 +1,26 @@
 import { PeriodLength, Period } from './period';
 import { Quote } from './quotes';
 
-export enum EmaPreprocessing {
-  TYPICAL,
-  MEDIAN,
-  LAST,
-  FIRST
+export enum MovingAveragePreprocessing {
+  TYPICAL = 'TYPICAL',
+  MEDIAN = 'MEDIAN',
+  LAST = 'LAST',
+  FIRST = 'FIRST'
 }
 
-export enum EmaSource {
-  OPEN,
-  CLOSE,
-  HIGH,
-  LOW,
-  MID
+export enum MovingAverageSource {
+  OPEN = 'OPEN',
+  CLOSE = 'CLOSE',
+  HIGH = 'HIGH',
+  LOW = 'LOW',
+  MID = 'MID'
 }
 
 class IEmaCalculator {
   numberOfPeriods: number;
   periodLength: PeriodLength;
-  source?: EmaSource;
-  preprocessing?: EmaPreprocessing;
+  source?: MovingAverageSource;
+  preprocessing?: MovingAveragePreprocessing;
 }
 
 /**
@@ -40,8 +40,8 @@ class IEmaCalculator {
 export class EmaCalculator {
   public numberOfPeriods: number;
   public periodLength: PeriodLength;
-  public source: EmaSource;
-  public preprocessing: EmaPreprocessing;
+  public source: MovingAverageSource;
+  public preprocessing: MovingAveragePreprocessing;
 
   public lastValue: number;
 
@@ -58,8 +58,8 @@ export class EmaCalculator {
     let {
       numberOfPeriods,
       periodLength,
-      source = EmaSource.CLOSE,
-      preprocessing = EmaPreprocessing.LAST
+      source = MovingAverageSource.CLOSE,
+      preprocessing = MovingAveragePreprocessing.LAST
     } = obj;
 
     this.numberOfPeriods = numberOfPeriods;
@@ -100,19 +100,19 @@ export class EmaCalculator {
    */
   private extractSourceValue(quote: Quote): number {
     switch(this.source) {
-      case EmaSource.CLOSE:
+      case MovingAverageSource.CLOSE:
         return quote.close;
 
-      case EmaSource.HIGH:
+      case MovingAverageSource.HIGH:
         return quote.high;
 
-      case EmaSource.LOW:
+      case MovingAverageSource.LOW:
         return quote.low;
 
-      case EmaSource.OPEN:
+      case MovingAverageSource.OPEN:
         return quote.open;
 
-      case EmaSource.MID:
+      case MovingAverageSource.MID:
         return (quote.high + quote.low) / 2;
     }
   }
@@ -125,16 +125,16 @@ export class EmaCalculator {
    */
   private preprocess(values: number[]):number {
     switch(this.preprocessing) {
-      case EmaPreprocessing.LAST:
+      case MovingAveragePreprocessing.LAST:
         return values[values.length - 1];
 
-      case EmaPreprocessing.FIRST:
+      case MovingAveragePreprocessing.FIRST:
         return values[0];
 
-      case EmaPreprocessing.TYPICAL:
+      case MovingAveragePreprocessing.TYPICAL:
         return this.meanOf(values);
 
-      case EmaPreprocessing.MEDIAN:
+      case MovingAveragePreprocessing.MEDIAN:
         return this.medianOf(values);
     }
   }

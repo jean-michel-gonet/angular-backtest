@@ -1,4 +1,4 @@
-import { EmaCalculator, EmaSource, EmaPreprocessing } from './moving-average';
+import { EmaCalculator, MovingAverageSource, MovingAveragePreprocessing } from './moving-average';
 import { PeriodLength } from '../core/period';
 import { Quote } from '../core/quotes';
 
@@ -9,8 +9,8 @@ describe('EMACalculator', () => {
     let ema = new EmaCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: EmaSource.CLOSE,
-      preprocessing: EmaPreprocessing.LAST
+      source: MovingAverageSource.CLOSE,
+      preprocessing: MovingAveragePreprocessing.LAST
     });
 
     expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();
@@ -28,8 +28,8 @@ describe('EMACalculator', () => {
     let ema = new EmaCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: EmaSource.OPEN,
-      preprocessing: EmaPreprocessing.LAST
+      source: MovingAverageSource.OPEN,
+      preprocessing: MovingAveragePreprocessing.LAST
     });
 
     expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: 0, open: values[0]}))).toBeUndefined();
@@ -47,8 +47,8 @@ describe('EMACalculator', () => {
     let ema = new EmaCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: EmaSource.HIGH,
-      preprocessing: EmaPreprocessing.LAST
+      source: MovingAverageSource.HIGH,
+      preprocessing: MovingAveragePreprocessing.LAST
     });
 
     expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: 0, high: values[0]}))).toBeUndefined();
@@ -66,8 +66,8 @@ describe('EMACalculator', () => {
     let ema = new EmaCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: EmaSource.LOW,
-      preprocessing: EmaPreprocessing.LAST
+      source: MovingAverageSource.LOW,
+      preprocessing: MovingAveragePreprocessing.LAST
     });
 
     expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: 0, low: values[0]}))).toBeUndefined();
@@ -86,8 +86,8 @@ describe('EMACalculator', () => {
     let ema = new EmaCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: EmaSource.MID,
-      preprocessing: EmaPreprocessing.LAST
+      source: MovingAverageSource.MID,
+      preprocessing: MovingAveragePreprocessing.LAST
     });
 
     expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: 0, high: highValues[0], low: lowValues[0]}))).toBeUndefined();
@@ -105,8 +105,8 @@ describe('EMACalculator', () => {
     let ema = new EmaCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: EmaSource.CLOSE,
-      preprocessing: EmaPreprocessing.FIRST
+      source: MovingAverageSource.CLOSE,
+      preprocessing: MovingAveragePreprocessing.FIRST
     });
 
     expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();
@@ -126,8 +126,8 @@ describe('EMACalculator', () => {
     let ema = new EmaCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: EmaSource.CLOSE,
-      preprocessing: EmaPreprocessing.TYPICAL
+      source: MovingAverageSource.CLOSE,
+      preprocessing: MovingAveragePreprocessing.TYPICAL
     });
 
     expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();
@@ -145,8 +145,8 @@ describe('EMACalculator', () => {
     let ema = new EmaCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: EmaSource.CLOSE,
-      preprocessing: EmaPreprocessing.MEDIAN
+      source: MovingAverageSource.CLOSE,
+      preprocessing: MovingAveragePreprocessing.MEDIAN
     });
 
     expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();
@@ -164,8 +164,8 @@ describe('EMACalculator', () => {
     let ema = new EmaCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: EmaSource.CLOSE,
-      preprocessing: EmaPreprocessing.MEDIAN
+      source: MovingAverageSource.CLOSE,
+      preprocessing: MovingAveragePreprocessing.MEDIAN
     });
 
     expect(ema.ema(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();
@@ -206,8 +206,8 @@ describe('EMACalculator', () => {
     let ema = new EmaCalculator({
       numberOfPeriods: 21,
       periodLength: PeriodLength.WEEKLY,
-      source: EmaSource.CLOSE,
-      preprocessing: EmaPreprocessing.LAST});
+      source: MovingAverageSource.CLOSE,
+      preprocessing: MovingAveragePreprocessing.LAST});
     ema.lastValue = 278.79;
 
     expect(ema.ema(new Date(2019, 4 - 1, 29), new Quote({name: 'xx', close: 293.87}))).toBeUndefined();

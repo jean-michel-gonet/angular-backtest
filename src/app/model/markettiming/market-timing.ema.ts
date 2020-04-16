@@ -2,10 +2,12 @@ import { MarketTiming, BearBull } from '../core/market-timing';
 import { Quote } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { PeriodLength } from '../core/period';
-import { EmaCalculator } from '../core/moving-average';
+import { EmaCalculator, MovingAverageSource, MovingAveragePreprocessing } from '../core/moving-average';
 
 export class IEMAMarketTiming {
   id?: string;
+  source?: MovingAverageSource;
+  preprocessing?: MovingAveragePreprocessing;
   periodLength?: PeriodLength;
   shortPeriod?: number;
   longPeriod?: number;
@@ -30,6 +32,8 @@ export class EMAMarketTiming implements MarketTiming {
   constructor(obj = {} as IEMAMarketTiming){
     let {
       id = "EMA",
+      source = MovingAverageSource.CLOSE,
+      preprocessing = MovingAveragePreprocessing.LAST,
       periodLength = PeriodLength.MONTHLY,
       shortPeriod = 5,
       longPeriod = 15,
@@ -38,8 +42,20 @@ export class EMAMarketTiming implements MarketTiming {
     console.log("Starting EMAMarketTiming", id, periodLength, shortPeriod, longPeriod, status);
     this.id = id;
     this.status = status;
-    this.longEMA = new EmaCalculator({numberOfPeriods: longPeriod, periodLength: periodLength});
-    this.shortEMA = new EmaCalculator({numberOfPeriods: shortPeriod, periodLength: periodLength});
+
+    this.longEMA = new EmaCalculator({
+      numberOfPeriods: longPeriod,
+      periodLength: periodLength,
+      source: source,
+      preprocessing: preprocessing
+    });
+
+    this.shortEMA = new EmaCalculator({
+      numberOfPeriods: shortPeriod,
+      periodLength: periodLength,
+      source: source,
+      preprocessing: preprocessing
+    });
   }
 
   record(instant: Date, quote: Quote): void {
