@@ -1,5 +1,5 @@
-import { PeriodLength, Period } from '../core/period';
-import { Quote } from '../core/quotes';
+import { PeriodLength, Period } from './period';
+import { Quote } from './quotes';
 
 export enum EmaPreprocessing {
   TYPICAL,
@@ -154,7 +154,7 @@ export class EmaCalculator {
       let middle = Math.floor(sortedValues.length / 2);
       let a = sortedValues[middle - 1];
       let b = sortedValues[middle];
-      return (a + b) / 2;      
+      return (a + b) / 2;
     } else {
       let middle = Math.ceil(sortedValues.length / 2);
       return sortedValues[middle - 1];

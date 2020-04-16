@@ -2,7 +2,7 @@ import { MarketTiming, BearBull } from '../core/market-timing';
 import { Quote } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { PeriodLength } from '../core/period';
-import { EmaCalculator } from '../utils/ema';
+import { EmaCalculator } from '../core/moving-average';
 
 export class IEMAMarketTiming {
   id?: string;

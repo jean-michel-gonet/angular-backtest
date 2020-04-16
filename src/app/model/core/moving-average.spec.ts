@@ -1,4 +1,4 @@
-import { EmaCalculator, EmaSource, EmaPreprocessing } from './ema';
+import { EmaCalculator, EmaSource, EmaPreprocessing } from './moving-average';
 import { PeriodLength } from '../core/period';
 import { Quote } from '../core/quotes';
 
