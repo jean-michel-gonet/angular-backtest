@@ -1,8 +1,4 @@
 import { ViewChild, Component, NO_ERRORS_SCHEMA } from "@angular/core";
-import { MarketTimingComponent,
-  EMAMarketTimingComponent,
-  SuperthonMarketTimingComponent,
-  MACDMarketTimingComponent } from './market-timing.component';
 import { ComponentFixture, async, TestBed } from '@angular/core/testing';
 import { BearBull } from 'src/app/model/core/market-timing';
 import { SuperthonMarketTiming } from 'src/app/model/markettiming/market-timing.superthon';
@@ -10,6 +6,10 @@ import { PeriodLength } from 'src/app/model/core/period';
 import { EMAMarketTiming } from 'src/app/model/markettiming/market-timing.ema';
 import { MACDMarketTiming } from 'src/app/model/markettiming/market-timing.macd';
 import { MovingAverageSource, MovingAveragePreprocessing } from 'src/app/model/core/moving-average';
+import { EMAMarketTimingComponent } from './market-timing.ema.component';
+import { MarketTimingComponent } from './market-timing.component';
+import { SuperthonMarketTimingComponent } from './market-timing.superthon.component';
+import { MACDMarketTimingComponent } from './market-timing.macd.component';
 
 @Component({
   selector: 'parent',
@@ -67,8 +67,8 @@ describe('MarketTimingComponent', () => {
             <ema-filter id="XX"
                         source="OPEN"
                         preprocessing="MEDIAN"
-                        shortPeriod="7"
-                        longPeriod="14"
+                        fastPeriod="7"
+                        slowPeriod="14"
                         periodLength="WEEKLY"
                         status="BEAR"></ema-filter>
           </market-timing>`
@@ -81,14 +81,14 @@ describe('MarketTimingComponent', () => {
       let emaFilter = component.asMarketTiming() as EMAMarketTiming;
       expect(emaFilter.id).toBe("XX");
       expect(emaFilter.bearBull()).toBe(BearBull.BEAR);
-      expect(emaFilter.shortEMA.numberOfPeriods).toBe(7);
-      expect(emaFilter.shortEMA.periodLength).toBe(PeriodLength.WEEKLY);
-      expect(emaFilter.shortEMA.source).toBe(MovingAverageSource.OPEN);
-      expect(emaFilter.shortEMA.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
-      expect(emaFilter.longEMA.numberOfPeriods).toBe(14);
-      expect(emaFilter.longEMA.periodLength).toBe(PeriodLength.WEEKLY);
-      expect(emaFilter.longEMA.source).toBe(MovingAverageSource.OPEN);
-      expect(emaFilter.longEMA.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
+      expect(emaFilter.fastEMA.numberOfPeriods).toBe(7);
+      expect(emaFilter.fastEMA.periodLength).toBe(PeriodLength.WEEKLY);
+      expect(emaFilter.fastEMA.source).toBe(MovingAverageSource.OPEN);
+      expect(emaFilter.fastEMA.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
+      expect(emaFilter.slowEMA.numberOfPeriods).toBe(14);
+      expect(emaFilter.slowEMA.periodLength).toBe(PeriodLength.WEEKLY);
+      expect(emaFilter.slowEMA.source).toBe(MovingAverageSource.OPEN);
+      expect(emaFilter.slowEMA.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
   });
 
   it('Can instantiate a MACD filter', () => {

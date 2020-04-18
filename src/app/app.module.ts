@@ -8,11 +8,6 @@ import { AppComponent } from './app.component';
 import { ChartReportComponent } from './components/reports/chart-report.component';
 import { ChartReportConfigurationComponent } from './components/reports/chart-report-configuration.component';
 import {
-  EMAMarketTimingComponent,
-  SuperthonMarketTimingComponent,
-  MACDMarketTimingComponent,
-  MarketTimingComponent } from './components/markettiming/market-timing.component';
-import {
   AccountComponent,
   AccountsComponent } from './components/accounts/accounts.component';
 import { TransferToComponent } from './components/accounts/transfer-to.component';
@@ -27,6 +22,11 @@ import {SimulationComponent } from './components/simulation/simulation.component
 import { HomePage } from './pages/home/home.page';
 import { MarketTimingPage } from './pages/market-timing/market-timing.page';
 import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear.page';
+
+import { EMAMarketTimingComponent } from './components/markettiming/market-timing.ema.component';
+import { SuperthonMarketTimingComponent } from './components/markettiming/market-timing.superthon.component';
+import { MACDMarketTimingComponent } from './components/markettiming/market-timing.macd.component';
+import { MarketTimingComponent } from './components/markettiming/market-timing.component';
 
 import 'hammerjs';
 import 'chartjs-plugin-zoom';

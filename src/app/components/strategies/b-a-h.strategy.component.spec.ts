@@ -1,9 +1,11 @@
 import { Component, ViewChild, NO_ERRORS_SCHEMA } from "@angular/core";
 import { BuyAndHoldStrategyComponent } from './b-a-h.strategy.component';
 import { async, TestBed, ComponentFixture } from '@angular/core/testing';
-import { MarketTimingComponent, EMAMarketTimingComponent, SuperthonMarketTimingComponent, MACDMarketTimingComponent } from '../markettiming/market-timing.component';
-import { RegularTransferComponent } from '../transfer/regular-transfer.component';
 import { TransferToComponent } from '../accounts/transfer-to.component';
+import { MarketTimingComponent } from '../markettiming/market-timing.component';
+import { EMAMarketTimingComponent } from '../markettiming/market-timing.ema.component';
+import { SuperthonMarketTimingComponent } from '../markettiming/market-timing.superthon.component';
+import { MACDMarketTimingComponent } from '../markettiming/market-timing.macd.component';
 
 @Component({
   selector: 'parent',

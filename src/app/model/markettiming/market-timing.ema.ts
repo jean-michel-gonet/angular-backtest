@@ -9,22 +9,22 @@ export class IEMAMarketTiming {
   source?: MovingAverageSource;
   preprocessing?: MovingAveragePreprocessing;
   periodLength?: PeriodLength;
-  shortPeriod?: number;
-  longPeriod?: number;
+  fastPeriod?: number;
+  slowPeriod?: number;
   status?: BearBull;
 }
 
 /**
  * This indicator measures the difference between two moving averages
- * (EMA), a short one and a long one.
- * When the short is higher than the long, then it is a BULL period.
+ * (EMA), a fast one and a slow one.
+ * When the fast is higher than the slow, then it is a BULL period.
  * See also the MACDMarketTiming.
  * @class {EMAMarketTiming}
  */
 export class EMAMarketTiming implements MarketTiming {
   id: string;
-  shortEMA: EmaCalculator;
-  longEMA: EmaCalculator;
+  fastEMA: EmaCalculator;
+  slowEMA: EmaCalculator;
 
   status: BearBull;
   difference: number;
@@ -35,23 +35,23 @@ export class EMAMarketTiming implements MarketTiming {
       source = MovingAverageSource.CLOSE,
       preprocessing = MovingAveragePreprocessing.LAST,
       periodLength = PeriodLength.MONTHLY,
-      shortPeriod = 5,
-      longPeriod = 15,
+      fastPeriod = 5,
+      slowPeriod = 15,
       status = BearBull.BEAR
     } = obj;
-    console.log("Starting EMAMarketTiming", id, periodLength, shortPeriod, longPeriod, status);
+    console.log("Starting EMAMarketTiming", id, periodLength, fastPeriod, slowPeriod, status);
     this.id = id;
     this.status = status;
 
-    this.longEMA = new EmaCalculator({
-      numberOfPeriods: longPeriod,
+    this.slowEMA = new EmaCalculator({
+      numberOfPeriods: slowPeriod,
       periodLength: periodLength,
       source: source,
       preprocessing: preprocessing
     });
 
-    this.shortEMA = new EmaCalculator({
-      numberOfPeriods: shortPeriod,
+    this.fastEMA = new EmaCalculator({
+      numberOfPeriods: fastPeriod,
       periodLength: periodLength,
       source: source,
       preprocessing: preprocessing
@@ -59,10 +59,10 @@ export class EMAMarketTiming implements MarketTiming {
   }
 
   record(instant: Date, quote: Quote): void {
-    let longEMA = this.longEMA.ema(instant, quote);
-    let shortEMA = this.shortEMA.ema(instant, quote);
-    if (longEMA) {
-      this.difference = shortEMA - longEMA;
+    let slowEMA = this.slowEMA.ema(instant, quote);
+    let fastEMA = this.fastEMA.ema(instant, quote);
+    if (slowEMA) {
+      this.difference = fastEMA - slowEMA;
       if (this.difference > 0) {
         this.status = BearBull.BULL;
       } else {
@@ -93,11 +93,11 @@ export class EMAMarketTiming implements MarketTiming {
       }));
       report.receiveData(new ReportedData({
         sourceName: this.id + ".SEMA",
-        y: this.shortEMA.lastValue
+        y: this.fastEMA.lastValue
       }));
       report.receiveData(new ReportedData({
         sourceName: this.id + ".LEMA",
-        y: this.longEMA.lastValue
+        y: this.slowEMA.lastValue
       }));
     }
   }
