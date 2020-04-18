@@ -1,4 +1,4 @@
-import { Component, Input, AfterViewInit, ContentChild } from '@angular/core';
+import { Component, Input, ContentChild } from '@angular/core';
 import { ChartReportComponent } from '../reports/chart-report.component';
 import { AccountsComponent } from '../accounts/accounts.component';
 import { QuotesService } from 'src/app/services/quotes/quotes.service';

@@ -3,16 +3,16 @@ import { ChartReportComponent } from './chart-report.component';
 import { ComponentFixture, async, TestBed } from '@angular/core/testing';
 import { ChartReportConfigurationComponent } from './chart-report-configuration.component';
 import { Report, Reporter, ReportedData } from 'src/app/model/core/reporting';
-import { Ng2ChartReport, Ng2ChartConfiguration, ShowDataAs, ShowDataOn } from 'src/app/model/reports/ng2-chart.report';
+import { Ng2ChartReport, ShowDataAs, ShowDataOn, INg2ChartReport } from 'src/app/model/reports/ng2-chart.report';
 
 @Component({
   selector: 'parent',
   template: `
-  <chart-report>
-  <chart-report-configuration show="XX"
-                              showDataAs="LINE"
-                              showDataOn="RIGHT"
-                              normalize="true"></chart-report-configuration>
+  <chart-report start="2020-12-25" end="2021-11-13">
+    <chart-report-configuration show="XX"
+                                showDataAs="LINE"
+                                showDataOn="RIGHT"
+                                normalize="true"></chart-report-configuration>
   </chart-report>`})
 class TestWrapperComponent {
   @ViewChild(ChartReportComponent, {static: true})
@@ -20,14 +20,14 @@ class TestWrapperComponent {
 }
 
 class TestReport implements Report {
-  public configuration: Ng2ChartConfiguration[];
+  public configuration: INg2ChartReport;
 
   public registeredReporter: Reporter;
   public startedReportingCycle: Date;
   public reportsHaveBeenCollected: boolean = false;
   public reportHasBeenCompleted: boolean = false;
 
-  initialize(configuration: Ng2ChartConfiguration[]): void {
+  initialize(configuration: INg2ChartReport): void {
     this.configuration = configuration;
   }
 
@@ -95,7 +95,9 @@ describe('ChartReportComponent', () => {
   });
 
   it('Passes the configuration to the inner report', () => {
-    expect(testReport.configuration).toEqual(jasmine.arrayWithExactContents([
+    expect(testReport.configuration.start).toEqual(new Date(2020, 12 - 1, 25));
+    expect(testReport.configuration.end).toEqual(new Date(2021, 11 - 1, 13));
+    expect(testReport.configuration.configurations).toEqual(jasmine.arrayWithExactContents([
       {
         show: "XX",
         as: ShowDataAs.LINE,

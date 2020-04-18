@@ -2,40 +2,85 @@ import { Ng2ChartReport, ShowDataAs, ShowDataOn } from "./ng2-chart.report";
 import { ReportedData } from '../core/reporting';
 
 describe('Ng2ChartReport', () => {
-  it('should create an instance', () => {
-    expect(new Ng2ChartReport([
-          {
-            show: "SQA01.NAV",
-            as: ShowDataAs.LINE,
-            on: ShowDataOn.LEFT
-          },
-          {
-            show: "LU1290894820.CLOSE",
-            as: ShowDataAs.LINE,
-            on: ShowDataOn.LEFT
-          },
-          {
-            show: "SQA01.COSTS",
-            as: ShowDataAs.SCATTER,
-            on: ShowDataOn.RIGHT
-          },
-          {
-            show: "BAH01.OUTPUT",
-            as: ShowDataAs.SCATTER,
-            on: ShowDataOn.RIGHT
-          }
-        ])).toBeTruthy();
-  });
-
+  let yesterday = new Date(2015, 8, 17);
   let today = new Date(2015, 8, 18);
   let tomorrow = new Date(2015, 8, 19);
+  let pastTomorrow = new Date(2015, 8, 20);
+
+  it('should create an instance', () => {
+    expect(new Ng2ChartReport({
+      configurations: [
+            {
+              show: "SQA01.NAV",
+              as: ShowDataAs.LINE,
+              on: ShowDataOn.LEFT
+            },
+            {
+              show: "LU1290894820.CLOSE",
+              as: ShowDataAs.LINE,
+              on: ShowDataOn.LEFT
+            },
+            {
+              show: "SQA01.COSTS",
+              as: ShowDataAs.SCATTER,
+              on: ShowDataOn.RIGHT
+            },
+            {
+              show: "BAH01.OUTPUT",
+              as: ShowDataAs.SCATTER,
+              on: ShowDataOn.RIGHT
+            }
+          ],
+      start: today,
+      end: tomorrow
+    })).toBeTruthy();
+  });
+
+  it('Can ignore data outside of start and end limits', () => {
+    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport({
+      start: today,
+      end: tomorrow,
+      configurations:[
+        {
+          show: "SQA01.NAV",
+          as: ShowDataAs.LINE,
+          on: ShowDataOn.LEFT
+        }
+      ]});
+
+    ng2ChartReport.startReportingCycle(yesterday);
+    ng2ChartReport.receiveData(new ReportedData({
+      sourceName: "SQA01.NAV",
+      y: 100
+    }));
+    ng2ChartReport.startReportingCycle(pastTomorrow);
+    ng2ChartReport.receiveData(new ReportedData({
+      sourceName: "SQA01.NAV",
+      y: 101
+    }));
+
+    expect(ng2ChartReport.dataSets).toEqual(jasmine.arrayWithExactContents([{
+      data: [],
+      label: "SQA01.NAV",
+      yAxisID: "y-axis-left",
+      type: "line",
+      borderWidth: 1,
+      pointRadius: 1.2
+    }]));
+
+  });
 
   it('Can process to data the same set', () => {
-    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport([{
-      show: "SQA01.NAV",
-      as: ShowDataAs.LINE,
-      on: ShowDataOn.LEFT
-    }]);
+    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport({
+      start: today,
+      end: tomorrow,
+      configurations:[
+        {
+          show: "SQA01.NAV",
+          as: ShowDataAs.LINE,
+          on: ShowDataOn.LEFT
+        }
+      ]});
 
     ng2ChartReport.startReportingCycle(today);
     ng2ChartReport.receiveData(new ReportedData({
@@ -60,17 +105,19 @@ describe('Ng2ChartReport', () => {
   });
 
   it('Can process four data of two different sets', () => {
-    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport([
-      {
-        show: "SQA01.NAV",
-        as: ShowDataAs.LINE,
-        on: ShowDataOn.LEFT
-      }, {
-        show: "SQA01.COSTS",
-        as: ShowDataAs.SCATTER,
-        on: ShowDataOn.RIGHT
-      }
-    ]);
+    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport({
+      configurations: [
+        {
+          show: "SQA01.NAV",
+          as: ShowDataAs.LINE,
+          on: ShowDataOn.LEFT
+        },
+        {
+          show: "SQA01.COSTS",
+          as: ShowDataAs.SCATTER,
+          on: ShowDataOn.RIGHT
+        }
+      ]});
 
     ng2ChartReport.startReportingCycle(today);
     ng2ChartReport.receiveData(new ReportedData({
@@ -112,19 +159,21 @@ describe('Ng2ChartReport', () => {
   });
 
   it('Can normalize outputs', () => {
-    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport([
-      {
-        show: "VALUE1",
-        as: ShowDataAs.LINE,
-        on: ShowDataOn.LEFT,
-        normalize: true
-      }, {
-        show: "VALUE2",
-        as: ShowDataAs.SCATTER,
-        on: ShowDataOn.LEFT,
-        normalize: true
-      }
-    ]);
+    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport({
+      configurations:[
+        {
+          show: "VALUE1",
+          as: ShowDataAs.LINE,
+          on: ShowDataOn.LEFT,
+          normalize: true
+        },
+        {
+          show: "VALUE2",
+          as: ShowDataAs.SCATTER,
+          on: ShowDataOn.LEFT,
+          normalize: true
+        }
+      ]});
 
     ng2ChartReport.startReportingCycle(today);
     ng2ChartReport.receiveData(new ReportedData({
@@ -166,19 +215,21 @@ describe('Ng2ChartReport', () => {
   });
 
   it('Can normalize outputs even if one set starts at zero', () => {
-    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport([
-      {
-        show: "VALUE1",
-        as: ShowDataAs.LINE,
-        on: ShowDataOn.LEFT,
-        normalize: true
-      }, {
-        show: "VALUE2",
-        as: ShowDataAs.SCATTER,
-        on: ShowDataOn.LEFT,
-        normalize: true
-      }
-    ]);
+    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport({
+      configurations: [
+        {
+          show: "VALUE1",
+          as: ShowDataAs.LINE,
+          on: ShowDataOn.LEFT,
+          normalize: true
+        },
+        {
+          show: "VALUE2",
+          as: ShowDataAs.SCATTER,
+          on: ShowDataOn.LEFT,
+          normalize: true
+        }
+      ]});
 
     ng2ChartReport.startReportingCycle(today);
     ng2ChartReport.receiveData(new ReportedData({
@@ -220,17 +271,19 @@ describe('Ng2ChartReport', () => {
   });
 
   it('Can hide the left axis when not used', () => {
-    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport([
-      {
-        show: "VALUE1",
-        as: ShowDataAs.LINE,
-        on: ShowDataOn.LEFT
-      }, {
-        show: "VALUE2",
-        as: ShowDataAs.SCATTER,
-        on: ShowDataOn.LEFT
-      }
-    ]);
+    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport({
+      configurations: [
+        {
+          show: "VALUE1",
+          as: ShowDataAs.LINE,
+          on: ShowDataOn.LEFT
+        },
+        {
+          show: "VALUE2",
+          as: ShowDataAs.SCATTER,
+          on: ShowDataOn.LEFT
+        }
+      ]});
     expect(ng2ChartReport.options.scales.yAxes).toEqual(jasmine.arrayWithExactContents([
       {
         id: "y-axis-left",
@@ -242,17 +295,18 @@ describe('Ng2ChartReport', () => {
   });
 
   it('Can hide the right axis when not used', () => {
-    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport([
-      {
-        show: "VALUE1",
-        as: ShowDataAs.LINE,
-        on: ShowDataOn.RIGHT
-      }, {
-        show: "VALUE2",
-        as: ShowDataAs.SCATTER,
-        on: ShowDataOn.RIGHT
-      }
-    ]);
+    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport({
+      configurations: [
+        {
+          show: "VALUE1",
+          as: ShowDataAs.LINE,
+          on: ShowDataOn.RIGHT
+        }, {
+          show: "VALUE2",
+          as: ShowDataAs.SCATTER,
+          on: ShowDataOn.RIGHT
+        }
+      ]});
     expect(ng2ChartReport.options.scales.yAxes).toEqual(jasmine.arrayWithExactContents([
       {
         id: "y-axis-right",
@@ -262,5 +316,4 @@ describe('Ng2ChartReport', () => {
         }
       }]));
   });
-
 });
