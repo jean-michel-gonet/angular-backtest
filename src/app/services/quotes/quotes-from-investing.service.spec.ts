@@ -28,7 +28,7 @@ describe('QuotesFromInvestingService', () => {
     service.getHistoricalQuotes("SOURCE", "NAME").subscribe((data: HistoricalQuotes) => {
       expect(data).toBeTruthy();
     });
-    
+
     const req = httpMock.expectOne((request: HttpRequest<any>) => {
       expect(request.method).toBe('GET');
       expect(request.url).toContain('SOURCE');
@@ -58,6 +58,20 @@ describe('InvestingConverter', () => {
               high: 260.81,
               low: 251.05,
               volume: 220440000,
+              spread: 0,
+              dividend: 0
+            })]}),
+        new IInstantQuotes({
+          instant: new Date(2020, 3 - 1, 28),
+          quotes: [
+            new Quote({
+              name: "ISIN1",
+              close: 253.42,
+              open: 253.42,
+              high: 253.42,
+              low: 253.42,
+              volume: undefined,
+              alert: "Circuit Breaker",
               spread: 0,
               dividend: 0
             })]}),

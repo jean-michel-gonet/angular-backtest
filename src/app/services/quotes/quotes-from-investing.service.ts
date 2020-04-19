@@ -35,26 +35,28 @@ export class InvestingConverter {
         let sHigh:     string = this.trimQuotes(tokens[4]);
         let sLow:      string = this.trimQuotes(tokens[5]);
         let sVolume:   string = this.trimQuotes(tokens[6]);
-        let sChange:   string = this.trimQuotes(tokens[7]);
 
+        let alert: string;
         let volume: number = this.convertToNumber(sVolume);
-        if (volume) {
-          let instantQuotes: InstantQuotes = new InstantQuotes({
-            instant: this.convertToDate(sMonthDay, sYear),
-            quotes: [
-              new Quote({
-                name: this.name,
-                open: this.convertToNumber(sOpen),
-                close: this.convertToNumber(sPrice),
-                high: this.convertToNumber(sHigh),
-                low: this.convertToNumber(sLow),
-                volume: this.convertToNumber(sVolume),
-                spread: 0,
-                dividend: 0})
-            ]
-          });
-          historicalQuotes.push(instantQuotes);
+        if (!volume) {
+          alert = "Circuit Breaker"
         }
+        let instantQuotes: InstantQuotes = new InstantQuotes({
+          instant: this.convertToDate(sMonthDay, sYear),
+          quotes: [
+            new Quote({
+              name: this.name,
+              open: this.convertToNumber(sOpen),
+              close: this.convertToNumber(sPrice),
+              high: this.convertToNumber(sHigh),
+              low: this.convertToNumber(sLow),
+              volume: volume,
+              alert: alert,
+              spread: 0,
+              dividend: 0})
+          ]
+        });
+        historicalQuotes.push(instantQuotes);
       }
     });
     return new HistoricalQuotes(historicalQuotes);

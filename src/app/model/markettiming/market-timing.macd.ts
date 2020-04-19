@@ -99,26 +99,28 @@ export class MACDMarketTiming implements MarketTiming {
   }
 
   reportTo(report: Report): void {
-    report.receiveData(new ReportedData({
-      sourceName: this.id + ".SLOW",
-      y: this.slowEma.lastValue
-    }));
-    report.receiveData(new ReportedData({
-      sourceName: this.id + ".FAST",
-      y: this.fastEma.lastValue
-    }));
-    report.receiveData(new ReportedData({
-      sourceName: this.id + ".MACD",
-      y: this.macd
-    }));
-    report.receiveData(new ReportedData({
-      sourceName: this.id + ".SIGNAL",
-      y: this.signal
-    }));
-    report.receiveData(new ReportedData({
-      sourceName: this.id + ".HISTOGRAM",
-      y: this.macd - this.signal
-    }));
+    if (this.macd) {
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".SLOW",
+        y: this.slowEma.lastValue
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".FAST",
+        y: this.fastEma.lastValue
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".MACD",
+        y: this.macd
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".SIGNAL",
+        y: this.signal
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".HISTOGRAM",
+        y: this.macd - this.signal
+      }));
+    }
   }
 
   bearBull(): BearBull {
