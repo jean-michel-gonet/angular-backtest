@@ -1,2 +1,27 @@
 <h1>This is the home page</h1>
-<p>Hi, there, I'm the home page</p>
+<simulation start="2010-01-01" end="2020-4-9" quotes="SPY">
+  <chart-report start="2018-01-01">
+    <chart-report-configuration show="SPY.CLOSE"      showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
+    <chart-report-configuration show="MACD.SLOW"      showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
+    <chart-report-configuration show="MACD.FAST"      showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
+    <chart-report-configuration show="MACD.SIGNAL"    showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
+    <chart-report-configuration show="MACD.MACD"      showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
+    <chart-report-configuration show="MACD.HISTOGRAM" showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
+  </chart-report>
+  <accounts>
+    <swiss-quote id="MACD" cash="100000">
+      <strategy>
+        <buy-and-hold assetName="SPY">
+          <market-timing>
+            <macd-filter id="MACD"
+                         slowPeriod="26"
+                         fastPeriod="12"
+                         signalPeriod="9"
+                         source="CLOSE"
+                         periodLength="DAILY"></macd-filter>
+          </market-timing>
+        </buy-and-hold>
+      </strategy>
+    </swiss-quote>
+  </accounts>
+</simulation>

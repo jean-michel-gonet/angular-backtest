@@ -109,6 +109,7 @@ class IQuote extends ICandleStick {
   volume?: number;
   spread?: number;
   dividend?: number;
+  alert?: string;
 }
 
 /**
@@ -145,18 +146,29 @@ export class Quote extends Candlestick {
    */
   dividend?: number;
 
+  /**
+   * A text describing the kind of anomaly found in the data.
+   * For example the infamous 'circuit breakers' that some stock exchange
+   * organization implement when things get too scary to continue trading.
+   * Could also be any other kind of alert.
+   * See https://en.wikipedia.org/wiki/Trading_curb
+   */
+  alert?: string;
+
   constructor(obj: IQuote = {} as IQuote) {
     super(obj);
     let {
       name = "",
       volume = 0,
       spread = 0,
-      dividend = 0
+      dividend = 0,
+      alert
     } = obj;
     this.name = name;
     this.volume = volume;
     this.spread = spread;
     this.dividend = dividend;
+    this.alert = alert;
   }
 }
 

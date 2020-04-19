@@ -22,26 +22,45 @@
 <p>This is a simulation with the following components:</p>
 <ul>
   <li>During Bull periods, invest in a fund tracking the S&amp;P500</li>
-  <li>During Bear periods, invest in the <em>Aggregated Bonds USA</em>.</li>
+  <li>During Bear periods, sell the position and stay in cash</li>
   <li>Use different market timing to discriminate between Bull and Bear</li>
   <li>Start in 1996 with USD 100.000, and end in 2020.</li>
 </ul>
-<simulation start="1996-1-1" end="2020-1-1" quotes="SP500, AGG">
+<simulation start="1996-1-1" end="2020-4-9" quotes="SP500, AGG">
   <chart-report>
-    <chart-report-configuration show="SP500.CLOSE"    showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
-    <chart-report-configuration show="AGG.CLOSE"      showDataAs="LINE" showDataOn="LEFT"  normalize="false"></chart-report-configuration>
-    <chart-report-configuration show="PORTFOLIO.NAV"  showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
+    <chart-report-configuration show="SP500.CLOSE" showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
+    <chart-report-configuration show="CANDLE.NAV"  showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
+    <chart-report-configuration show="EMA.NAV"     showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
+    <chart-report-configuration show="MACD.NAV"    showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
+    <!--chart-report-configuration show="CANF.SUPERTHON"  showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration-->
+    <!--chart-report-configuration show="EMAF.SEMA"  showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration-->
+    <!--chart-report-configuration show="EMAF.LEMA"  showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration-->
   </chart-report>
   <accounts>
-    <swiss-quote id="PORTFOLIO" cash="100000">
+    <swiss-quote id="CANDLE" cash="100000">
       <strategy>
-        <buy-and-hold assetName="SP500" assetNameDuringBear="AGG">
+        <buy-and-hold assetName="SP500">
           <market-timing>
-            <candle-filter></candle-filter>
+            <candle-filter id="CANF"></candle-filter>
           </market-timing>
-          <regular-transfer transfer="660" every="MONTH">
-            <to-account id="LIFESTYLE" cash="0"></to-account>
-          </regular-transfer>
+        </buy-and-hold>
+      </strategy>
+    </swiss-quote>
+    <swiss-quote id="EMA" cash="100000">
+      <strategy>
+        <buy-and-hold assetName="SP500">
+          <market-timing>
+            <ema-filter id="EMAF"></ema-filter>
+          </market-timing>
+        </buy-and-hold>
+      </strategy>
+    </swiss-quote>
+    <swiss-quote id="MACD" cash="100000">
+      <strategy>
+        <buy-and-hold assetName="SP500">
+          <market-timing>
+            <macd-filter></macd-filter>
+          </market-timing>
         </buy-and-hold>
       </strategy>
     </swiss-quote>

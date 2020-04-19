@@ -19,12 +19,12 @@ class IBuyAndHoldStrategy {
  * @class {BuyAndHoldStrategy}
  */
 export class BuyAndHoldStrategy implements Strategy {
-  assetName: string;
-  assetNameDuringBear: string;
-  transfer: RegularTransfer;
-  marketTiming: MarketTiming;
-  reinvestDivindends: boolean;
-  receivedDividends: number;
+  public assetName: string;
+  public assetNameDuringBear: string;
+  public transfer: RegularTransfer;
+  public marketTiming: MarketTiming;
+  public reinvestDivindends: boolean;
+  public receivedDividends: number;
 
   constructor(obj = {} as IBuyAndHoldStrategy) {
     let {

@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { HistoricalQuotes, InstantQuotes, Quote, HistoricalValue } from 'src/app/model/core/quotes';
 import { QuotesConfigurationService, NamedQuoteSource, QuoteProvider, DataFormat, IQuotesConfigurationService } from './quotes-configuration.service';
 import { PlainDataService, IPlainDataService } from './plain-data.service';
+import { QuotesFromInvestingService } from './quotes-from-investing.service';
 
 class PlainDataServiceMock implements IPlainDataService {
   private dividends: Map<string, HistoricalValue[]> = new Map<string, HistoricalValue[]>();
@@ -62,6 +63,7 @@ class QuotesConfigurationServiceMock implements IQuotesConfigurationService {
 describe('QuotesService', () => {
   let six: ConnectionServiceMock;
   let yahoo: ConnectionServiceMock;
+  let investing: ConnectionServiceMock;
   let painData: PlainDataServiceMock;
   let configurationService: QuotesConfigurationServiceMock;
   let quotesService: QuotesService;
@@ -79,12 +81,14 @@ describe('QuotesService', () => {
       providers: [
         {provide: QuotesFromSixService, useClass: ConnectionServiceMock},
         {provide: QuotesFromYahooService, useClass: ConnectionServiceMock},
+        {provide: QuotesFromInvestingService, useClass: ConnectionServiceMock},
         {provide: PlainDataService, useClass: PlainDataServiceMock},
         {provide: QuotesConfigurationService, useClass: QuotesConfigurationServiceMock }
       ]
     });
     six = TestBed.get(QuotesFromSixService);
     yahoo = TestBed.get(QuotesFromYahooService);
+    investing = TestBed.get(QuotesFromInvestingService);
     painData = TestBed.get(PlainDataService);
     configurationService = TestBed.get(QuotesConfigurationService);
 
@@ -93,6 +97,27 @@ describe('QuotesService', () => {
 
   it('Can create a new instance', () => {
     expect(quotesService).toBeTruthy();
+  });
+
+  it('Can retrieve from Investing data', (done: DoneFn) => {
+    configurationService.when("ISIN3", {
+      name: "ISIN3",
+      quote: {
+        provider: QuoteProvider.INVESTING,
+        uri: "xx",
+      }
+    });
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: beforeYesterday, quotes: [
+        new Quote({name: "ISIN3", close: 1.3})
+      ]})]);
+
+    investing.whenQuotes(quotesService.makeRelativePath("xx"), historicalQuotes);
+
+    quotesService.getQuotes(["ISIN3"]).subscribe(data => {
+      expect(data.get(beforeYesterday).quote("ISIN3").close).toBe(1.3);
+      done();
+    });
   });
 
   it('Can retrieve from Yahoo data', (done: DoneFn) => {

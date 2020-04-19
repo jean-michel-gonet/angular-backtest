@@ -1,11 +1,11 @@
-import { ChartDataSets, ChartOptions } from 'chart.js';
+import { ChartDataSets, ChartOptions, ChartPoint } from 'chart.js';
 import { Label } from 'ng2-charts';
 import { Report, Reporter, ReportedData } from '../core/reporting';
 import { Injectable } from '@angular/core';
 
 export enum ShowDataAs {
   LINE = 'LINE',
-  BAR = 'BAR'
+  SCATTER = 'SCATTER'
 };
 
 export enum ShowDataOn {
@@ -13,12 +13,66 @@ export enum ShowDataOn {
   RIGHT = 'RIGHT'
 };
 
-export class Ng2ChartConfiguration {
+export interface Ng2ChartConfiguration {
   show: string;
   as: ShowDataAs;
   on: ShowDataOn;
   normalize?: boolean;
 }
+
+export interface INg2ChartReport {
+  start?: Date;
+  end?: Date;
+  configurations: Ng2ChartConfiguration[]
+}
+
+/**
+ * Formats the provided number as a date
+ */
+let formatAsDate = function(value: any): string {
+  let date: Date = new Date(value);
+  let sYear: string = "" + date.getFullYear();
+  let month: number = date.getMonth() + 1;
+  let sMonth: string;
+  if (month < 10) {
+    sMonth = "0" + month;
+  } else {
+    sMonth = "" + month;
+  }
+  let day: number = date.getDate();
+  let sDay: string;
+  if (day < 10) {
+    sDay = "0" + day;
+  } else {
+    sDay = "" + day;
+  }
+  let s = sYear + "." + sMonth + "." + sDay
+  return s;
+}
+
+/**
+ * Formats the title of the tooltip.
+ */
+let formatTooltipTitle = function(tooltipItems: any[]): string {
+  let tooltipItem = tooltipItems[0];
+  let value = parseInt(tooltipItem.label);
+  return formatAsDate(value);
+}
+
+/**
+ * Formats the label of the tooltip.
+ * Which is actually the value.
+ */
+let formatLabel = function(tooltipItem: Chart.ChartTooltipItem, data: Chart.ChartData): string {
+  let dataSet: ChartDataSets = data.datasets[tooltipItem.datasetIndex];
+  let dataName: string = dataSet.label;
+
+  let value: number = parseFloat(tooltipItem.value);
+  let dataValue: number = Math.round(value * 100) / 100;
+
+  return dataName + ": " + dataValue;
+}
+
 
 /**
  * Receives the data and formats them into Ng2 data, so they can directly
@@ -32,48 +86,93 @@ export class Ng2ChartConfiguration {
    }
  })
 export class Ng2ChartReport implements Report {
+  public start: number;
+  public end: number;
   public dataSets: ChartDataSets[];
   public labels: Label[];
   public options: ChartOptions = {
+      animation: {
+        duration: 0
+      },
+      hover: {
+        animationDuration: 0
+      },
+      responsiveAnimationDuration: 0,
       legend: {
         display: true
+      },
+      tooltips: {
+        callbacks: {
+          title: formatTooltipTitle,
+          label: formatLabel,
+        }
       },
       scales: {
         yAxes: [],
         xAxes: [{
+          type: 'linear',
+          position: 'bottom',
           ticks: {
+            callback: formatAsDate,
             display: true,
           }
         }],
+      },
+      plugins: {
+        zoom: {
+          pan: {
+            enabled: true,
+            mode: 'xy'
+          },
+          zoom: {
+            enabled: true,
+            mode: 'xy'
+          }
+        }
       }
     };
   private mapOfDatasets: Map<String, ChartDataSets>;
   private mapOfConfigurations: Map<String, Ng2ChartConfiguration>;
   private reporters: Reporter[] = [];
 
-  constructor(obj = [] as Ng2ChartConfiguration[]) {
+  constructor(obj = {} as INg2ChartReport) {
     this.initialize(obj);
   }
 
-  public initialize(obj = [] as Ng2ChartConfiguration[]): void {
+  public initialize(obj = {} as INg2ChartReport): void {
     this.mapOfDatasets = new Map<String, ChartDataSets>();
     this.mapOfConfigurations = new Map<String, Ng2ChartConfiguration>();
     this.dataSets = [];
     this.labels = [];
-    obj.forEach(show => {
+
+    let {
+      start,
+      end,
+      configurations = []
+    } = obj;
+    if (start) {
+      this.start = start.valueOf();
+    }
+    if (end) {
+      this.end = end.valueOf();
+    }
+
+    configurations.forEach(show => {
       let yAxisID:string = "y-axis-" + this.showOn(show.on);
       let dataSet: ChartDataSets = {
         data: [],
         label: show.show,
         yAxisID: yAxisID,
         type: this.showAs(show.as),
-        pointRadius: 0
+        borderWidth: 1,
+        pointRadius: 1.2
       };
       this.mapOfDatasets.set(show.show, dataSet);
       this.mapOfConfigurations.set(show.show, show);
       this.dataSets.push(dataSet);
     });
   }
+
   private leftAxisIsUsed:boolean = false;
   private rightAxisIsUsed: boolean = false;
 
@@ -115,8 +214,8 @@ export class Ng2ChartReport implements Report {
     switch(showAs) {
       case ShowDataAs.LINE:
         return "line";
-      case ShowDataAs.BAR:
-        return "bar";
+      case ShowDataAs.SCATTER:
+        return "scatter";
       default:
         console.warn("showAs=" + showAs + ": unknown literal of ShowDataAs");
         return "";
@@ -130,15 +229,30 @@ export class Ng2ChartReport implements Report {
     this.reporters.push(reporter);
   }
 
-  startReportingCycle(instant: Date): void {
-    this.labels.push(instant.toDateString());
-    this.dataSets.forEach(d => {
-      d.data.push(0);
-    });
+  private x: number;
 
-    this.reporters.forEach(reporter => {
-      reporter.startReportingCycle(instant);
-    });
+  startReportingCycle(instant: Date): void {
+    let x = instant.valueOf();
+    let betweenStartAndEnd: boolean = true;
+
+    if (this.start) {
+      if (x < this.start) {
+        betweenStartAndEnd = false;
+      }
+    }
+    if (this.end) {
+      if (x > this.end) {
+        betweenStartAndEnd = false;
+      }
+    }
+    if (betweenStartAndEnd) {
+      this.x = instant.valueOf();
+      this.reporters.forEach(reporter => {
+        reporter.startReportingCycle(instant);
+      });
+    } else {
+      this.x = null;
+    }
   }
 
   collectReports(): void {
@@ -148,10 +262,14 @@ export class Ng2ChartReport implements Report {
   }
 
   receiveData(providedData: ReportedData): void {
-    let dataSet: ChartDataSets = this.mapOfDatasets.get(providedData.sourceName);
-    if (dataSet) {
-      let normalizedY: number = this.normalize(providedData.sourceName, providedData.y);
-      dataSet.data[dataSet.data.length - 1] = normalizedY;
+    if (this.x) {
+      let dataSet: ChartDataSets = this.mapOfDatasets.get(providedData.sourceName);
+      if (dataSet) {
+        let data: ChartPoint[] = dataSet.data as ChartPoint[];
+        let normalizedY: number = this.normalize(providedData.sourceName, providedData.y);
+        let chartPoint: ChartPoint = {x: this.x, y: normalizedY};
+        data.push(chartPoint);
+      }
     }
   }
 

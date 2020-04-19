@@ -1,97 +1,80 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
 import { Quote } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
-import { PeriodLength, Period } from '../core/period';
+import { PeriodLength } from '../core/period';
+import { EmaCalculator, MovingAverageSource, MovingAveragePreprocessing } from '../core/moving-average';
 
 export class IEMAMarketTiming {
   id?: string;
+  source?: MovingAverageSource;
+  preprocessing?: MovingAveragePreprocessing;
   periodLength?: PeriodLength;
-  shortPeriod?: number;
-  longPeriod?: number;
+  fastPeriod?: number;
+  slowPeriod?: number;
   status?: BearBull;
 }
 
 /**
  * This indicator measures the difference between two moving averages
- * (EMA), a short one and a long one.
- * When the short is higher than the long, then it is a BULL period.
+ * (EMA), a fast one and a slow one.
+ * When the fast is higher than the slow, then it is a BULL period.
  * See also the MACDMarketTiming.
  * @class {EMAMarketTiming}
  */
 export class EMAMarketTiming implements MarketTiming {
   id: string;
-  periodLength?: PeriodLength;
-  shortPeriod: number;
-  longPeriod: number;
+  fastEMA: EmaCalculator;
+  slowEMA: EmaCalculator;
+
   status: BearBull;
-
-  period: Period;
-  shortEMA: number;
-  longEMA: number;
   difference: number;
-
-  protected periodQuotes: number[] = [];
 
   constructor(obj = {} as IEMAMarketTiming){
     let {
       id = "EMA",
+      source = MovingAverageSource.CLOSE,
+      preprocessing = MovingAveragePreprocessing.LAST,
       periodLength = PeriodLength.MONTHLY,
-      shortPeriod = 5,
-      longPeriod = 15,
+      fastPeriod = 5,
+      slowPeriod = 15,
       status = BearBull.BEAR
     } = obj;
+    console.log("Starting EMAMarketTiming", id, periodLength, fastPeriod, slowPeriod, status);
     this.id = id;
-    this.periodLength = periodLength;
-    this.shortPeriod = shortPeriod;
-    this.longPeriod = longPeriod;
     this.status = status;
 
-    this.period = new Period(periodLength);
+    this.slowEMA = new EmaCalculator({
+      numberOfPeriods: slowPeriod,
+      periodLength: periodLength,
+      source: source,
+      preprocessing: preprocessing
+    });
+
+    this.fastEMA = new EmaCalculator({
+      numberOfPeriods: fastPeriod,
+      periodLength: periodLength,
+      source: source,
+      preprocessing: preprocessing
+    });
   }
 
   record(instant: Date, quote: Quote): void {
-    if (this.period.changeOfPeriod(instant)) {
-        let periodMean = this.mean(this.periodQuotes);
-        this.shortEMA = this.ema(this.shortEMA, this.shortPeriod, periodMean);
-        this.longEMA  = this.ema(this.longEMA , this.longPeriod , periodMean);
-        this.difference = this.shortEMA - this.longEMA;
-
-        if (this.difference > 0) {
-          this.status = BearBull.BULL;
-        } else {
-          this.status = BearBull.BEAR;
-        }
-
-        this.periodQuotes = [];
+    let slowEMA = this.slowEMA.ema(instant, quote);
+    let fastEMA = this.fastEMA.ema(instant, quote);
+    if (slowEMA) {
+      this.difference = fastEMA - slowEMA;
+      if (this.difference > 0) {
+        this.status = BearBull.BULL;
+      } else {
+        this.status = BearBull.BEAR;
+      }
+    } else {
+      this.difference = null;
     }
-
-    this.periodQuotes.push(quote.close);
   }
 
   bearBull(): BearBull {
     return this.status;
-  }
-
-  magnitude(): number {
-    return this.difference;
-  }
-
-  protected mean(values: number[]):number {
-    let mean: number = 0;
-    for (let n: number = 0; n < values.length; n++) {
-      mean += values[n];
-    }
-    mean /= values.length;
-    return mean;
-  }
-
-  protected ema(previousEma: number, numberOfPeriods: number, latestQuote: number) {
-    if (previousEma) {
-      let k: number = 2 / (numberOfPeriods + 1);
-      return latestQuote * k + previousEma * (1 - k);
-    } else {
-      return latestQuote;
-    }
   }
 
   doRegister(report :Report): void {
@@ -103,18 +86,20 @@ export class EMAMarketTiming implements MarketTiming {
   }
 
   reportTo(report: Report): void {
-    report.receiveData(new ReportedData({
-      sourceName: this.id + ".DIFF",
-      y: this.difference
-    }));
-    report.receiveData(new ReportedData({
-      sourceName: this.id + ".SEMA",
-      y: this.shortEMA
-    }));
-    report.receiveData(new ReportedData({
-      sourceName: this.id + ".LEMA",
-      y: this.longEMA
-    }));
+    if (this.difference) {
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".DIFF",
+        y: this.difference
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".SEMA",
+        y: this.fastEMA.lastValue
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".LEMA",
+        y: this.slowEMA.lastValue
+      }));
+    }
   }
 
 }

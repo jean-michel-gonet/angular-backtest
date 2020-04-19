@@ -8,26 +8,28 @@ import { AppComponent } from './app.component';
 import { ChartReportComponent } from './components/reports/chart-report.component';
 import { ChartReportConfigurationComponent } from './components/reports/chart-report-configuration.component';
 import {
-  EMAMarketTimingComponent,
-  SuperthonMarketTimingComponent,
-  MACDMarketTimingComponent,
-  MarketTimingComponent } from './components/markettiming/market-timing.component';
-import {
   AccountComponent,
   AccountsComponent } from './components/accounts/accounts.component';
 import { TransferToComponent } from './components/accounts/transfer-to.component';
 import { SwissQuoteAccountComponent } from './components/accounts/swiss-quote-account.component';
 
-import {
-  RegularTransferComponent } from './components/transfer/regular-transfer.component';
+import { RegularTransferComponent } from './components/transfer/regular-transfer.component';
 
-import {
-  BuyAndHoldStrategyComponent,
-  StrategyComponent } from './components/strategies/strategy.component';
+import { StrategyComponent } from './components/strategies/strategy.component';
+import { BuyAndHoldStrategyComponent } from './components/strategies/b-a-h.strategy.component';
 
 import {SimulationComponent } from './components/simulation/simulation.component';
 import { HomePage } from './pages/home/home.page';
 import { MarketTimingPage } from './pages/market-timing/market-timing.page';
+import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear.page';
+
+import { EMAMarketTimingComponent } from './components/markettiming/market-timing.ema.component';
+import { SuperthonMarketTimingComponent } from './components/markettiming/market-timing.superthon.component';
+import { MACDMarketTimingComponent } from './components/markettiming/market-timing.macd.component';
+import { MarketTimingComponent } from './components/markettiming/market-timing.component';
+
+import 'hammerjs';
+import 'chartjs-plugin-zoom';
 
 @NgModule({
   declarations: [
@@ -54,7 +56,8 @@ import { MarketTimingPage } from './pages/market-timing/market-timing.page';
     SimulationComponent,
 
     HomePage,
-    MarketTimingPage
+    MarketTimingPage,
+    InvestingInBearPage
   ],
   imports: [
     BrowserModule,
