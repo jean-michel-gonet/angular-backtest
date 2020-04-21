@@ -92,11 +92,11 @@ export class EMAMarketTiming implements MarketTiming {
         y: this.difference
       }));
       report.receiveData(new ReportedData({
-        sourceName: this.id + ".SEMA",
+        sourceName: this.id + ".FAST",
         y: this.fastEMA.lastValue
       }));
       report.receiveData(new ReportedData({
-        sourceName: this.id + ".LEMA",
+        sourceName: this.id + ".SLOW",
         y: this.slowEMA.lastValue
       }));
     }

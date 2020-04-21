@@ -27,14 +27,14 @@
   <li>Start in 1996 with USD 100.000, and end in 2020.</li>
 </ul>
 <simulation start="1996-1-1" end="2020-4-9" quotes="SP500, AGG">
-  <chart-report>
+  <chart-report start="1999-1-1" end="2002-1-1">
     <chart-report-configuration show="SP500.CLOSE" showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
     <chart-report-configuration show="CANDLE.NAV"  showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
     <chart-report-configuration show="EMA.NAV"     showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
-    <chart-report-configuration show="MACD.NAV"    showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
+    <!--chart-report-configuration show="MACD.NAV"    showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration-->
     <!--chart-report-configuration show="CANF.SUPERTHON"  showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration-->
-    <!--chart-report-configuration show="EMAF.SEMA"  showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration-->
-    <!--chart-report-configuration show="EMAF.LEMA"  showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration-->
+    <chart-report-configuration show="EMAF.FAST"  showDataAs="LINE" showDataOn="RIGHT"  normalize="false" ></chart-report-configuration>
+    <chart-report-configuration show="EMAF.SLOW"  showDataAs="LINE" showDataOn="RIGHT"  normalize="false" ></chart-report-configuration>
   </chart-report>
   <accounts>
     <swiss-quote id="CANDLE" cash="100000">

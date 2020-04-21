@@ -26,6 +26,12 @@ export interface INg2ChartReport {
   configurations: Ng2ChartConfiguration[]
 }
 
+class XChartPoint implements ChartPoint {
+  x?: number;
+  y?: number;
+  originalValue?: number;
+}
+
 /**
  * Formats the provided number as a date
  */
@@ -67,7 +73,13 @@ let formatLabel = function(tooltipItem: Chart.ChartTooltipItem, data: Chart.Char
   let dataSet: ChartDataSets = data.datasets[tooltipItem.datasetIndex];
   let dataName: string = dataSet.label;
 
-  let value: number = parseFloat(tooltipItem.value);
+  let value: number;
+  let d:XChartPoint = <XChartPoint>dataSet.data[tooltipItem.index];
+  if (d.originalValue) {
+    value = d.originalValue;
+  } else {
+    value = parseFloat(tooltipItem.value);
+  }
   let dataValue: number = Math.round(value * 100) / 100;
 
   return dataName + ": " + dataValue;
@@ -232,20 +244,7 @@ export class Ng2ChartReport implements Report {
   private x: number;
 
   startReportingCycle(instant: Date): void {
-    let x = instant.valueOf();
-    let betweenStartAndEnd: boolean = true;
-
-    if (this.start) {
-      if (x < this.start) {
-        betweenStartAndEnd = false;
-      }
-    }
-    if (this.end) {
-      if (x > this.end) {
-        betweenStartAndEnd = false;
-      }
-    }
-    if (betweenStartAndEnd) {
+    if (this.betweenStartAndEnd(instant)) {
       this.x = instant.valueOf();
       this.reporters.forEach(reporter => {
         reporter.startReportingCycle(instant);
@@ -253,6 +252,20 @@ export class Ng2ChartReport implements Report {
     } else {
       this.x = null;
     }
+  }
+
+  private betweenStartAndEnd(instant: Date): boolean  {
+    if (this.start) {
+      if (instant.valueOf() < this.start) {
+        return false;
+      }
+    }
+    if (this.end) {
+      if (instant.valueOf() > this.end) {
+        return false;
+      }
+    }
+    return true;
   }
 
   collectReports(): void {
@@ -267,7 +280,7 @@ export class Ng2ChartReport implements Report {
       if (dataSet) {
         let data: ChartPoint[] = dataSet.data as ChartPoint[];
         let normalizedY: number = this.normalize(providedData.sourceName, providedData.y);
-        let chartPoint: ChartPoint = {x: this.x, y: normalizedY};
+        let chartPoint: XChartPoint = {x: this.x, y: normalizedY, originalValue: providedData.y};
         data.push(chartPoint);
       }
     }
