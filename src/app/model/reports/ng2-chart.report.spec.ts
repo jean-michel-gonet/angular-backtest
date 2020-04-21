@@ -94,7 +94,9 @@ describe('Ng2ChartReport', () => {
     }));
 
     expect(ng2ChartReport.dataSets).toEqual(jasmine.arrayWithExactContents([{
-      data: [{x: today.valueOf(), y: 100}, {x: tomorrow.valueOf(), y: 101}],
+      data: [
+        {x: today.valueOf(), y: 100, originalValue: 100},
+        {x: tomorrow.valueOf(), y: 101, originalValue: 101}],
       label: "SQA01.NAV",
       yAxisID: "y-axis-left",
       type: "line",
@@ -140,14 +142,19 @@ describe('Ng2ChartReport', () => {
 
     expect(ng2ChartReport.dataSets).toEqual(jasmine.arrayWithExactContents([
       {
-        data: [{x: today.valueOf(), y: 100}, {x: tomorrow.valueOf(), y: 101}],
+        data: [
+          {x: today.valueOf(), y: 100, originalValue: 100},
+          {x: tomorrow.valueOf(), y: 101, originalValue: 101}],
         label: "SQA01.NAV",
         yAxisID: "y-axis-left",
         type: "line",
         borderWidth: 1,
         pointRadius: 1.2
       }, {
-        data: [{x: today.valueOf(), y: 1}, {x: tomorrow.valueOf(), y: 2}],
+        data: [
+          {x: today.valueOf(), y: 1, originalValue: 1},
+          {x: tomorrow.valueOf(), y: 2, originalValue: 2}
+        ],
         label: "SQA01.COSTS",
         yAxisID: "y-axis-right",
         type: "scatter",
@@ -196,14 +203,19 @@ describe('Ng2ChartReport', () => {
 
     expect(ng2ChartReport.dataSets).toEqual(jasmine.arrayWithExactContents([
       {
-        data: [{x: today.valueOf(), y: 100}, {x: tomorrow.valueOf(), y: 101}],
+        data: [
+          {x: today.valueOf(), y: 100, originalValue: 1000},
+          {x: tomorrow.valueOf(), y: 101, originalValue: 1010}
+        ],
         label: "VALUE1",
         yAxisID: "y-axis-left",
         type: "line",
         borderWidth: 1,
         pointRadius: 1.2
       }, {
-        data: [{x: today.valueOf(), y: 100}, {x: tomorrow.valueOf(), y: 200}],
+        data: [
+          {x: today.valueOf(), y: 100, originalValue: 10},
+          {x: tomorrow.valueOf(), y: 200, originalValue: 20}],
         label: "VALUE2",
         yAxisID: "y-axis-left",
         type: "scatter",
@@ -252,14 +264,20 @@ describe('Ng2ChartReport', () => {
 
     expect(ng2ChartReport.dataSets).toEqual(jasmine.arrayWithExactContents([
       {
-        data: [{x: today.valueOf(), y: 100}, {x: tomorrow.valueOf(), y: 101}],
+        data: [
+          {x: today.valueOf(), y: 100, originalValue: 1000},
+          {x: tomorrow.valueOf(), y: 101, originalValue: 1010}
+        ],
         label: "VALUE1",
         yAxisID: "y-axis-left",
         type: "line",
         borderWidth: 1,
         pointRadius: 1.2
       }, {
-        data: [{x: today.valueOf(), y: 0/0}, {x: tomorrow.valueOf(), y: 100}],
+        data: [
+          {x: today.valueOf(), y: 0/0, originalValue: 0},
+          {x: tomorrow.valueOf(), y: 100, originalValue: 20}
+        ],
         label: "VALUE2",
         yAxisID: "y-axis-left",
         type: "scatter",
