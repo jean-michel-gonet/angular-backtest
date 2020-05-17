@@ -150,6 +150,11 @@ apm install atom-ide-ui
 apm install atom-typescript
 ```
 
+Alternatives to _Atom_ are:
+* https://notepad-plus-plus.org/ - Notepad ++ - A simple, yet very complete text editor. Only for Windows.
+* http://brackets.io/ - A development-oriented text editor.
+* https://code.visualstudio.com/ - Visual Studio - Another development-oriented text editor
+
 ## How to use the library
 
 Here is an simple example on how to run a simulation based on an hypothetic
