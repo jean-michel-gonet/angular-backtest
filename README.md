@@ -85,6 +85,33 @@ npm --version
 
 To update _Node.js_, simply reinstall it from the same source.
 
+### In Mac OS X
+Git comes with XCode's command line tools, which is readily available in Mac OS X. To install this just open the terminal and type:
+
+```
+git --version
+```
+
+And the operative system will install _XCode's command line_ tools, including _git_, after asking you some questions 
+
+The easiest way to install _node_ and _npm_ is using _brew_:
+* https://brew.sh/
+
+If you don't have it already, install _brew_ by following instructions from the official site. Then you can install _node_ and _npm_ with the following commands:
+
+```
+brew update
+brew upgrade
+brew install node
+```
+
+Afterwards, you can check the version numbers:
+
+```
+node --version
+npm --version
+```
+
 ### Compile and run the program (all platforms)
 Look for or create an appropriate folder where to install the project, then open the command prompt, navigate to it, and use _Git_ to clone the sources:
 
