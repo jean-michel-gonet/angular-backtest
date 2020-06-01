@@ -1,12 +1,15 @@
 <h1>This is the home page</h1>
 <simulation start="2010-01-01" end="2020-4-9" quotes="SPY">
   <chart-report start="2018-01-01">
-    <chart-report-configuration show="SPY.CLOSE"      showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
-    <chart-report-configuration show="MACD.SLOW"      showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
-    <chart-report-configuration show="MACD.FAST"      showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
-    <chart-report-configuration show="MACD.SIGNAL"    showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
-    <chart-report-configuration show="MACD.MACD"      showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
-    <chart-report-configuration show="MACD.HISTOGRAM" showDataAs="LINE" showDataOn="LEFT"  normalize="false" ></chart-report-configuration>
+    <chart-report-configuration show="SPY.CLOSE"      showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
+    <chart-report-configuration show="PERFORMANCE3"   showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
+    <chart-report-configuration show="PERFORMANCE5"   showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
+    <chart-report-configuration show="PERFORMANCE10"  showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
+    <chart-report-preprocessors>
+      <sliding-performance source="MACD.NAV"  over="3" periodLength="YEARLY"  output="PERFORMANCE3"></sliding-performance>
+      <sliding-performance source="MACD.NAV"  over="5" periodLength="YEARLY"  output="PERFORMANCE5"></sliding-performance>
+      <sliding-performance source="MACD.NAV" over="10" periodLength="YEARLY" output="PERFORMANCE10"></sliding-performance>
+    </chart-report-preprocessors>
   </chart-report>
   <accounts>
     <swiss-quote id="MACD" cash="100000">

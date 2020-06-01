@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { PeriodLength } from 'src/app/model/core/period';
 import { SlidingPerformance } from 'src/app/model/reports/preprocessors/sliding-performance';
+import { UnitOfTime } from 'src/app/model/core/unit-of-time';
 
 @Component({
   selector: 'sliding-performance',
@@ -29,17 +29,17 @@ export class SlidingPerformanceComponent {
     return this._over;
   }
 
-  private _periodLength: PeriodLength;
+  private _unitOfTime: UnitOfTime;
   @Input()
-  set periodLength(value: PeriodLength) {
+  set unitOfTime(value: UnitOfTime) {
     if (typeof value == 'string') {
-      this._periodLength = PeriodLength[value];
+      this._unitOfTime = UnitOfTime[value];
     } else {
-      this._periodLength = value;
+      this._unitOfTime = value;
     }
   }
-  get periodLength() {
-    return this._periodLength;
+  get unitOfTime() {
+    return this._unitOfTime;
   }
 
   private _output: string;
@@ -55,7 +55,7 @@ export class SlidingPerformanceComponent {
     return new SlidingPerformance({
       source: this.source,
       over: this.over,
-      periodLength: this.periodLength,
+      unitOfTime: this.unitOfTime,
       output: this.output
     });
   }
