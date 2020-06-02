@@ -165,6 +165,10 @@ describe('Ng2ChartReport', () => {
     expect(ng2ChartReport.labels.length).toBe(0);
   });
 
+  it('Can call pre-processors and receive data from them', () => {
+
+  });
+
   it('Can normalize outputs', () => {
     let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport({
       configurations:[

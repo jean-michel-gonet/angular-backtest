@@ -1,6 +1,6 @@
 import { ChartDataSets, ChartOptions, ChartPoint } from 'chart.js';
 import { Label } from 'ng2-charts';
-import { Report, Reporter, ReportedData } from '../core/reporting';
+import { Report, Reporter, ReportedData, PreProcessor } from '../core/reporting';
 import { Injectable } from '@angular/core';
 
 export enum ShowDataAs {
@@ -23,7 +23,8 @@ export interface Ng2ChartConfiguration {
 export interface INg2ChartReport {
   start?: Date;
   end?: Date;
-  configurations: Ng2ChartConfiguration[]
+  preProcessors?: PreProcessor[];
+  configurations: Ng2ChartConfiguration[],
 }
 
 class XChartPoint implements ChartPoint {
@@ -145,6 +146,7 @@ export class Ng2ChartReport implements Report {
     };
   private mapOfDatasets: Map<String, ChartDataSets>;
   private mapOfConfigurations: Map<String, Ng2ChartConfiguration>;
+  private preProcessors: PreProcessor[] = [];
   private reporters: Reporter[] = [];
 
   constructor(obj = {} as INg2ChartReport) {
@@ -160,6 +162,7 @@ export class Ng2ChartReport implements Report {
     let {
       start,
       end,
+      preProcessors = [],
       configurations = []
     } = obj;
     if (start) {
@@ -168,7 +171,7 @@ export class Ng2ChartReport implements Report {
     if (end) {
       this.end = end.valueOf();
     }
-
+    this.preProcessors = preProcessors;
     configurations.forEach(show => {
       let yAxisID:string = "y-axis-" + this.showOn(show.on);
       let dataSet: ChartDataSets = {
