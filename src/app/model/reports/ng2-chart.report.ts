@@ -247,11 +247,18 @@ export class Ng2ChartReport implements Report {
   private x: number;
 
   startReportingCycle(instant: Date): void {
+
     if (this.betweenStartAndEnd(instant)) {
-      this.x = instant.valueOf();
+      // Propagate to reporters:
       this.reporters.forEach(reporter => {
         reporter.startReportingCycle(instant);
       });
+      // Propagate to preprocessors
+      this.preProcessors.forEach(preProcessor => {
+        preProcessor.startReportingCycle(instant)
+      });
+      // Remember the instant:
+      this.x = instant.valueOf();
     } else {
       this.x = null;
     }
@@ -275,10 +282,17 @@ export class Ng2ChartReport implements Report {
     this.reporters.forEach(reporter => {
       reporter.reportTo(this);
     });
+    this.preProcessors.forEach(preProcessor => {
+      preProcessor.reportTo(this);
+    });
   }
 
   receiveData(providedData: ReportedData): void {
     if (this.x) {
+      this.preProcessors.forEach(preProcessor => {
+        preProcessor.receiveData(providedData);
+      });
+
       let dataSet: ChartDataSets = this.mapOfDatasets.get(providedData.sourceName);
       if (dataSet) {
         let data: ChartPoint[] = dataSet.data as ChartPoint[];
