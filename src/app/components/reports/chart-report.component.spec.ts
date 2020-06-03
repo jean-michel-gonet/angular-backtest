@@ -4,6 +4,8 @@ import { ComponentFixture, async, TestBed } from '@angular/core/testing';
 import { ChartReportConfigurationComponent } from './chart-report-configuration.component';
 import { Report, Reporter, ReportedData } from 'src/app/model/core/reporting';
 import { Ng2ChartReport, ShowDataAs, ShowDataOn, INg2ChartReport } from 'src/app/model/reports/ng2-chart.report';
+import { ChartReportPreprocessorsComponent } from './preprocessors/chart-report-preprocessors.component';
+import { SlidingPerformanceComponent } from './preprocessors/sliding-performance.component';
 
 @Component({
   selector: 'parent',
@@ -13,6 +15,12 @@ import { Ng2ChartReport, ShowDataAs, ShowDataOn, INg2ChartReport } from 'src/app
                                 showDataAs="LINE"
                                 showDataOn="RIGHT"
                                 normalize="true"></chart-report-configuration>
+    <chart-report-preprocessors>
+      <sliding-performance source="MACD.NAV"
+                           over="10"
+                           unitOfTime="YEAR"
+                           output="PERFORMANCE10"></sliding-performance>
+    </chart-report-preprocessors>
   </chart-report>`})
 class TestWrapperComponent {
   @ViewChild(ChartReportComponent, {static: true})
@@ -75,6 +83,8 @@ describe('ChartReportComponent', () => {
       declarations: [
         TestWrapperComponent,
         ChartReportConfigurationComponent,
+        ChartReportPreprocessorsComponent,
+        SlidingPerformanceComponent,
         ChartReportComponent
       ],
       providers: [
@@ -97,6 +107,7 @@ describe('ChartReportComponent', () => {
   it('Passes the configuration to the inner report', () => {
     expect(testReport.configuration.start).toEqual(new Date(2020, 12 - 1, 25));
     expect(testReport.configuration.end).toEqual(new Date(2021, 11 - 1, 13));
+    expect(testReport.configuration.preProcessors.length).toBe(1);
     expect(testReport.configuration.configurations).toEqual(jasmine.arrayWithExactContents([
       {
         show: "XX",
