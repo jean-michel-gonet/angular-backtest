@@ -3,9 +3,9 @@
   <chart-report start="2000-01-01">
     <chart-report-configuration show="SPY.CLOSE"      showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
     <chart-report-configuration show="MACD.NAV"       showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
-    <chart-report-configuration show="PERFORMANCE10"  showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
+    <chart-report-configuration show="PERFORMANCE"  showDataAs="LINE" showDataOn="LEFT"  normalize="true" ></chart-report-configuration>
     <chart-report-preprocessors>
-      <sliding-performance source="MACD.NAV" over="10" unitOfTime="YEAR" output="PERFORMANCE10"></sliding-performance>
+      <sliding-performance source="MACD.NAV" over="10" unitOfTime="YEAR" output="PERFORMANCE"></sliding-performance>
     </chart-report-preprocessors>
   </chart-report>
   <accounts>
@@ -18,7 +18,7 @@
                          fastPeriod="12"
                          signalPeriod="9"
                          source="CLOSE"
-                         periodLength="DAILY"></macd-filter>
+                         periodLength="MONTHLY"></macd-filter>
           </market-timing>
         </buy-and-hold>
       </strategy>

@@ -316,7 +316,7 @@ export class Ng2ChartReport implements Report {
         let normalizationId: string = sourceName + ":" + configuration.on;
         let normalizationScale:number = this.normalizationMap.get(normalizationId);
         if (!normalizationScale && y != 0) {
-          normalizationScale = 100 / y;
+          normalizationScale = Math.abs(100 / y);
           this.normalizationMap.set(normalizationId, normalizationScale);
         }
         return normalizationScale * y;
