@@ -48,17 +48,19 @@ export class SlidingPerformance implements PreProcessor {
   }
 
   reportTo(report: Report): void {
-    let record: Record;
+    if (this.records.length > 0) {
+      let record: Record;
 
-    while (this.records[0].endDate <= this.instant) {
-      record = this.records.shift();
-    }
-    if (record) {
-      let variation: number = this.y - record.initialValue;
-      let performance: number = 100 * variation / record.initialValue;
-      let days: number = (this.instant.valueOf() - record.startDate.valueOf()) / (24 * 60 * 60 * 1000);
-      let annualPerformance: number = performance * 365 / days;
-      report.receiveData(new ReportedData({sourceName: this.output, y: annualPerformance}));
+      while (this.records[0].endDate <= this.instant) {
+        record = this.records.shift();
+      }
+      if (record) {
+        let variation: number = this.y - record.initialValue;
+        let performance: number = 100 * variation / record.initialValue;
+        let days: number = (this.instant.valueOf() - record.startDate.valueOf()) / (24 * 60 * 60 * 1000);
+        let annualPerformance: number = performance * 365 / days;
+        report.receiveData(new ReportedData({sourceName: this.output, y: annualPerformance}));
+      }
     }
   }
 }
