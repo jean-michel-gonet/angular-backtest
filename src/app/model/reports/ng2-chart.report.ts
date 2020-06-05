@@ -86,18 +86,24 @@ let formatLabel = function(tooltipItem: Chart.ChartTooltipItem, data: Chart.Char
   return dataName + ": " + dataValue;
 }
 
+/**
+ * A factory able to create new instances of the Ng2 charts report.
+ */
+ @Injectable({
+   providedIn: 'root'
+ })
+export class Ng2ChartReportFactory {
+  public newInstance(obj = {} as INg2ChartReport): Ng2ChartReport {
+    console.log("New Ng2ChartReport");
+    return new Ng2ChartReport(obj);
+  }
+}
 
 /**
  * Receives the data and formats them into Ng2 data, so they can directly
  * be displayed in a Ng2 Chart.
  * @class {Ng2ChartReport}
  */
- @Injectable({
-   providedIn: 'root',
-   useFactory: () => {
-     return new Ng2ChartReport();
-   }
- })
 export class Ng2ChartReport implements Report {
   public start: number;
   public end: number;

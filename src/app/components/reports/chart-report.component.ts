@@ -14,7 +14,7 @@ import {
   ReportedData,
   PreProcessor} from 'src/app/model/core/reporting';
 import { ChartReportConfigurationComponent } from './chart-report-configuration.component';
-import { Ng2ChartReport, Ng2ChartConfiguration } from 'src/app/model/reports/ng2-chart.report';
+import { Ng2ChartReport, Ng2ChartConfiguration, Ng2ChartReportFactory } from 'src/app/model/reports/ng2-chart.report';
 import { StringUtils } from 'src/app/model/utils/string-utils';
 import { ChartReportPreprocessorsComponent } from './preprocessors/chart-report-preprocessors.component';
 
@@ -59,7 +59,9 @@ export class ChartReportComponent implements AfterViewInit, Report {
 
   public reportIsReady: boolean;
 
-  constructor(private cdr: ChangeDetectorRef, public ng2ChartReport: Ng2ChartReport) {
+  public ng2ChartReport: Ng2ChartReport;
+
+  constructor(private cdr: ChangeDetectorRef, private ng2ChartReportFactory: Ng2ChartReportFactory) {
     this.reportIsReady = false;
   }
 
@@ -70,7 +72,7 @@ export class ChartReportComponent implements AfterViewInit, Report {
     this.show.forEach(configurationComponent => {
       configurations.push(configurationComponent.asNg2ChartConfiguration());
     });
-    this.ng2ChartReport.initialize({
+    this.ng2ChartReport = this.ng2ChartReportFactory.newInstance({
       preProcessors: preProcessors,
       configurations: configurations,
       start: this.start,

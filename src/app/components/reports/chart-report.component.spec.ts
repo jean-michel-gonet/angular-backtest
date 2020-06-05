@@ -3,7 +3,7 @@ import { ChartReportComponent } from './chart-report.component';
 import { ComponentFixture, async, TestBed } from '@angular/core/testing';
 import { ChartReportConfigurationComponent } from './chart-report-configuration.component';
 import { Report, Reporter, ReportedData } from 'src/app/model/core/reporting';
-import { Ng2ChartReport, ShowDataAs, ShowDataOn, INg2ChartReport } from 'src/app/model/reports/ng2-chart.report';
+import { Ng2ChartReport, ShowDataAs, ShowDataOn, INg2ChartReport, Ng2ChartReportFactory } from 'src/app/model/reports/ng2-chart.report';
 import { ChartReportPreprocessorsComponent } from './preprocessors/chart-report-preprocessors.component';
 import { SlidingPerformanceComponent } from './preprocessors/sliding-performance.component';
 
@@ -26,18 +26,18 @@ class TestWrapperComponent {
   @ViewChild(ChartReportComponent, {static: true})
   public chartReportComponent: ChartReportComponent;
 }
-
+class TestReportFactory {
+  public newInstance(configuration: INg2ChartReport) : TestReport {
+    return new TestReport(configuration);
+  }
+}
 class TestReport implements Report {
-  public configuration: INg2ChartReport;
-
   public registeredReporter: Reporter;
   public startedReportingCycle: Date;
   public reportsHaveBeenCollected: boolean = false;
   public reportHasBeenCompleted: boolean = false;
 
-  initialize(configuration: INg2ChartReport): void {
-    this.configuration = configuration;
-  }
+  constructor(public configuration: INg2ChartReport) {}
 
   register(reporter: Reporter): void {
     this.registeredReporter = reporter;
@@ -75,7 +75,7 @@ class TestReporter implements Reporter {
 describe('ChartReportComponent', () => {
   let component: ChartReportComponent;
   let fixture: ComponentFixture<TestWrapperComponent>;
-  let testReport: TestReport;
+  let testReport: any;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -88,7 +88,7 @@ describe('ChartReportComponent', () => {
         ChartReportComponent
       ],
       providers: [
-        { provide: Ng2ChartReport, useClass: TestReport }
+        { provide: Ng2ChartReportFactory, useClass: TestReportFactory }
       ]
     }).compileComponents();
   }));
@@ -97,7 +97,7 @@ describe('ChartReportComponent', () => {
     fixture = TestBed.createComponent(TestWrapperComponent);
     fixture.detectChanges();
     component = fixture.componentInstance.chartReportComponent;
-    testReport = TestBed.get(Ng2ChartReport);
+    testReport = component.ng2ChartReport;
   });
 
   it('Can be instantiated', () => {
