@@ -114,7 +114,7 @@ export class QuotesService {
     if (uri.startsWith('/')) {
       return uri;
     } else {
-      return "../../../assets/quotes/" + uri;
+      return "assets/quotes/" + uri;
     }
   }
 }

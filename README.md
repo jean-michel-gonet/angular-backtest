@@ -92,7 +92,7 @@ Git comes with XCode's command line tools, which is readily available in Mac OS 
 git --version
 ```
 
-And the operative system will install _XCode's command line_ tools, including _git_, after asking you some questions 
+And the operative system will install _XCode's command line_ tools, including _git_, after asking you some questions
 
 The easiest way to install _node_ and _npm_ is using _brew_:
 * https://brew.sh/
@@ -134,6 +134,12 @@ your browser on http://localhost:4200/
 ```
 
 Open a browser on that address, and you should see the main page.
+
+### Compile the program for distribution
+
+```
+npm run ng -- build --base-href ./
+```
 
 ## Development environment
 My favourite development environment is Atom. Download and install it from the
@@ -428,3 +434,10 @@ On technical matters:
 * **In-app navigation with routing**
   * Official guide to use routing.
   * https://angular.io/guide/router
+* **Bootstrapping in Angular: How It Works Internally**
+  * How the browser loads the initial ``index.html`` and what happens after.
+  * https://www.tektutorialshub.com/angular/angular-bootstrapping-application/
+* **Angular — The hash(#) trap**
+  * If you don't know the path to the application where the application is
+    deployed, then you better use (#) in the routing module.
+  * https://medium.com/@dao.houssene/angular-the-hash-trap-b2d415c2c241
