@@ -44,6 +44,7 @@ describe('MarketTimingComponent', () => {
             <candle-filter id="XX"
                            periods="10"
                            periodLength="MONTHLY"
+                           threshold="3"
                            status="BEAR"></candle-filter>
           </market-timing>`
         }
@@ -54,9 +55,10 @@ describe('MarketTimingComponent', () => {
       component = fixture.componentInstance.marketTimingComponent;
       let candleFilter = component.asMarketTiming() as SuperthonMarketTiming;
       expect(candleFilter.id).toBe("XX");
-      expect(candleFilter.bearBull()).toBe(BearBull.BEAR);
       expect(candleFilter.periods).toBe(10);
       expect(candleFilter.periodLength).toBe(PeriodLength.MONTHLY);
+      expect(candleFilter.threshold).toBe(3);
+      expect(candleFilter.bearBull()).toBe(BearBull.BEAR);
   });
 
   it('Can instantiate a EMA Filter', () => {

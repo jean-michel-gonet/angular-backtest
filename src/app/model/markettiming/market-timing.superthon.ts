@@ -7,6 +7,7 @@ class ISuperthonMarketTiming {
   id?: string;
   periods?: number;
   periodLength?: PeriodLength;
+  threshold?: number;
   status?: BearBull;
 }
 
@@ -19,6 +20,7 @@ export class SuperthonMarketTiming implements MarketTiming {
   id: string;
   periods: number;
   periodLength: PeriodLength;
+  threshold: number;
   private period?: Period;
   private candles: Candlestick[] = [];
   private status: BearBull;
@@ -30,11 +32,13 @@ export class SuperthonMarketTiming implements MarketTiming {
       id = "SPT",
       periods = 12,
       periodLength = PeriodLength.MONTHLY,
+      threshold = 1,
       status = BearBull.BULL
     } = obj;
     this.id = id;
     this.periods = periods;
     this.periodLength = periodLength;
+    this.threshold = threshold;
     this.period = new Period(periodLength);
     this.status = status;
   }
@@ -46,13 +50,15 @@ export class SuperthonMarketTiming implements MarketTiming {
 
       switch(this.status) {
         case BearBull.BEAR:
-          if (this.numericalStatus >= 1) {
+          if (this.numericalStatus >= this.threshold) {
+            console.log("Market Timing Superthon", BearBull.BULL, instant);
             this.status = BearBull.BULL;
           }
           break;
 
         case BearBull.BULL:
-        if (this.numericalStatus <= -1) {
+        if (this.numericalStatus <= - this.threshold) {
+          console.log("Market Timing Superthon", BearBull.BEAR, instant);
           this.status = BearBull.BEAR;
         }
         break;
