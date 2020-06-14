@@ -11,6 +11,13 @@
     "quote": {
       "provider": "finance.yahoo.com",
       "uri": "indexes/sp500-yahoo.csv"
+    }
+  },
+  {
+    "name": "SP500DIV",
+    "quote": {
+      "provider": "finance.yahoo.com",
+      "uri": "indexes/sp500-yahoo.csv"
     },
     "dividends": {
       "level1TaxWitholding": 0.34,
