@@ -441,3 +441,6 @@ On technical matters:
   * If you don't know the path to the application where the application is
     deployed, then you better use (#) in the routing module.
   * https://medium.com/@dao.houssene/angular-the-hash-trap-b2d415c2c241
+* **Component with <ng-content>**
+  * A question about using ``<ng-content></ng-content>`` in the root component.
+  * https://stackoverflow.com/questions/32568808/component-with-ng-content
