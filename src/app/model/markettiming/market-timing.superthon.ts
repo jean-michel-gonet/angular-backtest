@@ -26,6 +26,7 @@ export class SuperthonMarketTiming implements MarketTiming {
   private status: BearBull;
   private numericalStatus: number;
   private currentCandle: Candlestick;
+  private numberOfTriggers: number = 0;
 
   constructor(obj = {} as ISuperthonMarketTiming){
     let {
@@ -51,14 +52,14 @@ export class SuperthonMarketTiming implements MarketTiming {
       switch(this.status) {
         case BearBull.BEAR:
           if (this.numericalStatus >= this.threshold) {
-            console.log("Market Timing Superthon", BearBull.BULL, instant);
+            console.log("Market Timing Superthon", ++this.numberOfTriggers, BearBull.BULL, instant);
             this.status = BearBull.BULL;
           }
           break;
 
         case BearBull.BULL:
         if (this.numericalStatus <= - this.threshold) {
-          console.log("Market Timing Superthon", BearBull.BEAR, instant);
+          console.log("Market Timing Superthon", ++this.numberOfTriggers, BearBull.BEAR, instant);
           this.status = BearBull.BEAR;
         }
         break;
