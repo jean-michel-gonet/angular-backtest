@@ -2,7 +2,7 @@ import { Component, ContentChild } from '@angular/core';
 import { Reports } from 'src/app/model/reports/reports';
 import { ChartReportPreprocessorsComponent } from './preprocessors/chart-report-preprocessors.component';
 import { PreProcessor, Report } from 'src/app/model/core/reporting';
-import { ChartReportComponent } from './chart-report.component';
+import { ChartReportComponent } from './chart-report/chart-report.component';
 
 @Component({
   selector: 'reports',

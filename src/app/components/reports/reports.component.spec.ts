@@ -1,13 +1,13 @@
 import { ViewChild, Component, NO_ERRORS_SCHEMA } from "@angular/core";
-import { ChartReportComponent } from './chart-report.component';
 import { ComponentFixture, async, TestBed } from '@angular/core/testing';
-import { ChartReportConfigurationComponent } from './chart-report-configuration.component';
 import { NullReport, Report } from 'src/app/model/core/reporting';
 import { Ng2ChartReportFactory } from 'src/app/model/reports/ng2-chart.report';
 import { ChartReportPreprocessorsComponent } from './preprocessors/chart-report-preprocessors.component';
 import { SlidingPerformanceComponent } from './preprocessors/sliding-performance.component';
 import { ReportsComponent } from './reports.component';
 import { Reports } from 'src/app/model/reports/reports';
+import { ChartReportComponent } from './chart-report/chart-report.component';
+import { ChartReportConfigurationComponent } from './chart-report/chart-report-configuration.component';
 
 @Component({
   selector: 'parent',

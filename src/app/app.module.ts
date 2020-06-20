@@ -6,8 +6,8 @@ import { ChartsModule } from 'ng2-charts';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { ChartReportComponent } from './components/reports/chart-report.component';
-import { ChartReportConfigurationComponent } from './components/reports/chart-report-configuration.component';
+import { ChartReportComponent } from './components/reports/chart-report/chart-report.component';
+import { ChartReportConfigurationComponent } from './components/reports/chart-report/chart-report-configuration.component';
 import { ChartReportPreprocessorsComponent } from './components/reports/preprocessors/chart-report-preprocessors.component';
 import { ReportsComponent } from './components/reports/reports.component';
 import { SlidingPerformanceComponent} from './components/reports/preprocessors/sliding-performance.component';

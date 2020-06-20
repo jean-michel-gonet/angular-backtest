@@ -4,8 +4,6 @@ import { ComponentFixture, async, TestBed } from '@angular/core/testing';
 import { ChartReportConfigurationComponent } from './chart-report-configuration.component';
 import { Report, Reporter, ReportedData } from 'src/app/model/core/reporting';
 import { ShowDataAs, ShowDataOn, INg2ChartReport, Ng2ChartReportFactory } from 'src/app/model/reports/ng2-chart.report';
-import { ChartReportPreprocessorsComponent } from './preprocessors/chart-report-preprocessors.component';
-import { SlidingPerformanceComponent } from './preprocessors/sliding-performance.component';
 
 @Component({
   selector: 'parent',
@@ -78,8 +76,6 @@ describe('ChartReportComponent', () => {
       declarations: [
         TestWrapperComponent,
         ChartReportConfigurationComponent,
-        ChartReportPreprocessorsComponent,
-        SlidingPerformanceComponent,
         ChartReportComponent
       ],
       providers: [
