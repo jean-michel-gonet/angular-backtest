@@ -5,18 +5,15 @@ import {
   ContentChildren,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Input,
-  ContentChild} from '@angular/core';
+  Input} from '@angular/core';
 
 import {
   Report,
   Reporter,
-  ReportedData,
-  PreProcessor} from 'src/app/model/core/reporting';
+  ReportedData} from 'src/app/model/core/reporting';
 import { ChartReportConfigurationComponent } from './chart-report-configuration.component';
 import { Ng2ChartReport, Ng2ChartConfiguration, Ng2ChartReportFactory } from 'src/app/model/reports/ng2-chart.report';
 import { StringUtils } from 'src/app/model/utils/string-utils';
-import { ChartReportPreprocessorsComponent } from './preprocessors/chart-report-preprocessors.component';
 
 @Component({
   selector: 'chart-report',
@@ -54,9 +51,6 @@ export class ChartReportComponent implements AfterViewInit, Report {
   @ContentChildren(ChartReportConfigurationComponent)
   private show: QueryList<ChartReportConfigurationComponent>;
 
-  @ContentChild(ChartReportPreprocessorsComponent, {static: true})
-  public chartReportPreprocessorsComponent: ChartReportPreprocessorsComponent;
-
   public reportIsReady: boolean;
 
   public ng2ChartReport: Ng2ChartReport;
@@ -66,14 +60,11 @@ export class ChartReportComponent implements AfterViewInit, Report {
   }
 
   ngAfterViewInit() {
-    let preProcessors: PreProcessor[] = this.chartReportPreprocessorsComponent.asPreProcessors();
-
     let configurations: Ng2ChartConfiguration[] = [];
     this.show.forEach(configurationComponent => {
       configurations.push(configurationComponent.asNg2ChartConfiguration());
     });
     this.ng2ChartReport = this.ng2ChartReportFactory.newInstance({
-      preProcessors: preProcessors,
       configurations: configurations,
       start: this.start,
       end: this.end

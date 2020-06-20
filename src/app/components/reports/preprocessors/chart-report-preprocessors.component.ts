@@ -3,7 +3,7 @@ import { SlidingPerformanceComponent } from './sliding-performance.component';
 import { PreProcessor } from 'src/app/model/core/reporting';
 
 @Component({
-  selector: 'chart-report-preprocessors',
+  selector: 'preprocessors',
   template: '<ng-content></ng-content>'
 })
 export class ChartReportPreprocessorsComponent {

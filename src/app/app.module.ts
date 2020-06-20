@@ -9,6 +9,7 @@ import { AppComponent } from './app.component';
 import { ChartReportComponent } from './components/reports/chart-report.component';
 import { ChartReportConfigurationComponent } from './components/reports/chart-report-configuration.component';
 import { ChartReportPreprocessorsComponent } from './components/reports/preprocessors/chart-report-preprocessors.component';
+import { ReportsComponent } from './components/reports/reports.component';
 import { SlidingPerformanceComponent} from './components/reports/preprocessors/sliding-performance.component';
 
 import { AccountComponent, AccountsComponent } from './components/accounts/accounts.component';
@@ -41,6 +42,7 @@ import 'chartjs-plugin-zoom';
     ChartReportPreprocessorsComponent,
     SlidingPerformanceComponent,
     ChartReportComponent,
+    ReportsComponent,
 
     EMAMarketTimingComponent,
     SuperthonMarketTimingComponent,

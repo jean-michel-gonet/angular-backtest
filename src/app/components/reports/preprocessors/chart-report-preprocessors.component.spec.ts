@@ -9,12 +9,12 @@ import { PreProcessor } from 'src/app/model/core/reporting';
 @Component({
   selector: 'parent',
   template: `
-  <chart-report-preprocessors>
+  <preprocessors>
     <sliding-performance source="MACD.NAV"
                          over="3"
                          unitOfTime="YEAR"
                          output="PERFORMANCE3"></sliding-performance>
-  </chart-report-preprocessors>`})
+  </preprocessors>`})
 class TestWrapperComponent {
   @ViewChild(ChartReportPreprocessorsComponent, {static: true})
   public chartReportPreprocessorsComponent: ChartReportPreprocessorsComponent;
