@@ -2,7 +2,7 @@ import { ViewChild, Component, NO_ERRORS_SCHEMA } from "@angular/core";
 import { ComponentFixture, async, TestBed } from '@angular/core/testing';
 import { NullReport, Report } from 'src/app/model/core/reporting';
 import { Ng2ChartReportFactory } from 'src/app/model/reports/ng2-chart.report';
-import { ChartReportPreprocessorsComponent } from './preprocessors/chart-report-preprocessors.component';
+import { PreprocessorsComponent } from './preprocessors/preprocessors.component';
 import { SlidingPerformanceComponent } from './preprocessors/sliding-performance.component';
 import { ReportsComponent } from './reports.component';
 import { Reports } from 'src/app/model/reports/reports';
@@ -39,7 +39,7 @@ describe('ReportsComponent', () => {
         ReportsComponent,
         ChartReportComponent,
         ChartReportConfigurationComponent,
-        ChartReportPreprocessorsComponent,
+        PreprocessorsComponent,
         SlidingPerformanceComponent,
       ],
       providers: [

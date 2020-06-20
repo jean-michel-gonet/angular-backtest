@@ -1,6 +1,6 @@
 import { Component, ContentChild } from '@angular/core';
 import { Reports } from 'src/app/model/reports/reports';
-import { ChartReportPreprocessorsComponent } from './preprocessors/chart-report-preprocessors.component';
+import { PreprocessorsComponent } from './preprocessors/preprocessors.component';
 import { PreProcessor, Report } from 'src/app/model/core/reporting';
 import { ChartReportComponent } from './chart-report/chart-report.component';
 
@@ -9,8 +9,8 @@ import { ChartReportComponent } from './chart-report/chart-report.component';
   template: '<ng-content></ng-content>'
 })
 export class ReportsComponent {
-  @ContentChild(ChartReportPreprocessorsComponent, {static: true})
-  public chartReportPreprocessorsComponent: ChartReportPreprocessorsComponent;
+  @ContentChild(PreprocessorsComponent, {static: true})
+  public chartReportPreprocessorsComponent: PreprocessorsComponent;
 
   @ContentChild(ChartReportComponent, {static: true})
   public chartReportComponent: ChartReportComponent;

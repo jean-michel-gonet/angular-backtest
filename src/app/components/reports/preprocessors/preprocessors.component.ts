@@ -6,7 +6,7 @@ import { PreProcessor } from 'src/app/model/core/reporting';
   selector: 'preprocessors',
   template: '<ng-content></ng-content>'
 })
-export class ChartReportPreprocessorsComponent {
+export class PreprocessorsComponent {
   @ContentChildren(SlidingPerformanceComponent)
   private slidingPerformanceComponents: QueryList<SlidingPerformanceComponent>;
 

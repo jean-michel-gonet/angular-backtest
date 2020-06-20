@@ -3,7 +3,7 @@ import { ComponentFixture, async, TestBed } from '@angular/core/testing';
 import { SlidingPerformanceComponent } from './sliding-performance.component';
 import { SlidingPerformance } from 'src/app/model/reports/preprocessors/sliding-performance';
 import { UnitOfTime } from 'src/app/model/core/unit-of-time';
-import { ChartReportPreprocessorsComponent } from './chart-report-preprocessors.component';
+import { PreprocessorsComponent } from './preprocessors.component';
 import { PreProcessor } from 'src/app/model/core/reporting';
 
 @Component({
@@ -16,12 +16,12 @@ import { PreProcessor } from 'src/app/model/core/reporting';
                          output="PERFORMANCE3"></sliding-performance>
   </preprocessors>`})
 class TestWrapperComponent {
-  @ViewChild(ChartReportPreprocessorsComponent, {static: true})
-  public chartReportPreprocessorsComponent: ChartReportPreprocessorsComponent;
+  @ViewChild(PreprocessorsComponent, {static: true})
+  public chartReportPreprocessorsComponent: PreprocessorsComponent;
 }
 
 describe('ChartReportPreprocessorsComponent', () => {
-  let component: ChartReportPreprocessorsComponent;
+  let component: PreprocessorsComponent;
   let fixture: ComponentFixture<TestWrapperComponent>;
 
   beforeEach(async(() => {
@@ -29,7 +29,7 @@ describe('ChartReportPreprocessorsComponent', () => {
       schemas: [ NO_ERRORS_SCHEMA ],
       declarations: [
         TestWrapperComponent,
-        ChartReportPreprocessorsComponent,
+        PreprocessorsComponent,
         SlidingPerformanceComponent
       ],
       providers: []
