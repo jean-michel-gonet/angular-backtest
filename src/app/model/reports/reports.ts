@@ -13,7 +13,7 @@ interface IReports {
 }
 
 /**
- * A class that contains several reports, and behaves like one.
+ * A report that can hold multiple report and behave as one.
  */
 export class Reports implements Report, Reporter {
   reports: Report[];
@@ -37,7 +37,7 @@ export class Reports implements Report, Reporter {
     this.reporters.push(reporter);
   }
 
-  doRegister(report: Report): void {
+  doRegister(): void {
     throw new Error("Method not implemented.");
   }
 
