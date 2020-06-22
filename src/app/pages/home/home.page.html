@@ -1,7 +1,7 @@
 <h1>This is the home page</h1>
 <simulation start="2000-01-01" end="2020-4-9" quotes="SP500">
   <reports>
-    <!--highlight-report>
+    <highlight-report>
       <table>
         <thead>
           <tr>
@@ -14,28 +14,14 @@
         <tbody>
           <tr>
             <td>3 years</td>
-            <td><highlight type="MIN" of="ACC.P03"></highlight>% (at <highlight type="DATE_MIN" of="ACC.P03"></highlight>)</td>
-            <td><highlight type="MAX" of="ACC.P03"></highlight>% (at <highlight type="DATE_MAX" of="ACC.P03"></highlight>)</td>
-            <td><highlight type="AVG" of="ACC.P03"></highlight>%</td>
-            <td>&plusmn;<highlight type="AVG" of="ACC.P03">%</highlight></td>
-          </tr>
-          <tr>
-            <td>7 years</td>
-            <td><highlight type="MIN" of="ACC.P07"></highlight>% (at <highlight type="DATE_MIN" of="ACC.P07"></highlight>)</td>
-            <td><highlight type="MAX" of="ACC.P07"></highlight>% (at <highlight type="DATE_MAX" of="ACC.P07"></highlight>)</td>
-            <td><highlight type="AVG" of="ACC.P07"></highlight>%</td>
-            <td>&plusmn;<highlight type="AVG" of="ACC.P07">%</highlight></td>
-          </tr>
-          <tr>
-            <td>10 years</td>
-            <td><highlight type="MIN" of="ACC.P10"></highlight>% (at <highlight type="DATE_MIN" of="ACC.P10"></highlight>)</td>
-            <td><highlight type="MAX" of="ACC.P10"></highlight>% (at <highlight type="DATE_MAX" of="ACC.P10"></highlight>)</td>
-            <td><highlight type="AVG" of="ACC.P10"></highlight>%</td>
-            <td>&plusmn;<highlight type="AVG" of="ACC.P10">%</highlight></td>
+            <td><highlight-min sourceName="ACC.P03"></highlight-min>% (at <highlight-date-min sourceName="ACC.P03"></highlight-date-min>)</td>
+            <td><highlight-max sourceName="ACC.P03"></highlight-max>% (at <highlight-date-max sourceName="ACC.P03"></highlight-date-max>)</td>
+            <td><highlight-avg sourceName="ACC.P03"></highlight-avg>%</td>
+            <td>&plusmn;<highlight-std sourceName="ACC.P03"></highlight-std>%</td>
           </tr>
         </tbody>
       </table>
-    </highlight-report-->
+    </highlight-report>
     <chart-report>
       <chart-report-configuration show="SP500.CLOSE" showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="ACC.NAV"     showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>

@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 
 import { ChartReportComponent } from './components/reports/chart-report/chart-report.component';
 import { ChartReportConfigurationComponent } from './components/reports/chart-report/chart-report-configuration.component';
+import { HighlightReportComponent } from './components/reports/highlight-report/highlight-report.component';
 import { PreprocessorsComponent } from './components/reports/preprocessors/preprocessors.component';
 import { ReportsComponent } from './components/reports/reports.component';
 import { SlidingPerformanceComponent} from './components/reports/preprocessors/sliding-performance.component';
@@ -33,6 +34,12 @@ import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear
 
 import 'hammerjs';
 import 'chartjs-plugin-zoom';
+import { HighlightMaxComponent,
+         HighlightDateMaxComponent,
+         HighlightMinComponent,
+         HighlightDateMinComponent,
+         HighlightAvgComponent,
+         HighlightStdComponent } from './components/reports/highlight-report/highlight.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +47,13 @@ import 'chartjs-plugin-zoom';
 
     ChartReportConfigurationComponent,
     PreprocessorsComponent,
+    HighlightReportComponent,
+    HighlightMaxComponent,
+    HighlightDateMaxComponent,
+    HighlightMinComponent,
+    HighlightDateMinComponent,
+    HighlightAvgComponent,
+    HighlightStdComponent,
     SlidingPerformanceComponent,
     ChartReportComponent,
     ReportsComponent,

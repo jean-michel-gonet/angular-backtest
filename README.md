@@ -406,6 +406,18 @@ This is some of my reference documentation:
 * **Tax optimisation for ETF investing**
   * This is a collection of information on taxation of dividends for swiss investors.
   * https://forum.mustachianpost.com/t/tax-optimisation-for-etf-investing/67
+* **Hacking Compound Annual Growth Rate**
+  * Explains why and how using linear regression when estimating compound annual
+    growth rate.
+  * https://www.raynergobran.com/2017/07/hacking-compound-annual-growth-rate/
+* **How To... Perform Simple Linear Regression by Hand**
+  * A step by step method to calculate linear regression numerically, as you
+  would do when implementing the algorithm.
+  * https://www.youtube.com/watch?v=GhrxgbQnEEU
+* **How To... Calculate Pearson's Correlation Coefficient (r) by Hand**
+  * A step by step method to calculate correlation coefficient numerically, as you
+    would do when implementing the algorithm.
+  * https://www.youtube.com/watch?v=2SCg8Kuh0tE
 
 On technical matters:
 * **Angular ``ng-content`` and Content Projection: A Complete Guide: How To Use ``ng-content`` To Improve Component API Design**
