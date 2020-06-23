@@ -1,5 +1,4 @@
 import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, forwardRef } from '@angular/core';
-import { Highlight } from './highlight';
 import { ReportedData } from 'src/app/model/core/reporting';
 
 export interface Highlight {
