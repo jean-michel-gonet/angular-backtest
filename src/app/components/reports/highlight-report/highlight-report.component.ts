@@ -1,5 +1,5 @@
-import { Component, ContentChildren, QueryList, AfterViewInit } from '@angular/core';
-import { BaseHighlightComponent, Highlight } from './highlight.component';
+import { Component, ContentChildren, QueryList } from '@angular/core';
+import { BaseHighlightComponent } from './highlight.component';
 import { Report, Reporter, ReportedData } from 'src/app/model/core/reporting';
 
 @Component({

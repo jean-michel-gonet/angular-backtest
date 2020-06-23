@@ -8,12 +8,14 @@ import { ReportsComponent } from './reports.component';
 import { Reports } from 'src/app/model/reports/reports';
 import { ChartReportComponent } from './chart-report/chart-report.component';
 import { ChartReportConfigurationComponent } from './chart-report/chart-report-configuration.component';
+import { HighlightReportComponent } from './highlight-report/highlight-report.component';
 
 @Component({
   selector: 'parent',
   template: `
   <reports>
     <chart-report></chart-report>
+    <highlight-report></highlight-report>
     <preprocessors></preprocessors>
   </reports>`
 })
@@ -36,6 +38,7 @@ describe('ReportsComponent', () => {
       schemas: [ NO_ERRORS_SCHEMA ],
       declarations: [
         TestWrapperComponent,
+        HighlightReportComponent,
         ReportsComponent,
         ChartReportComponent,
         ChartReportConfigurationComponent,
@@ -61,7 +64,7 @@ describe('ReportsComponent', () => {
   it('Can propagate configuration to the chart', () => {
     let reports: Reports = component.asReports();
     expect(reports).toBeTruthy();
-    expect(reports.reports.length).toBe(1);
+    expect(reports.reports.length).toBe(2);
     expect(reports.preProcessors).toBeTruthy();
   });
 });

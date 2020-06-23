@@ -30,7 +30,9 @@ export class Reports implements Report, Reporter {
     this.preProcessors = preProcessors;
 
     // For child reports, this is the reporter:
-    this.reports.forEach(r => r.register(this))
+    this.reports.forEach(r => {
+      r.register(this)
+    });
   }
 
   register(reporter: Reporter): void {
