@@ -150,11 +150,23 @@ export class HighlightDateMinComponent extends BaseHighlightComponent {
   providers: [{provide: BaseHighlightComponent, useExisting: forwardRef(() => HighlightAvgComponent) }]
 })
 export class HighlightAvgComponent extends BaseHighlightComponent {
+  private numberOfSamples: number;
+
+  private avg: number;
+
   constructor(cdr: ChangeDetectorRef) {
     super(cdr);
   }
   receiveData(providedData: ReportedData): void {
-    // Nothing yet.
+    if (providedData.sourceName == this.sourceName) {
+      if (this.numberOfSamples) {
+        this.avg = (this.avg * this.numberOfSamples  + providedData.y) / (this.numberOfSamples + 1);
+        this.numberOfSamples++;
+      } else {
+        this.avg = providedData.y;
+        this.numberOfSamples = 1;
+      }
+    }
   }
 }
 
