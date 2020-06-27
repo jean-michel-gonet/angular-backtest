@@ -1,6 +1,6 @@
 import { SlidingPerformance} from "./sliding-performance";
 import { Reporter, Report, ReportedData, PreProcessor } from "../../core/reporting";
-import { UnitOfTime } from "../../core/unit-of-time";
+import { UnitOfTime } from "../../calculations/unit-of-time";
 
 describe('SlidingPerformance', () =>{
   it('Can be instantiated', () => {

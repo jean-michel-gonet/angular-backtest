@@ -1,5 +1,5 @@
 import { Report, PreProcessor, ReportedData } from '../../core/reporting';
-import { UnitOfTime, UnitsOfTime } from '../../core/unit-of-time';
+import { UnitOfTime, UnitsOfTime } from '../../calculations/unit-of-time';
 
 interface ISlidingPerformance {
   source: string;

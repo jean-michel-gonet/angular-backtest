@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { SlidingPerformance } from 'src/app/model/reports/preprocessors/sliding-performance';
-import { UnitOfTime } from 'src/app/model/core/unit-of-time';
+import { UnitOfTime } from 'src/app/model/calculations/unit-of-time';
 
 @Component({
   selector: 'sliding-performance',

@@ -1,5 +1,5 @@
-import { PeriodLength, Period } from './period';
-import { Quote } from './quotes';
+import { PeriodLength, Period } from '../core/period';
+import { Quote } from '../core/quotes';
 
 export enum MovingAveragePreprocessing {
   TYPICAL = 'TYPICAL',
