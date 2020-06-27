@@ -1,5 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, forwardRef } from '@angular/core';
 import { ReportedData } from 'src/app/model/core/reporting';
+import { OnlineAverage } from 'src/app/model/calculations/average';
+import { OnlineStandardDeviation } from 'src/app/model/calculations/standard-deviation';
 
 export interface Highlight {
   startReportingCycle(instant: Date): void;
@@ -149,22 +151,15 @@ export class HighlightDateMinComponent extends BaseHighlightComponent {
   providers: [{provide: BaseHighlightComponent, useExisting: forwardRef(() => HighlightAvgComponent) }]
 })
 export class HighlightAvgComponent extends BaseHighlightComponent {
-  private numberOfSamples: number;
-
-  private avg: number;
+  private onlineAverage: OnlineAverage = new OnlineAverage();
+  public avg: number;
 
   constructor(cdr: ChangeDetectorRef) {
     super(cdr);
   }
   receiveData(providedData: ReportedData): void {
     if (providedData.sourceName == this.sourceName) {
-      if (this.numberOfSamples) {
-        this.avg = (this.avg * this.numberOfSamples  + providedData.y) / (this.numberOfSamples + 1);
-        this.numberOfSamples++;
-      } else {
-        this.avg = providedData.y;
-        this.numberOfSamples = 1;
-      }
+      this.avg = this.onlineAverage.average(providedData.y);
     }
   }
 }
@@ -176,10 +171,15 @@ export class HighlightAvgComponent extends BaseHighlightComponent {
   providers: [{provide: BaseHighlightComponent, useExisting: forwardRef(() => HighlightStdComponent) }]
 })
 export class HighlightStdComponent extends BaseHighlightComponent {
+  private onlineStandardDeviation: OnlineStandardDeviation = new OnlineStandardDeviation();
+  public std: number;
+
   constructor(cdr: ChangeDetectorRef) {
     super(cdr);
   }
   receiveData(providedData: ReportedData): void {
-    // Nothing yet.
+    if (providedData.sourceName == this.sourceName) {
+      this.std = this.onlineStandardDeviation.std(providedData.y);
+    }
   }
 }
