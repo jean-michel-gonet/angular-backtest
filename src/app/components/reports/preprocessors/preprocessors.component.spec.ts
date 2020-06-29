@@ -2,9 +2,9 @@ import { ViewChild, Component, NO_ERRORS_SCHEMA } from "@angular/core";
 import { ComponentFixture, async, TestBed } from '@angular/core/testing';
 import { SlidingPerformanceComponent } from './sliding-performance.component';
 import { SlidingPerformance } from 'src/app/model/reports/preprocessors/sliding-performance';
-import { UnitOfTime } from 'src/app/model/calculations/unit-of-time';
 import { PreprocessorsComponent } from './preprocessors.component';
 import { PreProcessor } from 'src/app/model/core/reporting';
+import { UnitOfTime } from 'src/app/model/reports/preprocessors/unit-of-time';
 
 @Component({
   selector: 'parent',

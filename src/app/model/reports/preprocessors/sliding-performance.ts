@@ -1,66 +1,38 @@
-import { Report, PreProcessor, ReportedData } from '../../core/reporting';
-import { UnitOfTime, UnitsOfTime } from '../../calculations/unit-of-time';
+import { SlidingRecord, SlidingBase, ISlidingBase } from './sliding-base-class';
 
-interface ISlidingPerformance {
-  source: string;
-  over: number;
-  unitOfTime: UnitOfTime;
-  output: string;
-}
+class PerformanceRecord extends SlidingRecord {
+  private initialDate: Date;
+  private initialValue: number;
+  private variation: number;
+  private days: number;
 
-class Record {
-  constructor(public startDate: Date, public initialValue: number, public endDate: Date) {}
-}
-
-export class SlidingPerformance implements PreProcessor {
-  source: string;
-  unitsOfTime: UnitsOfTime;
-  output: string;
-
-  private instant: Date;
-  private y: number;
-  private records: Record[] = [];
-
-  constructor(obj = {} as ISlidingPerformance) {
-    let {
-      source,
-      over,
-      unitOfTime,
-      output
-    } = obj;
-    this.source = source;
-    this.unitsOfTime = new UnitsOfTime(over, unitOfTime);
-    this.output = output;
+  constructor(public endDate: Date) {
+    super(endDate);
   }
 
-  startReportingCycle(instant: Date): void {
-    this.instant = instant;
+  getValue(): number {
+    let performance: number = 100 * this.variation / this.initialValue;
+    let annualPerformance: number = performance * 365 / this.days;
+    return annualPerformance;
   }
 
-  receiveData(providedData: ReportedData): void {
-    if (providedData.sourceName == this.source) {
-      this.records.push(new Record(
-        new Date(this.instant.valueOf()),
-        providedData.y,
-        this.unitsOfTime.startingFrom(this.instant)));
-      this.y = providedData.y;
+  compute(instant: Date, y: number): void {
+    if (!this.initialValue) {
+      this.initialValue = y;
+      this.initialDate = new Date(instant);
+    } else {
+      this.variation = y - this.initialValue;
+      this.days = (instant.valueOf() - this.initialDate.valueOf()) / (24 * 60 * 60 * 1000);
     }
   }
+}
 
-  reportTo(report: Report): void {
-    if (this.records.length > 0) {
-      let record: Record;
+export class SlidingPerformance extends SlidingBase {
+  constructor(obj = {} as ISlidingBase) {
+    super(obj);
+  }
 
-      while (this.records[0].endDate <= this.instant) {
-        record = this.records.shift();
-      }
-      if (record) {
-        let variation: number = this.y - record.initialValue;
-        let performance: number = 100 * variation / record.initialValue;
-        let days: number = (this.instant.valueOf() - record.startDate.valueOf()) / (24 * 60 * 60 * 1000);
-        let annualPerformance: number = performance * 365 / days;
-        report.receiveData(new ReportedData({sourceName: this.output, y: annualPerformance}));
-      }
-    }
+  makeNewRecord(endDate: Date): SlidingRecord {
+    return new PerformanceRecord(endDate);
   }
 }
