@@ -1,5 +1,6 @@
 import { Component, ContentChildren, QueryList } from '@angular/core';
 import { PerformancePreprocessorComponent } from './performance-preprocessor.component';
+import { RegressionPreprocessorComponent } from './regression-preprocessor.component';
 import { PreProcessor } from 'src/app/model/core/reporting';
 
 @Component({
@@ -8,13 +9,21 @@ import { PreProcessor } from 'src/app/model/core/reporting';
 })
 export class PreprocessorsComponent {
   @ContentChildren(PerformancePreprocessorComponent)
-  private slidingPerformanceComponents: QueryList<PerformancePreprocessorComponent>;
+  private performancePreprocessorComponents: QueryList<PerformancePreprocessorComponent>;
+
+  @ContentChildren(RegressionPreprocessorComponent)
+  private regressionPreprocessorComponent: QueryList<RegressionPreprocessorComponent>;
 
   public asPreProcessors(): PreProcessor[] {
     let preProcessors: PreProcessor[] = [];
-    this.slidingPerformanceComponents.forEach(slidingPerformanceComponent =>  {
-      preProcessors.push(slidingPerformanceComponent.asPerformancePreprocessor());
+
+    this.performancePreprocessorComponents.forEach(p =>  {
+      preProcessors.push(p.asPerformancePreprocessor());
     });
+    this.regressionPreprocessorComponent.forEach(p =>  {
+      preProcessors.push(p.asRegressionPreprocessor());
+    });
+
     return preProcessors;
   }
 }

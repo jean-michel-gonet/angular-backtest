@@ -1,23 +1,23 @@
 import { ViewChild, Component, NO_ERRORS_SCHEMA } from "@angular/core";
 import { ComponentFixture, async, TestBed } from '@angular/core/testing';
-import { PerformancePreprocessorComponent } from './performance-preprocessor.component';
-import { PerformancePreprocessor } from 'src/app/model/reports/preprocessors/performance-preprocessor';
+import { RegressionPreprocessorComponent } from './regression-preprocessor.component';
+import { RegressionPreprocessor } from 'src/app/model/reports/preprocessors/regression-preprocessor';
 import { UnitOfTime } from 'src/app/model/reports/preprocessors/unit-of-time';
 
 @Component({
   selector: 'parent',
   template: `
-  <performance-preprocessor source="MACD.NAV"
-                            over="3"
-                            unitOfTime="YEAR"
-                            output="PERFORMANCE3"></performance-preprocessor>`})
+  <regression-preprocessor source="MACD.NAV"
+                           over="3"
+                           unitOfTime="YEAR"
+                           output="REGRESSION3"></regression-preprocessor>`})
 class TestWrapperComponent {
-  @ViewChild(PerformancePreprocessorComponent, {static: true})
-  public slidingPerformanceComponent: PerformancePreprocessorComponent;
+  @ViewChild(RegressionPreprocessorComponent, {static: true})
+  public regressionPreprocessorComponent: RegressionPreprocessorComponent;
 }
 
-describe('SlidingPerformanceComponent', () => {
-  let component: PerformancePreprocessorComponent;
+describe('RegressionPreprocessorComponent', () => {
+  let component: RegressionPreprocessorComponent;
   let fixture: ComponentFixture<TestWrapperComponent>;
 
   beforeEach(async(() => {
@@ -25,7 +25,7 @@ describe('SlidingPerformanceComponent', () => {
       schemas: [ NO_ERRORS_SCHEMA ],
       declarations: [
         TestWrapperComponent,
-        PerformancePreprocessorComponent
+        RegressionPreprocessorComponent
       ],
       providers: []
     }).compileComponents();
@@ -34,7 +34,7 @@ describe('SlidingPerformanceComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TestWrapperComponent);
     fixture.detectChanges();
-    component = fixture.componentInstance.slidingPerformanceComponent;
+    component = fixture.componentInstance.regressionPreprocessorComponent;
   });
 
   it('Can be instantiated', () => {
@@ -42,11 +42,11 @@ describe('SlidingPerformanceComponent', () => {
   });
 
   it('Can instantiate a SlidingPerformance preprocessor', () => {
-    let performancePreprocessor: PerformancePreprocessor = component.asPerformancePreprocessor();
-    expect(performancePreprocessor).toBeTruthy();
-    expect(performancePreprocessor.source).toBe("MACD.NAV");
-    expect(performancePreprocessor.unitsOfTime.over).toBe(3);
-    expect(performancePreprocessor.unitsOfTime.unitOfTime).toBe(UnitOfTime.YEAR);
-    expect(performancePreprocessor.output).toBe("PERFORMANCE3");
+    let regressionPreprocessor: RegressionPreprocessor = component.asRegressionPreprocessor();
+    expect(regressionPreprocessor).toBeTruthy();
+    expect(regressionPreprocessor.source).toBe("MACD.NAV");
+    expect(regressionPreprocessor.unitsOfTime.over).toBe(3);
+    expect(regressionPreprocessor.unitsOfTime.unitOfTime).toBe(UnitOfTime.YEAR);
+    expect(regressionPreprocessor.output).toBe("REGRESSION3");
   });
 });

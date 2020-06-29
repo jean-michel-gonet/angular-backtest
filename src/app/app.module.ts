@@ -9,9 +9,10 @@ import { AppComponent } from './app.component';
 import { ChartReportComponent } from './components/reports/chart-report/chart-report.component';
 import { ChartReportConfigurationComponent } from './components/reports/chart-report/chart-report-configuration.component';
 import { HighlightReportComponent } from './components/reports/highlight-report/highlight-report.component';
+import { PerformancePreprocessorComponent} from './components/reports/preprocessors/performance-preprocessor.component';
+import { RegressionPreprocessorComponent} from './components/reports/preprocessors/regression-preprocessor.component';
 import { PreprocessorsComponent } from './components/reports/preprocessors/preprocessors.component';
 import { ReportsComponent } from './components/reports/reports.component';
-import { PerformancePreprocessorComponent} from './components/reports/preprocessors/performance-preprocessor.component';
 
 import { AccountComponent, AccountsComponent } from './components/accounts/accounts.component';
 import { TransferToComponent } from './components/accounts/transfer-to.component';
@@ -55,6 +56,7 @@ import { HighlightMaxComponent,
     HighlightAvgComponent,
     HighlightStdComponent,
     PerformancePreprocessorComponent,
+    RegressionPreprocessorComponent,
     ChartReportComponent,
     ReportsComponent,
 

@@ -1,10 +1,9 @@
 import { ViewChild, Component, NO_ERRORS_SCHEMA } from "@angular/core";
 import { ComponentFixture, async, TestBed } from '@angular/core/testing';
+import { RegressionPreprocessorComponent } from './regression-preprocessor.component';
 import { PerformancePreprocessorComponent } from './performance-preprocessor.component';
-import { PerformancePreprocessor } from 'src/app/model/reports/preprocessors/performance-preprocessor';
 import { PreprocessorsComponent } from './preprocessors.component';
 import { PreProcessor } from 'src/app/model/core/reporting';
-import { UnitOfTime } from 'src/app/model/reports/preprocessors/unit-of-time';
 
 @Component({
   selector: 'parent',
@@ -14,10 +13,14 @@ import { UnitOfTime } from 'src/app/model/reports/preprocessors/unit-of-time';
                               over="3"
                               unitOfTime="YEAR"
                               output="PERFORMANCE3"></performance-preprocessor>
+    <regression-preprocessor source="ACC.CLOSE"
+                              over="4"
+                              unitOfTime="MONTH"
+                              output="REGRESSION2"></regression-preprocessor>
   </preprocessors>`})
 class TestWrapperComponent {
   @ViewChild(PreprocessorsComponent, {static: true})
-  public chartReportPreprocessorsComponent: PreprocessorsComponent;
+  public preprocessorComponent: PreprocessorsComponent;
 }
 
 describe('ChartReportPreprocessorsComponent', () => {
@@ -30,7 +33,8 @@ describe('ChartReportPreprocessorsComponent', () => {
       declarations: [
         TestWrapperComponent,
         PreprocessorsComponent,
-        PerformancePreprocessorComponent
+        PerformancePreprocessorComponent,
+        RegressionPreprocessorComponent
       ],
       providers: []
     }).compileComponents();
@@ -39,22 +43,16 @@ describe('ChartReportPreprocessorsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TestWrapperComponent);
     fixture.detectChanges();
-    component = fixture.componentInstance.chartReportPreprocessorsComponent;
+    component = fixture.componentInstance.preprocessorComponent;
   });
 
   it('Can be instantiated', () => {
     expect(component).toBeTruthy();
   });
 
-  it('Can instantiate a SlidingPerformance preprocessor', () => {
-    let preProcessors: PreProcessor[] = component.asPreProcessors();
-    expect(preProcessors).toBeTruthy();
-
-    let slidingPerformance: PerformancePreprocessor = <PerformancePreprocessor>preProcessors[0];
-
-    expect(slidingPerformance.source).toBe("MACD.NAV");
-    expect(slidingPerformance.unitsOfTime.over).toBe(3);
-    expect(slidingPerformance.unitsOfTime.unitOfTime).toBe(UnitOfTime.YEAR);
-    expect(slidingPerformance.output).toBe("PERFORMANCE3");
+  it('Can contain all specified preprocessors', () => {
+    let preprocessors: PreProcessor[] = component.asPreProcessors();
+    expect(preprocessors).toBeTruthy();
+    expect(preprocessors.length).toBe(2);
   });
 });

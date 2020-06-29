@@ -18,16 +18,12 @@ export class OnlineLinearRegression {
   private covXY: number = 0;
   private n: number = 0;
 
-  private a: number;
-  private b: number;
-
   /**
    * Calculates the linear regression for all samples provided so far.
    * @param{Date} instant The sample's instant, considered as x value.
    * @param{number} y The sample's y value.
-   * @return{number} The A parameter, based on the samples provided so far.
    */
-  regression(instant: Date, y: number): number {
+  regression(instant: Date, y: number): void {
     let days = instant.valueOf() / 86400000;
     if (this.n == 0) {
       this.x0 = days;
@@ -44,19 +40,14 @@ export class OnlineLinearRegression {
 
     this.meanX += dx / this.n;
     this.meanY += dy / this.n;
-
-    this.a = this.covXY / this.varX;
-    this.b = this.meanY - this.a * this.meanX;
-
-    return this.a;
   }
 
   getA(): number {
-    return this.a;
+    return this.covXY / this.varX;
   }
 
   getB(): number {
-    return this.b;
+    return this.meanY - this.getA() * this.meanX;
   }
 
 }
