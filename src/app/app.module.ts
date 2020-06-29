@@ -11,7 +11,7 @@ import { ChartReportConfigurationComponent } from './components/reports/chart-re
 import { HighlightReportComponent } from './components/reports/highlight-report/highlight-report.component';
 import { PreprocessorsComponent } from './components/reports/preprocessors/preprocessors.component';
 import { ReportsComponent } from './components/reports/reports.component';
-import { SlidingPerformanceComponent} from './components/reports/preprocessors/sliding-performance.component';
+import { PerformancePreprocessorComponent} from './components/reports/preprocessors/performance-preprocessor.component';
 
 import { AccountComponent, AccountsComponent } from './components/accounts/accounts.component';
 import { TransferToComponent } from './components/accounts/transfer-to.component';
@@ -54,7 +54,7 @@ import { HighlightMaxComponent,
     HighlightDateMinComponent,
     HighlightAvgComponent,
     HighlightStdComponent,
-    SlidingPerformanceComponent,
+    PerformancePreprocessorComponent,
     ChartReportComponent,
     ReportsComponent,
 

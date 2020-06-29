@@ -1,12 +1,12 @@
 import { Component, Input } from '@angular/core';
-import { SlidingRegression } from 'src/app/model/reports/preprocessors/sliding-regression';
+import { PerformancePreprocessor } from 'src/app/model/reports/preprocessors/performance-preprocessor';
 import { UnitOfTime } from 'src/app/model/reports/preprocessors/unit-of-time';
 
 @Component({
-  selector: 'sliding-regression',
+  selector: 'performance-preprocessor',
   template: ''
 })
-export class SlidingRegressionComponent {
+export class PerformancePreprocessorComponent {
   private _source: string;
   @Input()
   set source(value: string) {
@@ -51,8 +51,8 @@ export class SlidingRegressionComponent {
     return this._output;
   }
 
-  asSlidingRegression(): SlidingRegression {
-    return new SlidingRegression({
+  asPerformancePreprocessor(): PerformancePreprocessor {
+    return new PerformancePreprocessor({
       source: this.source,
       over: this.over,
       unitOfTime: this.unitOfTime,

@@ -3,7 +3,7 @@ import { ComponentFixture, async, TestBed } from '@angular/core/testing';
 import { NullReport, Report } from 'src/app/model/core/reporting';
 import { Ng2ChartReportFactory } from 'src/app/model/reports/ng2-chart.report';
 import { PreprocessorsComponent } from './preprocessors/preprocessors.component';
-import { SlidingPerformanceComponent } from './preprocessors/sliding-performance.component';
+import { PerformancePreprocessorComponent } from './preprocessors/performance-preprocessor.component';
 import { ReportsComponent } from './reports.component';
 import { Reports } from 'src/app/model/reports/reports';
 import { ChartReportComponent } from './chart-report/chart-report.component';
@@ -43,7 +43,7 @@ describe('ReportsComponent', () => {
         ChartReportComponent,
         ChartReportConfigurationComponent,
         PreprocessorsComponent,
-        SlidingPerformanceComponent,
+        PerformancePreprocessorComponent,
       ],
       providers: [
         { provide: Ng2ChartReportFactory, useClass: TestReportFactory }

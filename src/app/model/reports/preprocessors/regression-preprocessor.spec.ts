@@ -1,11 +1,11 @@
-import { SlidingRegression} from "./sliding-regression";
+import { RegressionPreprocessor} from "./regression-preprocessor";
 import { UnitOfTime } from "./unit-of-time";
 import { TestReport, TestReporter } from './test-utils';
 
 describe('SlidingRegression', () =>{
   let testReport: TestReport;
   let testReporter: TestReporter;
-  let slidingRegression: SlidingRegression;
+  let regressionPreprocessor: RegressionPreprocessor;
 
   beforeEach(() => {
     testReport = new TestReport("OUTPUT");
@@ -14,12 +14,12 @@ describe('SlidingRegression', () =>{
   });
 
   it('Can be instantiated', () => {
-    slidingRegression = new SlidingRegression({
+    regressionPreprocessor = new RegressionPreprocessor({
       source: "SOURCE",
       over: 3,
       unitOfTime: UnitOfTime.YEAR,
       output: "OUTPUT"});
-    expect(slidingRegression).toBeTruthy();
+    expect(regressionPreprocessor).toBeTruthy();
   });
 
   /**
@@ -32,13 +32,12 @@ describe('SlidingRegression', () =>{
   }
 
   it('Can compute performance over 3 years with uneven sampling', () => {
-    slidingRegression =  new SlidingRegression({
+    testReport.setPreProcessor(new RegressionPreprocessor({
       source: "SOURCE",
       over: 3,
       unitOfTime: UnitOfTime.YEAR,
-      output: "OUTPUT"});
-
-    testReport.setPreProcessor(slidingRegression);
+      output: "OUTPUT"
+    }));
 
     feedReportWith(new Date(1980,  1 - 1,  1),     7.24);
     feedReportWith(new Date(1980,  3 - 1, 17),   771.92);

@@ -1,7 +1,7 @@
 import { OnlineLinearRegression } from '../../calculations/linear-regression';
-import { SlidingRecord, SlidingBase, ISlidingBase } from './sliding-base-class';
+import { Record, BasePreprocessor, IBasePreprocessor } from './base-preprocessor';
 
-class RegressionRecord extends SlidingRecord {
+class RegressionRecord extends Record {
   private onlineLinearRegression: OnlineLinearRegression;
 
   constructor(public endDate: Date) {
@@ -18,13 +18,13 @@ class RegressionRecord extends SlidingRecord {
   }
 }
 
-export class SlidingRegression extends SlidingBase {
+export class RegressionPreprocessor extends BasePreprocessor {
 
-  constructor(obj = {} as ISlidingBase) {
+  constructor(obj = {} as IBasePreprocessor) {
     super(obj);
   }
 
-  makeNewRecord(endDate: Date): SlidingRecord {
+  makeNewRecord(endDate: Date): RegressionRecord {
     return new RegressionRecord(endDate);
   }
 }

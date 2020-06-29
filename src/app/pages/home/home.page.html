@@ -44,9 +44,9 @@
       <chart-report-configuration show="ACC.P10"     showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
     </chart-report>
     <preprocessors>
-      <sliding-performance source="ACC.NAV" over= "3" unitOfTime="YEAR" output="ACC.P03"></sliding-performance>
-      <sliding-performance source="ACC.NAV" over= "7" unitOfTime="YEAR" output="ACC.P07"></sliding-performance>
-      <sliding-performance source="ACC.NAV" over="10" unitOfTime="YEAR" output="ACC.P10"></sliding-performance>
+      <performance-preprocessor source="ACC.NAV" over= "3" unitOfTime="YEAR" output="ACC.P03"></performance-preprocessor>
+      <performance-preprocessor source="ACC.NAV" over= "7" unitOfTime="YEAR" output="ACC.P07"></performance-preprocessor>
+      <performance-preprocessor source="ACC.NAV" over="10" unitOfTime="YEAR" output="ACC.P10"></performance-preprocessor>
     </preprocessors>
   </reports>
   <accounts>

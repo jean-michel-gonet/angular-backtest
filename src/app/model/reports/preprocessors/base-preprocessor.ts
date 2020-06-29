@@ -1,28 +1,28 @@
 import { Report, PreProcessor, ReportedData } from '../../core/reporting';
 import { UnitOfTime, UnitsOfTime } from './unit-of-time';
 
-export interface ISlidingBase {
+export interface IBasePreprocessor {
   source: string;
   over: number;
   unitOfTime: UnitOfTime;
   output: string;
 }
 
-export abstract class SlidingRecord {
+export abstract class Record {
   constructor(public endDate: Date) {}
   abstract getValue(): number;
   abstract compute(instant: Date, y: number): void;
 }
 
-export abstract class SlidingBase implements PreProcessor {
+export abstract class BasePreprocessor implements PreProcessor {
   source: string;
   unitsOfTime: UnitsOfTime;
   output: string;
 
   private instant: Date;
-  private records: SlidingRecord[] = [];
+  private records: Record[] = [];
 
-  constructor(obj = {} as ISlidingBase) {
+  constructor(obj = {} as IBasePreprocessor) {
     let {
       source,
       over,
@@ -48,11 +48,11 @@ export abstract class SlidingBase implements PreProcessor {
     }
   }
 
-  abstract makeNewRecord(endDate: Date): SlidingRecord;
+  abstract makeNewRecord(endDate: Date): Record;
 
   reportTo(report: Report): void {
     if (this.records.length > 0) {
-      let record: SlidingRecord;
+      let record: Record;
 
       while (this.records[0].endDate <= this.instant) {
         record = this.records.shift();

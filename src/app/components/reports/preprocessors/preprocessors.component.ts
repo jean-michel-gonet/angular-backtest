@@ -1,5 +1,5 @@
 import { Component, ContentChildren, QueryList } from '@angular/core';
-import { SlidingPerformanceComponent } from './sliding-performance.component';
+import { PerformancePreprocessorComponent } from './performance-preprocessor.component';
 import { PreProcessor } from 'src/app/model/core/reporting';
 
 @Component({
@@ -7,13 +7,13 @@ import { PreProcessor } from 'src/app/model/core/reporting';
   template: '<ng-content></ng-content>'
 })
 export class PreprocessorsComponent {
-  @ContentChildren(SlidingPerformanceComponent)
-  private slidingPerformanceComponents: QueryList<SlidingPerformanceComponent>;
+  @ContentChildren(PerformancePreprocessorComponent)
+  private slidingPerformanceComponents: QueryList<PerformancePreprocessorComponent>;
 
   public asPreProcessors(): PreProcessor[] {
     let preProcessors: PreProcessor[] = [];
     this.slidingPerformanceComponents.forEach(slidingPerformanceComponent =>  {
-      preProcessors.push(slidingPerformanceComponent.asSlidingPerformance());
+      preProcessors.push(slidingPerformanceComponent.asPerformancePreprocessor());
     });
     return preProcessors;
   }

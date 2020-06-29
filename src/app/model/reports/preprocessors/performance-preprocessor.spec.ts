@@ -1,8 +1,8 @@
-import { SlidingPerformance} from "./sliding-performance";
+import { PerformancePreprocessor} from "./performance-preprocessor";
 import { UnitOfTime } from "./unit-of-time";
 import { TestReport, TestReporter } from './test-utils';
 
-describe('SlidingPerformance', () =>{
+describe('PerformancePreprocessor', () =>{
   let testReport: TestReport;
   let testReporter: TestReporter;
 
@@ -13,16 +13,16 @@ describe('SlidingPerformance', () =>{
   });
 
   it('Can be instantiated', () => {
-    let slidingPerformance: SlidingPerformance = new SlidingPerformance({
+    let performancePreprocessor: PerformancePreprocessor = new PerformancePreprocessor({
       source: "SOURCE",
       over: 3,
       unitOfTime: UnitOfTime.YEAR,
       output: "OUTPUT"});
-    expect(slidingPerformance).toBeTruthy();
+    expect(performancePreprocessor).toBeTruthy();
   });
 
   it('Can compute performance over 3 years', () => {
-    testReport.setPreProcessor(new SlidingPerformance({
+    testReport.setPreProcessor(new PerformancePreprocessor({
       source: "SOURCE",
       over: 3,
       unitOfTime: UnitOfTime.YEAR,
@@ -52,7 +52,7 @@ describe('SlidingPerformance', () =>{
   });
 
   it('Can compute performance over 3 month with missing dayas', () => {
-    testReport.setPreProcessor(new SlidingPerformance({
+    testReport.setPreProcessor(new PerformancePreprocessor({
       source: "SOURCE",
       over: 3,
       unitOfTime: UnitOfTime.MONTH,

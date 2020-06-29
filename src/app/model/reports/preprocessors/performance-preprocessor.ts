@@ -1,6 +1,6 @@
-import { SlidingRecord, SlidingBase, ISlidingBase } from './sliding-base-class';
+import { Record, BasePreprocessor, IBasePreprocessor } from './base-preprocessor';
 
-class PerformanceRecord extends SlidingRecord {
+export class PerformanceRecord extends Record {
   private initialDate: Date;
   private initialValue: number;
   private variation: number;
@@ -27,12 +27,12 @@ class PerformanceRecord extends SlidingRecord {
   }
 }
 
-export class SlidingPerformance extends SlidingBase {
-  constructor(obj = {} as ISlidingBase) {
+export class PerformancePreprocessor extends BasePreprocessor {
+  constructor(obj = {} as IBasePreprocessor) {
     super(obj);
   }
 
-  makeNewRecord(endDate: Date): SlidingRecord {
+  makeNewRecord(endDate: Date): PerformanceRecord {
     return new PerformanceRecord(endDate);
   }
 }
