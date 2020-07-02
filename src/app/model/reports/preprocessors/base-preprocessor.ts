@@ -43,7 +43,9 @@ export abstract class BasePreprocessor implements PreProcessor {
       let endDate: Date = this.unitsOfTime.startingFrom(this.instant);
       this.records.push(this.makeNewRecord(endDate));
       this.records.forEach(r => {
-        r.compute(this.instant, providedData.y);
+        if (this.instant.valueOf() < r.endDate.valueOf()) {
+          r.compute(this.instant, providedData.y);
+        }
       });
     }
   }
@@ -56,8 +58,6 @@ export abstract class BasePreprocessor implements PreProcessor {
 
       while (this.records[0].endDate <= this.instant) {
         record = this.records.shift();
-      }
-      if (record) {
         let y: number = record.getValue();
         report.receiveData(new ReportedData({sourceName: this.output, y: y}));
       }

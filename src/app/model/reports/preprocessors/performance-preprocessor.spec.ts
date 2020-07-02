@@ -62,14 +62,17 @@ describe('PerformancePreprocessor', () =>{
     testReport.startReportingCycle(new Date(1980, 0, 1));
     testReporter.setY(10);
     testReport.collectReports();
+    testReport.startReportingCycle(new Date(1980, 2, 31));
+    testReporter.setY(11);
+    testReport.collectReports();
 
     testReport.startReportingCycle(new Date(1980, 3, 1));
-    testReporter.setY(11);
+    testReporter.setY(100);
     testReport.collectReports();
 
     expect(testReport.numberOfEntries()).toBe(1);
 
-    expect(testReport.entryOf(new Date(1980, 3, 1))).toBeCloseTo(40, 0);
+    expect(testReport.entryOf(new Date(1980, 3, 1))).toBeCloseTo(40.555, 2);
   });
 
 });

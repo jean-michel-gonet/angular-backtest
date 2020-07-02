@@ -20,6 +20,8 @@ export class PerformanceRecord extends Record {
     if (!this.initialValue) {
       this.initialValue = y;
       this.initialDate = new Date(instant);
+      this.variation = 0;
+      this.days = 0;
     } else {
       this.variation = y - this.initialValue;
       this.days = (instant.valueOf() - this.initialDate.valueOf()) / (24 * 60 * 60 * 1000);

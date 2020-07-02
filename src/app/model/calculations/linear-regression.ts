@@ -13,7 +13,6 @@
 export class OnlineLinearRegression {
   private meanX: number = 0;
   private meanY: number = 0;
-  private x0: number;
   private varX: number = 0;
   private covXY: number = 0;
   private n: number = 0;
@@ -23,13 +22,7 @@ export class OnlineLinearRegression {
    * @param{Date} instant The sample's instant, considered as x value.
    * @param{number} y The sample's y value.
    */
-  regression(instant: Date, y: number): void {
-    let days = instant.valueOf() / 86400000;
-    if (this.n == 0) {
-      this.x0 = days;
-    }
-    let x: number = days - this.x0;
-
+  regression(x: number, y: number): void {
     this.n++;
 
     let dx = x - this.meanX;
