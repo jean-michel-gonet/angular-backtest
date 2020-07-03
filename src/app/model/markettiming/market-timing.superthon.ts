@@ -42,6 +42,11 @@ export class SuperthonMarketTiming implements MarketTiming {
     this.threshold = threshold;
     this.period = new Period(periodLength);
     this.status = status;
+    console.log("Superthon id=" + this.id +
+                " periods=" + this.periods +
+                " periodLength=" + this.periodLength +
+                " threshold=" + this.threshold +
+                " status=" + this.status);
   }
 
   record(instant: Date, candlestick: Candlestick): void {
@@ -118,6 +123,10 @@ export class SuperthonMarketTiming implements MarketTiming {
     report.receiveData(new ReportedData({
       sourceName: this.id + ".SUPERTHON",
       y: this.numericalStatus
+    }));
+    report.receiveData(new ReportedData({
+      sourceName: this.id + ".TRI",
+      y: this.numberOfTriggers
     }));
   }
 
