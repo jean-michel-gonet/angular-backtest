@@ -27,14 +27,13 @@ export class InvestingConverter {
     let csvContent: string[] = this.investingData.split(/\r\n|\r|\n/);
     csvContent.forEach( (line: string) => {
       if (lineNumber++ > 0 && line.length > 0) {
-        let tokens: string[] = line.split(",");
-        let sMonthDay: string = this.trimQuotes(tokens[0]);
-        let sYear:     string = this.trimQuotes(tokens[1]);
-        let sPrice:    string = this.trimQuotes(tokens[2]);
-        let sOpen:     string = this.trimQuotes(tokens[3]);
-        let sHigh:     string = this.trimQuotes(tokens[4]);
-        let sLow:      string = this.trimQuotes(tokens[5]);
-        let sVolume:   string = this.trimQuotes(tokens[6]);
+        let tokens: string[] = line.split("\",\"");
+        let sDate: string = this.trimQuotes(tokens[0]);
+        let sPrice:    string = this.trimQuotes(tokens[1]);
+        let sOpen:     string = this.trimQuotes(tokens[2]);
+        let sHigh:     string = this.trimQuotes(tokens[3]);
+        let sLow:      string = this.trimQuotes(tokens[4]);
+        let sVolume:   string = this.trimQuotes(tokens[5]);
 
         let alert: string;
         let volume: number = this.convertToNumber(sVolume);
@@ -42,7 +41,7 @@ export class InvestingConverter {
           alert = "Circuit Breaker"
         }
         let instantQuotes: InstantQuotes = new InstantQuotes({
-          instant: this.convertToDate(sMonthDay, sYear),
+          instant: this.convertToDate(sDate),
           quotes: [
             new Quote({
               name: this.name,
@@ -73,19 +72,21 @@ export class InvestingConverter {
   }
   /**
    * Converts a Yahoo Finance formatted date into a date.
-   * @param {string} sMonthDay A string representing
-   * a month and day, like in @code{Apr 09}.
-   * @param {string} sYear A string with an integer, representing
-   * the year.
+   * @param {string} sDate A string representing
+   * a date, like in @code{Apr 09, 2020}.
    * @return {Date} The date.
    */
-  private convertToDate(sMonthDay: string, sYear: string): Date {
+  private convertToDate(sDate: string): Date {
+    let token1:string[] = sDate.split(",");
+    let sMonthDay: string = token1[0];
+    let sYear: string = token1[1];
+
     let year: number = parseInt(sYear);
 
-    let tokens: string[] = sMonthDay.split(" ");
-    let day: number = parseInt(tokens[1]);
+    let token2: string[] = sMonthDay.split(" ");
+    let day: number = parseInt(token2[1]);
 
-    let month: number = this.convertToMonth(tokens[0]);
+    let month: number = this.convertToMonth(token2[0]);
 
     return new Date(year, month, day);
   }
@@ -135,6 +136,7 @@ export class InvestingConverter {
        s = s.slice(0, -1);
        exponent = 1000
      }
+     s = s.replace(",", "");
      let value: number = parseFloat(s) * exponent;
      return value;
    }

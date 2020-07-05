@@ -2,8 +2,8 @@
   {
     "name": "IBEX35",
     "quote": {
-      "provider": "finance.yahoo.com",
-      "uri": "indexes/ibex35-yahoo.csv"
+      "provider": "www.investing.com",
+      "uri": "indexes/ibex35-investing.csv"
     }
   },
   {
