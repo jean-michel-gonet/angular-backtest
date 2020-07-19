@@ -2,7 +2,7 @@ import { MarketTiming, BearBull } from '../core/market-timing';
 import { Quote } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { PeriodLength } from '../core/period';
-import { EmaCalculator, MovingAverageSource, MovingAveragePreprocessing } from '../core/moving-average';
+import { EmaCalculator, MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-average';
 
 export class IEMAMarketTiming {
   id?: string;
@@ -12,6 +12,7 @@ export class IEMAMarketTiming {
   fastPeriod?: number;
   slowPeriod?: number;
   status?: BearBull;
+
 }
 
 /**
@@ -29,6 +30,8 @@ export class EMAMarketTiming implements MarketTiming {
   status: BearBull;
   difference: number;
 
+  numberOfTriggers: number = 0;
+
   constructor(obj = {} as IEMAMarketTiming){
     let {
       id = "EMA",
@@ -39,7 +42,7 @@ export class EMAMarketTiming implements MarketTiming {
       slowPeriod = 15,
       status = BearBull.BEAR
     } = obj;
-    console.log("Starting EMAMarketTiming", id, periodLength, fastPeriod, slowPeriod, status);
+    console.log("EMA Market Timing", id, periodLength, fastPeriod, slowPeriod, status);
     this.id = id;
     this.status = status;
 
@@ -63,10 +66,19 @@ export class EMAMarketTiming implements MarketTiming {
     let fastEMA = this.fastEMA.ema(instant, quote);
     if (slowEMA) {
       this.difference = fastEMA - slowEMA;
-      if (this.difference > 0) {
-        this.status = BearBull.BULL;
-      } else {
-        this.status = BearBull.BEAR;
+      switch (this.status) {
+        case BearBull.BULL:
+          if (this.difference < 0) {
+            this.status = BearBull.BEAR;
+            console.log("EMA Market Timing", ++this.numberOfTriggers, BearBull.BEAR, instant);
+          }
+          break;
+        case BearBull.BEAR:
+          if (this.difference > 0) {
+            this.status = BearBull.BULL;
+            console.log("EMA Market Timing", ++this.numberOfTriggers, BearBull.BULL, instant);
+          }
+          break;
       }
     } else {
       this.difference = null;
@@ -98,6 +110,10 @@ export class EMAMarketTiming implements MarketTiming {
       report.receiveData(new ReportedData({
         sourceName: this.id + ".SLOW",
         y: this.slowEMA.lastValue
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".TRI",
+        y: this.numberOfTriggers
       }));
     }
   }

@@ -1,10 +1,10 @@
 import { Component, Input, ContentChild } from '@angular/core';
-import { ChartReportComponent } from '../reports/chart-report.component';
 import { AccountsComponent } from '../accounts/accounts.component';
 import { QuotesService } from 'src/app/services/quotes/quotes.service';
 import { Simulation } from 'src/app/model/core/simulation';
+import { ReportsComponent } from '../reports/reports.component';
 
-enum SimulationStatus {
+export enum SimulationStatus {
   WAITING,
   RUNNING,
   COMPLETED
@@ -54,8 +54,8 @@ export class SimulationComponent {
   }
 
 
-  @ContentChild(ChartReportComponent, {static: true})
-  public reportComponent: ChartReportComponent;
+  @ContentChild(ReportsComponent, {static: true})
+  public reportComponent: ReportsComponent;
 
   @ContentChild(AccountsComponent, {static: true})
   public accountsComponent: AccountsComponent;
@@ -79,7 +79,7 @@ export class SimulationComponent {
         let simulation: Simulation = new Simulation({
           accounts: this.accountsComponent.asAccounts(),
           historicalQuotes: historicalQuotes,
-          report: this.reportComponent
+          report: this.reportComponent.asReports()
         });
 
         // Run the simulation:

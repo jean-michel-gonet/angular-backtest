@@ -2,12 +2,19 @@
   {
     "name": "IBEX35",
     "quote": {
-      "provider": "finance.yahoo.com",
-      "uri": "indexes/ibex35-yahoo.csv"
+      "provider": "www.investing.com",
+      "uri": "indexes/ibex35-investing.csv"
     }
   },
   {
     "name": "SP500",
+    "quote": {
+      "provider": "finance.yahoo.com",
+      "uri": "indexes/sp500-yahoo.csv"
+    }
+  },
+  {
+    "name": "SP500DIV",
     "quote": {
       "provider": "finance.yahoo.com",
       "uri": "indexes/sp500-yahoo.csv"

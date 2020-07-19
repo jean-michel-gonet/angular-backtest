@@ -1,6 +1,6 @@
 import { ChartDataSets, ChartOptions, ChartPoint } from 'chart.js';
 import { Label } from 'ng2-charts';
-import { Report, Reporter, ReportedData } from '../core/reporting';
+import { Report, Reporter, ReportedData, PreProcessor } from '../core/reporting';
 import { Injectable } from '@angular/core';
 
 export enum ShowDataAs {
@@ -23,7 +23,8 @@ export interface Ng2ChartConfiguration {
 export interface INg2ChartReport {
   start?: Date;
   end?: Date;
-  configurations: Ng2ChartConfiguration[]
+  preProcessors?: PreProcessor[];
+  configurations: Ng2ChartConfiguration[],
 }
 
 class XChartPoint implements ChartPoint {
@@ -85,18 +86,24 @@ let formatLabel = function(tooltipItem: Chart.ChartTooltipItem, data: Chart.Char
   return dataName + ": " + dataValue;
 }
 
+/**
+ * A factory able to create new instances of the Ng2 charts report.
+ */
+ @Injectable({
+   providedIn: 'root'
+ })
+export class Ng2ChartReportFactory {
+  public newInstance(obj = {} as INg2ChartReport): Ng2ChartReport {
+    console.log("New Ng2ChartReport");
+    return new Ng2ChartReport(obj);
+  }
+}
 
 /**
  * Receives the data and formats them into Ng2 data, so they can directly
  * be displayed in a Ng2 Chart.
  * @class {Ng2ChartReport}
  */
- @Injectable({
-   providedIn: 'root',
-   useFactory: () => {
-     return new Ng2ChartReport();
-   }
- })
 export class Ng2ChartReport implements Report {
   public start: number;
   public end: number;
@@ -145,6 +152,7 @@ export class Ng2ChartReport implements Report {
     };
   private mapOfDatasets: Map<String, ChartDataSets>;
   private mapOfConfigurations: Map<String, Ng2ChartConfiguration>;
+  private preProcessors: PreProcessor[] = [];
   private reporters: Reporter[] = [];
 
   constructor(obj = {} as INg2ChartReport) {
@@ -160,6 +168,7 @@ export class Ng2ChartReport implements Report {
     let {
       start,
       end,
+      preProcessors = [],
       configurations = []
     } = obj;
     if (start) {
@@ -168,7 +177,7 @@ export class Ng2ChartReport implements Report {
     if (end) {
       this.end = end.valueOf();
     }
-
+    this.preProcessors = preProcessors;
     configurations.forEach(show => {
       let yAxisID:string = "y-axis-" + this.showOn(show.on);
       let dataSet: ChartDataSets = {
@@ -244,11 +253,18 @@ export class Ng2ChartReport implements Report {
   private x: number;
 
   startReportingCycle(instant: Date): void {
+
     if (this.betweenStartAndEnd(instant)) {
-      this.x = instant.valueOf();
+      // Propagate to reporters:
       this.reporters.forEach(reporter => {
         reporter.startReportingCycle(instant);
       });
+      // Propagate to preprocessors
+      this.preProcessors.forEach(preProcessor => {
+        preProcessor.startReportingCycle(instant)
+      });
+      // Remember the instant:
+      this.x = instant.valueOf();
     } else {
       this.x = null;
     }
@@ -272,10 +288,17 @@ export class Ng2ChartReport implements Report {
     this.reporters.forEach(reporter => {
       reporter.reportTo(this);
     });
+    this.preProcessors.forEach(preProcessor => {
+      preProcessor.reportTo(this);
+    });
   }
 
   receiveData(providedData: ReportedData): void {
     if (this.x) {
+      this.preProcessors.forEach(preProcessor => {
+        preProcessor.receiveData(providedData);
+      });
+
       let dataSet: ChartDataSets = this.mapOfDatasets.get(providedData.sourceName);
       if (dataSet) {
         let data: ChartPoint[] = dataSet.data as ChartPoint[];
@@ -299,7 +322,7 @@ export class Ng2ChartReport implements Report {
         let normalizationId: string = sourceName + ":" + configuration.on;
         let normalizationScale:number = this.normalizationMap.get(normalizationId);
         if (!normalizationScale && y != 0) {
-          normalizationScale = 100 / y;
+          normalizationScale = Math.abs(100 / y);
           this.normalizationMap.set(normalizationId, normalizationScale);
         }
         return normalizationScale * y;

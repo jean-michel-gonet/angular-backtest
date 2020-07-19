@@ -1,5 +1,5 @@
 import { Ng2ChartReport, ShowDataAs, ShowDataOn } from "./ng2-chart.report";
-import { ReportedData } from '../core/reporting';
+import { ReportedData, PreProcessor, Report, Reporter } from '../core/reporting';
 
 describe('Ng2ChartReport', () => {
   let yesterday = new Date(2015, 8, 17);
@@ -36,28 +36,113 @@ describe('Ng2ChartReport', () => {
     })).toBeTruthy();
   });
 
-  it('Can ignore data outside of start and end limits', () => {
+  class PreProcessorMock implements PreProcessor {
+    private y: number;
+    public instant: Date;
+    constructor(public sourceName: string, public output: string, public p:(y:number) => number) {}
+
+    startReportingCycle(instant: Date): void {
+      this.instant = instant;
+    }
+
+    receiveData(providedData: ReportedData): void {
+      if (providedData.sourceName == this.sourceName) {
+        this.y = this.p(providedData.y);
+      }
+    }
+    reportTo(report: Report): void {
+      if (this.y) {
+        report.receiveData(new ReportedData({sourceName: this.output, y: this.y}));
+      }
+    }
+  }
+
+  class ReporterMock implements Reporter {
+    private y: number;
+    public instant: Date;
+
+    constructor(public sourceName: string) {}
+
+    public setY(y: number): void {
+      this.y = y;
+    }
+
+    doRegister(report: Report): void {
+      report.register(this);
+    }
+    startReportingCycle(instant: Date): void {
+      this.instant = instant;
+    }
+    reportTo(report: Report): void {
+      report.receiveData(new ReportedData({sourceName: this.sourceName, y: this.y}));
+    }
+  }
+
+  it('Can follow implements the correct workflow with reporters and preprocessors', () => {
+    let reporter: ReporterMock = new ReporterMock("SQA01.NAV");
+    let preProcessor: PreProcessorMock = new PreProcessorMock("SQA01.NAV", "OUTPUT", y => 2 * y);
     let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport({
-      start: today,
-      end: tomorrow,
-      configurations:[
+      preProcessors: [
+        preProcessor
+      ],
+      configurations: [
         {
-          show: "SQA01.NAV",
+          show: "OUTPUT",
           as: ShowDataAs.LINE,
           on: ShowDataOn.LEFT
         }
       ]});
 
+    reporter.doRegister(ng2ChartReport);
+
+    ng2ChartReport.startReportingCycle(today);
+    reporter.setY(100);
+    ng2ChartReport.collectReports();
+
+    ng2ChartReport.startReportingCycle(tomorrow);
+    reporter.setY(101);
+    ng2ChartReport.collectReports();
+
+    ng2ChartReport.completeReport();
+
+    expect(ng2ChartReport.dataSets).toEqual(jasmine.arrayWithExactContents([
+      {
+        data: [
+          {x: today.valueOf(), y: 200, originalValue: 200},
+          {x: tomorrow.valueOf(), y: 202, originalValue: 202}],
+        label: "OUTPUT",
+        yAxisID: "y-axis-left",
+        type: "line",
+        borderWidth: 1,
+        pointRadius: 1.2
+      }
+    ]));
+    expect(ng2ChartReport.labels.length).toBe(0);
+  });
+
+  it('Can ignore data outside of start and end limits', () => {
+    let reporter: ReporterMock = new ReporterMock("SQA01.NAV");
+    let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport({
+      start: today,
+      end: tomorrow,
+      configurations:[
+        {
+          show: reporter.sourceName,
+          as: ShowDataAs.LINE,
+          on: ShowDataOn.LEFT
+        }
+      ]});
+    reporter.doRegister(ng2ChartReport);
+
     ng2ChartReport.startReportingCycle(yesterday);
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "SQA01.NAV",
-      y: 100
-    }));
+    reporter.setY(100);
+    ng2ChartReport.collectReports();
+
     ng2ChartReport.startReportingCycle(pastTomorrow);
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "SQA01.NAV",
-      y: 101
-    }));
+    reporter.setY(101);
+    ng2ChartReport.collectReports();
+
+    ng2ChartReport.completeReport();
 
     expect(ng2ChartReport.dataSets).toEqual(jasmine.arrayWithExactContents([{
       data: [],
@@ -67,31 +152,31 @@ describe('Ng2ChartReport', () => {
       borderWidth: 1,
       pointRadius: 1.2
     }]));
-
   });
 
   it('Can process to data the same set', () => {
+    let reporter: ReporterMock = new ReporterMock("SQA01.NAV");
     let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport({
       start: today,
       end: tomorrow,
       configurations:[
         {
-          show: "SQA01.NAV",
+          show: reporter.sourceName,
           as: ShowDataAs.LINE,
           on: ShowDataOn.LEFT
         }
       ]});
+    reporter.doRegister(ng2ChartReport);
 
     ng2ChartReport.startReportingCycle(today);
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "SQA01.NAV",
-      y: 100
-    }));
+    reporter.setY(100);
+    ng2ChartReport.collectReports();
+
     ng2ChartReport.startReportingCycle(tomorrow);
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "SQA01.NAV",
-      y: 101
-    }));
+    reporter.setY(101);
+    ng2ChartReport.collectReports();
+
+    ng2ChartReport.completeReport();
 
     expect(ng2ChartReport.dataSets).toEqual(jasmine.arrayWithExactContents([{
       data: [
@@ -107,38 +192,35 @@ describe('Ng2ChartReport', () => {
   });
 
   it('Can process four data of two different sets', () => {
+    let reporter1: ReporterMock = new ReporterMock("SQA01.NAV");
+    let reporter2: ReporterMock = new ReporterMock("SQA01.COSTS");
     let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport({
       configurations: [
         {
-          show: "SQA01.NAV",
+          show: reporter1.sourceName,
           as: ShowDataAs.LINE,
           on: ShowDataOn.LEFT
         },
         {
-          show: "SQA01.COSTS",
+          show: reporter2.sourceName,
           as: ShowDataAs.SCATTER,
           on: ShowDataOn.RIGHT
         }
       ]});
+    reporter1.doRegister(ng2ChartReport);
+    reporter2.doRegister(ng2ChartReport);
 
     ng2ChartReport.startReportingCycle(today);
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "SQA01.NAV",
-      y: 100
-    }));
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "SQA01.COSTS",
-      y: 1
-    }));
+    reporter1.setY(100);
+    reporter2.setY(1);
+    ng2ChartReport.collectReports();
+
     ng2ChartReport.startReportingCycle(tomorrow);
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "SQA01.NAV",
-      y: 101
-    }));
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "SQA01.COSTS",
-      y: 2
-    }));
+    reporter1.setY(101);
+    reporter2.setY(2);
+    ng2ChartReport.collectReports();
+
+    ng2ChartReport.completeReport();
 
     expect(ng2ChartReport.dataSets).toEqual(jasmine.arrayWithExactContents([
       {
@@ -166,40 +248,37 @@ describe('Ng2ChartReport', () => {
   });
 
   it('Can normalize outputs', () => {
+    let reporter1: ReporterMock = new ReporterMock("VALUE1");
+    let reporter2: ReporterMock = new ReporterMock("VALUE2");
     let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport({
       configurations:[
         {
-          show: "VALUE1",
+          show: reporter1.sourceName,
           as: ShowDataAs.LINE,
           on: ShowDataOn.LEFT,
           normalize: true
         },
         {
-          show: "VALUE2",
+          show: reporter2.sourceName,
           as: ShowDataAs.SCATTER,
           on: ShowDataOn.LEFT,
           normalize: true
         }
       ]});
+    reporter1.doRegister(ng2ChartReport);
+    reporter2.doRegister(ng2ChartReport);
 
     ng2ChartReport.startReportingCycle(today);
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "VALUE1",
-      y: 1000
-    }));
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "VALUE2",
-      y: 10
-    }));
+    reporter1.setY(1000);
+    reporter2.setY(10);
+    ng2ChartReport.collectReports();
+
     ng2ChartReport.startReportingCycle(tomorrow);
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "VALUE1",
-      y: 1010
-    }));
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "VALUE2",
-      y: 20
-    }));
+    reporter1.setY(1010);
+    reporter2.setY(20);
+    ng2ChartReport.collectReports();
+
+    ng2ChartReport.completeReport();
 
     expect(ng2ChartReport.dataSets).toEqual(jasmine.arrayWithExactContents([
       {
@@ -227,40 +306,37 @@ describe('Ng2ChartReport', () => {
   });
 
   it('Can normalize outputs even if one set starts at zero', () => {
+    let reporter1: ReporterMock = new ReporterMock("VALUE1");
+    let reporter2: ReporterMock = new ReporterMock("VALUE2");
     let ng2ChartReport: Ng2ChartReport = new Ng2ChartReport({
       configurations: [
         {
-          show: "VALUE1",
+          show: reporter1.sourceName,
           as: ShowDataAs.LINE,
           on: ShowDataOn.LEFT,
           normalize: true
         },
         {
-          show: "VALUE2",
+          show: reporter2.sourceName,
           as: ShowDataAs.SCATTER,
           on: ShowDataOn.LEFT,
           normalize: true
         }
       ]});
+    reporter1.doRegister(ng2ChartReport);
+    reporter2.doRegister(ng2ChartReport);
 
     ng2ChartReport.startReportingCycle(today);
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "VALUE1",
-      y: 1000
-    }));
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "VALUE2",
-      y: 0
-    }));
+    reporter1.setY(1000);
+    reporter2.setY(0);
+    ng2ChartReport.collectReports();
+
     ng2ChartReport.startReportingCycle(tomorrow);
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "VALUE1",
-      y: 1010
-    }));
-    ng2ChartReport.receiveData(new ReportedData({
-      sourceName: "VALUE2",
-      y: 20
-    }));
+    reporter1.setY(1010);
+    reporter2.setY(20);
+    ng2ChartReport.collectReports();
+
+    ng2ChartReport.completeReport();
 
     expect(ng2ChartReport.dataSets).toEqual(jasmine.arrayWithExactContents([
       {

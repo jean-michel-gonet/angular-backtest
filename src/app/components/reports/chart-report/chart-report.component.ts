@@ -10,9 +10,9 @@ import {
 import {
   Report,
   Reporter,
-  ReportedData } from 'src/app/model/core/reporting';
+  ReportedData} from 'src/app/model/core/reporting';
 import { ChartReportConfigurationComponent } from './chart-report-configuration.component';
-import { Ng2ChartReport, Ng2ChartConfiguration } from 'src/app/model/reports/ng2-chart.report';
+import { Ng2ChartReport, Ng2ChartConfiguration, Ng2ChartReportFactory } from 'src/app/model/reports/ng2-chart.report';
 import { StringUtils } from 'src/app/model/utils/string-utils';
 
 @Component({
@@ -53,17 +53,19 @@ export class ChartReportComponent implements AfterViewInit, Report {
 
   public reportIsReady: boolean;
 
-  constructor(private cdr: ChangeDetectorRef, public ng2ChartReport: Ng2ChartReport) {
+  public ng2ChartReport: Ng2ChartReport;
+
+  constructor(private cdr: ChangeDetectorRef, private ng2ChartReportFactory: Ng2ChartReportFactory) {
     this.reportIsReady = false;
   }
 
   ngAfterViewInit() {
-    let configuration: Ng2ChartConfiguration[] = [];
+    let configurations: Ng2ChartConfiguration[] = [];
     this.show.forEach(configurationComponent => {
-      configuration.push(configurationComponent.asNg2ChartConfiguration());
+      configurations.push(configurationComponent.asNg2ChartConfiguration());
     });
-    this.ng2ChartReport.initialize({
-      configurations: configuration,
+    this.ng2ChartReport = this.ng2ChartReportFactory.newInstance({
+      configurations: configurations,
       start: this.start,
       end: this.end
     });

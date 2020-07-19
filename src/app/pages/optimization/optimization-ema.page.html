@@ -1,0 +1,54 @@
+<h3>EMA Optimization</h3>
+<p>Click on Run to execute all EMA simulations</p>
+<p>It takes a long time. Let it run until the table is shown.</p>
+<button *ngIf="displayRunButton()" (click) = "run()" class="start-simulation">Run</button>
+<table>
+  <thead>
+    <tr>
+      <th rowspan="2">Short EMA</th>
+      <th rowspan="2">Long EMA</th>
+      <th rowspan="2">Triggers</th>
+      <th colspan="4">3 years</th>
+      <th colspan="4">7 years</th>
+      <th colspan="4">10 years</th>
+    </tr>
+    <tr>
+      <th>min</th>
+      <th>max</th>
+      <th>avg</th>
+      <th>std</th>
+
+      <th>min</th>
+      <th>max</th>
+      <th>avg</th>
+      <th>std</th>
+
+      <th>min</th>
+      <th>max</th>
+      <th>avg</th>
+      <th>std</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let result of results">
+      <td>{{result.shortEma}}</td>
+      <td>{{result.longEma}}</td>
+      <td>{{result.triggers}}</td>
+
+      <td>{{result.min3|number:'1.2-2'}}</td>
+      <td>{{result.max3|number:'1.2-2'}}</td>
+      <td>{{result.avg3|number:'1.2-2'}}</td>
+      <td>{{result.std3|number:'1.2-2'}}</td>
+
+      <td>{{result.min7|number:'1.2-2'}}</td>
+      <td>{{result.max7|number:'1.2-2'}}</td>
+      <td>{{result.avg7|number:'1.2-2'}}</td>
+      <td>{{result.std7|number:'1.2-2'}}</td>
+
+      <td>{{result.min10|number:'1.2-2'}}</td>
+      <td>{{result.max10|number:'1.2-2'}}</td>
+      <td>{{result.avg10|number:'1.2-2'}}</td>
+      <td>{{result.std10|number:'1.2-2'}}</td>
+    </tr>
+  </tbody>
+</table>

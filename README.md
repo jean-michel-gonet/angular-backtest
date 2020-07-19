@@ -92,7 +92,7 @@ Git comes with XCode's command line tools, which is readily available in Mac OS 
 git --version
 ```
 
-And the operative system will install _XCode's command line_ tools, including _git_, after asking you some questions 
+And the operative system will install _XCode's command line_ tools, including _git_, after asking you some questions
 
 The easiest way to install _node_ and _npm_ is using _brew_:
 * https://brew.sh/
@@ -134,6 +134,12 @@ your browser on http://localhost:4200/
 ```
 
 Open a browser on that address, and you should see the main page.
+
+### Compile the program for distribution
+
+```
+npm run ng -- build --base-href ./
+```
 
 ## Development environment
 My favourite development environment is Atom. Download and install it from the
@@ -400,6 +406,25 @@ This is some of my reference documentation:
 * **Tax optimisation for ETF investing**
   * This is a collection of information on taxation of dividends for swiss investors.
   * https://forum.mustachianpost.com/t/tax-optimisation-for-etf-investing/67
+* **Hacking Compound Annual Growth Rate**
+  * Explains why and how using linear regression when estimating compound annual
+    growth rate.
+  * https://www.raynergobran.com/2017/07/hacking-compound-annual-growth-rate/
+* **How To... Perform Simple Linear Regression by Hand**
+  * A step by step method to calculate linear regression numerically, as you
+  would do when implementing the algorithm.
+  * https://www.youtube.com/watch?v=GhrxgbQnEEU
+* **How To... Calculate Pearson's Correlation Coefficient (r) by Hand**
+  * A step by step method to calculate correlation coefficient numerically, as you
+    would do when implementing the algorithm.
+  * https://www.youtube.com/watch?v=2SCg8Kuh0tE
+* **Algorithms for calculating variance**
+  * In particular, the Welford's online algorithm, which allows to calculate
+    the variance in an incremental manner
+  * https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
+* **Note on a method for calculating corrected sums of squares and products (1962)**
+  * Original article from Welford, where he explains why his algorithm works.
+  * https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.302.7503
 
 On technical matters:
 * **Angular ``ng-content`` and Content Projection: A Complete Guide: How To Use ``ng-content`` To Improve Component API Design**
@@ -428,3 +453,13 @@ On technical matters:
 * **In-app navigation with routing**
   * Official guide to use routing.
   * https://angular.io/guide/router
+* **Bootstrapping in Angular: How It Works Internally**
+  * How the browser loads the initial ``index.html`` and what happens after.
+  * https://www.tektutorialshub.com/angular/angular-bootstrapping-application/
+* **Angular — The hash(#) trap**
+  * If you don't know the path to the application where the application is
+    deployed, then you better use (#) in the routing module.
+  * https://medium.com/@dao.houssene/angular-the-hash-trap-b2d415c2c241
+* **Component with <ng-content>**
+  * A question about using ``<ng-content></ng-content>`` in the root component.
+  * https://stackoverflow.com/questions/32568808/component-with-ng-content

@@ -7,6 +7,7 @@ class ISuperthonMarketTiming {
   id?: string;
   periods?: number;
   periodLength?: PeriodLength;
+  threshold?: number;
   status?: BearBull;
 }
 
@@ -19,24 +20,33 @@ export class SuperthonMarketTiming implements MarketTiming {
   id: string;
   periods: number;
   periodLength: PeriodLength;
+  threshold: number;
   private period?: Period;
   private candles: Candlestick[] = [];
   private status: BearBull;
   private numericalStatus: number;
   private currentCandle: Candlestick;
+  private numberOfTriggers: number = 0;
 
   constructor(obj = {} as ISuperthonMarketTiming){
     let {
       id = "SPT",
       periods = 12,
       periodLength = PeriodLength.MONTHLY,
+      threshold = 1,
       status = BearBull.BULL
     } = obj;
     this.id = id;
     this.periods = periods;
     this.periodLength = periodLength;
+    this.threshold = threshold;
     this.period = new Period(periodLength);
     this.status = status;
+    console.log("Superthon id=" + this.id +
+                " periods=" + this.periods +
+                " periodLength=" + this.periodLength +
+                " threshold=" + this.threshold +
+                " status=" + this.status);
   }
 
   record(instant: Date, candlestick: Candlestick): void {
@@ -46,13 +56,15 @@ export class SuperthonMarketTiming implements MarketTiming {
 
       switch(this.status) {
         case BearBull.BEAR:
-          if (this.numericalStatus >= 1) {
+          if (this.numericalStatus >= this.threshold) {
+            console.log("Market Timing Superthon", ++this.numberOfTriggers, BearBull.BULL, instant);
             this.status = BearBull.BULL;
           }
           break;
 
         case BearBull.BULL:
-        if (this.numericalStatus <= -1) {
+        if (this.numericalStatus <= - this.threshold) {
+          console.log("Market Timing Superthon", ++this.numberOfTriggers, BearBull.BEAR, instant);
           this.status = BearBull.BEAR;
         }
         break;
@@ -111,6 +123,10 @@ export class SuperthonMarketTiming implements MarketTiming {
     report.receiveData(new ReportedData({
       sourceName: this.id + ".SUPERTHON",
       y: this.numericalStatus
+    }));
+    report.receiveData(new ReportedData({
+      sourceName: this.id + ".TRI",
+      y: this.numberOfTriggers
     }));
   }
 

@@ -66,23 +66,53 @@ describe('SuperthonMarketTiming', () => {
   });
 
   it('Can follow a real case <<loscanalesdesuperthon>> Jun 2017', () => {
-    let superthon = makeSuperthon(new Date(2016, 5, 1), [
-      new Candlestick({open: 2093.94, close: 2098.86}), // jun.16   +1
-      new Candlestick({open: 2099.34, close: 2173.60}), // jul.16   +1
-      new Candlestick({open: 2173.15, close: 2170.95}), // ago.16
-      new Candlestick({open: 2171.33, close: 2168.27}), // sept.16
-      new Candlestick({open: 2164.33, close: 2126.15}), // oct.16
-      new Candlestick({open: 2128.68, close: 2198.81}), // nov.16   +1
-      new Candlestick({open: 2200.17, close: 2238.83}), // dic.16   +1
-      new Candlestick({open: 2251.57, close: 2278.87}), // ene.17   +1
-      new Candlestick({open: 2285.59, close: 2363.64}), // feb.17   +1
-      new Candlestick({open: 2380.13, close: 2362.72}), // mar.17
-      new Candlestick({open: 2362.34, close: 2384.20}), // abr.17   +1
-      new Candlestick({open: 2388.50, close: 2411.80}), // may.17   +1
-      new Candlestick({open:    0.00, close:    0.00}), // jun.17
-    ]);
+    let superthon: SuperthonMarketTiming = new SuperthonMarketTiming({
+      periodLength: PeriodLength.MONTHLY,
+      periods: 12,
+      threshold: 1,
+      status: BearBull.BEAR
+    });
+    superthon.record(new Date(2016,  5, 1), new Candlestick({open: 2093.94, close: 2098.86})); // jun.16   +1
+    superthon.record(new Date(2016,  6, 1), new Candlestick({open: 2099.34, close: 2173.60})); // jul.16   +1
+    superthon.record(new Date(2016,  7, 1), new Candlestick({open: 2173.15, close: 2170.95})); // ago.16
+    superthon.record(new Date(2016,  8, 1), new Candlestick({open: 2171.33, close: 2168.27})); // sept.16
+    superthon.record(new Date(2016,  9, 1), new Candlestick({open: 2164.33, close: 2126.15})); // oct.16
+    superthon.record(new Date(2016, 10, 1), new Candlestick({open: 2128.68, close: 2198.81})); // nov.16   +1
+    superthon.record(new Date(2016, 11, 1), new Candlestick({open: 2200.17, close: 2238.83})); // dic.16   +1
+    superthon.record(new Date(2017,  0, 1), new Candlestick({open: 2251.57, close: 2278.87})); // ene.17   +1
+    superthon.record(new Date(2017,  1, 1), new Candlestick({open: 2285.59, close: 2363.64})); // feb.17   +1
+    superthon.record(new Date(2017,  2, 1), new Candlestick({open: 2380.13, close: 2362.72})); // mar.17
+    superthon.record(new Date(2017,  3, 1), new Candlestick({open: 2362.34, close: 2384.20})); // abr.17   +1
+    superthon.record(new Date(2017,  4, 1), new Candlestick({open: 2388.50, close: 2411.80})); // may.17   +1
+    superthon.record(new Date(2017,  5, 1), new Candlestick({open:    0.00, close:    0.00})); // jun.17
+
     expect(superthon.magnitude()).toBe(2);
     expect(superthon.bearBull()).toBe(BearBull.BULL);
+  });
+
+  it('Can use a threshold value different that 1', () => {
+    let superthon: SuperthonMarketTiming = new SuperthonMarketTiming({
+      periodLength: PeriodLength.MONTHLY,
+      periods: 12,
+      threshold: 4,
+      status: BearBull.BEAR
+    });
+    superthon.record(new Date(2016,  5, 1), new Candlestick({open: 2093.94, close: 2098.86})); // jun.16   +1
+    superthon.record(new Date(2016,  6, 1), new Candlestick({open: 2099.34, close: 2173.60})); // jul.16   +1
+    superthon.record(new Date(2016,  7, 1), new Candlestick({open: 2173.15, close: 2170.95})); // ago.16
+    superthon.record(new Date(2016,  8, 1), new Candlestick({open: 2171.33, close: 2168.27})); // sept.16
+    superthon.record(new Date(2016,  9, 1), new Candlestick({open: 2164.33, close: 2126.15})); // oct.16
+    superthon.record(new Date(2016, 10, 1), new Candlestick({open: 2128.68, close: 2198.81})); // nov.16   +1
+    superthon.record(new Date(2016, 11, 1), new Candlestick({open: 2200.17, close: 2238.83})); // dic.16   +1
+    superthon.record(new Date(2017,  0, 1), new Candlestick({open: 2251.57, close: 2278.87})); // ene.17   +1
+    superthon.record(new Date(2017,  1, 1), new Candlestick({open: 2285.59, close: 2363.64})); // feb.17   +1
+    superthon.record(new Date(2017,  2, 1), new Candlestick({open: 2380.13, close: 2362.72})); // mar.17
+    superthon.record(new Date(2017,  3, 1), new Candlestick({open: 2362.34, close: 2384.20})); // abr.17   +1
+    superthon.record(new Date(2017,  4, 1), new Candlestick({open: 2388.50, close: 2411.80})); // may.17   +1
+    superthon.record(new Date(2017,  5, 1), new Candlestick({open:    0.00, close:    0.00})); // jun.17
+
+    expect(superthon.magnitude()).toBe(2);
+    expect(superthon.bearBull()).toBe(BearBull.BEAR);
   });
 
   it('Can follow a real case <<loscanalesdesuperthon>> Sept 2017', () => {
