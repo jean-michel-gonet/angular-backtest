@@ -1,33 +1,24 @@
 import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, forwardRef } from '@angular/core';
-import { ReportedData } from 'src/app/model/core/reporting';
-import { OnlineAverage } from 'src/app/model/calculations/average';
-import { OnlineStandardDeviation } from 'src/app/model/calculations/standard-deviation';
+import { BaseHighlight, MaxHighlight, MinHighlight, AvgHighlight, StdHighlight } from 'src/app/model/reports/highlight/highlight';
 
-export interface Highlight {
-  startReportingCycle(instant: Date): void;
-  receiveData(providedData: ReportedData): void;
-  completeReport(): void;
-}
-
-export abstract class BaseHighlightComponent implements Highlight {
-  protected instant: Date;
-
-  private _sourceName: string;
+@Component({
+  selector: 'highlight-max',
+  template: `{{max|number:'1.2-2'}}`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [{provide: BaseHighlight, useExisting: forwardRef(() => HighlightMaxComponent) }]
+})
+export class HighlightMaxComponent extends MaxHighlight {
   @Input()
   set sourceName(value: string) {
-    this._sourceName = value;
+    super.sourceName = value;
   }
   get sourceName(): string {
-      return this._sourceName;
+      return super.sourceName;
   }
 
-  constructor(private cdr: ChangeDetectorRef) {}
-
-  startReportingCycle(instant: Date): void {
-    this.instant = instant;
+  constructor(private cdr: ChangeDetectorRef) {
+    super();
   }
-
-  abstract receiveData(providedData: ReportedData): void;
 
   completeReport(): void {
     this.cdr.detectChanges();
@@ -35,57 +26,26 @@ export abstract class BaseHighlightComponent implements Highlight {
 }
 
 @Component({
-  selector: 'highlight-max',
-  template: `{{max|number:'1.2-2'}}`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{provide: BaseHighlightComponent, useExisting: forwardRef(() => HighlightMaxComponent) }]
-})
-export class HighlightMaxComponent extends BaseHighlightComponent {
-  public max: number;
-
-  constructor(cdr: ChangeDetectorRef) {
-    super(cdr);
-  }
-
-  receiveData(providedData: ReportedData): void {
-    if (providedData.sourceName == this.sourceName) {
-      if (this.max) {
-        if (providedData.y > this.max) {
-          this.max = providedData.y;
-        }
-      } else {
-        this.max = providedData.y;
-      }
-    }
-  }
-}
-
-@Component({
   selector: 'highlight-date-max',
   template: `{{instantMax|date:'y/M/d'}}`,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{provide: BaseHighlightComponent, useExisting: forwardRef(() => HighlightDateMaxComponent) }]
+  providers: [{provide: BaseHighlight, useExisting: forwardRef(() => HighlightDateMaxComponent) }]
 })
-export class HighlightDateMaxComponent extends BaseHighlightComponent {
-  public max: number;
-  public instantMax: Date;
-
-  constructor(cdr: ChangeDetectorRef) {
-    super(cdr);
+export class HighlightDateMaxComponent extends MaxHighlight {
+  @Input()
+  set sourceName(value: string) {
+    super.sourceName = value;
+  }
+  get sourceName(): string {
+      return super.sourceName;
   }
 
-  receiveData(providedData: ReportedData): void {
-    if (providedData.sourceName == this.sourceName) {
-      if (this.max) {
-        if (providedData.y > this.max) {
-          this.max = providedData.y;
-          this.instantMax = this.instant;
-        }
-      } else {
-        this.max = providedData.y;
-        this.instantMax = this.instant;
-      }
-    }
+  constructor(private cdr: ChangeDetectorRef) {
+    super();
+  }
+
+  completeReport(): void {
+    this.cdr.detectChanges();
   }
 }
 
@@ -93,25 +53,23 @@ export class HighlightDateMaxComponent extends BaseHighlightComponent {
   selector: 'highlight-min',
   template: `{{min|number:'1.2-2'}}`,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{provide: BaseHighlightComponent, useExisting: forwardRef(() => HighlightMinComponent) }]
+  providers: [{provide: BaseHighlight, useExisting: forwardRef(() => HighlightMinComponent) }]
 })
-export class HighlightMinComponent extends BaseHighlightComponent {
-  public min: number;
-
-  constructor(cdr: ChangeDetectorRef) {
-    super(cdr);
+export class HighlightMinComponent extends MinHighlight {
+  @Input()
+  set sourceName(value: string) {
+    super.sourceName = value;
+  }
+  get sourceName(): string {
+      return super.sourceName;
   }
 
-  receiveData(providedData: ReportedData): void {
-    if (providedData.sourceName == this.sourceName) {
-      if (this.min) {
-        if (providedData.y < this.min) {
-          this.min = providedData.y;
-        }
-      } else {
-        this.min = providedData.y;
-      }
-    }
+  constructor(private cdr: ChangeDetectorRef) {
+    super();
+  }
+
+  completeReport(): void {
+    this.cdr.detectChanges();
   }
 }
 
@@ -119,28 +77,23 @@ export class HighlightMinComponent extends BaseHighlightComponent {
   selector: 'highlight-date-min',
   template: `{{instantMin|date:'y/M/d'}}`,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{provide: BaseHighlightComponent, useExisting: forwardRef(() => HighlightDateMinComponent) }]
+  providers: [{provide: BaseHighlight, useExisting: forwardRef(() => HighlightDateMinComponent) }]
 })
-export class HighlightDateMinComponent extends BaseHighlightComponent {
-  public min: number;
-  public instantMin: Date;
-
-  constructor(cdr: ChangeDetectorRef) {
-    super(cdr);
+export class HighlightDateMinComponent extends MinHighlight {
+  @Input()
+  set sourceName(value: string) {
+    super.sourceName = value;
+  }
+  get sourceName(): string {
+      return super.sourceName;
   }
 
-  receiveData(providedData: ReportedData): void {
-    if (providedData.sourceName == this.sourceName) {
-      if (this.min) {
-        if (providedData.y < this.min) {
-          this.min = providedData.y;
-          this.instantMin = this.instant;
-        }
-      } else {
-        this.min = providedData.y;
-        this.instantMin = this.instant;
-      }
-    }
+  constructor(private cdr: ChangeDetectorRef) {
+    super();
+  }
+
+  completeReport(): void {
+    this.cdr.detectChanges();
   }
 }
 
@@ -148,19 +101,23 @@ export class HighlightDateMinComponent extends BaseHighlightComponent {
   selector: 'highlight-avg',
   template: `{{avg|number:'1.2-2'}}`,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{provide: BaseHighlightComponent, useExisting: forwardRef(() => HighlightAvgComponent) }]
+  providers: [{provide: BaseHighlight, useExisting: forwardRef(() => HighlightAvgComponent) }]
 })
-export class HighlightAvgComponent extends BaseHighlightComponent {
-  private onlineAverage: OnlineAverage = new OnlineAverage();
-  public avg: number;
-
-  constructor(cdr: ChangeDetectorRef) {
-    super(cdr);
+export class HighlightAvgComponent extends AvgHighlight {
+  @Input()
+  set sourceName(value: string) {
+    super.sourceName = value;
   }
-  receiveData(providedData: ReportedData): void {
-    if (providedData.sourceName == this.sourceName) {
-      this.avg = this.onlineAverage.average(providedData.y);
-    }
+  get sourceName(): string {
+      return super.sourceName;
+  }
+
+  constructor(private cdr: ChangeDetectorRef) {
+    super();
+  }
+
+  completeReport(): void {
+    this.cdr.detectChanges();
   }
 }
 
@@ -168,18 +125,22 @@ export class HighlightAvgComponent extends BaseHighlightComponent {
   selector: 'highlight-std',
   template: `{{std|number:'1.2-2'}}`,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{provide: BaseHighlightComponent, useExisting: forwardRef(() => HighlightStdComponent) }]
+  providers: [{provide: BaseHighlight, useExisting: forwardRef(() => HighlightStdComponent) }]
 })
-export class HighlightStdComponent extends BaseHighlightComponent {
-  private onlineStandardDeviation: OnlineStandardDeviation = new OnlineStandardDeviation();
-  public std: number;
-
-  constructor(cdr: ChangeDetectorRef) {
-    super(cdr);
+export class HighlightStdComponent extends StdHighlight {
+  @Input()
+  set sourceName(value: string) {
+    super.sourceName = value;
   }
-  receiveData(providedData: ReportedData): void {
-    if (providedData.sourceName == this.sourceName) {
-      this.std = this.onlineStandardDeviation.std(providedData.y);
-    }
+  get sourceName(): string {
+      return super.sourceName;
+  }
+
+  constructor(private cdr: ChangeDetectorRef) {
+    super();
+  }
+
+  completeReport(): void {
+    this.cdr.detectChanges();
   }
 }

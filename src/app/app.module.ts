@@ -29,18 +29,21 @@ import { MarketTimingComponent } from './components/markettiming/market-timing.c
 
 import { SimulationComponent } from './components/simulation/simulation.component';
 
-import { HomePage } from './pages/home/home.page';
-import { MarketTimingPage } from './pages/market-timing/market-timing.page';
-import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear.page';
-
-import 'hammerjs';
-import 'chartjs-plugin-zoom';
 import { HighlightMaxComponent,
          HighlightDateMaxComponent,
          HighlightMinComponent,
          HighlightDateMinComponent,
          HighlightAvgComponent,
          HighlightStdComponent } from './components/reports/highlight-report/highlight.component';
+
+import { HomePage } from './pages/home/home.page';
+import { MarketTimingPage } from './pages/market-timing/market-timing.page';
+import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear.page';
+import { OptimizationEmaPage } from './pages/optimization/optimization-ema.page';
+import { OptimizationSuperthonPage } from './pages/optimization/optimization-superthon.page';
+
+import 'hammerjs';
+import 'chartjs-plugin-zoom';
 
 @NgModule({
   declarations: [
@@ -79,7 +82,9 @@ import { HighlightMaxComponent,
 
     HomePage,
     MarketTimingPage,
-    InvestingInBearPage
+    InvestingInBearPage,
+    OptimizationEmaPage,
+    OptimizationSuperthonPage
   ],
   imports: [
     BrowserModule,

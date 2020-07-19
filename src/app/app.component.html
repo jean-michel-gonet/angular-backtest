@@ -1,17 +1,18 @@
-<div class="container">
-  <h1>{{title}}</h1>
-  <ul class="nav nav-tabs">
-    <li class="nav-item">
-      <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" routerLink="/market-timing" routerLinkActive="active">Market Timing</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" routerLink="/investing-in-bear" routerLinkActive="active">Investing in Bear</a>
-    </li>
-  </ul>
+<!-- The navigation menu -->
+<div class="navbar">
+  <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
+  <a class="nav-link" routerLink="/market-timing" routerLinkActive="active">Market Timing</a>
+  <a class="nav-link" routerLink="/investing-in-bear" routerLinkActive="active">Investing in Bear</a>
+  <div class="subnav">
+    <button class="subnavbtn">Optimization <i class="fa fa-caret-down"></i></button>
+    <div class="subnav-content">
+      <a class="nav-link" routerLink="/optimization-ema" routerLinkActive="active">EMA Optimization</a>
+      <a class="nav-link" routerLink="/optimization-superthon" routerLinkActive="active">Superthon Optimization</a>
+    </div>
+  </div>
 </div>
+
+<!-- The page content -->
 <div class="container">
   <router-outlet></router-outlet>
 </div>

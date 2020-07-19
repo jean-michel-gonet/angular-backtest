@@ -1,14 +1,15 @@
 import { Component, ViewChild, NO_ERRORS_SCHEMA } from "@angular/core";
-import { BaseHighlightComponent, HighlightMaxComponent, HighlightDateMaxComponent, HighlightMinComponent, HighlightDateMinComponent, HighlightAvgComponent, HighlightStdComponent } from './highlight.component';
+import { HighlightMaxComponent, HighlightDateMaxComponent, HighlightMinComponent, HighlightDateMinComponent, HighlightAvgComponent, HighlightStdComponent } from './highlight.component';
 import { async, TestBed, ComponentFixture } from '@angular/core/testing';
+import { BaseHighlight } from 'src/app/model/reports/highlight/highlight';
 
 @Component({
   selector: 'parent',
   template: '<p>x</p>'
 })
 class TestWrapperComponent {
-  @ViewChild(BaseHighlightComponent, {static: true})
-  public highlight: BaseHighlightComponent;
+  @ViewChild(BaseHighlight, {static: true})
+  public highlight: BaseHighlight;
 }
 
 describe('HighlightComponent', () => {

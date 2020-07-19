@@ -4,7 +4,7 @@ import { QuotesService } from 'src/app/services/quotes/quotes.service';
 import { Simulation } from 'src/app/model/core/simulation';
 import { ReportsComponent } from '../reports/reports.component';
 
-enum SimulationStatus {
+export enum SimulationStatus {
   WAITING,
   RUNNING,
   COMPLETED

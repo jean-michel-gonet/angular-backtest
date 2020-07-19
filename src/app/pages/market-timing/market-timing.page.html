@@ -1,166 +1,15 @@
 <h2>What is the best market timing?</h2>
-<!--
-<h3>S&amp;P500 without market timing</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th rowspan="2">Instrument</th>
-      <th rowspan="2">Market Timing</th>
-      <th colspan="4">Investment period</th>
-      <th colspan="3">performance (2)</th>
-    </tr>
-    <tr>
-      <th>Duration</th>
-      <th>Start</th>
-      <th>First end (1)</th>
-      <th>Last end</th>
-      <th>min</th>
-      <th>average</th>
-      <th>max</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td id="instrument">SPY</td>
-      <td id="market-timing">none</td>
-      <td id="duration">3 years</td>
-      <td id="start">2000-01-01</td>
-      <td id="first-end">2003-01-03</td>
-      <td id="last-end">2020-4-9</td>
-      <td id="min">-15.5%</td>
-      <td id="average"></td>
-      <td id="max">+33.96%</td>
-    </tr>
-    <tr>
-      <td id="instrument">SPY</td>
-      <td id="market-timing">none</td>
-      <td id="duration">7 years</td>
-      <td id="start">2000-01-01</td>
-      <td id="first-end">2007-01-03</td>
-      <td id="last-end">2020-4-9</td>
-      <td id="min">-5.96%</td>
-      <td id="average"></td>
-      <td id="max">+27.51%</td>
-    </tr>
-    <tr>
-      <td id="instrument">SPY</td>
-      <td id="market-timing">none</td>
-      <td id="duration">10 years</td>
-      <td id="start">2000-01-01</td>
-      <td id="first-end">2010-01-04</td>
-      <td id="last-end">2020-4-9</td>
-      <td id="min">-3.08%</td>
-      <td id="average"></td>
-      <td id="max">+30.54%</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td>(1)</td>
-      <td colspan="7">The earliest date an investment over the duration can finish.</td>
-    </tr>
-    <tr>
-      <td>(2)</td>
-      <td colspan="7">Rate per year.</td>
-    </tr>
-  </tfoot>
-</table>
-
-<simulation start="2000-01-01" end="2020-4-9" quotes="SP500">
-  <chart-report>
-    <chart-report-configuration show="SP500.CLOSE" showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
-    <chart-report-configuration show="BAH.NAV"     showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
-    <chart-report-configuration show="BAH.P03"     showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
-    <chart-report-configuration show="BAH.P07"     showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
-    <chart-report-configuration show="BAH.P10"     showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
-    <chart-report-preprocessors>
-      <sliding-performance source="BAH.NAV" over= "3" unitOfTime="YEAR" output="BAH.P03"></sliding-performance>
-      <sliding-performance source="BAH.NAV" over= "7" unitOfTime="YEAR" output="BAH.P07"></sliding-performance>
-      <sliding-performance source="BAH.NAV" over="10" unitOfTime="YEAR" output="BAH.P10"></sliding-performance>
-    </chart-report-preprocessors>
-  </chart-report>
-  <accounts>
-    <swiss-quote id="BAH" cash="100000">
-      <strategy>
-        <buy-and-hold assetName="SP500">
-        </buy-and-hold>
-      </strategy>
-    </swiss-quote>
-  </accounts>
-</simulation>
-
-<h3>S&amp;P 500 with candle filter</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th rowspan="2">Instrument</th>
-      <th rowspan="2">Market Timing</th>
-      <th colspan="4">Investment period</th>
-      <th colspan="3">performance (2)</th>
-    </tr>
-    <tr>
-      <th>Duration</th>
-      <th>Start</th>
-      <th>First end (1)</th>
-      <th>Last end</th>
-      <th>min</th>
-      <th>average</th>
-      <th>max</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td id="instrument">SPY</td>
-      <td id="market-timing">Candle</td>
-      <td id="duration">3 years</td>
-      <td id="start">2000-01-01</td>
-      <td id="first-end">2003-01-03</td>
-      <td id="last-end">2020-4-9</td>
-      <td id="min">-15.5%</td>
-      <td id="average"></td>
-      <td id="max">+33.96%</td>
-    </tr>
-    <tr>
-      <td id="instrument">SPY</td>
-      <td id="market-timing">none</td>
-      <td id="duration">7 years</td>
-      <td id="start">2000-01-01</td>
-      <td id="first-end">2007-01-03</td>
-      <td id="last-end">2020-4-9</td>
-      <td id="min">-5.96%</td>
-      <td id="average"></td>
-      <td id="max">+27.51%</td>
-    </tr>
-    <tr>
-      <td id="instrument">SPY</td>
-      <td id="market-timing">none</td>
-      <td id="duration">10 years</td>
-      <td id="start">2000-01-01</td>
-      <td id="first-end">2010-01-04</td>
-      <td id="last-end">2020-4-9</td>
-      <td id="min">-3.08%</td>
-      <td id="average"></td>
-      <td id="max">+30.54%</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td>(1)</td>
-      <td colspan="7">The earliest date an investment over the duration can finish.</td>
-    </tr>
-    <tr>
-      <td>(2)</td>
-      <td colspan="7">Rate per year.</td>
-    </tr>
-  </tfoot>
-</table>
-
+<h3>Candle filter</h3>
+<p>The best Candle filter configuration to use with S&amp;P500 is:</p>
+<ul>
+  <li>Period length: SEMIMONTHLY</li>
+  <li>Number of periods: 11</li>
+</ul>
+<p>This is a simulation of it:</p>
 <simulation start="2000-01-01" end="2020-4-9" quotes="SP500">
   <reports>
     <highlight-report>
-      <table>
+      <table border="1">
         <thead>
           <tr>
             <th>Duration</th>
@@ -172,26 +21,30 @@
         <tbody>
           <tr>
             <td>3 years</td>
-            <td><highlight type="MIN" of="ACC.P03"></highlight>% (at <highlight type="DATE_MIN" of="ACC.P03"></highlight>)</td>
-            <td><highlight type="MAX" of="ACC.P03"></highlight>% (at <highlight type="DATE_MAX" of="ACC.P03"></highlight>)</td>
-            <td><highlight type="AVG" of="ACC.P03"></highlight>%</td>
-            <td>&plusmn;<highlight type="AVG" of="ACC.P03">%</highlight></td>
+            <td><highlight-min sourceName="ACC.P03"></highlight-min>% (<highlight-date-min sourceName="ACC.P03"></highlight-date-min>)</td>
+            <td><highlight-max sourceName="ACC.P03"></highlight-max>% (<highlight-date-max sourceName="ACC.P03"></highlight-date-max>)</td>
+            <td><highlight-avg sourceName="ACC.P03"></highlight-avg>%</td>
+            <td>&plusmn;<highlight-std sourceName="ACC.P03"></highlight-std>%</td>
           </tr>
           <tr>
             <td>7 years</td>
-            <td><highlight type="MIN" of="ACC.P07"></highlight>% (at <highlight type="DATE_MIN" of="ACC.P07"></highlight>)</td>
-            <td><highlight type="MAX" of="ACC.P07"></highlight>% (at <highlight type="DATE_MAX" of="ACC.P07"></highlight>)</td>
-            <td><highlight type="AVG" of="ACC.P07"></highlight>%</td>
-            <td>&plusmn;<highlight type="AVG" of="ACC.P07">%</highlight></td>
+            <td><highlight-min sourceName="ACC.P07"></highlight-min>% (<highlight-date-min sourceName="ACC.P07"></highlight-date-min>)</td>
+            <td><highlight-max sourceName="ACC.P07"></highlight-max>% (<highlight-date-max sourceName="ACC.P07"></highlight-date-max>)</td>
+            <td><highlight-avg sourceName="ACC.P07"></highlight-avg>%</td>
+            <td>&plusmn;<highlight-std sourceName="ACC.P07"></highlight-std>%</td>
           </tr>
           <tr>
             <td>10 years</td>
-            <td><highlight type="MIN" of="ACC.P10"></highlight>% (at <highlight type="DATE_MIN" of="ACC.P10"></highlight>)</td>
-            <td><highlight type="MAX" of="ACC.P10"></highlight>% (at <highlight type="DATE_MAX" of="ACC.P10"></highlight>)</td>
-            <td><highlight type="AVG" of="ACC.P10"></highlight>%</td>
-            <td>&plusmn;<highlight type="AVG" of="ACC.P10">%</highlight></td>
+            <td><highlight-min sourceName="ACC.P10"></highlight-min>% (<highlight-date-min sourceName="ACC.P10"></highlight-date-min>)</td>
+            <td><highlight-max sourceName="ACC.P10"></highlight-max>% (<highlight-date-max sourceName="ACC.P10"></highlight-date-max>)</td>
+            <td><highlight-avg sourceName="ACC.P10"></highlight-avg>%</td>
+            <td>&plusmn;<highlight-std sourceName="ACC.P10"></highlight-std>%</td>
           </tr>
         </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="5">Number of BULL/BEAR triggers: <highlight-max sourceName="MT.TRI"></highlight-max>
+        </tfoot>
       </table>
     </highlight-report>
     <chart-report>
@@ -201,19 +54,19 @@
       <chart-report-configuration show="ACC.P07"     showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
       <chart-report-configuration show="ACC.P10"     showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
     </chart-report>
-    <report-preprocessors>
-      <sliding-performance source="ACC.NAV" over= "3" unitOfTime="YEAR" output="ACC.P03"></sliding-performance>
-      <sliding-performance source="ACC.NAV" over= "7" unitOfTime="YEAR" output="ACC.P07"></sliding-performance>
-      <sliding-performance source="ACC.NAV" over="10" unitOfTime="YEAR" output="ACC.P10"></sliding-performance>
-    </report-preprocessors>
+    <preprocessors>
+      <performance-preprocessor source="ACC.NAV" over= "3" unitOfTime="YEAR" output="ACC.P03"></performance-preprocessor>
+      <performance-preprocessor source="ACC.NAV" over= "7" unitOfTime="YEAR" output="ACC.P07"></performance-preprocessor>
+      <performance-preprocessor source="ACC.NAV" over="10" unitOfTime="YEAR" output="ACC.P10"></performance-preprocessor>
+    </preprocessors>
   </reports>
   <accounts>
     <swiss-quote id="ACC" cash="100000">
       <strategy>
         <buy-and-hold assetName="SP500">
           <market-timing>
-            <candle-filter id="CANDLE"
-                           periods="13"
+            <candle-filter id="MT"
+                           periods="11"
                            threshold="1"
                            periodLength="SEMIMONTHLY"></candle-filter>
           </market-timing>
@@ -222,4 +75,3 @@
     </swiss-quote>
   </accounts>
 </simulation>
--->

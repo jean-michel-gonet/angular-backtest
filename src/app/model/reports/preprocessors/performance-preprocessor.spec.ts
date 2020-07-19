@@ -1,6 +1,6 @@
 import { PerformancePreprocessor} from "./performance-preprocessor";
 import { UnitOfTime } from "./unit-of-time";
-import { TestReport, TestReporter } from './test-utils';
+import { TestReport, TestReporter } from '../test-utils/test-utils';
 
 describe('PerformancePreprocessor', () =>{
   let testReport: TestReport;

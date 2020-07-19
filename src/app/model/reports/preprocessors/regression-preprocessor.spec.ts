@@ -1,6 +1,6 @@
 import { RegressionPreprocessor} from "./regression-preprocessor";
 import { UnitOfTime } from "./unit-of-time";
-import { TestReport, TestReporter } from './test-utils';
+import { TestReport, TestReporter } from '../test-utils/test-utils';
 
 describe('RegressionProcessor', () =>{
   let testReport: TestReport;
