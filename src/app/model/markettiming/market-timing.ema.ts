@@ -42,7 +42,6 @@ export class EMAMarketTiming implements MarketTiming {
       slowPeriod = 15,
       status = BearBull.BEAR
     } = obj;
-    console.log("EMA Market Timing", id, periodLength, fastPeriod, slowPeriod, status);
     this.id = id;
     this.status = status;
 
@@ -59,6 +58,7 @@ export class EMAMarketTiming implements MarketTiming {
       source: source,
       preprocessing: preprocessing
     });
+    console.log("EMA Market Timing", this);
   }
 
   record(instant: Date, quote: Quote): void {

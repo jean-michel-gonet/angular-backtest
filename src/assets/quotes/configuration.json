@@ -1,5 +1,12 @@
 [
   {
+    "name": "SMI",
+    "quote": {
+      "provider": "www.six-group.com",
+      "uri": "indexes/smi-six.json"
+    }
+  },
+  {
     "name": "IBEX35",
     "quote": {
       "provider": "www.investing.com",

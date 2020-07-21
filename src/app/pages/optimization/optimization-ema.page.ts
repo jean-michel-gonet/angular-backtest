@@ -45,7 +45,7 @@ export class OptimizationEmaPage implements OnInit {
   constructor(private quotesService:QuotesService) {}
 
   ngOnInit(): void {
-    this.quotesService.getQuotes(["SP500"]).subscribe(historicalQuotes => {
+    this.quotesService.getQuotes(["SMI"]).subscribe(historicalQuotes => {
       this.historicalQuotes = historicalQuotes;
       this.status = SimulationStatus.WAITING;
     });
@@ -98,7 +98,7 @@ export class OptimizationEmaPage implements OnInit {
         id: "ACC",
         cash: 100000,
         strategy: new BuyAndHoldStrategy({
-          assetName: "SP500",
+          assetName: "SMI",
           marketTiming: new EMAMarketTiming({
             id: "EMA",
             periodLength: PeriodLength.DAILY,
@@ -133,7 +133,7 @@ export class OptimizationEmaPage implements OnInit {
       })
     });
     // Run the simulation:
-    simulation.run(new Date(2000, 0, 1), new Date(2020, 0, 1));
+    simulation.run(new Date(2000, 0, 1), new Date(2020, 6, 17));
 
     // Returns the result of the simulation:
     return {
