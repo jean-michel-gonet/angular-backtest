@@ -4,7 +4,7 @@ import { Report } from '../core/reporting';
 
 export class MultipleMarketTiming implements MarketTiming {
 
-  constructor(private marketTimings: MarketTiming[]) {}
+  constructor(public marketTimings: MarketTiming[]) {}
 
   record(instant: Date, candlestick: Candlestick): void {
     this.marketTimings.forEach(m => {

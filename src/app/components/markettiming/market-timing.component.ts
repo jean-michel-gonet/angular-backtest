@@ -1,32 +1,39 @@
-import { Component, Input, ContentChild } from '@angular/core';
+import { Component, ContentChildren, QueryList } from '@angular/core';
 import { MarketTiming } from 'src/app/model/core/market-timing';
 import { EMAMarketTimingComponent } from './market-timing.ema.component';
 import { MACDMarketTimingComponent } from './market-timing.macd.component';
 import { SuperthonMarketTimingComponent } from './market-timing.superthon.component';
+import { MultipleMarketTiming } from 'src/app/model/markettiming/market-timing.multiple';
 
 @Component({
   selector: 'market-timing',
   template: '<ng-content></ng-content>'
 })
 export class MarketTimingComponent {
-  @ContentChild(EMAMarketTimingComponent, {static: true})
-  private emaFilter: EMAMarketTimingComponent;
+  @ContentChildren(EMAMarketTimingComponent)
+  private emaFilter: QueryList<EMAMarketTimingComponent>;
 
-  @ContentChild(MACDMarketTimingComponent, {static: true})
-  private macdFilter: MACDMarketTimingComponent;
+  @ContentChildren(MACDMarketTimingComponent)
+  private macdFilter: QueryList<MACDMarketTimingComponent>;
 
-  @ContentChild(SuperthonMarketTimingComponent, {static: true})
-  private candleFilter: SuperthonMarketTimingComponent;
+  @ContentChildren(SuperthonMarketTimingComponent)
+  private candleFilter: QueryList<SuperthonMarketTimingComponent>;
 
   public asMarketTiming(): MarketTiming {
-    if (this.emaFilter) {
-      return this.emaFilter.asEmaMarketTiming();
-    } else if (this.macdFilter) {
-      return this.macdFilter.asMACDMarketTiming();
-    } else if (this.candleFilter) {
-      return this.candleFilter.asSuperthonMarketTimingComponent();
-    } else {
-      throw new Error('<market-timing> should contain one of <macd-filter>, <ema-filter> or <candle-filter>');
-    }
+    let marketTimings: MarketTiming[] = [];
+
+    this.emaFilter.forEach(f => {
+      marketTimings.push(f.asEmaMarketTiming());
+    });
+
+    this.macdFilter.forEach(f => {
+      marketTimings.push(f.asMACDMarketTiming());
+    });
+
+    this.candleFilter.forEach(f => {
+      marketTimings.push(f.asSuperthonMarketTimingComponent());
+    });
+
+    return new MultipleMarketTiming(marketTimings);
   }
 }

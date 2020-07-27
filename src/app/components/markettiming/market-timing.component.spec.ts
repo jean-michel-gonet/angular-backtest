@@ -10,6 +10,7 @@ import { EMAMarketTimingComponent } from './market-timing.ema.component';
 import { MarketTimingComponent } from './market-timing.component';
 import { SuperthonMarketTimingComponent } from './market-timing.superthon.component';
 import { MACDMarketTimingComponent } from './market-timing.macd.component';
+import { MultipleMarketTiming } from 'src/app/model/markettiming/market-timing.multiple';
 
 @Component({
   selector: 'parent',
@@ -53,7 +54,8 @@ describe('MarketTimingComponent', () => {
         = TestBed.createComponent(TestWrapperComponent);
       fixture.detectChanges();
       component = fixture.componentInstance.marketTimingComponent;
-      let candleFilter = component.asMarketTiming() as SuperthonMarketTiming;
+      let multipleMarketTiming = component.asMarketTiming() as MultipleMarketTiming;
+      let candleFilter = multipleMarketTiming.marketTimings[0] as SuperthonMarketTiming;
       expect(candleFilter.id).toBe("XX");
       expect(candleFilter.periods).toBe(10);
       expect(candleFilter.periodLength).toBe(PeriodLength.MONTHLY);
@@ -80,7 +82,8 @@ describe('MarketTimingComponent', () => {
         = TestBed.createComponent(TestWrapperComponent);
       fixture.detectChanges();
       component = fixture.componentInstance.marketTimingComponent;
-      let emaFilter = component.asMarketTiming() as EMAMarketTiming;
+      let multipleMarketTiming = component.asMarketTiming() as MultipleMarketTiming;
+      let emaFilter = multipleMarketTiming.marketTimings[0] as EMAMarketTiming;
       expect(emaFilter.id).toBe("XX");
       expect(emaFilter.bearBull()).toBe(BearBull.BEAR);
       expect(emaFilter.fastEMA.numberOfPeriods).toBe(7);
@@ -113,7 +116,8 @@ describe('MarketTimingComponent', () => {
         = TestBed.createComponent(TestWrapperComponent);
       fixture.detectChanges();
       component = fixture.componentInstance.marketTimingComponent;
-      let macdFilter = component.asMarketTiming() as MACDMarketTiming;
+      let multipleMarketTiming = component.asMarketTiming() as MultipleMarketTiming;
+      let macdFilter = multipleMarketTiming.marketTimings[0] as MACDMarketTiming;
       expect(macdFilter.id).toBe("XX");
       expect(macdFilter.bearBull()).toBe(BearBull.BEAR);
       expect(macdFilter.fastEma.numberOfPeriods).toBe(9);
@@ -128,5 +132,41 @@ describe('MarketTimingComponent', () => {
 
       expect(macdFilter.signalEma.numberOfPeriods).toBe(16);
       expect(macdFilter.signalEma.periodLength).toBe(PeriodLength.SEMIMONTHLY);
+  });
+
+  it('Can instantiate multiple filters filter', () => {
+    TestBed.overrideComponent(TestWrapperComponent, {
+        set: {
+          template: `
+          <market-timing>
+            <candle-filter id="XX"
+                           periods="10"
+                           periodLength="MONTHLY"
+                           threshold="3"
+                           status="BEAR"></candle-filter>
+            <ema-filter id="XX"
+                        source="OPEN"
+                        preprocessing="MEDIAN"
+                        fastPeriod="7"
+                        slowPeriod="14"
+                        periodLength="WEEKLY"
+                        status="BEAR"></ema-filter>
+            <macd-filter id="XX"
+                         source="OPEN"
+                         preprocessing="MEDIAN"
+                         fastPeriod="9"
+                         slowPeriod="14"
+                         signalPeriod="16"
+                         periodLength="SEMIMONTHLY"
+                         status="BEAR"></macd-filter>
+          </market-timing>`
+        }
+      }).compileComponents();
+      const fixture: ComponentFixture<TestWrapperComponent>
+        = TestBed.createComponent(TestWrapperComponent);
+      fixture.detectChanges();
+      component = fixture.componentInstance.marketTimingComponent;
+      let multipleMarketTiming = component.asMarketTiming() as MultipleMarketTiming;
+      expect(multipleMarketTiming.marketTimings.length).toBe(3);
   });
 });
