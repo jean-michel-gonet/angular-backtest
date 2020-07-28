@@ -11,6 +11,8 @@ import { MarketTimingComponent } from './market-timing.component';
 import { SuperthonMarketTimingComponent } from './market-timing.superthon.component';
 import { MACDMarketTimingComponent } from './market-timing.macd.component';
 import { MultipleMarketTiming } from 'src/app/model/markettiming/market-timing.multiple';
+import { StopLossMarketTiming } from 'src/app/model/markettiming/market-timing.stop-loss';
+import { StopLossMarketTimingComponent } from './market-timing.stop-loss.component';
 
 @Component({
   selector: 'parent',
@@ -32,7 +34,8 @@ describe('MarketTimingComponent', () => {
         MarketTimingComponent,
         EMAMarketTimingComponent,
         SuperthonMarketTimingComponent,
-        MACDMarketTimingComponent
+        MACDMarketTimingComponent,
+        StopLossMarketTimingComponent
       ]
     });
   }));
@@ -132,6 +135,30 @@ describe('MarketTimingComponent', () => {
 
       expect(macdFilter.signalEma.numberOfPeriods).toBe(16);
       expect(macdFilter.signalEma.periodLength).toBe(PeriodLength.SEMIMONTHLY);
+  });
+
+  it('Can instantiate a Stop Loss filter', () => {
+    TestBed.overrideComponent(TestWrapperComponent, {
+        set: {
+          template: `
+          <market-timing>
+            <stop-loss id="XX"
+                       safety="10"
+                       threshold="90"
+                       status="BEAR"></stop-loss>
+          </market-timing>`
+        }
+      }).compileComponents();
+      const fixture: ComponentFixture<TestWrapperComponent>
+        = TestBed.createComponent(TestWrapperComponent);
+      fixture.detectChanges();
+      component = fixture.componentInstance.marketTimingComponent;
+      let multipleMarketTiming = component.asMarketTiming() as MultipleMarketTiming;
+      let stopLossFilter = multipleMarketTiming.marketTimings[0] as StopLossMarketTiming;
+      expect(stopLossFilter.id).toBe("XX");
+      expect(stopLossFilter.safety).toBe(10);
+      expect(stopLossFilter.threshold).toBe(90);
+      expect(stopLossFilter.bearBull()).toBe(BearBull.BEAR);
   });
 
   it('Can instantiate multiple filters filter', () => {
