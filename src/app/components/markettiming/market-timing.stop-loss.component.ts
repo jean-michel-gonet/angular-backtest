@@ -20,19 +20,6 @@ export class StopLossMarketTimingComponent extends BaseMarketTimingComponent {
     return this._safety;
   }
 
-  private _threshold: number;
-  @Input()
-  set threshold(value: number) {
-    if (typeof value == 'string') {
-      this._threshold = parseInt(value);
-    } else {
-      this._threshold = value;
-    }
-  }
-  get threshold(): number {
-    return this._threshold;
-  }
-
   asSuperthonMarketTimingComponent(): StopLossMarketTiming {
     return new StopLossMarketTiming({
       id: this.id,

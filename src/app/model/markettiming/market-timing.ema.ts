@@ -12,7 +12,8 @@ export class IEMAMarketTiming {
   fastPeriod?: number;
   slowPeriod?: number;
   status?: BearBull;
-
+  threshold?: number;
+  offset?: number;
 }
 
 /**
@@ -24,10 +25,13 @@ export class IEMAMarketTiming {
  */
 export class EMAMarketTiming implements MarketTiming {
   id: string;
+  status: BearBull;
+  threshold: number;
+  offset: number;
+
   fastEMA: EmaCalculator;
   slowEMA: EmaCalculator;
 
-  status: BearBull;
   difference: number;
 
   numberOfTriggers: number = 0;
@@ -40,10 +44,14 @@ export class EMAMarketTiming implements MarketTiming {
       periodLength = PeriodLength.MONTHLY,
       fastPeriod = 5,
       slowPeriod = 15,
-      status = BearBull.BEAR
+      status = BearBull.BEAR,
+      threshold = 0,
+      offset = 0
     } = obj;
     this.id = id;
     this.status = status;
+    this.threshold = threshold;
+    this.offset = offset;
 
     this.slowEMA = new EmaCalculator({
       numberOfPeriods: slowPeriod,
@@ -65,18 +73,28 @@ export class EMAMarketTiming implements MarketTiming {
     let slowEMA = this.slowEMA.ema(instant, quote);
     let fastEMA = this.fastEMA.ema(instant, quote);
     if (slowEMA) {
-      this.difference = fastEMA - slowEMA;
+      this.difference = (fastEMA - slowEMA) / (fastEMA + slowEMA);
       switch (this.status) {
         case BearBull.BULL:
-          if (this.difference < 0) {
+          if (this.difference < this.offset - this.threshold) {
             this.status = BearBull.BEAR;
-            console.log("EMA Market Timing", ++this.numberOfTriggers, BearBull.BEAR, instant);
+            console.log("EMA Market Timing",
+              this.difference,
+              this.offset - this.threshold,
+              ++this.numberOfTriggers,
+              BearBull.BEAR,
+              instant);
           }
           break;
         case BearBull.BEAR:
-          if (this.difference > 0) {
+          if (this.difference > this.offset + this.threshold) {
             this.status = BearBull.BULL;
-            console.log("EMA Market Timing", ++this.numberOfTriggers, BearBull.BULL, instant);
+            console.log("EMA Market Timing",
+              this.difference,
+              this.offset - this.threshold,
+              ++this.numberOfTriggers,
+              BearBull.BULL,
+              instant);
           }
           break;
       }

@@ -25,6 +25,7 @@ import { BuyAndHoldStrategyComponent } from './components/strategies/b-a-h.strat
 import { EMAMarketTimingComponent } from './components/markettiming/market-timing.ema.component';
 import { SuperthonMarketTimingComponent } from './components/markettiming/market-timing.superthon.component';
 import { MACDMarketTimingComponent } from './components/markettiming/market-timing.macd.component';
+import { StopLossMarketTimingComponent } from './components/markettiming/market-timing.stop-loss.component';
 import { MarketTimingComponent } from './components/markettiming/market-timing.component';
 
 import { SimulationComponent } from './components/simulation/simulation.component';
@@ -66,6 +67,7 @@ import 'chartjs-plugin-zoom';
     EMAMarketTimingComponent,
     SuperthonMarketTimingComponent,
     MACDMarketTimingComponent,
+    StopLossMarketTimingComponent,
     MarketTimingComponent,
 
     SwissQuoteAccountComponent,

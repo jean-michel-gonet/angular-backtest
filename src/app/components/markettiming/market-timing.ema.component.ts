@@ -8,6 +8,19 @@ import { Component, Input } from '@angular/core';
 })
 export class EMAMarketTimingComponent extends BaseMarketTimingComponent {
 
+  private _offset: number;
+  @Input()
+  set offset(value: number) {
+    if (typeof value == 'string') {
+      this._offset = parseFloat(value);
+    } else {
+      this._offset = value;
+    }
+  }
+  get offset() {
+    return this._offset;
+  }
+
   private _fastPeriod: number;
   @Input()
   set fastPeriod(value: number) {
@@ -42,7 +55,9 @@ export class EMAMarketTimingComponent extends BaseMarketTimingComponent {
       periodLength: this.periodLength,
       fastPeriod: this.fastPeriod,
       slowPeriod: this.slowPeriod,
-      status: this.status
+      status: this.status,
+      threshold: this.threshold,
+      offset: this.offset
     });
   }
 }

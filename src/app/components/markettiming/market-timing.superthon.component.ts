@@ -20,19 +20,6 @@ export class SuperthonMarketTimingComponent extends BaseMarketTimingComponent {
     return this._periods;
   }
 
-  private _threshold: number;
-  @Input()
-  set threshold(value: number) {
-    if (typeof value == 'string') {
-      this._threshold = parseInt(value);
-    } else {
-      this._threshold = value;
-    }
-  }
-  get threshold(): number {
-    return this._threshold;
-  }
-
   asSuperthonMarketTimingComponent(): SuperthonMarketTiming {
     return new SuperthonMarketTiming({
       id: this.id,

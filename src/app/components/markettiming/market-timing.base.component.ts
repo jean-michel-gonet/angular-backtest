@@ -58,4 +58,17 @@ export class BaseMarketTimingComponent {
   get status() {
     return this._status;
   }
+
+  private _threshold: number;
+  @Input()
+  set threshold(value: number) {
+    if (typeof value == 'string') {
+      this._threshold = parseFloat(value);
+    } else {
+      this._threshold = value;
+    }
+  }
+  get threshold(): number {
+    return this._threshold;
+  }
 }

@@ -77,7 +77,9 @@ describe('MarketTimingComponent', () => {
                         fastPeriod="7"
                         slowPeriod="14"
                         periodLength="WEEKLY"
-                        status="BEAR"></ema-filter>
+                        status="BEAR"
+                        threshold="1.5"
+                        offset="3.3"></ema-filter>
           </market-timing>`
         }
       }).compileComponents();
@@ -88,6 +90,8 @@ describe('MarketTimingComponent', () => {
       let multipleMarketTiming = component.asMarketTiming() as MultipleMarketTiming;
       let emaFilter = multipleMarketTiming.marketTimings[0] as EMAMarketTiming;
       expect(emaFilter.id).toBe("XX");
+      expect(emaFilter.threshold).toBe(1.5);
+      expect(emaFilter.offset).toBe(3.3);
       expect(emaFilter.bearBull()).toBe(BearBull.BEAR);
       expect(emaFilter.fastEMA.numberOfPeriods).toBe(7);
       expect(emaFilter.fastEMA.periodLength).toBe(PeriodLength.WEEKLY);
