@@ -81,7 +81,12 @@ let formatLabel = function(tooltipItem: Chart.ChartTooltipItem, data: Chart.Char
   } else {
     value = parseFloat(tooltipItem.value);
   }
-  let dataValue: number = Math.round(value * 100) / 100;
+  let dataValue: number;
+  if (value >= 1) {
+    dataValue = Math.round(value * 100) / 100;
+  } else {
+    dataValue = value;
+  }
 
   return dataName + ": " + dataValue;
 }
