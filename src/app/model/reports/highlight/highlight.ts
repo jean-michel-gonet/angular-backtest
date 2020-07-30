@@ -1,7 +1,7 @@
 import { Highlight } from './highlight-report';
 import { ReportedData } from '../../core/reporting';
-import { OnlineAverage } from '../../calculations/average';
-import { OnlineStandardDeviation } from '../../calculations/standard-deviation';
+import { OnlineAverage } from '../../calculations/online-average';
+import { OnlineStandardDeviation } from '../../calculations/online-standard-deviation';
 
 export abstract class BaseHighlight implements Highlight {
   protected instant: Date;

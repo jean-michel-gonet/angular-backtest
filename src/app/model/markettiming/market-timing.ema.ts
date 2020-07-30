@@ -30,7 +30,9 @@ export class EMAMarketTiming implements MarketTiming {
   offset: number;
 
   fastEMA: EmaCalculator;
+  fastEMAValue: number;
   slowEMA: EmaCalculator;
+  slowEMAValue: number;
 
   difference: number;
 
@@ -70,10 +72,11 @@ export class EMAMarketTiming implements MarketTiming {
   }
 
   record(instant: Date, quote: Quote): void {
-    let slowEMA = this.slowEMA.ema(instant, quote);
-    let fastEMA = this.fastEMA.ema(instant, quote);
-    if (slowEMA) {
-      this.difference = (fastEMA - slowEMA) / (fastEMA + slowEMA);
+    this.slowEMAValue = this.slowEMA.ema(instant, quote);
+    this.fastEMAValue = this.fastEMA.ema(instant, quote);
+    if (this.slowEMAValue) {
+      this.difference =
+        (this.fastEMAValue - this.slowEMAValue) / (this.fastEMAValue + this.slowEMAValue);
       switch (this.status) {
         case BearBull.BULL:
           if (this.difference < this.offset - this.threshold) {
@@ -123,11 +126,11 @@ export class EMAMarketTiming implements MarketTiming {
       }));
       report.receiveData(new ReportedData({
         sourceName: this.id + ".FAST",
-        y: this.fastEMA.lastValue
+        y: this.fastEMAValue
       }));
       report.receiveData(new ReportedData({
         sourceName: this.id + ".SLOW",
-        y: this.slowEMA.lastValue
+        y: this.slowEMAValue
       }));
       report.receiveData(new ReportedData({
         sourceName: this.id + ".TRI",

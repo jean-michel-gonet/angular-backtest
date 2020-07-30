@@ -1,4 +1,4 @@
-import { OnlineAverage } from "./average";
+import { OnlineAverage } from "./online-average";
 
 describe("Average", () => {
   it("Can calculate the average of three numbers", () => {

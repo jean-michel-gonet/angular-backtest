@@ -126,16 +126,17 @@
       <strategy>
         <buy-and-hold assetName="SMI">
           <market-timing>
-            <!--candle-filter id="MT"
-                           periods="12"
-                           threshold="1"
-                           periodLength="SEMIMONTHLY"></candle-filter-->
-            <ema-filter id="MT"
+            <!--ema-filter id="MT"
                         fastPeriod="80"
                         slowPeriod="180"
                         threshold="0.0014"
                         offset="0.0014"
-                        periodLength="DAILY"></ema-filter>
+                        periodLength="DAILY"></ema-filter-->
+            <stop-loss id="SL"
+                       status="BULL"
+                       threshold="95"
+                       safety="3"
+                       recovery="1"></stop-loss>
           </market-timing>
         </buy-and-hold>
       </strategy>

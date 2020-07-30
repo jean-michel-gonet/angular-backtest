@@ -1,4 +1,4 @@
-import { OnlineAverage } from './average';
+import { OnlineAverage } from './online-average';
 
 /**
  * Calculates the standard deviation over the provided population.

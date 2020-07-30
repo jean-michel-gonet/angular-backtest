@@ -3,6 +3,7 @@ import { Quote } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { PeriodLength } from '../core/period';
 import { EmaCalculator, MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-average';
+import { OnlineEma } from '../calculations/online-ema';
 
 class IMACDMarketTiming {
   id?: string;
@@ -36,8 +37,10 @@ export class MACDMarketTiming implements MarketTiming {
   id: string;
   status: BearBull;
   slowEma: EmaCalculator;
+  slowEmaValue: number;
   fastEma: EmaCalculator;
-  signalEma: EmaCalculator;
+  fastEmaValue: number;
+  signalEma: OnlineEma;
   macd: number;
   signal: number;
 
@@ -66,17 +69,14 @@ export class MACDMarketTiming implements MarketTiming {
       source: source,
       preprocessing: preprocessing,
     });
-    this.signalEma = new EmaCalculator({
-      numberOfPeriods: signalPeriod,
-      periodLength: periodLength
-    });
+    this.signalEma = new OnlineEma(signalPeriod);
   }
 
   record(instant: Date, quote: Quote): void {
-    let slowEma = this.slowEma.ema(instant, quote);
-    let fastEma = this.fastEma.ema(instant, quote);
-    if (slowEma) {
-        this.macd = fastEma - slowEma;
+    this.slowEmaValue = this.slowEma.ema(instant, quote);
+    this.fastEmaValue = this.fastEma.ema(instant, quote);
+    if (this.slowEmaValue) {
+        this.macd = this.fastEmaValue - this.slowEmaValue;
         this.signal = this.signalEma.emaOf(this.macd);
 
         switch(this.status) {
@@ -102,11 +102,11 @@ export class MACDMarketTiming implements MarketTiming {
     if (this.macd) {
       report.receiveData(new ReportedData({
         sourceName: this.id + ".SLOW",
-        y: this.slowEma.lastValue
+        y: this.slowEmaValue
       }));
       report.receiveData(new ReportedData({
         sourceName: this.id + ".FAST",
-        y: this.fastEma.lastValue
+        y: this.fastEmaValue
       }));
       report.receiveData(new ReportedData({
         sourceName: this.id + ".MACD",

@@ -1,4 +1,4 @@
-import { OnlineStandardDeviation } from "./standard-deviation";
+import { OnlineStandardDeviation } from "./online-standard-deviation";
 
 describe("OnlineStandardDeviation", () => {
   it("Can calculate the standard deviation", () => {

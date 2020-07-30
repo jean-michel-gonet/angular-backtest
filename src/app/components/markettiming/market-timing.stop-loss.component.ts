@@ -20,12 +20,26 @@ export class StopLossMarketTimingComponent extends BaseMarketTimingComponent {
     return this._safety;
   }
 
+  private _recovery: number;
+  @Input()
+  set recovery(value: number) {
+    if (typeof value == 'string') {
+      this._recovery = parseFloat(value);
+    } else {
+      this._recovery = value;
+    }
+  }
+  get recovery() {
+    return this._recovery;
+  }
+
   asSuperthonMarketTimingComponent(): StopLossMarketTiming {
     return new StopLossMarketTiming({
       id: this.id,
-      safety: this.safety,
+      status: this.status,
       threshold: this.threshold,
-      status: this.status
+      safety: this.safety,
+      recovery: this.recovery
     });
   }
 }

@@ -1,4 +1,4 @@
-import { OnlineLinearRegression } from '../../calculations/linear-regression';
+import { OnlineLinearRegression } from '../../calculations/online-linear-regression';
 import { Record, BasePreprocessor, IBasePreprocessor } from './base-preprocessor';
 
 const MILLISECONDS_IN_A_YEAR: number = 1000 * 24 * 60 * 60 * 365;

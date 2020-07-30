@@ -1,4 +1,4 @@
-import { OnlineLinearRegression } from "./linear-regression";
+import { OnlineLinearRegression } from "./online-linear-regression";
 
 describe("OnlineLinearRegression" , () => {
   it("Can calculate the linear regression", () => {

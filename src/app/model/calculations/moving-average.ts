@@ -1,5 +1,6 @@
 import { PeriodLength, Period } from '../core/period';
 import { Quote } from '../core/quotes';
+import { OnlineEma } from './online-ema';
 
 export enum MovingAveragePreprocessing {
   TYPICAL = 'TYPICAL',
@@ -16,45 +17,24 @@ export enum MovingAverageSource {
   MID = 'MID'
 }
 
-class IEmaCalculator {
+class IMovingCalculator {
   numberOfPeriods: number;
   periodLength: PeriodLength;
   source?: MovingAverageSource;
   preprocessing?: MovingAveragePreprocessing;
 }
 
-/**
- * Calculates the Exponential Moving Average of the quotes provided
- * along time.
- * For example, suppose we calculate an EMA over 12 months. You need
- * to specify the following values to the constructor:
- * <dl>
- *  <dt>Number of periods</dt><dd>That will be 12</dd>
- *  <dt>Period length</dt><dd>That will be MONTHLY</dd>
- * </dl>
- * Then you can call {@link ema} once for every simulated day, providing
- * the instant and the corresponding quote. The calculation will return
- * {@code undefined} most of the time, except when there is a change of
- * period. In this case, the first day of each month.
- */
-export class EmaCalculator {
+abstract class MovingCalculator {
   public numberOfPeriods: number;
   public periodLength: PeriodLength;
   public source: MovingAverageSource;
   public preprocessing: MovingAveragePreprocessing;
 
-  public lastValue: number;
+  protected period: Period;
 
   private sourceValues: number[];
-  private period: Period;
 
-  /**
-   * Class constructor.
-   * @param {number} numberOfPeriods The number of periods over which calculating
-   * the moving average.
-   * @param {PeriodLength} periodLength The period period length.
-   */
-  constructor(obj = {} as IEmaCalculator) {
+  constructor(obj = {} as IMovingCalculator) {
     let {
       numberOfPeriods,
       periodLength,
@@ -83,7 +63,7 @@ export class EmaCalculator {
     if (this.period.changeOfPeriod(instant)) {
       if (this.sourceValues) {
         let preprocessedValue = this.preprocess(this.sourceValues);
-        ema = this.emaOf(preprocessedValue);
+        ema = this.calculate(preprocessedValue);
       }
       this.sourceValues = [];
     }
@@ -161,15 +141,58 @@ export class EmaCalculator {
     }
   }
 
-  emaOf(latestQuote: number) {
-    let ema: number;
-    if (this.lastValue) {
-      let k: number = 2 / (this.numberOfPeriods + 1);
-      ema = latestQuote * k + this.lastValue * (1 - k);
-    } else {
-      ema = latestQuote;
-    }
-    this.lastValue = ema;
-    return ema;
+  /**
+   * Extend this method to implement the corresponding calculation.
+   * @param {number}  value The value to perform the calculation on.
+   * @return {number} The result of the calculation.
+   */
+  abstract calculate(value: number): number;
+}
+
+/**
+ * Calculates the Exponential Moving Average of the quotes provided
+ * along time.
+ * For example, suppose we calculate an EMA over 12 months. You need
+ * to specify the following values to the constructor:
+ * <dl>
+ *  <dt>Number of periods</dt><dd>That will be 12</dd>
+ *  <dt>Period length</dt><dd>That will be MONTHLY</dd>
+ * </dl>
+ * Then you can call {@link ema} once for every simulated day, providing
+ * the instant and the corresponding quote. The calculation will return
+ * {@code undefined} most of the time, except when there is a change of
+ * period. In this case, the first day of each month.
+ */
+export class EmaCalculator extends MovingCalculator {
+
+  public onlineEma: OnlineEma;
+
+  /**
+   * Class constructor.
+   * @param {number} numberOfPeriods The number of periods over which calculating
+   * the moving average.
+   * @param {PeriodLength} periodLength The period period length.
+   */
+  constructor(obj = {} as IMovingCalculator) {
+    super(obj);
+    this.onlineEma = new OnlineEma(this.numberOfPeriods);
+  }
+
+  /**
+   * Performs the EMA calculation.
+   * @param {number} value The value.
+   * @return {number} The EMA for this and all previously provided values.
+   */
+  calculate(value: number): number {
+    return this.onlineEma.emaOf(value);
+  }
+
+  /**
+   * Force the last EMA value.
+   * A method useful for unit testing, for example.
+   * @param {number} value The forced last ema value.
+   */
+  setLastValue(value: number): void  {
+    this.onlineEma.setLastValue(value);
   }
 }

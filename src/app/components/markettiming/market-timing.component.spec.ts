@@ -138,7 +138,6 @@ describe('MarketTimingComponent', () => {
       expect(macdFilter.slowEma.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
 
       expect(macdFilter.signalEma.numberOfPeriods).toBe(16);
-      expect(macdFilter.signalEma.periodLength).toBe(PeriodLength.SEMIMONTHLY);
   });
 
   it('Can instantiate a Stop Loss filter', () => {
@@ -147,9 +146,10 @@ describe('MarketTimingComponent', () => {
           template: `
           <market-timing>
             <stop-loss id="XX"
-                       safety="10"
+                       status="BEAR"
                        threshold="90"
-                       status="BEAR"></stop-loss>
+                       safety="10"
+                       recovery="3"></stop-loss>
           </market-timing>`
         }
       }).compileComponents();
@@ -161,7 +161,8 @@ describe('MarketTimingComponent', () => {
       let stopLossFilter = multipleMarketTiming.marketTimings[0] as StopLossMarketTiming;
       expect(stopLossFilter.id).toBe("XX");
       expect(stopLossFilter.safety).toBe(10);
-      expect(stopLossFilter.threshold).toBe(90);
+      expect(stopLossFilter.threshold).toBe(0.9);
+      expect(stopLossFilter.recovery).toBe(3);
       expect(stopLossFilter.bearBull()).toBe(BearBull.BEAR);
   });
 

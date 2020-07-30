@@ -32,9 +32,9 @@ describe('MACDMarketTiming', () => {
       status: BearBull.BULL
     });
 
-    macdFilter.fastEma.lastValue = 282.78;
-    macdFilter.slowEma.lastValue = 277.64;
-    macdFilter.signalEma.lastValue = 2.50;
+    macdFilter.fastEma.setLastValue(282.78);
+    macdFilter.slowEma.setLastValue(277.64);
+    macdFilter.signalEma.setLastValue(2.50);
 
     macdFilter.record(new Date(2019, 4 - 1, 29), new Quote({name: 'SPY', close: 293.87}));
     macdFilter.record(new Date(2019, 4 - 1, 30), new Quote({name: 'SPY', close: 294.02}));
