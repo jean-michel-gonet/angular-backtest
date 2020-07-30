@@ -8,6 +8,9 @@
  * </pre>
  * Algorithm is taken from:
  * https://stats.stackexchange.com/questions/23481/are-there-algorithms-for-computing-running-linear-or-logistic-regression-param
+ * Online algorithms can process its input piece-by-piece in a serial fashion,
+ * in the order that the input is fed to the algorithm, without having the entire
+ * input available from the start (https://en.wikipedia.org/wiki/Online_algorithm).
  * @class{OnlineLinearRegression}
  */
 export class OnlineLinearRegression {

@@ -6,6 +6,9 @@ import { OnlineAverage } from './online-average';
  * (N) divisor (as opposed of Bessel's correction).
  * An implementation of the Welford's online algorithm.
  * see https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
+ * Online algorithms can process its input piece-by-piece in a serial fashion,
+ * in the order that the input is fed to the algorithm, without having the entire
+ * input available from the start (https://en.wikipedia.org/wiki/Online_algorithm).
  * @class {OnlineStandardDeviation}
  */
 export class OnlineStandardDeviation {

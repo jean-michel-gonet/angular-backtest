@@ -1,6 +1,9 @@
 /**
  * Online implementation of the Exponential Moving Average of provided
  * values.
+ * Online algorithms can process its input piece-by-piece in a serial fashion,
+ * in the order that the input is fed to the algorithm, without having the entire
+ * input available from the start (https://en.wikipedia.org/wiki/Online_algorithm).
  */
 export class OnlineEma {
 
