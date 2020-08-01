@@ -5,7 +5,7 @@ import { SuperthonMarketTiming } from 'src/app/model/markettiming/market-timing.
 import { PeriodLength } from 'src/app/model/core/period';
 import { EMAMarketTiming } from 'src/app/model/markettiming/market-timing.ema';
 import { MACDMarketTiming } from 'src/app/model/markettiming/market-timing.macd';
-import { MovingAverageSource, MovingAveragePreprocessing } from 'src/app/model/calculations/moving-average';
+import { MovingAverageSource, MovingAveragePreprocessing } from 'src/app/model/calculations/moving-calculator';
 import { EMAMarketTimingComponent } from './market-timing.ema.component';
 import { MarketTimingComponent } from './market-timing.component';
 import { SuperthonMarketTimingComponent } from './market-timing.superthon.component';

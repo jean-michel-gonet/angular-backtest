@@ -2,7 +2,8 @@ import { MarketTiming, BearBull } from '../core/market-timing';
 import { Quote } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { PeriodLength } from '../core/period';
-import { EmaCalculator, MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-average';
+import { MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-calculator';
+import { ExponentialMovingAverage } from '../calculations/exponential-moving-average';
 import { OnlineEma } from '../calculations/online-ema';
 
 class IMACDMarketTiming {
@@ -36,9 +37,9 @@ class IMACDMarketTiming {
 export class MACDMarketTiming implements MarketTiming {
   id: string;
   status: BearBull;
-  slowEma: EmaCalculator;
+  slowEma: ExponentialMovingAverage;
   slowEmaValue: number;
-  fastEma: EmaCalculator;
+  fastEma: ExponentialMovingAverage;
   fastEmaValue: number;
   signalEma: OnlineEma;
   macd: number;
@@ -57,13 +58,13 @@ export class MACDMarketTiming implements MarketTiming {
     } = obj;
     this.id = id;
     this.status = status;
-    this.slowEma = new EmaCalculator({
+    this.slowEma = new ExponentialMovingAverage({
       numberOfPeriods: slowPeriod,
       periodLength: periodLength,
       source: source,
       preprocessing: preprocessing,
     });
-    this.fastEma = new EmaCalculator({
+    this.fastEma = new ExponentialMovingAverage({
       numberOfPeriods: fastPeriod,
       periodLength: periodLength,
       source: source,
@@ -73,8 +74,8 @@ export class MACDMarketTiming implements MarketTiming {
   }
 
   record(instant: Date, quote: Quote): void {
-    this.slowEmaValue = this.slowEma.ema(instant, quote);
-    this.fastEmaValue = this.fastEma.ema(instant, quote);
+    this.slowEmaValue = this.slowEma.calculate(instant, quote);
+    this.fastEmaValue = this.fastEma.calculate(instant, quote);
     if (this.slowEmaValue) {
         this.macd = this.fastEmaValue - this.slowEmaValue;
         this.signal = this.signalEma.emaOf(this.macd);

@@ -15,7 +15,7 @@ describe("StopLosMarketTiming", () => {
   it("Can react to a drop", () => {
     let stopLossMarketTiming: StopLossMarketTiming = new StopLossMarketTiming({
       status: BearBull.BULL,
-      threshold: 0.95,
+      threshold: 95,
       safety: 4
     });
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
@@ -30,7 +30,7 @@ describe("StopLosMarketTiming", () => {
   it("Can react to a drop after experiencing a raise", () => {
     let stopLossMarketTiming: StopLossMarketTiming = new StopLossMarketTiming({
       status: BearBull.BULL,
-      threshold: 0.95,
+      threshold: 95,
       safety: 4,
       recovery: 0.1
     });
@@ -48,52 +48,53 @@ describe("StopLosMarketTiming", () => {
   it("Can recover after a drop", () => {
     let stopLossMarketTiming: StopLossMarketTiming = new StopLossMarketTiming({
       status: BearBull.BULL,
-      threshold: 0.95,
-      safety: 2,
-      recovery: 0.1
+      threshold: 95.1,
+      safety: 5,
+      recovery: 3.0
     });
-    stopLossMarketTiming.record(new Date(2000, 1, 1), new Candlestick({close: 100}));
+    stopLossMarketTiming.record(new Date(1999, 11, 31), new Candlestick({close: 1000}));
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
 
-    stopLossMarketTiming.record(new Date(2000, 1, 2), new Candlestick({close: 94}));
+    stopLossMarketTiming.record(new Date(2000, 1, 1), new Candlestick({close: 950.0}));
+    expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BEAR);
+    stopLossMarketTiming.record(new Date(2000, 1, 2), new Candlestick({close: 945.7}));
+    expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BEAR);
+    stopLossMarketTiming.record(new Date(2000, 1, 3), new Candlestick({close: 947.0}));
+    expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BEAR);
+    stopLossMarketTiming.record(new Date(2000, 1, 4), new Candlestick({close: 947.0}));
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BEAR);
 
-    stopLossMarketTiming.record(new Date(2000, 1, 3), new Candlestick({close: 95}));
+    stopLossMarketTiming.record(new Date(2000, 1, 5), new Candlestick({close: 947.0}));
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BEAR);
-
-    stopLossMarketTiming.record(new Date(2000, 1, 4), new Candlestick({close: 96}));
+    stopLossMarketTiming.record(new Date(2000, 1, 6), new Candlestick({close: 946.0}));
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BEAR);
-
-    stopLossMarketTiming.record(new Date(2000, 1, 5), new Candlestick({close: 97}));
+    stopLossMarketTiming.record(new Date(2000, 1, 7), new Candlestick({close: 947.9}));
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
   });
 
   it("Can detect a second drop after a recovery", () => {
     let stopLossMarketTiming: StopLossMarketTiming = new StopLossMarketTiming({
       status: BearBull.BULL,
-      threshold: 0.95,
-      safety: 2,
-      recovery: 0.1
+      threshold: 95.1,
+      safety: 5,
+      recovery: 3
     });
-    stopLossMarketTiming.record(new Date(2000, 1, 1), new Candlestick({close: 100}));
+    stopLossMarketTiming.record(new Date(1999, 11, 31), new Candlestick({close: 1000}));
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
 
-    stopLossMarketTiming.record(new Date(2000, 1, 2), new Candlestick({close: 94}));
+    stopLossMarketTiming.record(new Date(2000, 1, 1), new Candlestick({close: 950.0}));
+    expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BEAR);
+    stopLossMarketTiming.record(new Date(2000, 1, 2), new Candlestick({close: 945.7}));
+    expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BEAR);
+    stopLossMarketTiming.record(new Date(2000, 1, 3), new Candlestick({close: 947.0}));
+    expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BEAR);
+    stopLossMarketTiming.record(new Date(2000, 1, 4), new Candlestick({close: 947.0}));
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BEAR);
 
-    stopLossMarketTiming.record(new Date(2000, 1, 3), new Candlestick({close: 95}));
-    expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BEAR);
-
-    stopLossMarketTiming.record(new Date(2000, 1, 4), new Candlestick({close: 96}));
-    expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BEAR);
-
-    stopLossMarketTiming.record(new Date(2000, 1, 5), new Candlestick({close: 97}));
+    stopLossMarketTiming.record(new Date(2000, 1, 5), new Candlestick({close: 950.0}));
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
 
-    stopLossMarketTiming.record(new Date(2000, 1, 6), new Candlestick({close: 92.15}));
-    expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
-
-    stopLossMarketTiming.record(new Date(2000, 1, 6), new Candlestick({close: 92.14}));
+    stopLossMarketTiming.record(new Date(2000, 1, 6), new Candlestick({close: 902.0}));
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BEAR);
   });
 

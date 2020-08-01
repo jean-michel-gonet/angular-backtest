@@ -2,7 +2,7 @@ import { Quote } from '../core/quotes'
 import { BearBull } from '../core/market-timing';
 import { MACDMarketTiming } from './market-timing.macd';
 import { PeriodLength } from '../core/period';
-import { MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-average';
+import { MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-calculator';
 
 describe('MACDMarketTiming', () => {
   it('Can create a new instance', () => {

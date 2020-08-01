@@ -2,7 +2,8 @@ import { MarketTiming, BearBull } from '../core/market-timing';
 import { Quote } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { PeriodLength } from '../core/period';
-import { EmaCalculator, MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-average';
+import { MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-calculator';
+import { ExponentialMovingAverage } from '../calculations/exponential-moving-average';
 
 export class IEMAMarketTiming {
   id?: string;
@@ -29,9 +30,9 @@ export class EMAMarketTiming implements MarketTiming {
   threshold: number;
   offset: number;
 
-  fastEMA: EmaCalculator;
+  fastEMA: ExponentialMovingAverage;
   fastEMAValue: number;
-  slowEMA: EmaCalculator;
+  slowEMA: ExponentialMovingAverage;
   slowEMAValue: number;
 
   difference: number;
@@ -55,14 +56,14 @@ export class EMAMarketTiming implements MarketTiming {
     this.threshold = threshold;
     this.offset = offset;
 
-    this.slowEMA = new EmaCalculator({
+    this.slowEMA = new ExponentialMovingAverage({
       numberOfPeriods: slowPeriod,
       periodLength: periodLength,
       source: source,
       preprocessing: preprocessing
     });
 
-    this.fastEMA = new EmaCalculator({
+    this.fastEMA = new ExponentialMovingAverage({
       numberOfPeriods: fastPeriod,
       periodLength: periodLength,
       source: source,
@@ -72,8 +73,8 @@ export class EMAMarketTiming implements MarketTiming {
   }
 
   record(instant: Date, quote: Quote): void {
-    this.slowEMAValue = this.slowEMA.ema(instant, quote);
-    this.fastEMAValue = this.fastEMA.ema(instant, quote);
+    this.slowEMAValue = this.slowEMA.calculate(instant, quote);
+    this.fastEMAValue = this.fastEMA.calculate(instant, quote);
     if (this.slowEMAValue) {
       this.difference =
         (this.fastEMAValue - this.slowEMAValue) / (this.fastEMAValue + this.slowEMAValue);
