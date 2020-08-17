@@ -1,5 +1,5 @@
 import { HistoricalQuotes, Quote, HistoricalValue } from '../core/quotes';
-import { ExchageRateOperation } from 'src/app/services/quotes/quotes-configuration.service';
+import { ExchangeRateOperation } from 'src/app/services/quotes/quotes-configuration.service';
 
 /**
  * An utility class to enrich historical quotes with dividends based
@@ -18,7 +18,7 @@ export class ApplyExchangeRate {
    * @param {HistoricalQuotes} historicalQuotes Historical quotes containing
    * the exchange rates to apply.
    */
-  constructor(operation: ExchageRateOperation, name: string, historicalQuotes: HistoricalQuotes) {
+  constructor(operation: ExchangeRateOperation, name: string, historicalQuotes: HistoricalQuotes) {
     this.exchangeRate = [];
     this.exchangeRateIndex = 0;
     historicalQuotes.forEachDate(instantQuotes => {
@@ -31,14 +31,17 @@ export class ApplyExchangeRate {
         this.lastExchangeRateInstant = instantQuotes.instant.valueOf();
       }
     });
+    this.operate = this.makeOperation(operation);
+  }
 
+  private makeOperation(operation: ExchangeRateOperation): ((x: number, y: number) => number) {
     switch(operation) {
-      case ExchageRateOperation.DIVIDE:
-        this.operate = ((x: number, y: number) => {
+      case ExchangeRateOperation.DIVIDE:
+        return ((x: number, y: number) => {
           return x / y;
         });
-      case ExchageRateOperation.MULTIPLY:
-        this.operate = ((x: number, y: number) => {
+      case ExchangeRateOperation.MULTIPLY:
+        return ((x: number, y: number) => {
           return x * y;
         });
       default:

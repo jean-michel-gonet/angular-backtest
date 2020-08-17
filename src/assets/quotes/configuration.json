@@ -51,7 +51,7 @@
       "quote": {
         "provider": "www.investing.com",
         "uri": "forex/usd-chf-investing.csv"
-      }
+      },
       "operation": "divide"
     }
   },

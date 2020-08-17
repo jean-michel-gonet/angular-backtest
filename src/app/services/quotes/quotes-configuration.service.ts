@@ -64,7 +64,7 @@ export class DividendSource {
     totalReturn?: QuoteSource;
 }
 
-export enum ExchageRateOperation {
+export enum ExchangeRateOperation {
   DIVIDE = 'divide',
   MULTIPLY = 'multiply'
 }
@@ -83,7 +83,7 @@ export class ExchangeRateSource {
    * and you want to obtain a quotation for SPY in CHF, then you have to specify 'divide'.
    * Why: Because USD/CHF means 'buy (or sell) USD using CHF as money'.
    */
-  operation: ExchageRateOperation;
+  operation: ExchangeRateOperation;
 }
 
 /**
