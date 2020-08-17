@@ -5,10 +5,11 @@ import { QuotesFromSixService } from './quotes-from-six.service';
 import { QuotesFromYahooService } from './quotes-from-yahoo.service';
 import { HistoricalQuotes } from 'src/app/model/core/quotes';
 import { QuotesConfigurationService, NamedQuoteSource, QuoteProvider,
-  QuoteSource, DividendSource, DataSource } from './quotes-configuration.service';
+  QuoteSource, DividendSource, DataSource, ExchangeRateSource } from './quotes-configuration.service';
 import { PlainDataService } from './plain-data.service';
 import { EnrichWithDividends, EnrichWithTotalReturn } from 'src/app/model/utils/quotes-enrich';
 import { QuotesFromInvestingService } from './quotes-from-investing.service';
+import { ApplyExchangeRate } from 'src/app/model/utils/quotes-exchange-rate';
 
 /**
  * Retrieves instantQuotes data from a provider, and then broadcasts the
@@ -34,12 +35,12 @@ export class QuotesService {
         this.quotesConfigurationService.obtainNamedQuoteSource(name);
 
       let quoteRetriever: Observable<HistoricalQuotes> = new Observable<HistoricalQuotes>(observer => {
-        this.retrieveQuote(
-          namedQuoteSource.name,
-          namedQuoteSource.quote).subscribe(h1 => {
-            this.obtainDividends(h1, namedQuoteSource).subscribe(h2 => {
-              observer.next(h2);
-              observer.complete();
+        this.retrieveQuote(namedQuoteSource.name, namedQuoteSource.quote).subscribe(h1 => {
+            this.applyDividends(h1, namedQuoteSource).subscribe(h2 => {
+              this.applyExchangeRate(h2, namedQuoteSource).subscribe(h3 => {
+                observer.next(h3);
+                observer.complete();
+              })
             });
           });
       });
@@ -76,7 +77,7 @@ export class QuotesService {
     }
   }
 
-  private obtainDividends(historicalQuotes: HistoricalQuotes, namedQuoteSource: NamedQuoteSource): Observable<HistoricalQuotes> {
+  private applyDividends(historicalQuotes: HistoricalQuotes, namedQuoteSource: NamedQuoteSource): Observable<HistoricalQuotes> {
     let dividendsSource: DividendSource = namedQuoteSource.dividends;
     if (dividendsSource) {
       let directDividendsSource: DataSource = dividendsSource.directDividends;
@@ -105,6 +106,23 @@ export class QuotesService {
           });
         }
       }
+    } else {
+      return of(historicalQuotes);
+    }
+  }
+
+  private applyExchangeRate(historicalQuotes: HistoricalQuotes, namedQuoteSource: NamedQuoteSource): Observable<HistoricalQuotes> {
+    let exchangeRateSource: ExchangeRateSource = namedQuoteSource.exchangeRate;
+    if (exchangeRateSource) {
+      return new Observable<HistoricalQuotes>(observer => {
+        this.retrieveQuote("ER", exchangeRateSource.quote).subscribe(exchangeRate => {
+          let applyExchangeRate: ApplyExchangeRate =
+            new ApplyExchangeRate(exchangeRateSource.operation, "ER", exchangeRate);
+          applyExchangeRate.applyTo(namedQuoteSource.name, historicalQuotes);
+          observer.next(historicalQuotes);
+          observer.complete();
+        });
+      });
     } else {
       return of(historicalQuotes);
     }

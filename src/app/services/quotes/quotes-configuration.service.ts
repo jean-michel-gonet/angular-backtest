@@ -64,6 +64,28 @@ export class DividendSource {
     totalReturn?: QuoteSource;
 }
 
+export enum ExchageRateOperation {
+  DIVIDE = 'divide',
+  MULTIPLY = 'multiply'
+}
+
+/**
+ * Describes a source of exchange rate.
+ */
+export class ExchangeRateSource {
+  /**
+   * A quote source to retrieve the exchange rate.
+   */
+  quote: QuoteSource;
+  /**
+   * Operation to apply.
+   * For example: if you have the SPY (which is in USD) and the USD/CHF exchange rate,
+   * and you want to obtain a quotation for SPY in CHF, then you have to specify 'divide'.
+   * Why: Because USD/CHF means 'buy (or sell) USD using CHF as money'.
+   */
+  operation: ExchageRateOperation;
+}
+
 /**
  * A named quote source is the one that provides an instrument or an index
  * to invest.
@@ -82,6 +104,11 @@ export class NamedQuoteSource {
    * The source of the dividends.
    */
   dividends?: DividendSource;
+
+  /**
+   * The exchange rate to apply.
+   */
+  exchangeRate?: ExchangeRateSource;
 };
 
 /**
