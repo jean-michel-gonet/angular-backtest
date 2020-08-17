@@ -7,8 +7,7 @@ import { ExchangeRateOperation } from 'src/app/services/quotes/quotes-configurat
  * @class {EnrichWithTotalReturn}
  */
 export class ApplyExchangeRate {
-  private exchangeRate: HistoricalValue[];
-  private lastExchangeRateInstant: number;
+  private exchangeRates: HistoricalValue[];
   private exchangeRateIndex: number;
   private operate: (x: number, y: number) => number;
 
@@ -19,16 +18,15 @@ export class ApplyExchangeRate {
    * the exchange rates to apply.
    */
   constructor(operation: ExchangeRateOperation, name: string, historicalQuotes: HistoricalQuotes) {
-    this.exchangeRate = [];
+    this.exchangeRates = [];
     this.exchangeRateIndex = 0;
     historicalQuotes.forEachDate(instantQuotes => {
       let quote: Quote = instantQuotes.quote(name);
       if (quote) {
-        this.exchangeRate.push({
+        this.exchangeRates.push({
           instant: instantQuotes.instant,
           value: quote.close
         });
-        this.lastExchangeRateInstant = instantQuotes.instant.valueOf();
       }
     });
     this.operate = this.makeOperation(operation);
@@ -60,32 +58,37 @@ export class ApplyExchangeRate {
       let instant:Date = priceInstantQuotes.instant;
 
       // If current instant is within total return available data:
-      if ( instant.valueOf() <= this.lastExchangeRateInstant) {
-        let priceQuote: Quote = priceInstantQuotes.quote(name);
+      let priceQuote: Quote = priceInstantQuotes.quote(name);
 
         // If the quote to enrich is present:
-        if (priceQuote) {
-          this.applyExchangeRate(instant, priceQuote);
-        }
+      if (priceQuote) {
+        this.applyExchangeRate(instant, priceQuote);
       }
     });
   }
 
   private applyExchangeRate(instant: Date, priceQuote: Quote): void {
+    let exchangeRate: HistoricalValue = this.exchangeRates[this.exchangeRateIndex];
 
     // Looks for a matching date:
-    let exchangeRateEntry: HistoricalValue = this.exchangeRate[this.exchangeRateIndex];
-    while(exchangeRateEntry.instant.valueOf() < instant.valueOf()) {
-      exchangeRateEntry = this.exchangeRate[this.exchangeRateIndex++]
+    while(exchangeRate.instant.valueOf() < instant.valueOf()
+            && this.exchangeRateIndex < this.exchangeRates.length - 1) {
+        exchangeRate = this.exchangeRates[++this.exchangeRateIndex];
+    }
+
+    // Oops, we went too far:
+    if (exchangeRate.instant.valueOf() > instant.valueOf()
+            && this.exchangeRateIndex > 0) {
+        exchangeRate = this.exchangeRates[--this.exchangeRateIndex];
     }
 
     // Make the calculation:
-    priceQuote.close = this.operate(priceQuote.close, exchangeRateEntry.value);
-    priceQuote.open = this.operate(priceQuote.open, exchangeRateEntry.value);
-    priceQuote.high = this.operate(priceQuote.high, exchangeRateEntry.value);
-    priceQuote.low = this.operate(priceQuote.low, exchangeRateEntry.value);
+    priceQuote.close = this.operate(priceQuote.close, exchangeRate.value);
+    priceQuote.open = this.operate(priceQuote.open, exchangeRate.value);
+    priceQuote.high = this.operate(priceQuote.high, exchangeRate.value);
+    priceQuote.low = this.operate(priceQuote.low, exchangeRate.value);
     if (priceQuote.dividend) {
-      priceQuote.dividend = this.operate(priceQuote.dividend, exchangeRateEntry.value);
+      priceQuote.dividend = this.operate(priceQuote.dividend, exchangeRate.value);
     }
   }
 }

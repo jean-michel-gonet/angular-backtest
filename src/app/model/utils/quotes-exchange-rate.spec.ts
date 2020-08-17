@@ -3,7 +3,6 @@ import { ApplyExchangeRate } from './quotes-exchange-rate';
 import { ExchangeRateOperation } from 'src/app/services/quotes/quotes-configuration.service';
 
 let now: Date = new Date();
-let tomorrow: Date =        new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 let today: Date =           new Date(now.getFullYear(), now.getMonth(), now.getDate() + 0);
 let yesterday: Date =       new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
 let beforeYesterday: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 2);
@@ -78,4 +77,50 @@ describe('ApplyExchangeRate', () => {
     expect(historicalQuotes.get(today).quote("ISIN1").close).toBeCloseTo(285.7, 1);
   });
 
+  it('Can apply previous exchange rate when dates are not matching - 1', () => {
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: beforeYesterday, quotes: [
+        new Quote({name: "ISIN1", close: 200}),
+        new Quote({name: "USD.CHF", close: 1.15}),
+      ]}),
+      new InstantQuotes({instant: yesterday, quotes: [
+        new Quote({name: "ISIN1", close: 100}),
+      ]}),
+      new InstantQuotes({instant: today, quotes: [
+        new Quote({name: "ISIN1", close: 300}),
+      ]})
+    ]);
+
+    let applyExchangeRate: ApplyExchangeRate =
+      new ApplyExchangeRate(ExchangeRateOperation.MULTIPLY, "USD.CHF", historicalQuotes);
+    applyExchangeRate.applyTo("ISIN1", historicalQuotes);
+
+    expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").close).toBeCloseTo(230.0, 1);
+    expect(historicalQuotes.get(yesterday).quote("ISIN1").close).toBeCloseTo(115.0, 1);
+    expect(historicalQuotes.get(today).quote("ISIN1").close).toBeCloseTo(345.0, 1);
+  });
+
+  it('Can apply previous exchange rate when dates are not matching - 2', () => {
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: beforeYesterday, quotes: [
+        new Quote({name: "ISIN1", close: 200}),
+        new Quote({name: "USD.CHF", close: 1.15}),
+      ]}),
+      new InstantQuotes({instant: yesterday, quotes: [
+        new Quote({name: "ISIN1", close: 100}),
+      ]}),
+      new InstantQuotes({instant: today, quotes: [
+        new Quote({name: "ISIN1", close: 300}),
+        new Quote({name: "USD.CHF", close: 1.2}),
+      ]})
+    ]);
+
+    let applyExchangeRate: ApplyExchangeRate =
+      new ApplyExchangeRate(ExchangeRateOperation.MULTIPLY, "USD.CHF", historicalQuotes);
+    applyExchangeRate.applyTo("ISIN1", historicalQuotes);
+
+    expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").close).toBeCloseTo(230.0, 1);
+    expect(historicalQuotes.get(yesterday).quote("ISIN1").close).toBeCloseTo(115.0, 1);
+    expect(historicalQuotes.get(today).quote("ISIN1").close).toBeCloseTo(360.0, 1);
+  });
 });
