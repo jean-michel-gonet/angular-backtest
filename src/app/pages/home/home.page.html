@@ -1,6 +1,6 @@
 <h1>This is the home page</h1>
 <h3>The S&amp;P500</h3>
-<simulation start="2000-01-01" end="2020-07-17" quotes="SP500">
+<simulation start="2000-01-01" end="2020-08-03" quotes="SPY">
   <reports>
     <highlight-report>
       <table border="1">
@@ -42,7 +42,7 @@
       </table>
     </highlight-report>
     <chart-report>
-      <chart-report-configuration show="SP500.CLOSE"  showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
+      <chart-report-configuration show="SPY.CLOSE"  showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="ACC.NAV"      showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="MT.SUPERTHON" showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
     </chart-report>
@@ -55,10 +55,10 @@
   <accounts>
     <swiss-quote id="ACC" cash="100000">
       <strategy>
-        <buy-and-hold assetName="SP500">
+        <buy-and-hold assetName="SPY">
           <market-timing>
             <candle-filter id="MT"
-                           periods="12"
+                           periods="13"
                            threshold="1"
                            periodLength="SEMIMONTHLY"></candle-filter>
           </market-timing>
@@ -69,7 +69,7 @@
 </simulation>
 
 <h3>The SMI</h3>
-<simulation start="2000-01-01" end="2020-07-17" quotes="SMI">
+<simulation start="2013-01-01" end="2020-07-17" quotes="SMI">
   <reports>
     <highlight-report>
       <table border="1">
@@ -131,10 +131,8 @@
                            threshold="1"
                            periodLength="SEMIMONTHLY"></candle-filter>
             <!--ema-filter id="MT"
-                        fastPeriod="80"
-                        slowPeriod="180"
-                        threshold="0.0014"
-                        offset="0.0014"
+                        fastPeriod="90"
+                        slowPeriod="270"
                         periodLength="DAILY"></ema-filter-->
             <!--stop-loss id="SL"
                        status="BULL"
