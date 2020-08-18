@@ -110,6 +110,7 @@ export class OptimizationSuperthonPage implements OnInit {
         strategy: new BuyAndHoldStrategy({
           assetName: "SP500",
           marketTiming: new SuperthonMarketTiming({
+            assetName: "SP500",
             id: "SUP",
             periodLength: PeriodLength.DAILY,
             periods: periods,

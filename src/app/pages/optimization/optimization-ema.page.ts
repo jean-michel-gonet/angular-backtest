@@ -100,6 +100,7 @@ export class OptimizationEmaPage implements OnInit {
         strategy: new BuyAndHoldStrategy({
           assetName: "SMI",
           marketTiming: new EMAMarketTiming({
+            assetName: "SMI",
             id: "EMA",
             periodLength: PeriodLength.DAILY,
             fastPeriod: shortEma,
