@@ -59,7 +59,9 @@
       <strategy>
         <buy-and-hold assetName="SPYCHF">
           <market-timing>
-            <candle-filter id="MT"
+            <candle-filter assetName="SPY",
+                           id="MT"
+                           on="SPY"
                            periods="13"
                            threshold="1"
                            periodLength="SEMIMONTHLY"></candle-filter>
@@ -128,15 +130,18 @@
       <strategy>
         <buy-and-hold assetName="SMI">
           <market-timing>
-            <candle-filter id="MT"
+            <candle-filter assetName="SMI"
+                           id="MT"
                            periods="13"
                            threshold="1"
                            periodLength="SEMIMONTHLY"></candle-filter>
-            <!--ema-filter id="MT"
+            <!--ema-filter assetName="SMI"
+                        id="MT"
                         fastPeriod="90"
                         slowPeriod="270"
                         periodLength="DAILY"></ema-filter-->
-            <!--stop-loss id="SL"
+            <!--stop-loss assetName="SMI"
+                       id="SL"
                        status="BULL"
                        threshold="91"
                        safety="5"

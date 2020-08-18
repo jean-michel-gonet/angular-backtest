@@ -1,9 +1,10 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
 import { Report, ReportedData } from '../core/reporting';
-import { Candlestick, CandlestickType } from '../core/quotes';
+import { Candlestick, CandlestickType, InstantQuotes } from '../core/quotes';
 import { PeriodLength, Period } from '../core/period';
 
 class ISuperthonMarketTiming {
+  assetName: string;
   id?: string;
   periods?: number;
   periodLength?: PeriodLength;
@@ -17,6 +18,7 @@ class ISuperthonMarketTiming {
  * See http://www.loscanalesdesuperthon.com/p/mis-indicadores.html
  */
 export class SuperthonMarketTiming implements MarketTiming {
+  assetName: string;
   id: string;
   periods: number;
   periodLength: PeriodLength;
@@ -30,12 +32,14 @@ export class SuperthonMarketTiming implements MarketTiming {
 
   constructor(obj = {} as ISuperthonMarketTiming){
     let {
+      assetName,
       id = "SPT",
       periods = 12,
       periodLength = PeriodLength.MONTHLY,
       threshold = 1,
       status = BearBull.BULL
     } = obj;
+    this.assetName = assetName;
     this.id = id;
     this.periods = periods;
     this.periodLength = periodLength;
@@ -49,7 +53,15 @@ export class SuperthonMarketTiming implements MarketTiming {
                 " status=" + this.status);
   }
 
-  record(instant: Date, candlestick: Candlestick): void {
+  record(instantQuotes: InstantQuotes): void {
+    let instant = instantQuotes.instant;
+    let quote: Candlestick = instantQuotes.quote(this.assetName);
+    if (quote) {
+      this.recordQuote(instant, quote);
+    }
+  }
+
+  recordQuote(instant: Date, candlestick: Candlestick): void {
     if (candlestick) {
       this.recordCandles(instant, candlestick);
       this.numericalStatus = this.countCandles();

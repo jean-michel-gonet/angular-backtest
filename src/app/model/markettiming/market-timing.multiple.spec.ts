@@ -1,5 +1,5 @@
 import { MarketTiming, BearBull } from "../core/market-timing";
-import { Candlestick } from '../core/quotes';
+import { Candlestick, InstantQuotes, Quote } from '../core/quotes';
 import { Report, NullReport } from '../core/reporting';
 import { MultipleMarketTiming } from './market-timing.multiple';
 
@@ -10,11 +10,11 @@ class MockMarketTiming implements MarketTiming {
   public instant: Date;
   public candlestick: Candlestick;
 
-  constructor(private response: BearBull) {}
+  constructor(private assetName: string, private response: BearBull) {}
 
-  record(instant: Date, candlestick: Candlestick): void {
-    this.instant = instant;
-    this.candlestick = candlestick;
+  record(instantQuotes: InstantQuotes): void {
+    this.instant = instantQuotes.instant;
+    this.candlestick = instantQuotes.quote(this.assetName);
   }
 
   bearBull(): BearBull {
@@ -34,8 +34,8 @@ class MockMarketTiming implements MarketTiming {
 describe("MultipleMarketTiming", () => {
   it("Can create a new instance", () => {
     let multipleMarketTiming: MultipleMarketTiming = new MultipleMarketTiming([
-      new MockMarketTiming(BearBull.BULL),
-      new MockMarketTiming(BearBull.BULL)
+      new MockMarketTiming("ONE", BearBull.BULL),
+      new MockMarketTiming("TWO", BearBull.BULL)
     ]);
     expect(multipleMarketTiming).toBeTruthy();
   });
@@ -44,50 +44,60 @@ describe("MultipleMarketTiming", () => {
     let multipleMarketTiming: MultipleMarketTiming;
 
     multipleMarketTiming = new MultipleMarketTiming([
-      new MockMarketTiming(BearBull.BULL),
-      new MockMarketTiming(BearBull.BULL)
+      new MockMarketTiming("ONE", BearBull.BULL),
+      new MockMarketTiming("TWO", BearBull.BULL)
     ]);
     expect(multipleMarketTiming.bearBull()).toBe(BearBull.BULL);
 
     multipleMarketTiming = new MultipleMarketTiming([
-      new MockMarketTiming(BearBull.BEAR),
-      new MockMarketTiming(BearBull.BULL)
+      new MockMarketTiming("ONE", BearBull.BEAR),
+      new MockMarketTiming("TWO", BearBull.BULL)
     ]);
     expect(multipleMarketTiming.bearBull()).toBe(BearBull.BEAR);
 
     multipleMarketTiming = new MultipleMarketTiming([
-      new MockMarketTiming(BearBull.BULL),
-      new MockMarketTiming(BearBull.BEAR)
+      new MockMarketTiming("ONE", BearBull.BULL),
+      new MockMarketTiming("TWO", BearBull.BEAR)
     ]);
     expect(multipleMarketTiming.bearBull()).toBe(BearBull.BEAR);
 
     multipleMarketTiming = new MultipleMarketTiming([
-      new MockMarketTiming(BearBull.BEAR),
-      new MockMarketTiming(BearBull.BEAR)
+      new MockMarketTiming("ONE", BearBull.BEAR),
+      new MockMarketTiming("TWO", BearBull.BEAR)
     ]);
     expect(multipleMarketTiming.bearBull()).toBe(BearBull.BEAR);
   });
 
   it("Can propagate the market timing events", () => {
-    let marketTiming1: MockMarketTiming = new MockMarketTiming(BearBull.BULL);
-    let marketTiming2: MockMarketTiming = new MockMarketTiming(BearBull.BEAR);
+    let marketTiming1: MockMarketTiming = new MockMarketTiming("ONE", BearBull.BULL);
+    let marketTiming2: MockMarketTiming = new MockMarketTiming("ONE", BearBull.BEAR);
     let multipleMarketTiming: MultipleMarketTiming =
         new MultipleMarketTiming([marketTiming1, marketTiming2]);
 
     let instant: Date = new Date();
-    let candlestick: Candlestick = new Candlestick({open: 100, high: 110, low: 90, close: 101});
-    multipleMarketTiming.record(instant, candlestick);
+    let quote: Quote = new Quote({
+      name: "ONE",
+      open: 100,
+      close: 110,
+      high: 90,
+      low: 101
+    })
+
+    multipleMarketTiming.record(new InstantQuotes({
+      instant: instant,
+      quotes: [quote]
+    }));
 
     expect(marketTiming1.instant).toBe(instant);
-    expect(marketTiming1.candlestick).toBe(candlestick);
+    expect(marketTiming1.candlestick).toBe(quote);
     expect(marketTiming2.instant).toBe(instant);
-    expect(marketTiming2.candlestick).toBe(candlestick);
+    expect(marketTiming2.candlestick).toBe(quote);
 
   });
 
   it("Can propagate the report events", () => {
-    let marketTiming1: MockMarketTiming = new MockMarketTiming(BearBull.BULL);
-    let marketTiming2: MockMarketTiming = new MockMarketTiming(BearBull.BEAR);
+    let marketTiming1: MockMarketTiming = new MockMarketTiming("ONE", BearBull.BULL);
+    let marketTiming2: MockMarketTiming = new MockMarketTiming("TWO", BearBull.BEAR);
     let multipleMarketTiming: MultipleMarketTiming =
         new MultipleMarketTiming([marketTiming1, marketTiming2]);
 

@@ -1,12 +1,16 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
-import { Candlestick } from '../core/quotes';
+import { Candlestick, InstantQuotes } from '../core/quotes';
 import { Report } from '../core/reporting';
 import { MovingLinearRegression } from '../calculations/moving-linear-regression';
 import { PeriodLength } from '../core/period';
 
 interface IStopLossMarketTiming {
+  /** The name of the asset to watch.*/
+  assetName: string;
+
   /** The idientifier of this market timing.*/
-  id?: string,
+  id?: string;
+
   /** The initial status.*/
   status?: BearBull;
   /**
@@ -25,15 +29,14 @@ interface IStopLossMarketTiming {
   recovery?: number;
 }
 
-const MILLISECONDS_IN_DAY: number = 1000 * 24 * 60 * 60;
-
 /**
  * This is a fast reacting market timing that is intend to work together with
  * a slower one like EMA or Superthon.
  * class{StopLossMarketTiming}
  */
 export class StopLossMarketTiming implements MarketTiming {
-  public id: String;
+  public assetName: string;
+  public id: string;
   public threshold: number;
   public safety: number;
   public recovery: number;
@@ -44,12 +47,14 @@ export class StopLossMarketTiming implements MarketTiming {
 
   constructor(obj = {} as IStopLossMarketTiming) {
     let {
+      assetName,
       id = 'STOPLOSS',
       status = BearBull.BULL,
       threshold = 95,
       safety = 3,
       recovery = 1
     } = obj;
+    this.assetName = assetName;
     this.id = id;
     this.status = status;
     this.threshold = threshold / 100;
@@ -57,7 +62,15 @@ export class StopLossMarketTiming implements MarketTiming {
     this.recovery = recovery;
   }
 
-  record(instant: Date, candlestick: Candlestick): void {
+  record(instantQuotes: InstantQuotes): void {
+    let instant: Date = instantQuotes.instant;
+    let quote: Candlestick = instantQuotes.quote(this.assetName);
+    if (quote) {
+      this.recordQuote(instant, quote);
+    }
+  }
+
+  recordQuote(instant: Date, candlestick: Candlestick) {
     switch(this.status) {
       // Stays in BULL until the quote drops below the threshold:
       case BearBull.BULL:

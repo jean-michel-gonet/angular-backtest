@@ -45,7 +45,8 @@ describe('MarketTimingComponent', () => {
         set: {
           template: `
           <market-timing>
-            <candle-filter id="XX"
+            <candle-filter assetName="ANY"
+                           id="XX"
                            periods="10"
                            periodLength="MONTHLY"
                            threshold="3"
@@ -59,6 +60,7 @@ describe('MarketTimingComponent', () => {
       component = fixture.componentInstance.marketTimingComponent;
       let multipleMarketTiming = component.asMarketTiming() as MultipleMarketTiming;
       let candleFilter = multipleMarketTiming.marketTimings[0] as SuperthonMarketTiming;
+      expect(candleFilter.assetName).toBe("ANY")
       expect(candleFilter.id).toBe("XX");
       expect(candleFilter.periods).toBe(10);
       expect(candleFilter.periodLength).toBe(PeriodLength.MONTHLY);
@@ -71,7 +73,8 @@ describe('MarketTimingComponent', () => {
         set: {
           template: `
           <market-timing>
-            <ema-filter id="XX"
+            <ema-filter assetName="SPY"
+                        id="XX"
                         source="OPEN"
                         preprocessing="MEDIAN"
                         fastPeriod="7"
@@ -89,6 +92,7 @@ describe('MarketTimingComponent', () => {
       component = fixture.componentInstance.marketTimingComponent;
       let multipleMarketTiming = component.asMarketTiming() as MultipleMarketTiming;
       let emaFilter = multipleMarketTiming.marketTimings[0] as EMAMarketTiming;
+      expect(emaFilter.assetName).toBe("SPY")
       expect(emaFilter.id).toBe("XX");
       expect(emaFilter.threshold).toBe(1.5);
       expect(emaFilter.offset).toBe(3.3);
@@ -108,7 +112,8 @@ describe('MarketTimingComponent', () => {
         set: {
           template: `
           <market-timing>
-            <macd-filter id="XX"
+            <macd-filter assetName="MANY"
+                         id="XX"
                          source="OPEN"
                          preprocessing="MEDIAN"
                          fastPeriod="9"
@@ -125,6 +130,7 @@ describe('MarketTimingComponent', () => {
       component = fixture.componentInstance.marketTimingComponent;
       let multipleMarketTiming = component.asMarketTiming() as MultipleMarketTiming;
       let macdFilter = multipleMarketTiming.marketTimings[0] as MACDMarketTiming;
+      expect(macdFilter.assetName).toBe("MANY");
       expect(macdFilter.id).toBe("XX");
       expect(macdFilter.bearBull()).toBe(BearBull.BEAR);
       expect(macdFilter.fastEma.numberOfPeriods).toBe(9);
@@ -145,7 +151,8 @@ describe('MarketTimingComponent', () => {
         set: {
           template: `
           <market-timing>
-            <stop-loss id="XX"
+            <stop-loss assetName="SANY"
+                       id="XX"
                        status="BEAR"
                        threshold="90"
                        safety="10"
@@ -159,6 +166,7 @@ describe('MarketTimingComponent', () => {
       component = fixture.componentInstance.marketTimingComponent;
       let multipleMarketTiming = component.asMarketTiming() as MultipleMarketTiming;
       let stopLossFilter = multipleMarketTiming.marketTimings[0] as StopLossMarketTiming;
+      expect(stopLossFilter.assetName).toBe("SANY");
       expect(stopLossFilter.id).toBe("XX");
       expect(stopLossFilter.safety).toBe(10);
       expect(stopLossFilter.threshold).toBe(0.9);
@@ -171,19 +179,22 @@ describe('MarketTimingComponent', () => {
         set: {
           template: `
           <market-timing>
-            <candle-filter id="XX"
+            <candle-filter assetName="ANY"
+                           id="XX"
                            periods="10"
                            periodLength="MONTHLY"
                            threshold="3"
                            status="BEAR"></candle-filter>
-            <ema-filter id="XX"
+            <ema-filter assetName="ANY"
+                        id="XX"
                         source="OPEN"
                         preprocessing="MEDIAN"
                         fastPeriod="7"
                         slowPeriod="14"
                         periodLength="WEEKLY"
                         status="BEAR"></ema-filter>
-            <macd-filter id="XX"
+            <macd-filter assetName="ANY"
+                         id="XX"
                          source="OPEN"
                          preprocessing="MEDIAN"
                          fastPeriod="9"

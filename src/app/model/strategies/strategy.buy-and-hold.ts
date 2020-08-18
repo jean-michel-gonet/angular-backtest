@@ -54,7 +54,7 @@ export class BuyAndHoldStrategy implements Strategy {
     let quote: Quote = instantQuotes.quote(this.assetName);
     let quoteDuringBear: Quote = instantQuotes.quote(this.assetNameDuringBear);
 
-    this.marketTiming.record(instantQuotes.instant, quote);
+    this.marketTiming.record(instantQuotes);
 
     switch(this.marketTiming.bearBull()) {
         case BearBull.BEAR:
