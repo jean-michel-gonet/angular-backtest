@@ -42,6 +42,13 @@
     }
   },
   {
+    "name": "USDCHF",
+    "quote": {
+      "provider": "www.investing.com",
+      "uri": "forex/usd-chf-investing.csv"
+    }
+  },
+  {
     "name": "SPYCHF",
     "quote": {
       "provider": "www.investing.com",
@@ -52,7 +59,7 @@
         "provider": "www.investing.com",
         "uri": "forex/usd-chf-investing.csv"
       },
-      "operation": "divide"
+      "operation": "multiply"
     }
   },
   {
