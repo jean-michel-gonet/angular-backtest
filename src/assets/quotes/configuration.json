@@ -42,6 +42,27 @@
     }
   },
   {
+    "name": "USDCHF",
+    "quote": {
+      "provider": "www.investing.com",
+      "uri": "forex/usd-chf-investing.csv"
+    }
+  },
+  {
+    "name": "SPYCHF",
+    "quote": {
+      "provider": "www.investing.com",
+      "uri": "instruments/spy-investing.csv"
+    },
+    "exchangeRate": {
+      "quote": {
+        "provider": "www.investing.com",
+        "uri": "forex/usd-chf-investing.csv"
+      },
+      "operation": "multiply"
+    }
+  },
+  {
     "name": "AGG",
     "quote": {
       "provider": "finance.yahoo.com",

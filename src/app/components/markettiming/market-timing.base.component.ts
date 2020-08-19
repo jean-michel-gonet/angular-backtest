@@ -5,6 +5,9 @@ import { BearBull } from 'src/app/model/core/market-timing';
 
 export class BaseMarketTimingComponent {
   @Input()
+  protected assetName: string;
+
+  @Input()
   protected id: string;
 
   protected _source: MovingAverageSource;

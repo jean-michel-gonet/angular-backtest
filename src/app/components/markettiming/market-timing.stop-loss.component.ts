@@ -35,6 +35,7 @@ export class StopLossMarketTimingComponent extends BaseMarketTimingComponent {
 
   asSuperthonMarketTimingComponent(): StopLossMarketTiming {
     return new StopLossMarketTiming({
+      assetName: this.assetName,
       id: this.id,
       status: this.status,
       threshold: this.threshold,

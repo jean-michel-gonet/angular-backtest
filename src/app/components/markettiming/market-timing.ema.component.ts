@@ -49,6 +49,7 @@ export class EMAMarketTimingComponent extends BaseMarketTimingComponent {
 
   asEmaMarketTiming(): EMAMarketTiming {
     return new EMAMarketTiming({
+      assetName: this.assetName,
       id: this.id,
       source: this._source,
       preprocessing: this._preprocessing,

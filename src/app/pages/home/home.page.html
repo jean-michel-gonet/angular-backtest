@@ -1,6 +1,6 @@
 <h1>This is the home page</h1>
 <h3>The S&amp;P500</h3>
-<simulation start="2000-01-01" end="2020-08-03" quotes="SPY">
+<simulation start="2000-01-01" end="2020-08-17" quotes="SPY, SPYCHF, USDCHF">
   <reports>
     <highlight-report>
       <table border="1">
@@ -42,6 +42,8 @@
       </table>
     </highlight-report>
     <chart-report>
+      <chart-report-configuration show="USDCHF.CLOSE"  showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
+      <chart-report-configuration show="SPYCHF.CLOSE"  showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="SPY.CLOSE"  showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="ACC.NAV"      showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="MT.SUPERTHON" showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
@@ -55,9 +57,11 @@
   <accounts>
     <swiss-quote id="ACC" cash="100000">
       <strategy>
-        <buy-and-hold assetName="SPY">
+        <buy-and-hold assetName="SPYCHF">
           <market-timing>
-            <candle-filter id="MT"
+            <candle-filter assetName="SPY"
+                           id="MT"
+                           on="SPY"
                            periods="13"
                            threshold="1"
                            periodLength="SEMIMONTHLY"></candle-filter>
@@ -126,15 +130,18 @@
       <strategy>
         <buy-and-hold assetName="SMI">
           <market-timing>
-            <candle-filter id="MT"
+            <candle-filter assetName="SMI"
+                           id="MT"
                            periods="13"
                            threshold="1"
                            periodLength="SEMIMONTHLY"></candle-filter>
-            <!--ema-filter id="MT"
+            <!--ema-filter assetName="SMI"
+                        id="MT"
                         fastPeriod="90"
                         slowPeriod="270"
                         periodLength="DAILY"></ema-filter-->
-            <!--stop-loss id="SL"
+            <!--stop-loss assetName="SMI"
+                       id="SL"
                        status="BULL"
                        threshold="91"
                        safety="5"

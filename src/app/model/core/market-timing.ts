@@ -1,4 +1,4 @@
-import { Candlestick } from './quotes';
+import { InstantQuotes } from './quotes';
 import { Reporter, Report } from './reporting';
 
 /**
@@ -25,7 +25,7 @@ export interface MarketTiming extends Reporter {
    * @param {Date} instant The current instant.
    * @param {Candlestick} candlestick The relevant quote at specified instant.
    */
-  record(instant: Date, candlestick: Candlestick): void;
+  record(instantQuotes: InstantQuotes): void;
 
   /**
    * Indicates if market is bearish (better sell everything) or bullish
@@ -44,7 +44,7 @@ export class DefaultMarketTiming implements MarketTiming {
   /**
    * Does nothing with the instant quotes.
    */
-   record(instant: Date, candlestick: Candlestick): void {
+   record(instantQuotes: InstantQuotes): void {
     // Do nothing.
   }
 

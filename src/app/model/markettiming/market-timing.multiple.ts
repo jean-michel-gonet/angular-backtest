@@ -1,14 +1,14 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
-import { Candlestick } from '../core/quotes';
+import { InstantQuotes } from '../core/quotes';
 import { Report } from '../core/reporting';
 
 export class MultipleMarketTiming implements MarketTiming {
 
   constructor(public marketTimings: MarketTiming[]) {}
 
-  record(instant: Date, candlestick: Candlestick): void {
+  record(instantQuotes: InstantQuotes): void {
     this.marketTimings.forEach(m => {
-      m.record(instant, candlestick);
+      m.record(instantQuotes);
     });
   }
 
