@@ -29,13 +29,15 @@ export class OnlineTrueRange {
   private previous: Candlestick;
 
   public trueRange(current: Candlestick): number {
-    let tr: number;
+    let a: number, b: number;
     if (this.previous) {
-      let a: number = Math.max(this.previous.close, current.high);
-      let b: number = Math.min(this.previous.close, current.low);
-      tr = a - b;
+      a = Math.max(this.previous.close, current.high);
+      b = Math.min(this.previous.close, current.low);
+    } else {
+      a = current.high;
+      b = current.low;
     }
     this.previous = current;
-    return tr;
+    return a - b;
   }
 }
