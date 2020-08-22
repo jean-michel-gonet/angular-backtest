@@ -3,6 +3,8 @@ import { Candlestick, InstantQuotes } from '../core/quotes';
 import { Report } from '../core/reporting';
 import { MovingLinearRegression } from '../calculations/moving-linear-regression';
 import { PeriodLength } from '../core/period';
+import { OnlineSma } from '../calculations/online-sma';
+import { OnlineTrueRange } from '../calculations/true-range';
 
 interface IStopLossMarketTiming {
   /** The name of the asset to watch.*/
@@ -13,9 +15,11 @@ interface IStopLossMarketTiming {
 
   /** The initial status.*/
   status?: BearBull;
+
   /**
-   * The amount of the drop before activating stop loss.
-   * Specify 0.95 if you want to stop your loss after a drop of 5%.
+   * The multiple of ATR that triggers the stop loss.
+   * Specify 3 if you want to stop your losses (or collect your gains )
+   * after a variation of three times the ATR.
    */
   threshold?: number;
   /**
@@ -41,8 +45,10 @@ export class StopLossMarketTiming implements MarketTiming {
   public safety: number;
   public recovery: number;
   public status: BearBull;
-  private max: Candlestick;
+  private previous: Candlestick;
 
+  private trueRange: OnlineTrueRange;
+  private onlineSma: OnlineSma;
   private movingLinearRegression: MovingLinearRegression;
 
   constructor(obj = {} as IStopLossMarketTiming) {
@@ -50,16 +56,18 @@ export class StopLossMarketTiming implements MarketTiming {
       assetName,
       id = 'STOPLOSS',
       status = BearBull.BULL,
-      threshold = 95,
-      safety = 3,
+      threshold = 2,
+      safety = 10,
       recovery = 1
     } = obj;
     this.assetName = assetName;
     this.id = id;
     this.status = status;
-    this.threshold = threshold / 100;
+    this.threshold = threshold;
     this.safety = safety;
     this.recovery = recovery;
+    this.trueRange = new OnlineTrueRange();
+    this.onlineSma = new OnlineSma(14);
   }
 
   record(instantQuotes: InstantQuotes): void {
@@ -71,24 +79,25 @@ export class StopLossMarketTiming implements MarketTiming {
   }
 
   recordQuote(instant: Date, candlestick: Candlestick) {
+    // Updates the ATR:
+    let tr: number = this.trueRange.trueRange(candlestick);
+    let atr: number = this.onlineSma.smaOf(tr);
+
     switch(this.status) {
       // Stays in BULL until the quote drops below the threshold:
       case BearBull.BULL:
-        // Keeps track of the max closing quote:
-        if (!this.max) {
-          this.max = candlestick;
-        } else if (candlestick.close > this.max.close) {
-          this.max = candlestick;
-        }
         // Looks out for drops:
-        if (candlestick.close < this.max.close * this.threshold) {
-          console.log("Stop Loss going BEAR", instant, candlestick, this.max)
-          this.status = BearBull.BEAR;
-          this.movingLinearRegression = new MovingLinearRegression({
-            numberOfPeriods: this.safety,
-            periodLength: PeriodLength.DAILY
-          });
-          this.movingLinearRegression.calculate(instant, candlestick);
+        if (this.previous) {
+          let change: number = candlestick.close -  this.previous.close;
+          if (change > atr * this.threshold) {
+            console.log("Stop Loss going BEAR ", instant, change, atr, this.threshold, candlestick, this.previous)
+            this.status = BearBull.BEAR;
+            this.movingLinearRegression = new MovingLinearRegression({
+              numberOfPeriods: this.safety,
+              periodLength: PeriodLength.DAILY
+            });
+            this.movingLinearRegression.calculate(instant, candlestick);
+          }
         }
         break;
 
@@ -98,10 +107,12 @@ export class StopLossMarketTiming implements MarketTiming {
         if (mlr && mlr > this.recovery) {
           console.log("Stop Loss going BULL", instant, candlestick, mlr, this.recovery);
           this.status = BearBull.BULL;
-          this.max = candlestick;
         }
         break;
     }
+
+    // Keep candlestick as previous value:
+    this.previous = candlestick;
   }
 
   bearBull(): BearBull {
