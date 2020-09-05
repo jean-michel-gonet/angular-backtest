@@ -63,6 +63,27 @@
     }
   },
   {
+    "name": "ACWXDIV",
+    "quote": {
+      "provider": "finance.yahoo.com",
+      "uri": "instruments/acwx-yahoo.csv"
+    },
+    "dividends": {
+      "level1TaxWitholding": 0,
+      "directDividends": {
+        "provider": "date.value.csv",
+        "uri": "instruments/acwx-dividends.csv"
+      }
+    }
+  },
+  {
+    "name": "ACWX",
+    "quote": {
+      "provider": "finance.yahoo.com",
+      "uri": "instruments/acwx-yahoo.csv"
+    }
+  },
+  {
     "name": "AGG",
     "quote": {
       "provider": "finance.yahoo.com",
