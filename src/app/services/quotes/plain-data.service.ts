@@ -19,12 +19,15 @@ export class DateYieldCsvConverter {
 
   /**
    * Transforms the provided CSV file into HistoricalValues.
-   * @return {HistoricalValue[]} The transformed data.
+   * @return {HistoricalValue[]} The transformed data, sorted by date.
    */
   asHistoricalValues(): HistoricalValue[] {
+    // Split the CSV file per lines:
+    let csvContent: string[] = this.dateYieldData.split(/\r\n|\r|\n/);
+
+    // For each line, extract dividends:
     let historicalValues: HistoricalValue[] = [];
     let lineNumber = 0;
-    let csvContent: string[] = this.dateYieldData.split(/\r\n|\r|\n/);
     csvContent.forEach( (line: string) => {
       if (lineNumber++ > 0) {
         let tokens: string[] = line.split(",");
@@ -40,6 +43,13 @@ export class DateYieldCsvConverter {
         }
       }
     });
+
+    // Sort the dividends by date, oldest first:
+    historicalValues.sort((a: HistoricalValue, b:HistoricalValue) => {
+      return a.instant.valueOf() - b.instant.valueOf();
+    });
+
+    // Done:
     return historicalValues;
   }
 
