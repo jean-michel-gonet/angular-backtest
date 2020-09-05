@@ -63,10 +63,17 @@
     }
   },
   {
-    "name": "ACWXDIV",
+    "name": "ACWXCHFTR",
     "quote": {
       "provider": "finance.yahoo.com",
       "uri": "instruments/acwx-yahoo.csv"
+    },
+    "exchangeRate": {
+      "quote": {
+        "provider": "www.investing.com",
+        "uri": "forex/usd-chf-investing.csv"
+      },
+      "operation": "multiply"
     },
     "dividends": {
       "level1TaxWitholding": 0,
