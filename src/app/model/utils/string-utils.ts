@@ -40,6 +40,9 @@ export class StringUtils {
    */
   public static formatAsDate(value: any): string {
     let date: Date;
+    if (!date) {
+      return "";
+    }
     if (typeof value == 'string') {
       return value;
     } else if (value instanceof Date){
