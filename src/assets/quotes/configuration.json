@@ -80,13 +80,13 @@
     "name": "AGG",
     "quote": {
       "provider": "finance.yahoo.com",
-      "uri": "instruments/ishares-core-us-aggregate-bond-etf.csv"
+      "uri": "instruments/agg-yahoo.csv"
     },
     "dividends": {
-      "level1TaxWitholding": 0.34,
+      "level1TaxWitholding": 0,
       "directDividends": {
         "provider": "date.value.csv",
-        "uri": "instruments/ishares-core-us-aggregate-bond-dividends.csv"
+        "uri": "instruments/agg-dividends.csv"
       }
     }
   }
