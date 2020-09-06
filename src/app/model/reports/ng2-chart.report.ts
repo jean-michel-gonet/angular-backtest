@@ -2,6 +2,7 @@ import { ChartDataSets, ChartOptions, ChartPoint } from 'chart.js';
 import { Label } from 'ng2-charts';
 import { Report, Reporter, ReportedData, PreProcessor } from '../core/reporting';
 import { Injectable } from '@angular/core';
+import { StringUtils } from '../utils/string-utils';
 
 export enum ShowDataAs {
   LINE = 'LINE',
@@ -34,36 +35,12 @@ class XChartPoint implements ChartPoint {
 }
 
 /**
- * Formats the provided number as a date
- */
-let formatAsDate = function(value: any): string {
-  let date: Date = new Date(value);
-  let sYear: string = "" + date.getFullYear();
-  let month: number = date.getMonth() + 1;
-  let sMonth: string;
-  if (month < 10) {
-    sMonth = "0" + month;
-  } else {
-    sMonth = "" + month;
-  }
-  let day: number = date.getDate();
-  let sDay: string;
-  if (day < 10) {
-    sDay = "0" + day;
-  } else {
-    sDay = "" + day;
-  }
-  let s = sYear + "." + sMonth + "." + sDay
-  return s;
-}
-
-/**
  * Formats the title of the tooltip.
  */
 let formatTooltipTitle = function(tooltipItems: any[]): string {
   let tooltipItem = tooltipItems[0];
   let value = parseInt(tooltipItem.label);
-  return formatAsDate(value);
+  return StringUtils.formatAsDate(value);
 }
 
 /**
@@ -137,7 +114,7 @@ export class Ng2ChartReport implements Report {
           type: 'linear',
           position: 'bottom',
           ticks: {
-            callback: formatAsDate,
+            callback: StringUtils.formatAsDate,
             display: true,
           }
         }],

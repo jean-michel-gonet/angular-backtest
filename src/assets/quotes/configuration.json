@@ -21,27 +21,6 @@
     }
   },
   {
-    "name": "SP500DIV",
-    "quote": {
-      "provider": "finance.yahoo.com",
-      "uri": "indexes/sp500-yahoo.csv"
-    },
-    "dividends": {
-      "level1TaxWitholding": 0.34,
-      "directDividends": {
-        "provider": "date.value.csv",
-        "uri": "indexes/sp500-dividends.csv"
-      }
-    }
-  },
-  {
-    "name": "SPY",
-    "quote": {
-      "provider": "www.investing.com",
-      "uri": "instruments/spy-investing.csv"
-    }
-  },
-  {
     "name": "USDCHF",
     "quote": {
       "provider": "www.investing.com",
@@ -49,17 +28,10 @@
     }
   },
   {
-    "name": "SPYCHF",
+    "name": "ACWX",
     "quote": {
-      "provider": "www.investing.com",
-      "uri": "instruments/spy-investing.csv"
-    },
-    "exchangeRate": {
-      "quote": {
-        "provider": "www.investing.com",
-        "uri": "forex/usd-chf-investing.csv"
-      },
-      "operation": "multiply"
+      "provider": "finance.yahoo.com",
+      "uri": "instruments/acwx-yahoo.csv"
     }
   },
   {
@@ -84,10 +56,24 @@
     }
   },
   {
-    "name": "ACWX",
+    "name": "SPY",
     "quote": {
-      "provider": "finance.yahoo.com",
-      "uri": "instruments/acwx-yahoo.csv"
+      "provider": "www.investing.com",
+      "uri": "instruments/spy-investing.csv"
+    }
+  },
+  {
+    "name": "SPYCHF",
+    "quote": {
+      "provider": "www.investing.com",
+      "uri": "instruments/spy-investing.csv"
+    },
+    "exchangeRate": {
+      "quote": {
+        "provider": "www.investing.com",
+        "uri": "forex/usd-chf-investing.csv"
+      },
+      "operation": "multiply"
     }
   },
   {
