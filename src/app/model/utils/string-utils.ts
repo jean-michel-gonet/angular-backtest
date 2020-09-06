@@ -39,10 +39,10 @@ export class StringUtils {
    * @return {String} A string representing the provided date.
    */
   public static formatAsDate(value: any): string {
-    let date: Date;
-    if (!date) {
+    if (!value) {
       return "";
     }
+    let date: Date;
     if (typeof value == 'string') {
       return value;
     } else if (value instanceof Date){
