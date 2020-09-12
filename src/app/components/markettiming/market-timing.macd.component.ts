@@ -49,6 +49,7 @@ export class MACDMarketTimingComponent extends BaseMarketTimingComponent {
 
   asMACDMarketTiming(): MACDMarketTiming {
     return new MACDMarketTiming({
+      assetName: this.assetName,
       id: this.id,
       source: this._source,
       preprocessing: this._preprocessing,

@@ -1,6 +1,5 @@
 import { PeriodLength, Period } from '../core/period';
-import { Quote } from '../core/quotes';
-import { OnlineEma } from './online-ema';
+import { Candlestick } from '../core/quotes';
 
 export enum MovingAveragePreprocessing {
   TYPICAL = 'TYPICAL',
@@ -17,14 +16,14 @@ export enum MovingAverageSource {
   MID = 'MID'
 }
 
-class IMovingCalculator {
+export class IMovingCalculator {
   numberOfPeriods: number;
   periodLength: PeriodLength;
   source?: MovingAverageSource;
   preprocessing?: MovingAveragePreprocessing;
 }
 
-abstract class MovingCalculator {
+export abstract class MovingCalculator {
   public numberOfPeriods: number;
   public periodLength: PeriodLength;
   public source: MovingAverageSource;
@@ -54,22 +53,29 @@ abstract class MovingCalculator {
    * Calculates the EMA of the last period.
    * @param {Date} instant The current date. Method assumes that instants
    * through subsequent calls always move forward.
-   * @param {Quote} quote The quote corresponding to this instant.
+   * @param {Candlestick} candlestick The candlestick corresponding to this instant.
    * @return {number} If the provided instant is a change of period, returns
    * the moving average of the last period.
    */
-  ema(instant: Date, quote: Quote): number {
-    let ema: number;
+  calculate(instant: Date, candlestick: Candlestick): number {
+    let result: number;
+
     if (this.period.changeOfPeriod(instant)) {
-      if (this.sourceValues) {
-        let preprocessedValue = this.preprocess(this.sourceValues);
-        ema = this.calculate(preprocessedValue);
+      if (this.periodLength == PeriodLength.DAILY) {
+        let sourceValue = this.extractSourceValue(candlestick);
+        let preprocessedValue = this.preprocess([sourceValue]);
+        result = this.compute(instant, preprocessedValue);
+      } else {
+        if (this.sourceValues) {
+          let preprocessedValue = this.preprocess(this.sourceValues);
+          result = this.compute(instant, preprocessedValue);
+        }
       }
       this.sourceValues = [];
     }
-    let sourceValue = this.extractSourceValue(quote);
+    let sourceValue = this.extractSourceValue(candlestick);
     this.sourceValues.push(sourceValue);
-    return ema;
+    return result;
   }
 
   /**
@@ -78,22 +84,22 @@ abstract class MovingCalculator {
    * @param {Quote} quote The Quote.
    * @return {number} The value to use as source.
    */
-  private extractSourceValue(quote: Quote): number {
+  private extractSourceValue(candlestick: Candlestick): number {
     switch(this.source) {
       case MovingAverageSource.CLOSE:
-        return quote.close;
+        return candlestick.close;
 
       case MovingAverageSource.HIGH:
-        return quote.high;
+        return candlestick.high;
 
       case MovingAverageSource.LOW:
-        return quote.low;
+        return candlestick.low;
 
       case MovingAverageSource.OPEN:
-        return quote.open;
+        return candlestick.open;
 
       case MovingAverageSource.MID:
-        return (quote.high + quote.low) / 2;
+        return (candlestick.high + candlestick.low) / 2;
     }
   }
 
@@ -146,53 +152,5 @@ abstract class MovingCalculator {
    * @param {number}  value The value to perform the calculation on.
    * @return {number} The result of the calculation.
    */
-  abstract calculate(value: number): number;
-}
-
-/**
- * Calculates the Exponential Moving Average of the quotes provided
- * along time.
- * For example, suppose we calculate an EMA over 12 months. You need
- * to specify the following values to the constructor:
- * <dl>
- *  <dt>Number of periods</dt><dd>That will be 12</dd>
- *  <dt>Period length</dt><dd>That will be MONTHLY</dd>
- * </dl>
- * Then you can call {@link ema} once for every simulated day, providing
- * the instant and the corresponding quote. The calculation will return
- * {@code undefined} most of the time, except when there is a change of
- * period. In this case, the first day of each month.
- */
-export class EmaCalculator extends MovingCalculator {
-
-  public onlineEma: OnlineEma;
-
-  /**
-   * Class constructor.
-   * @param {number} numberOfPeriods The number of periods over which calculating
-   * the moving average.
-   * @param {PeriodLength} periodLength The period period length.
-   */
-  constructor(obj = {} as IMovingCalculator) {
-    super(obj);
-    this.onlineEma = new OnlineEma(this.numberOfPeriods);
-  }
-
-  /**
-   * Performs the EMA calculation.
-   * @param {number} value The value.
-   * @return {number} The EMA for this and all previously provided values.
-   */
-  calculate(value: number): number {
-    return this.onlineEma.emaOf(value);
-  }
-
-  /**
-   * Force the last EMA value.
-   * A method useful for unit testing, for example.
-   * @param {number} value The forced last ema value.
-   */
-  setLastValue(value: number): void  {
-    this.onlineEma.setLastValue(value);
-  }
+  protected abstract compute(instant: Date, value: number): number;
 }

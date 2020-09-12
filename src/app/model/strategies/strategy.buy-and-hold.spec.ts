@@ -54,7 +54,7 @@ describe('BuyAndHoldStrategy', () => {
         new Quote({
           name: "ISIN1",
           close: 10,
-          dividend: 5
+          dividend: 0.5
         })
       ]
     });

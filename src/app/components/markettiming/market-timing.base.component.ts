@@ -1,9 +1,12 @@
 import { Input } from "@angular/core";
-import { MovingAverageSource, MovingAveragePreprocessing } from 'src/app/model/calculations/moving-average';
+import { MovingAverageSource, MovingAveragePreprocessing } from 'src/app/model/calculations/moving-calculator';
 import { PeriodLength } from 'src/app/model/core/period';
 import { BearBull } from 'src/app/model/core/market-timing';
 
 export class BaseMarketTimingComponent {
+  @Input()
+  protected assetName: string;
+
   @Input()
   protected id: string;
 

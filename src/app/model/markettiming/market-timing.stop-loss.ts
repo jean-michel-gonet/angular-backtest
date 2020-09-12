@@ -1,11 +1,16 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
-import { Candlestick } from '../core/quotes';
+import { Candlestick, InstantQuotes } from '../core/quotes';
 import { Report } from '../core/reporting';
-import { OnlineLinearRegression } from '../calculations/linear-regression';
+import { MovingLinearRegression } from '../calculations/moving-linear-regression';
+import { PeriodLength } from '../core/period';
 
 interface IStopLossMarketTiming {
+  /** The name of the asset to watch.*/
+  assetName: string;
+
   /** The idientifier of this market timing.*/
-  id?: string,
+  id?: string;
+
   /** The initial status.*/
   status?: BearBull;
   /**
@@ -24,35 +29,48 @@ interface IStopLossMarketTiming {
   recovery?: number;
 }
 
-const MILLISECONDS_IN_DAY: number = 1000 * 24 * 60 * 60;
-
+/**
+ * This is a fast reacting market timing that is intend to work together with
+ * a slower one like EMA or Superthon.
+ * class{StopLossMarketTiming}
+ */
 export class StopLossMarketTiming implements MarketTiming {
-  public id: String;
+  public assetName: string;
+  public id: string;
   public threshold: number;
   public safety: number;
   public recovery: number;
   public status: BearBull;
   private max: Candlestick;
-  private count: number;
 
-  private linearRegression: OnlineLinearRegression;
+  private movingLinearRegression: MovingLinearRegression;
 
   constructor(obj = {} as IStopLossMarketTiming) {
     let {
+      assetName,
       id = 'STOPLOSS',
       status = BearBull.BULL,
-      threshold = 95 / 100,
+      threshold = 95,
       safety = 3,
       recovery = 1
     } = obj;
+    this.assetName = assetName;
     this.id = id;
     this.status = status;
-    this.threshold = threshold;
+    this.threshold = threshold / 100;
     this.safety = safety;
     this.recovery = recovery;
   }
 
-  record(instant: Date, candlestick: Candlestick): void {
+  record(instantQuotes: InstantQuotes): void {
+    let instant: Date = instantQuotes.instant;
+    let quote: Candlestick = instantQuotes.quote(this.assetName);
+    if (quote) {
+      this.recordQuote(instant, quote);
+    }
+  }
+
+  recordQuote(instant: Date, candlestick: Candlestick) {
     switch(this.status) {
       // Stays in BULL until the quote drops below the threshold:
       case BearBull.BULL:
@@ -66,27 +84,21 @@ export class StopLossMarketTiming implements MarketTiming {
         if (candlestick.close < this.max.close * this.threshold) {
           console.log("Stop Loss going BEAR", instant, candlestick, this.max)
           this.status = BearBull.BEAR;
-          this.count = this.safety;
-          this.linearRegression = new OnlineLinearRegression();
+          this.movingLinearRegression = new MovingLinearRegression({
+            numberOfPeriods: this.safety,
+            periodLength: PeriodLength.DAILY
+          });
+          this.movingLinearRegression.calculate(instant, candlestick);
         }
         break;
 
       // Stays in BEAR until recovery.
       case BearBull.BEAR:
-        let x: number = instant.valueOf() / MILLISECONDS_IN_DAY;
-        this.linearRegression.regression(x , candlestick.close);
-        // Waits in bear for the duration of the safety.
-        if (this.count > 0) {
-          this.count--;
-        }
-        // Then waits until the linear regression is above recovery
-        else {
-          let a: number = this.linearRegression.getA();
-          if (a > this.recovery) {
-            console.log("Stop Loss going BULL", instant, candlestick)
-            this.status = BearBull.BULL;
-            this.max = candlestick;
-          }
+        let mlr = this.movingLinearRegression.calculate(instant, candlestick);
+        if (mlr && mlr > this.recovery) {
+          console.log("Stop Loss going BULL", instant, candlestick, mlr, this.recovery);
+          this.status = BearBull.BULL;
+          this.max = candlestick;
         }
         break;
     }

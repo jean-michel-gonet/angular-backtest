@@ -1,6 +1,7 @@
 import { InstantQuotes, Quote } from './quotes';
 import { Strategy, NullStrategy } from './strategy';
 import { Reporter, Report, ReportedData } from './reporting';
+import { StringUtils } from '../utils/string-utils';
 
 class IPosition {
   name: string;
@@ -147,7 +148,13 @@ export class Account extends IAccount implements Reporter {
       });
       if (position) {
         position.update(quote);
-        this.cash += position.nav() * quote.dividend / 100;
+        if (quote.dividend) {
+          let dividends = position.parts * quote.dividend;
+          this.cash += dividends;
+          console.info(StringUtils.formatAsDate(this.instant) +
+            " - Account " + this.id +
+            " received " + quote.dividend + " per part of " + quote.name + ". A total of " + dividends  + " for " + position.parts + " parts.");
+        }
       }
     });
 
@@ -215,7 +222,9 @@ export class Account extends IAccount implements Reporter {
                 costs;
 
     // A little log:
-    console.info("Account " + this.id + " ordered " + parts + " parts of " + quote.name + " on " + this.instant);
+    console.info(StringUtils.formatAsDate(this.instant) +
+      " - Account " + this.id +
+      " ordered " + parts + " parts of " + quote.name + " at " + quote.close);
   }
 
   /**

@@ -1,10 +1,12 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
-import { Quote } from '../core/quotes';
+import { Quote, InstantQuotes } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { PeriodLength } from '../core/period';
-import { EmaCalculator, MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-average';
+import { MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-calculator';
+import { ExponentialMovingAverage } from '../calculations/exponential-moving-average';
 
 export class IEMAMarketTiming {
+  assetName: string;
   id?: string;
   source?: MovingAverageSource;
   preprocessing?: MovingAveragePreprocessing;
@@ -24,14 +26,15 @@ export class IEMAMarketTiming {
  * @class {EMAMarketTiming}
  */
 export class EMAMarketTiming implements MarketTiming {
+  assetName: string;
   id: string;
   status: BearBull;
   threshold: number;
   offset: number;
 
-  fastEMA: EmaCalculator;
+  fastEMA: ExponentialMovingAverage;
   fastEMAValue: number;
-  slowEMA: EmaCalculator;
+  slowEMA: ExponentialMovingAverage;
   slowEMAValue: number;
 
   difference: number;
@@ -40,6 +43,7 @@ export class EMAMarketTiming implements MarketTiming {
 
   constructor(obj = {} as IEMAMarketTiming){
     let {
+      assetName,
       id = "EMA",
       source = MovingAverageSource.CLOSE,
       preprocessing = MovingAveragePreprocessing.LAST,
@@ -50,19 +54,20 @@ export class EMAMarketTiming implements MarketTiming {
       threshold = 0,
       offset = 0
     } = obj;
+    this.assetName = assetName;
     this.id = id;
     this.status = status;
     this.threshold = threshold;
     this.offset = offset;
 
-    this.slowEMA = new EmaCalculator({
+    this.slowEMA = new ExponentialMovingAverage({
       numberOfPeriods: slowPeriod,
       periodLength: periodLength,
       source: source,
       preprocessing: preprocessing
     });
 
-    this.fastEMA = new EmaCalculator({
+    this.fastEMA = new ExponentialMovingAverage({
       numberOfPeriods: fastPeriod,
       periodLength: periodLength,
       source: source,
@@ -71,9 +76,17 @@ export class EMAMarketTiming implements MarketTiming {
     console.log("EMA Market Timing", this);
   }
 
-  record(instant: Date, quote: Quote): void {
-    this.slowEMAValue = this.slowEMA.ema(instant, quote);
-    this.fastEMAValue = this.fastEMA.ema(instant, quote);
+  record(instantQuotes: InstantQuotes): void {
+    let instant: Date = instantQuotes.instant;
+    let quote: Quote = instantQuotes.quote(this.assetName);
+    if (quote) {
+      this.recordQuote(instant, quote);
+    }
+  }
+
+  recordQuote(instant: Date, quote: Quote): void {
+    this.slowEMAValue = this.slowEMA.calculate(instant, quote);
+    this.fastEMAValue = this.fastEMA.calculate(instant, quote);
     if (this.slowEMAValue) {
       this.difference =
         (this.fastEMAValue - this.slowEMAValue) / (this.fastEMAValue + this.slowEMAValue);

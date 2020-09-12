@@ -1,11 +1,13 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
-import { Quote } from '../core/quotes';
+import { Quote, InstantQuotes } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { PeriodLength } from '../core/period';
-import { EmaCalculator, MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-average';
+import { MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-calculator';
+import { ExponentialMovingAverage } from '../calculations/exponential-moving-average';
 import { OnlineEma } from '../calculations/online-ema';
 
 class IMACDMarketTiming {
+  assetName: string;
   id?: string;
   periodLength?: PeriodLength;
   source?: MovingAverageSource;
@@ -34,11 +36,12 @@ class IMACDMarketTiming {
  * @class {MACDMarketTiming}
  */
 export class MACDMarketTiming implements MarketTiming {
+  assetName: string;
   id: string;
   status: BearBull;
-  slowEma: EmaCalculator;
+  slowEma: ExponentialMovingAverage;
   slowEmaValue: number;
-  fastEma: EmaCalculator;
+  fastEma: ExponentialMovingAverage;
   fastEmaValue: number;
   signalEma: OnlineEma;
   macd: number;
@@ -46,6 +49,7 @@ export class MACDMarketTiming implements MarketTiming {
 
   constructor(obj = {} as IMACDMarketTiming){
     let {
+      assetName,
       id = "MACD",
       source = MovingAverageSource.CLOSE,
       preprocessing = MovingAveragePreprocessing.LAST,
@@ -55,15 +59,16 @@ export class MACDMarketTiming implements MarketTiming {
       signalPeriod = 9,
       status = BearBull.BULL
     } = obj;
+    this.assetName = assetName;
     this.id = id;
     this.status = status;
-    this.slowEma = new EmaCalculator({
+    this.slowEma = new ExponentialMovingAverage({
       numberOfPeriods: slowPeriod,
       periodLength: periodLength,
       source: source,
       preprocessing: preprocessing,
     });
-    this.fastEma = new EmaCalculator({
+    this.fastEma = new ExponentialMovingAverage({
       numberOfPeriods: fastPeriod,
       periodLength: periodLength,
       source: source,
@@ -72,9 +77,17 @@ export class MACDMarketTiming implements MarketTiming {
     this.signalEma = new OnlineEma(signalPeriod);
   }
 
-  record(instant: Date, quote: Quote): void {
-    this.slowEmaValue = this.slowEma.ema(instant, quote);
-    this.fastEmaValue = this.fastEma.ema(instant, quote);
+  record(instantQuotes: InstantQuotes): void {
+    let instant: Date = instantQuotes.instant;
+    let quote: Quote = instantQuotes.quote(this.assetName);
+    if (quote) {
+      this.recordQuote(instant, quote);
+    }
+  }
+
+  recordQuote(instant: Date, quote: Quote): void {
+    this.slowEmaValue = this.slowEma.calculate(instant, quote);
+    this.fastEmaValue = this.fastEma.calculate(instant, quote);
     if (this.slowEmaValue) {
         this.macd = this.fastEmaValue - this.slowEmaValue;
         this.signal = this.signalEma.emaOf(this.macd);

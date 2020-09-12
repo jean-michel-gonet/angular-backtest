@@ -88,7 +88,7 @@ describe('Account', () => {
     let instantQuotes: InstantQuotes = new InstantQuotes({
       instant: new Date(),
       quotes: [
-        new Quote({name: "YY", close: 11, dividend: 10})
+        new Quote({name: "YY", close: 11, dividend: 5})
       ]
     });
     let account: Account = new Account({
@@ -103,8 +103,8 @@ describe('Account', () => {
       ]
     });
     account.process(instantQuotes);
-    expect(account.cash).toBe(1004.4);
-    expect(account.nav()).toBe(1004.4 + 4 * 11);
+    expect(account.cash).toBe(1000 + 4 * 5);
+    expect(account.nav()).toBe(1000 + 4 * 5 + 4 * 11);
   });
 
   it('Can calculate costs based on the spread', () => {
