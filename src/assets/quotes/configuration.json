@@ -21,16 +21,37 @@
     }
   },
   {
-    "name": "SP500DIV",
+    "name": "USDCHF",
+    "quote": {
+      "provider": "www.investing.com",
+      "uri": "forex/usd-chf-investing.csv"
+    }
+  },
+  {
+    "name": "ACWX",
     "quote": {
       "provider": "finance.yahoo.com",
-      "uri": "indexes/sp500-yahoo.csv"
+      "uri": "instruments/acwx-yahoo.csv"
+    }
+  },
+  {
+    "name": "ACWXCHFTR",
+    "quote": {
+      "provider": "finance.yahoo.com",
+      "uri": "instruments/acwx-yahoo.csv"
+    },
+    "exchangeRate": {
+      "quote": {
+        "provider": "www.investing.com",
+        "uri": "forex/usd-chf-investing.csv"
+      },
+      "operation": "multiply"
     },
     "dividends": {
-      "level1TaxWitholding": 0.34,
+      "level1TaxWitholding": 0,
       "directDividends": {
         "provider": "date.value.csv",
-        "uri": "indexes/sp500-dividends.csv"
+        "uri": "instruments/acwx-dividends.csv"
       }
     }
   },
@@ -39,13 +60,6 @@
     "quote": {
       "provider": "www.investing.com",
       "uri": "instruments/spy-investing.csv"
-    }
-  },
-  {
-    "name": "USDCHF",
-    "quote": {
-      "provider": "www.investing.com",
-      "uri": "forex/usd-chf-investing.csv"
     }
   },
   {
@@ -66,13 +80,13 @@
     "name": "AGG",
     "quote": {
       "provider": "finance.yahoo.com",
-      "uri": "instruments/ishares-core-us-aggregate-bond-etf.csv"
+      "uri": "instruments/agg-yahoo.csv"
     },
     "dividends": {
-      "level1TaxWitholding": 0.34,
+      "level1TaxWitholding": 0,
       "directDividends": {
         "provider": "date.value.csv",
-        "uri": "instruments/ishares-core-us-aggregate-bond-dividends.csv"
+        "uri": "instruments/agg-dividends.csv"
       }
     }
   }

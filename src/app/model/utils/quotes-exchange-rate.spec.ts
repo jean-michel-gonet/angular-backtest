@@ -17,7 +17,9 @@ describe('ApplyExchangeRate', () => {
           open: 210,
           high: 230,
           low: 190,
-          close: 200}),
+          close: 200,
+          dividend: 0.5
+        }),
         new Quote({name: "USD.CHF", close: 1.15}),
       ]}),
       new InstantQuotes({instant: yesterday, quotes: [
@@ -38,6 +40,7 @@ describe('ApplyExchangeRate', () => {
     expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").high).toBeCloseTo(264.5, 1);
     expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").low).toBeCloseTo(218.5, 1);
     expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").close).toBeCloseTo(230.0, 1);
+    expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").dividend).toBeCloseTo(0.575, 2);
 
     expect(historicalQuotes.get(yesterday).quote("ISIN1").close).toBeCloseTo(110.0, 1);
     expect(historicalQuotes.get(today).quote("ISIN1").close).toBeCloseTo(315.0, 1);
@@ -51,7 +54,9 @@ describe('ApplyExchangeRate', () => {
           open: 210,
           high: 230,
           low: 190,
-          close: 200}),
+          close: 200,
+          dividend: 0.3
+        }),
         new Quote({name: "USD.CHF", close: 1.15}),
       ]}),
       new InstantQuotes({instant: yesterday, quotes: [
@@ -72,6 +77,7 @@ describe('ApplyExchangeRate', () => {
     expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").high).toBeCloseTo(200.0, 1);
     expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").low).toBeCloseTo(165.2, 1);
     expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").close).toBeCloseTo(173.9, 1);
+    expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").dividend).toBeCloseTo(0.260, 2);
 
     expect(historicalQuotes.get(yesterday).quote("ISIN1").close).toBeCloseTo(90.9, 1);
     expect(historicalQuotes.get(today).quote("ISIN1").close).toBeCloseTo(285.7, 1);

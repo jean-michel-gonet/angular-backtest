@@ -6,9 +6,9 @@ import { PlainDataService, DateYieldCsvConverter } from './plain-data.service';
 import { HistoricalValue } from 'src/app/model/core/quotes';
 
 var dateYieldResponse = "Date,Yield\r\n" +
-  "2019-12-31,1.81\r\n" +
   "2018-12-31,2.09\r\n" +
   "2017-12-31,1.84\r\n" +
+  "2019-12-31,1.81\r\n" +
   "2016-12-31,2.03\r\n";
 
 describe('QuotesFromSimpleCsvService', () => {
@@ -62,5 +62,16 @@ describe('DateYieldConverter', () => {
           instant: new Date(2016, 11, 31),
           value: 2.03}
       ]));
+  });
+  it('Can sort Dividends by date, oldest first', () => {
+    let dateYieldConverter: DateYieldCsvConverter = new DateYieldCsvConverter(dateYieldResponse);
+    let historicalValues: HistoricalValue[] = dateYieldConverter.asHistoricalValues();
+    let previousInstant: Date;
+    historicalValues.forEach(h => {
+      if (previousInstant) {
+        expect(previousInstant.valueOf()).toBeLessThan(h.instant.valueOf());
+      }
+      previousInstant = h.instant;
+    });
   });
 });

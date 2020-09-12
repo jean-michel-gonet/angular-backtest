@@ -11,24 +11,22 @@ var sixResponse = {
   "protocolVersion":"fqs.json#17x",
   "nettingMinutes":1440,
   "delayMinutes":15,
-  "delayedMillis":1583649059819,
-  "delayedDateTime":"20200308T07:30:59.819",
-  "requestURL":"/itf/fqs/delayed/charts.json?netting=1440&columns=Date,Time,Close,Open,Low,High,TotalVolume&fromdate=19880630&where=ValorId=CH0008899764CHF4&select=ISIN,ClosingPrice,ClosingPerformance,PreviousClosingPrice",
+  "delayedMillis":1599378208885,
+  "delayedDateTime":"20200906T09:43:28.885",
+  "requestURL":"/itf/fqs/delayed/charts.json?netting=1440&columns=Date,Time,Close,Open,High,Low,TotalVolume&todate=20200906&fromdate=19880630&where=ValorId=CH0009980894CHF9&select=ValorId,ValorSymbol",
   "copyRight":"(c) Copyright by SIX Group Ltd 2020. All rights reserved.",
   "valors":[
     {
-      "ISIN":"CH0008899764",
-      "ClosingPrice":101.14,
-      "ClosingPerformance":-3.44,
-      "PreviousClosingPrice":104.74,
+      "ValorId":"CH0009980894CHF9",
+      "ValorSymbol":"SMI",
       "data":{
-        "Date":       [20010315,20010316,20010319,20010320],
-        "Time":       [  120000,  120000,  120000,  120000],
-        "Close":      [      73,    71.7,   70.25,   71.15],
-        "Open":       [   72.85,    73.3,   71.05,   70.35],
-        "Low":        [    71.2,    70.9,   70.25,    70.3],
-        "High":       [      73,    73.3,   71.95,   71.35],
-        "TotalVolume":[   41965,   30255,    9144,   15863]
+            "Date":       [20010315,20010316,20010319,20010320],
+            "Time":       [  120000,  120000,  120000,  120000],
+            "Close":      [      73,    71.7,   70.25,   71.15],
+            "Open":       [   72.85,    73.3,   71.05,   70.35],
+            "Low":        [    71.2,    70.9,   70.25,    70.3],
+            "High":       [      73,    73.3,   71.95,   71.35],
+            "TotalVolume":[   41965,   30255,    9144,   15863]
       }
     }
   ],

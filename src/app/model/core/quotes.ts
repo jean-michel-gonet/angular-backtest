@@ -143,6 +143,7 @@ export class Quote extends Candlestick {
   /**
    * A dividend is the distribution of reward from a portion of the company's
    * earnings and is paid to a class of its shareholders.
+   * Dividends are given in absolute value per part.
    */
   dividend?: number;
 
