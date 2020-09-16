@@ -4,7 +4,7 @@ import { Report } from '../core/reporting';
 import { MovingLinearRegression } from '../calculations/moving-linear-regression';
 import { PeriodLength } from '../core/period';
 import { OnlineSma } from '../calculations/online-sma';
-import { OnlineTrueRange } from '../calculations/true-range';
+import { OnlineTrueRange } from '../calculations/online-average-true-range';
 
 interface IStopLossMarketTiming {
   /** The name of the asset to watch.*/
