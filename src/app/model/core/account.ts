@@ -75,6 +75,20 @@ export class Position {
   }
 }
 
+/**
+ * Describes the order to buy (parts > 0) or sell (parts < 0) parts of the
+ * specified quote.
+ * Orders are always Good Till Done, executed at Market Value (open) at the
+ * beginning of the next opening day.
+ * @class{Order}
+ */
+export class Order {
+  /** The name of the instrument to sell.*/
+  name: String;
+  /** The number of parts to buy or sell.*/
+  parts: number
+}
+
 class IAccount {
   id?: string;
   cash?: number;
@@ -98,9 +112,10 @@ class IAccount {
 /**
  * The account holds the cash and a list of quote positions.
  * It also handles the buy and sell operations.
- * @class Account
+ * @class{Account}
  */
 export class Account extends IAccount implements Reporter {
+  private standingOrders: Order[] = [];
   private accumulatedCosts: number;
   private instant: Date;
 
@@ -138,8 +153,11 @@ export class Account extends IAccount implements Reporter {
    * @param{InstantQuotes} instantQuotes The instantQuotes update.
    */
   process(instantQuotes: InstantQuotes): void {
-    // Updates current time.
+    // Update current time.
     this.instant = instantQuotes.instant;
+
+    // Execute the standing orders:
+    this.executeStandingOrders(instantQuotes);
 
     // Update the positions:
     instantQuotes.quotes.forEach(quote => {
@@ -159,7 +177,80 @@ export class Account extends IAccount implements Reporter {
     });
 
     // Call the strategy:
+    // The strategy may create additional standing orders, that will
+    // be executed next day.
     this.strategy.applyStrategy(this, instantQuotes);
+  }
+
+  /**
+   * Exectues all standing orders if the instrument name is found
+   * in the quotes of the day.
+   * @param {InstantQuotes} instantQuotes The quotes of the day.
+   */
+  private executeStandingOrders(instantQuotes: InstantQuotes): void {
+    let remainingOrders: Order[] = this.standingOrders.filter(standingOrder => {
+      let quote: Quote = instantQuotes.quote(standingOrder.name);
+      if (quote) {
+        this.executeImmediately(quote, standingOrder.parts);
+        return false;
+      }
+      return true;
+    });
+    this.standingOrders = remainingOrders;
+  }
+
+  /**
+   * Immediately sell or buys the specified quote, using the open quotation,
+   * updating the concerned position and the cash.
+   * @param {Quote} quote The quote to buy.
+   * @param {number} parts When positive, the number of parts to buy. When
+   * negative, the number of parts to sell.
+   **/
+  private executeImmediately(quote: Quote, parts: number): void {
+    parts = Math.floor(parts);
+    if (parts == 0) {
+      return;
+    }
+
+    // Looks for the corresponding position:
+    let position: Position = this.positions.find(p => {
+      return p.name == quote.name;
+    });
+    if (!position) {
+      position = new Position({
+        name: quote.name,
+      });
+      this.positions.push(position);
+    }
+
+    // Updates the number of parts:
+    if (position.parts + parts < 0) {
+      parts =  -position.parts;
+    }
+    position.parts += parts;
+
+    // Updates the cash based on the number of parts,
+    // the part value and the costs:
+    let costs: number = this.orderCost(quote, parts);
+    this.accumulatedCosts += costs;
+    this.cash = this.cash -
+                parts * quote.open -
+                costs;
+
+    // A little log:
+    console.info(StringUtils.formatAsDate(this.instant) +
+      " - Account " + this.id +
+      " ordered " + parts + " parts of " + quote.name + " at " + quote.open);
+  }
+
+  /**
+   * Adds a standing order.
+   * Standing orders will be executed at market value (open), next day.
+   * @param {String} name The name of the instrument.
+   * @param {number} parts The number of parts to buy (if positive) or sell (if negative).
+   */
+  order(name: String, parts: number) {
+    this.standingOrders.push({name: name, parts: parts});
   }
 
   /**
@@ -171,60 +262,11 @@ export class Account extends IAccount implements Reporter {
    * trending partner.
    * @param {Quote} quote The quote to buy.
    * @param {number} parts When positive, the number of parts to buy. When
-   *                       negative, the number of parts to sell.
+   * negative, the number of parts to sell.
    * @return {number} The cost, always positive.
    **/
   orderCost(quote: Quote, parts: number): number {
-    return Math.abs(parts * quote.close * quote.spread / 2);
-  }
-
-  /**
-   * Sells or buys the specified quote, updating the concerned position
-   * and the cash.
-   * @param {Quote} quote The quote to buy.
-   * @param {number} parts When positive, the number of parts to buy. When
-   *                       negative, the number of parts to sell.
-   **/
-  order(quote: Quote, parts: number): void {
-    parts = Math.floor(parts);
-    if (parts == 0) {
-      return;
-    }
-
-    // Looks for the corresponding position:
-    let position: Position = this.positions.find(p => {
-      return p.name == quote.name;
-    });
-
-    // Either update or create the position:
-    if (position) {
-      position.partValue = quote.close;
-    } else {
-      position = new Position({
-        name: quote.name,
-        partValue: quote.close,
-      });
-      this.positions.push(position);
-    }
-
-    // If possible, updates the number of parts accordingly:
-    if (position.parts + parts < 0) {
-      parts =  -position.parts;
-    }
-    position.parts += parts;
-
-    // Updates the cash based on the number of parts,
-    // the part value and the costs:
-    let costs: number = this.orderCost(quote, parts);
-    this.accumulatedCosts += costs;
-    this.cash = this.cash -
-                parts * quote.close -
-                costs;
-
-    // A little log:
-    console.info(StringUtils.formatAsDate(this.instant) +
-      " - Account " + this.id +
-      " ordered " + parts + " parts of " + quote.name + " at " + quote.close);
+    return Math.abs(parts * quote.open * quote.spread / 2);
   }
 
   /**

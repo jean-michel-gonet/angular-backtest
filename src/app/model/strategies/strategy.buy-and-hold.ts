@@ -76,7 +76,7 @@ export class BuyAndHoldStrategy implements Strategy {
       let missingCash = dueAmount - account.cash;
       if (missingCash > 0 && quote) {
         let partsToSell = Math.ceil(missingCash / quote.close);
-        account.order(quote, -partsToSell);
+        account.order(quote.name, -partsToSell);
       }
       account.transfer(this.transfer.to, dueAmount);
     }
@@ -85,7 +85,7 @@ export class BuyAndHoldStrategy implements Strategy {
   private investAllYourCashInOneSingleBasket(account: Account, quote:Quote):void {
     if (quote) {
       let numberOfParts: number = Math.floor(account.cash / quote.close);
-      account.order(quote, numberOfParts);
+      account.order(quote.name, numberOfParts);
     }
   }
 
@@ -93,7 +93,7 @@ export class BuyAndHoldStrategy implements Strategy {
     if (quote) {
       let position: Position = account.position(quote.name);
       if (position && position.parts > 0) {
-        account.order(quote, -position.parts);
+        account.order(quote.name, -position.parts);
       }
     }
   }
