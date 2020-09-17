@@ -20,10 +20,17 @@ export class ReportsComponent {
   public chartReportComponent: ChartReportComponent;
 
   asReports(): Reports {
-    let preProcessors: PreProcessor[] = this.chartReportPreprocessorsComponent.asPreProcessors();
+    let preProcessors: PreProcessor[];
+    if (this.chartReportPreprocessorsComponent) {
+      preProcessors = this.chartReportPreprocessorsComponent.asPreProcessors();
+    }
     let reports: Report[] = [];
-    reports.push(this.chartReportComponent);
-    reports.push(this.highlightReportComponent);
+    if (this.chartReportComponent) {
+      reports.push(this.chartReportComponent);
+    }
+    if (this.highlightReportComponent) {
+      reports.push(this.highlightReportComponent);
+    }
     return new Reports({preProcessors: preProcessors, reports: reports});
   }
 }

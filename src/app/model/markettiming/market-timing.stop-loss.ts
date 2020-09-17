@@ -1,10 +1,7 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
 import { Candlestick, InstantQuotes } from '../core/quotes';
-import { Report } from '../core/reporting';
-import { MovingLinearRegression } from '../calculations/moving-linear-regression';
-import { PeriodLength } from '../core/period';
-import { OnlineSma } from '../calculations/online-sma';
-import { OnlineTrueRange } from '../calculations/online-average-true-range';
+import { Report, ReportedData } from '../core/reporting';
+import { OnlineAverageTrueRange } from '../calculations/online-average-true-range';
 
 interface IStopLossMarketTiming {
   /** The name of the asset to watch.*/
@@ -22,6 +19,7 @@ interface IStopLossMarketTiming {
    * after a variation of three times the ATR.
    */
   threshold?: number;
+
   /**
    * The number of days to wait before checking the linear regression for
    * recovery. Calculation for linear regression starts immediately, though.
@@ -45,11 +43,11 @@ export class StopLossMarketTiming implements MarketTiming {
   public safety: number;
   public recovery: number;
   public status: BearBull;
-  private previous: Candlestick;
 
-  private trueRange: OnlineTrueRange;
-  private onlineSma: OnlineSma;
-  private movingLinearRegression: MovingLinearRegression;
+  private averageTrueRange: OnlineAverageTrueRange;
+
+  private atrLevel: number;
+  private atrValue: number
 
   constructor(obj = {} as IStopLossMarketTiming) {
     let {
@@ -66,8 +64,7 @@ export class StopLossMarketTiming implements MarketTiming {
     this.threshold = threshold;
     this.safety = safety;
     this.recovery = recovery;
-    this.trueRange = new OnlineTrueRange();
-    this.onlineSma = new OnlineSma(14);
+    this.averageTrueRange = new OnlineAverageTrueRange(14);
   }
 
   record(instantQuotes: InstantQuotes): void {
@@ -80,52 +77,44 @@ export class StopLossMarketTiming implements MarketTiming {
 
   recordQuote(instant: Date, candlestick: Candlestick) {
     // Updates the ATR:
-    let tr: number = this.trueRange.trueRange(candlestick);
-    let atr: number = this.onlineSma.smaOf(tr);
+    this.atrValue = this.averageTrueRange.atr(candlestick);
 
-    switch(this.status) {
-      // Stays in BULL until the quote drops below the threshold:
-      case BearBull.BULL:
-        // Looks out for drops:
-        if (this.previous) {
-          let change: number = candlestick.close -  this.previous.close;
-          if (change > atr * this.threshold) {
-            console.log("Stop Loss going BEAR ", instant, change, atr, this.threshold, candlestick, this.previous)
-            this.status = BearBull.BEAR;
-            this.movingLinearRegression = new MovingLinearRegression({
-              numberOfPeriods: this.safety,
-              periodLength: PeriodLength.DAILY
-            });
-            this.movingLinearRegression.calculate(instant, candlestick);
-          }
-        }
-        break;
-
-      // Stays in BEAR until recovery.
-      case BearBull.BEAR:
-        let mlr = this.movingLinearRegression.calculate(instant, candlestick);
-        if (mlr && mlr > this.recovery) {
-          console.log("Stop Loss going BULL", instant, candlestick, mlr, this.recovery);
-          this.status = BearBull.BULL;
-        }
-        break;
+    // Updates the level:
+    let l1: number = candlestick.close - this.threshold * this.atrValue;
+    if (!this.atrLevel || l1 > this.atrLevel) {
+      this.atrLevel = l1;
     }
-
-    // Keep candlestick as previous value:
-    this.previous = candlestick;
+    if (candlestick.close < this.atrLevel) {
+      this.atrLevel = candlestick.close;
+    }
   }
 
   bearBull(): BearBull {
-    return this.status;
+    return BearBull.BULL;
   }
 
   doRegister(report: Report): void {
-    // Do nothing.
+    report.register(this);
   }
+
   startReportingCycle(instant: Date): void {
-    // Do nothing.
+    // Nothing to do.
   }
+
   reportTo(report: Report): void {
-    // Do nothing.
+    if (this.atrLevel) {
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".ATR",
+        y: this.atrLevel
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".ATRT",
+        y: this.atrLevel + this.atrValue * this.threshold
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".ATRM",
+        y: this.atrLevel + this.atrValue * (this.threshold - 2)
+      }));
+    }
   }
 }
