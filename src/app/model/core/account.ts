@@ -116,7 +116,7 @@ class IAccount {
  */
 export class Account extends IAccount implements Reporter {
   private standingOrders: Order[] = [];
-  private accumulatedCosts: number;
+  public accumulatedCosts: number = 0;
   private instant: Date;
 
   constructor(obj = {} as IAccount) {
@@ -219,18 +219,21 @@ export class Account extends IAccount implements Reporter {
     if (!position) {
       position = new Position({
         name: quote.name,
+        parts: 0
       });
       this.positions.push(position);
     }
 
-    // Updates the number of parts:
-    if (position.parts + parts < 0) {
-      parts =  -position.parts;
-    }
-    position.parts += parts;
+    // Checks for available cash:
+    parts = this.maximumPartsGivenAvailableCash(quote, parts);
 
-    // Updates the cash based on the number of parts,
-    // the part value and the costs:
+    // Checks for available parts:
+    if (parts <  -position.parts) {
+      parts = -position.parts;
+    }
+
+    // Performs the transaction:
+    position.parts += parts;
     let costs: number = this.orderCost(quote, parts);
     this.accumulatedCosts += costs;
     this.cash = this.cash -
@@ -241,6 +244,31 @@ export class Account extends IAccount implements Reporter {
     console.info(StringUtils.formatAsDate(this.instant) +
       " - Account " + this.id +
       " ordered " + parts + " parts of " + quote.name + " at " + quote.open);
+  }
+
+  /**
+   * Verifies the there is enough available cash to buy the indended number of parts.
+   * When there is not enough cash, returns the maximum number of parts
+   * that can be bought.
+   * @param {Quote} quote The quote to buy.
+   * @param {number} intendedParts The intended number of parts to buy.
+   * @return {number} The maximum number of parts.
+   */
+  private maximumPartsGivenAvailableCash(quote: Quote, intendedParts: number): number {
+    let availableCash: number = this.cash;
+    let partValue: number = quote.partValue();
+
+    let maximumParts = Math.floor(availableCash / partValue);
+    if (intendedParts > maximumParts) {
+      intendedParts = maximumParts;
+    }
+
+    let requiredCash = intendedParts * partValue + this.orderCost(quote, intendedParts);
+    while (requiredCash > availableCash) {
+      intendedParts--;
+      requiredCash = intendedParts * partValue + this.orderCost(quote, intendedParts);
+    }
+    return intendedParts;
   }
 
   /**

@@ -21,20 +21,27 @@ describe('BuyAndHoldStrategy', () => {
       cash:1000
     });
 
-    let instantQuotes: InstantQuotes = new InstantQuotes({
+    account.process(new InstantQuotes({
       instant: new Date(2010, 10, 10),
       quotes: [
         new Quote({
           name: "ISIN1",
           close: 10})
       ]
-    });
+    }));
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 10, 11),
+      quotes: [
+        new Quote({
+          name: "ISIN1",
+          open: 8,
+          close: 10})
+      ]
+    }));
 
-    account.process(instantQuotes);
-
-    expect(account.cash).toBe(0);
+    expect(account.cash).toBe(200);
     expect(account.position("ISIN1").parts).toBe(100);
-    expect(account.nav()).toBe(1000);
+    expect(account.nav()).toBe(1200);
   });
 
   it('Can reinvest dividends in the quote', () => {
@@ -48,7 +55,7 @@ describe('BuyAndHoldStrategy', () => {
       positions: [new Position({name: "ISIN1", parts: 1000})]
     });
 
-    let instantQuotes: InstantQuotes = new InstantQuotes({
+    account.process(new InstantQuotes({
       instant: new Date(2010, 10, 10),
       quotes: [
         new Quote({
@@ -57,12 +64,22 @@ describe('BuyAndHoldStrategy', () => {
           dividend: 0.5
         })
       ]
-    });
-    account.process(instantQuotes);
+    }));
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 10, 10),
+      quotes: [
+        new Quote({
+          name: "ISIN1",
+          close: 11,
+          open: 10,
+          dividend: 0
+        })
+      ]
+    }));
 
     expect(account.cash).toBe(0);
     expect(account.position("ISIN1").parts).toBe(1050);
-    expect(account.nav()).toBe(10500);
+    expect(account.nav()).toBe(11550);
 
   });
 
@@ -102,7 +119,7 @@ describe('BuyAndHoldStrategy', () => {
           close: 10})
       ]
     });
-
+    account.process(instantQuotes);
     account.process(instantQuotes);
 
     expect(account.cash).toBe(1000);
@@ -135,6 +152,8 @@ describe('BuyAndHoldStrategy', () => {
       ]
     });
 
+    account.process(instantQuotes);
+    account.process(instantQuotes);
     account.process(instantQuotes);
 
     expect(account.cash).toBe(0);
@@ -176,6 +195,7 @@ describe('BuyAndHoldStrategy', () => {
       ]
     });
 
+    account.process(instantQuotes);
     account.process(instantQuotes);
 
     expect(account.nav()).toBe(100 * 5 - monthlyOutput);

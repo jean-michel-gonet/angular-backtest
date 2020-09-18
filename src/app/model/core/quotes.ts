@@ -171,8 +171,21 @@ export class Quote extends Candlestick {
     this.dividend = dividend;
     this.alert = alert;
   }
-}
 
+  /**
+   * Returns the part value to be used during a transaction.
+   * Transaction are typically ordered the previous day, and
+   * executed this day, at opening.
+   * @return {number} The open value, if available. The close value oterwise.
+   */
+  public partValue(): number {
+    if (this.open && this.open > 0) {
+      return this.open;
+    } else {
+      return this.close;
+    }
+  }
+}
 
 export class IInstantQuotes {
   instant: Date;
