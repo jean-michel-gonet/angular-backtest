@@ -48,6 +48,9 @@ export class StopLossMarketTiming implements MarketTiming {
 
   private atrLevel: number;
   private atrValue: number
+  private n: number;
+
+  private annotations: string[] = [];
 
   constructor(obj = {} as IStopLossMarketTiming) {
     let {
@@ -55,7 +58,7 @@ export class StopLossMarketTiming implements MarketTiming {
       id = 'STOPLOSS',
       status = BearBull.BULL,
       threshold = 2,
-      safety = 10,
+      safety = 0,
       recovery = 1
     } = obj;
     this.assetName = assetName;
@@ -81,16 +84,35 @@ export class StopLossMarketTiming implements MarketTiming {
 
     // Updates the level:
     let l1: number = candlestick.close - this.threshold * this.atrValue;
-    if (!this.atrLevel || l1 > this.atrLevel) {
+    if (!this.atrLevel) {
+      this.atrLevel = l1;
+      return;
+    }
+
+    // Raise the level when possible:
+    if (l1 > this.atrLevel) {
       this.atrLevel = l1;
     }
+
+    // If the level is to be lowered, then we're in BEAR:
+    let newStatus: BearBull;
     if (candlestick.close < this.atrLevel) {
       this.atrLevel = candlestick.close;
+      newStatus = BearBull.BEAR;
+      this.n = this.safety;
+    } else {
+      if (this.n-- <= 0) {
+        newStatus = BearBull.BULL;
+      }
+    }
+    if (this.status != newStatus) {
+      this.annotations.push(newStatus);
+      this.status = newStatus;
     }
   }
 
   bearBull(): BearBull {
-    return BearBull.BULL;
+    return this.status;
   }
 
   doRegister(report: Report): void {
@@ -116,5 +138,11 @@ export class StopLossMarketTiming implements MarketTiming {
         y: this.atrLevel + this.atrValue * (this.threshold - 2)
       }));
     }
+    this.annotations = this.annotations.filter(annotation =>{
+      report.receiveData(new ReportedData({
+        sourceName: this.id + "." + annotation
+      }))
+      return false;
+    });
   }
 }

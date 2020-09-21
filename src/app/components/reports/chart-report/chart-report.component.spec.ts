@@ -4,6 +4,7 @@ import { ComponentFixture, async, TestBed } from '@angular/core/testing';
 import { ChartReportConfigurationComponent } from './chart-report-configuration.component';
 import { Report, Reporter, ReportedData } from 'src/app/model/core/reporting';
 import { ShowDataAs, ShowDataOn, INg2ChartReport, Ng2ChartReportFactory } from 'src/app/model/reports/ng2-chart.report';
+import { ChartReportAnnotationComponent } from './chart-report-annotation.component';
 
 @Component({
   selector: 'parent',
@@ -12,8 +13,9 @@ import { ShowDataAs, ShowDataOn, INg2ChartReport, Ng2ChartReportFactory } from '
     <chart-report-configuration show="XX"
                                 showDataAs="LINE"
                                 showDataOn="RIGHT"
-                                normalize="true">
-    </chart-report-configuration>
+                                normalize="true"></chart-report-configuration>
+    <chart-report-annotation show="XX"
+                             color="blue"></chart-report-annotation>
   </chart-report>`})
 class TestWrapperComponent {
   @ViewChild(ChartReportComponent, {static: true})
@@ -76,6 +78,7 @@ describe('ChartReportComponent', () => {
       declarations: [
         TestWrapperComponent,
         ChartReportConfigurationComponent,
+        ChartReportAnnotationComponent,
         ChartReportComponent
       ],
       providers: [
@@ -105,6 +108,11 @@ describe('ChartReportComponent', () => {
         on: ShowDataOn.RIGHT,
         normalize: true
       }]));
+      expect(testReport.configuration.annotations).toEqual(jasmine.arrayWithExactContents([
+        {
+          show: "XX",
+          color: "blue"
+        }]));
   });
 
   it('Acts as a façade to the inner report', () => {

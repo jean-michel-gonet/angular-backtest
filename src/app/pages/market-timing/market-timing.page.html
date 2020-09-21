@@ -6,13 +6,15 @@
   <li>Number of periods: 11</li>
 </ul>
 <p>This is a simulation of it:</p>
-<simulation start="2008-04-01" end="2020-09-04" quotes="ACWX">
+<simulation start="2009-04-01" end="2020-09-04" quotes="ACWX">
   <reports>
     <chart-report>
-      <chart-report-configuration show="ACWX.CLOSE"      showDataAs="LINE" showDataOn="LEFT"  normalize="false"  ></chart-report-configuration>
-      <chart-report-configuration show="STOP.ATR"        showDataAs="LINE" showDataOn="LEFT" normalize="false" ></chart-report-configuration>
-      <chart-report-configuration show="STOP.ATRT"        showDataAs="LINE" showDataOn="LEFT" normalize="false" ></chart-report-configuration>
-      <chart-report-configuration show="STOP.ATRM"        showDataAs="LINE" showDataOn="LEFT" normalize="false" ></chart-report-configuration>
+      <chart-report-configuration show="ACC.NAV"         showDataAs="LINE" showDataOn="LEFT" normalize="true"  ></chart-report-configuration>
+      <chart-report-configuration show="ACWX.CLOSE"      showDataAs="LINE" showDataOn="LEFT" normalize="true"  ></chart-report-configuration>
+      <chart-report-configuration show="STOP.ATR"        showDataAs="LINE" showDataOn="LEFT" normalize="true" ></chart-report-configuration>
+      <chart-report-configuration show="STOP.ATRT"       showDataAs="LINE" showDataOn="LEFT" normalize="true" ></chart-report-configuration>
+      <chart-report-annotation show="STOP.BULL" color="blue"></chart-report-annotation>
+      <chart-report-annotation show="STOP.BEAR" color="red"></chart-report-annotation>
     </chart-report>
   </reports>
   <accounts>
@@ -20,12 +22,18 @@
       <strategy>
         <buy-and-hold assetName="ACWX">
           <market-timing>
-           <stop-loss assetName="ACWX"
-                      id="STOP"
-                      status="BEAR"
-                      threshold="10"
-                      safety="10"
-                      recovery="3"></stop-loss>
+            <!--candle-filter assetName="ACWX"
+                           id="MT"
+                           on="ACWX"
+                           periods="13"
+                           threshold="1"
+                           periodLength="SEMIMONTHLY"></candle-filter-->
+            <stop-loss assetName="ACWX"
+                       id="STOP"
+                       status="BULL"
+                       threshold="20"
+                       safety="0"
+                       recovery="3"></stop-loss>
           </market-timing>
         </buy-and-hold>
       </strategy>
