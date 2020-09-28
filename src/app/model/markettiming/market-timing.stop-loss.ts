@@ -19,16 +19,6 @@ interface IStopLossMarketTiming {
    * after a variation of three times the ATR.
    */
   threshold?: number;
-
-  /**
-   * The number of days to wait before checking the linear regression for
-   * recovery. Calculation for linear regression starts immediately, though.
-   */
-  safety?: number;
-  /**
-   * Minimal value for linear regression's A factor to recover.
-   */
-  recovery?: number;
 }
 
 /**
@@ -40,8 +30,6 @@ export class StopLossMarketTiming implements MarketTiming {
   public assetName: string;
   public id: string;
   public threshold: number;
-  public safety: number;
-  public recovery: number;
   public status: BearBull;
 
   private averageTrueRange: OnlineAverageTrueRange;
@@ -57,15 +45,11 @@ export class StopLossMarketTiming implements MarketTiming {
       id = 'STOPLOSS',
       status = BearBull.BULL,
       threshold = 2,
-      safety = 0,
-      recovery = 1
     } = obj;
     this.assetName = assetName;
     this.id = id;
     this.status = status;
     this.threshold = threshold;
-    this.safety = safety;
-    this.recovery = recovery;
     this.averageTrueRange = new OnlineAverageTrueRange(14);
   }
 

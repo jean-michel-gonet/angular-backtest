@@ -7,8 +7,7 @@ describe("StopLosMarketTiming", () => {
     let stopLossMarketTiming: StopLossMarketTiming = new StopLossMarketTiming({
       assetName: "ANY",
       status: BearBull.BEAR,
-      threshold: 0.2,
-      safety: 4
+      threshold: 0.2
     });
     expect(stopLossMarketTiming).toBeTruthy();
   });
@@ -17,8 +16,7 @@ describe("StopLosMarketTiming", () => {
     let stopLossMarketTiming: StopLossMarketTiming = new StopLossMarketTiming({
       assetName: "ANY",
       status: BearBull.BULL,
-      threshold: 4,
-      safety: 4
+      threshold: 4
     });
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
     stopLossMarketTiming.record(new InstantQuotes({instant: new Date(), quotes: [new Quote({name: 'ANY', close: 100})]}));;
@@ -35,8 +33,7 @@ describe("StopLosMarketTiming", () => {
     let stopLossMarketTiming: StopLossMarketTiming = new StopLossMarketTiming({
       assetName: "ANY",
       status: BearBull.BULL,
-      threshold: 4,
-      safety: 4
+      threshold: 4
     });
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
     stopLossMarketTiming.record(new InstantQuotes({instant: new Date(), quotes: [new Quote({name: 'ANY', close: 100})]}));;
@@ -53,8 +50,7 @@ describe("StopLosMarketTiming", () => {
     let stopLossMarketTiming: StopLossMarketTiming = new StopLossMarketTiming({
       assetName: "ANY",
       status: BearBull.BULL,
-      threshold: 4,
-      safety: 4
+      threshold: 4
     });
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
     stopLossMarketTiming.record(new InstantQuotes({instant: new Date(), quotes: [new Quote({name: 'ANY', close: 100})]}));;
