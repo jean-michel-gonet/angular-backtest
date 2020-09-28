@@ -46,8 +46,9 @@ export class StopLossMarketTiming implements MarketTiming {
 
   private averageTrueRange: OnlineAverageTrueRange;
 
-  private atrLevel: number;
-  private atrValue: number
+  private atr: number;
+  private l1: number
+  private l2: number
   private n: number;
 
   private annotations: string[] = [];
@@ -80,34 +81,45 @@ export class StopLossMarketTiming implements MarketTiming {
 
   recordQuote(instant: Date, candlestick: Candlestick) {
     // Updates the ATR:
-    this.atrValue = this.averageTrueRange.atr(candlestick);
-
-    // Updates the level:
-    let l1: number = candlestick.close - this.threshold * this.atrValue;
-    if (!this.atrLevel) {
-      this.atrLevel = l1;
-      return;
+    this.atr = this.averageTrueRange.atr(candlestick);
+    if (this.atr < 0.5) {
+      this.atr = 0.5
     }
 
-    // Raise the level when possible:
-    if (l1 > this.atrLevel) {
-      this.atrLevel = l1;
-    }
+    let status: BearBull;
 
-    // If the level is to be lowered, then we're in BEAR:
-    let newStatus: BearBull;
-    if (candlestick.close < this.atrLevel) {
-      this.atrLevel = candlestick.close;
-      newStatus = BearBull.BEAR;
-      this.n = this.safety;
+    // Updates the L1:
+    let l1: number = candlestick.close - this.threshold * this.atr;
+    if (!this.l1) {
+      this.l1 = l1;
     } else {
-      if (this.n-- <= 0) {
-        newStatus = BearBull.BULL;
+      if (l1 > this.l1) {
+        this.l1 = l1;
+        status = BearBull.BULL;
+      }
+      if (candlestick.close < this.l1) {
+        this.l1 = candlestick.close;
       }
     }
-    if (this.status != newStatus) {
-      this.annotations.push(newStatus);
-      this.status = newStatus;
+
+    // Updates the L2:
+    let l2: number = candlestick.close + this.threshold * this.atr;
+    if (!this.l2) {
+      this.l2 = l2;
+    } else {
+      if (l2 < this.l2) {
+        this.l2 = l2;
+        status = BearBull.BEAR;
+      }
+      if (candlestick.close > this.l2) {
+        this.l2 = candlestick.close;
+      }
+    }
+
+    // Annotates the status variation:
+    if (status && status != this.status) {
+      this.annotations.push(status);
+      this.status = status;
     }
   }
 
@@ -124,18 +136,18 @@ export class StopLossMarketTiming implements MarketTiming {
   }
 
   reportTo(report: Report): void {
-    if (this.atrLevel) {
+    if (this.atr) {
       report.receiveData(new ReportedData({
         sourceName: this.id + ".ATR",
-        y: this.atrLevel
+        y: this.atr
       }));
       report.receiveData(new ReportedData({
-        sourceName: this.id + ".ATRT",
-        y: this.atrLevel + this.atrValue * this.threshold
+        sourceName: this.id + ".L1",
+        y: this.l1
       }));
       report.receiveData(new ReportedData({
-        sourceName: this.id + ".ATRM",
-        y: this.atrLevel + this.atrValue * (this.threshold - 2)
+        sourceName: this.id + ".L2",
+        y: this.l2
       }));
     }
     this.annotations = this.annotations.filter(annotation =>{
