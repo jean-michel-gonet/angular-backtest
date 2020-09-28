@@ -154,7 +154,7 @@ describe('MarketTimingComponent', () => {
             <stop-loss assetName="SANY"
                        id="XX"
                        status="BEAR"
-                       threshold="90"
+                       threshold="4"
                        safety="10"
                        recovery="3"></stop-loss>
           </market-timing>`
@@ -169,7 +169,7 @@ describe('MarketTimingComponent', () => {
       expect(stopLossFilter.assetName).toBe("SANY");
       expect(stopLossFilter.id).toBe("XX");
       expect(stopLossFilter.safety).toBe(10);
-      expect(stopLossFilter.threshold).toBe(0.9);
+      expect(stopLossFilter.threshold).toBe(4);
       expect(stopLossFilter.recovery).toBe(3);
       expect(stopLossFilter.bearBull()).toBe(BearBull.BEAR);
   });

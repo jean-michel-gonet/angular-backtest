@@ -26,15 +26,15 @@
             <candle-filter assetName="ACWX"
                            id="MT"
                            on="ACWX"
-                           periods="12"
+                           periods="13"
                            threshold="1"
-                           periodLength="MONTHLY"></candle-filter>
-            <!--stop-loss assetName="ACWX"
+                           periodLength="SEMIMONTHLY"></candle-filter>
+            <stop-loss assetName="ACWX"
                        id="STOP"
                        status="BULL"
-                       threshold="5"
+                       threshold="6"
                        safety="0"
-                       recovery="3"></stop-loss-->
+                       recovery="3"></stop-loss>
           </market-timing>
         </buy-and-hold>
       </strategy>

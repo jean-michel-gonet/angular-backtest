@@ -48,8 +48,6 @@ export class StopLossMarketTiming implements MarketTiming {
 
   private atr: number;
   private l1: number
-  private l2: number
-  private n: number;
 
   private annotations: string[] = [];
 
@@ -82,37 +80,23 @@ export class StopLossMarketTiming implements MarketTiming {
   recordQuote(instant: Date, candlestick: Candlestick) {
     // Updates the ATR:
     this.atr = this.averageTrueRange.atr(candlestick);
-    if (this.atr < 0.5) {
-      this.atr = 0.5
-    }
 
     let status: BearBull;
 
-    // Updates the L1:
-    let l1: number = candlestick.close - this.threshold * this.atr;
-    if (!this.l1) {
-      this.l1 = l1;
-    } else {
-      if (l1 > this.l1) {
+    if (this.atr) {
+      // Updates the L1:
+      let l1: number = candlestick.close - this.threshold * this.atr;
+      if (!this.l1) {
         this.l1 = l1;
-        status = BearBull.BULL;
-      }
-      if (candlestick.close < this.l1) {
-        this.l1 = candlestick.close;
-      }
-    }
-
-    // Updates the L2:
-    let l2: number = candlestick.close + this.threshold * this.atr;
-    if (!this.l2) {
-      this.l2 = l2;
-    } else {
-      if (l2 < this.l2) {
-        this.l2 = l2;
-        status = BearBull.BEAR;
-      }
-      if (candlestick.close > this.l2) {
-        this.l2 = candlestick.close;
+      } else {
+        if (l1 > this.l1) {
+          this.l1 = l1;
+          status = BearBull.BULL;
+        }
+        if (candlestick.close < this.l1) {
+          this.l1 = candlestick.close;
+          status = BearBull.BEAR;
+        }
       }
     }
 
@@ -144,10 +128,6 @@ export class StopLossMarketTiming implements MarketTiming {
       report.receiveData(new ReportedData({
         sourceName: this.id + ".L1",
         y: this.l1
-      }));
-      report.receiveData(new ReportedData({
-        sourceName: this.id + ".L2",
-        y: this.l2
       }));
     }
     this.annotations = this.annotations.filter(annotation =>{
