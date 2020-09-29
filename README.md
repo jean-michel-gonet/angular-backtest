@@ -425,6 +425,9 @@ This is some of my reference documentation:
 * **Note on a method for calculating corrected sums of squares and products (1962)**
   * Original article from Welford, where he explains why his algorithm works.
   * https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.302.7503
+* **Average True Range (ATR)**
+  * Explanation of ATR, and Excel example.
+  * https://school.stockcharts.com/doku.php?id=technical_indicators:average_true_range_atr
 
 On technical matters:
 * **Angular ``ng-content`` and Content Projection: A Complete Guide: How To Use ``ng-content`` To Improve Component API Design**

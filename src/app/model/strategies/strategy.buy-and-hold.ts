@@ -25,6 +25,7 @@ export class BuyAndHoldStrategy implements Strategy {
   public marketTiming: MarketTiming;
   public reinvestDivindends: boolean;
   public receivedDividends: number;
+  public dueAmount: number;
 
   constructor(obj = {} as IBuyAndHoldStrategy) {
     let {
@@ -40,6 +41,7 @@ export class BuyAndHoldStrategy implements Strategy {
     this.marketTiming = marketTiming;
     this.reinvestDivindends = reinvestDivindends;
     this.receivedDividends = 0;
+    this.dueAmount = 0;
   }
 
   receiveDividends(dividends: number) {
@@ -71,21 +73,23 @@ export class BuyAndHoldStrategy implements Strategy {
   }
 
   private payRegularTransfers(account: Account, instant: Date, quote: Quote): void {
-    let dueAmount:number = this.transfer.amount(instant);
-    if (dueAmount > 0) {
-      let missingCash = dueAmount - account.cash;
+    this.dueAmount += this.transfer.amount(instant);
+    if (this.dueAmount > 0) {
+      let missingCash = this.dueAmount - account.cash;
       if (missingCash > 0 && quote) {
         let partsToSell = Math.ceil(missingCash / quote.close);
-        account.order(quote, -partsToSell);
+        account.order(quote.name, -partsToSell);
+      } else {
+        account.transfer(this.transfer.to, this.dueAmount);
+        this.dueAmount = 0;
       }
-      account.transfer(this.transfer.to, dueAmount);
     }
   }
 
   private investAllYourCashInOneSingleBasket(account: Account, quote:Quote):void {
     if (quote) {
       let numberOfParts: number = Math.floor(account.cash / quote.close);
-      account.order(quote, numberOfParts);
+      account.order(quote.name, numberOfParts);
     }
   }
 
@@ -93,7 +97,7 @@ export class BuyAndHoldStrategy implements Strategy {
     if (quote) {
       let position: Position = account.position(quote.name);
       if (position && position.parts > 0) {
-        account.order(quote, -position.parts);
+        account.order(quote.name, -position.parts);
       }
     }
   }

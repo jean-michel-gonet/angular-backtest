@@ -55,6 +55,27 @@ describe('Quote', () => {
       dividend: 0.01
     })).toBeTruthy();
   });
+
+  it('Can use the open value as part value', () => {
+    let quote: Quote = new Quote({
+      name: "XX",
+      open: 2.0,
+      close: 1.5,
+      spread: 0.01,
+      dividend: 0.01
+    });
+    expect(quote.partValue()).toBe(2.0);
+  });
+
+  it('Can use the close value as part value when open value is not available', () => {
+    let quote: Quote = new Quote({
+      name: "XX",
+      close: 1.5,
+      spread: 0.01,
+      dividend: 0.01
+    });
+    expect(quote.partValue()).toBe(1.5);
+  });
 });
 
 describe('InstantQuotes', () => {

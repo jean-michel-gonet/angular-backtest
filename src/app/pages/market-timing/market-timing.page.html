@@ -6,69 +6,33 @@
   <li>Number of periods: 11</li>
 </ul>
 <p>This is a simulation of it:</p>
-<simulation start="2000-01-01" end="2020-07-17" quotes="SP500">
+<simulation start="2009-04-01" end="2020-09-04" quotes="ACWX">
   <reports>
-    <highlight-report>
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Duration</th>
-            <th>Min (per year)</th>
-            <th>Max (per year)</th>
-            <th>Average</th>
-            <th>Standard deviation</th>
-        </thead>
-        <tbody>
-          <tr>
-            <td>3 years</td>
-            <td><highlight-min sourceName="ACC.P03"></highlight-min>% (<highlight-date-min sourceName="ACC.P03"></highlight-date-min>)</td>
-            <td><highlight-max sourceName="ACC.P03"></highlight-max>% (<highlight-date-max sourceName="ACC.P03"></highlight-date-max>)</td>
-            <td><highlight-avg sourceName="ACC.P03"></highlight-avg>%</td>
-            <td>&plusmn;<highlight-std sourceName="ACC.P03"></highlight-std>%</td>
-          </tr>
-          <tr>
-            <td>7 years</td>
-            <td><highlight-min sourceName="ACC.P07"></highlight-min>% (<highlight-date-min sourceName="ACC.P07"></highlight-date-min>)</td>
-            <td><highlight-max sourceName="ACC.P07"></highlight-max>% (<highlight-date-max sourceName="ACC.P07"></highlight-date-max>)</td>
-            <td><highlight-avg sourceName="ACC.P07"></highlight-avg>%</td>
-            <td>&plusmn;<highlight-std sourceName="ACC.P07"></highlight-std>%</td>
-          </tr>
-          <tr>
-            <td>10 years</td>
-            <td><highlight-min sourceName="ACC.P10"></highlight-min>% (<highlight-date-min sourceName="ACC.P10"></highlight-date-min>)</td>
-            <td><highlight-max sourceName="ACC.P10"></highlight-max>% (<highlight-date-max sourceName="ACC.P10"></highlight-date-max>)</td>
-            <td><highlight-avg sourceName="ACC.P10"></highlight-avg>%</td>
-            <td>&plusmn;<highlight-std sourceName="ACC.P10"></highlight-std>%</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="5">Number of BULL/BEAR triggers: <highlight-max sourceName="MT.TRI"></highlight-max>
-        </tfoot>
-      </table>
-    </highlight-report>
     <chart-report>
-      <chart-report-configuration show="SP500.CLOSE" showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
-      <chart-report-configuration show="ACC.NAV"     showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
-      <chart-report-configuration show="ACC.P03"     showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
-      <chart-report-configuration show="ACC.P07"     showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
-      <chart-report-configuration show="ACC.P10"     showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
+      <chart-report-configuration show="ACC.NAV"         showDataAs="LINE" showDataOn="RIGHT" normalize="true"  ></chart-report-configuration>
+      <chart-report-configuration show="ACWX.CLOSE"      showDataAs="LINE" showDataOn="RIGHT" normalize="true"  ></chart-report-configuration>
+      <chart-report-configuration show="STOP.ATR"        showDataAs="LINE" showDataOn="LEFT" normalize="false" ></chart-report-configuration>
+      <chart-report-configuration show="STOP.L1"        showDataAs="LINE" showDataOn="LEFT" normalize="false" ></chart-report-configuration>
+      <chart-report-configuration show="STOP.L2"       showDataAs="LINE" showDataOn="LEFT" normalize="false" ></chart-report-configuration>
+      <chart-report-annotation show="STOP.BULL" color="blue"></chart-report-annotation>
+      <chart-report-annotation show="STOP.BEAR" color="red"></chart-report-annotation>
     </chart-report>
-    <preprocessors>
-      <performance-preprocessor source="ACC.NAV" over= "3" unitOfTime="YEAR" output="ACC.P03"></performance-preprocessor>
-      <performance-preprocessor source="ACC.NAV" over= "7" unitOfTime="YEAR" output="ACC.P07"></performance-preprocessor>
-      <performance-preprocessor source="ACC.NAV" over="10" unitOfTime="YEAR" output="ACC.P10"></performance-preprocessor>
-    </preprocessors>
   </reports>
   <accounts>
     <swiss-quote id="ACC" cash="100000">
       <strategy>
-        <buy-and-hold assetName="SP500">
+        <buy-and-hold assetName="ACWX">
           <market-timing>
-            <candle-filter id="MT"
-                           periods="11"
+            <candle-filter assetName="ACWX"
+                           id="MT"
+                           on="ACWX"
+                           periods="13"
                            threshold="1"
                            periodLength="SEMIMONTHLY"></candle-filter>
+            <stop-loss assetName="ACWX"
+                       id="STOP"
+                       status="BULL"
+                       threshold="6"></stop-loss>
           </market-timing>
         </buy-and-hold>
       </strategy>

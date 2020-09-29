@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 
 import { ChartReportComponent } from './components/reports/chart-report/chart-report.component';
 import { ChartReportConfigurationComponent } from './components/reports/chart-report/chart-report-configuration.component';
+import { ChartReportAnnotationComponent } from './components/reports/chart-report/chart-report-annotation.component';
 import { HighlightReportComponent } from './components/reports/highlight-report/highlight-report.component';
 import { PerformancePreprocessorComponent} from './components/reports/preprocessors/performance-preprocessor.component';
 import { RegressionPreprocessorComponent} from './components/reports/preprocessors/regression-preprocessor.component';
@@ -45,12 +46,14 @@ import { OptimizationSuperthonPage } from './pages/optimization/optimization-sup
 
 import 'hammerjs';
 import 'chartjs-plugin-zoom';
+import 'chartjs-plugin-annotation';
 
 @NgModule({
   declarations: [
     AppComponent,
 
     ChartReportConfigurationComponent,
+    ChartReportAnnotationComponent,
     PreprocessorsComponent,
     HighlightReportComponent,
     HighlightMaxComponent,

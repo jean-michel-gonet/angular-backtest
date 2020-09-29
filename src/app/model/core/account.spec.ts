@@ -120,51 +120,151 @@ describe('Account', () => {
     expect(account.orderCost(quote, -3)).toBe(3 * partValue * spread / 2);
   });
 
-  it('Can buy a quote taking in count the costs', () => {
-    let partValue: number = 110;
+  it("Can buy an instrument using next day's open value, taking in count the costs", () => {
+    let partOpenValue: number = 110;
+    let partCloseValue: number = 55;
     let spread: number = 0.1;
-    let cash: number = 1000;
+    let initialCash: number = 1000;
 
-    let quote: Quote = new Quote({
-      name: "XX",
-      close: partValue,
-      spread: spread
-    });
     let account: Account = new Account({
-      cash: cash
+      cash: initialCash
     });
+    // Parts are ordered today:
+    account.order("XX", 3);
 
-    let costs = account.orderCost(quote, 3);
-    expect(costs).toBe(3 * partValue * spread / 2);
+    // But are executed next opening day, at open value:
+    account.process(new InstantQuotes({
+      instant: new Date(),
+      quotes: [
+        new Quote({
+          name: "XX",
+          open: partOpenValue,
+          close: partCloseValue,
+          spread: spread
+        })
+      ]
+    }));
 
-    account.order(quote, 3);
-    expect(account.cash).toBe(cash - 3 * partValue - costs);
-    expect(account.nav()).toBe(cash - costs);
+    let costs = account.accumulatedCosts;
+    expect(costs).toBe(3 * partOpenValue * spread / 2);
+
+    let cash = account.cash
+    expect(cash).toBe(initialCash - 3 * partOpenValue - costs);
+
+    let nav = account.nav();
+    expect(nav).toBe(3 * partCloseValue + cash);
   });
 
-  it('Can sell an quote taking in count the costs', () => {
-    let partValue: number = 110;
+  it("Can prevent buying more parts of an instrument when there is not enough cash", () => {
+    let partOpenValue: number = 110;
+    let partCloseValue: number = 55;
     let spread: number = 0.1;
-    let cash: number = 1000;
+    let initialCash: number = 1000;
 
-    let quote: Quote = new Quote({
-      name: "XX",
-      close: partValue,
-      spread: spread
-    });
     let account: Account = new Account({
-      cash: cash,
+      cash: initialCash
+    });
+
+    // Order a big bunch of parts:
+    account.order("XX", 30);
+
+    // Execute next opening day:
+    account.process(new InstantQuotes({
+      instant: new Date(),
+      quotes: [
+        new Quote({
+          name: "XX",
+          open: partOpenValue,
+          close: partCloseValue,
+          spread: spread
+        })
+      ]
+    }));
+
+    let position: Position = account.position("XX");
+
+    // Bought parts only up to available cash:
+    // (The -1 is because of the costs)
+    let expectedParts = Math.floor(initialCash / partOpenValue) - 1;
+    expect(position.parts).toBe(8);
+
+    // Costs are based on the number of parts actually bought.
+    let costs = expectedParts * partOpenValue * spread / 2
+    expect(account.accumulatedCosts).toBe(costs);
+  });
+
+  it("Can sell an instrument using next day's open value, taking in count the costs", () => {
+    let partOpenValue: number = 110;
+    let partCloseValue: number = 55;
+    let spread: number = 0.1;
+    let initialCash: number = 1000;
+
+    let account: Account = new Account({
+      cash: initialCash,
       positions: [
         new Position({name: "XX", parts: 4})
       ]
     });
 
-    let costs = account.orderCost(quote, -3);
-    expect(costs).toBe(3 * partValue * spread / 2);
+    // Parts are ordered today:
+    account.order("XX", -3);
 
-    account.order(quote, -3);
-    expect(account.cash).toBe(cash + 3 * partValue - costs);
-    expect(account.nav()).toBe(cash + 4 * partValue - costs);
+    // But are executed next opening day, at open value:
+    account.process(new InstantQuotes({
+      instant: new Date(),
+      quotes: [
+        new Quote({
+          name: "XX",
+          open: partOpenValue,
+          close: partCloseValue,
+          spread: spread
+        })
+      ]
+    }));
+
+    let costs = account.accumulatedCosts;
+    expect(costs).toBe(3 * partOpenValue * spread / 2);
+
+    let cash = account.cash
+    expect(cash).toBe(initialCash + 3 * partOpenValue - costs);
+
+    let nav = account.nav();
+    expect(nav).toBe(1 * partCloseValue + cash);
+  });
+
+  it("Can prevent selling more parts of an instrument that available", () => {
+    let partOpenValue: number = 110;
+    let partCloseValue: number = 55;
+    let spread: number = 0.1;
+    let initialCash: number = 0;
+
+    let account: Account = new Account({
+      cash: initialCash,
+      positions: [
+        new Position({name: "XX", parts: 4})
+      ]
+    });
+
+    // Sell a lot of parts:
+    account.order("XX", -50);
+
+    // Execute at next opening day:
+    account.process(new InstantQuotes({
+      instant: new Date(),
+      quotes: [
+        new Quote({
+          name: "XX",
+          open: partOpenValue,
+          close: partCloseValue,
+          spread: spread
+        })
+      ]
+    }));
+
+    let position: Position = account.position("XX");
+    expect(position.parts).toBe(0);
+    let costs = 4 * partOpenValue * spread / 2;
+    expect(account.accumulatedCosts).toBe(costs);
   });
 
   it('Can obtain one single position identified by its ISIN', () => {
@@ -242,5 +342,4 @@ describe('Account', () => {
     expect(account1.cash).toBe(750);
     expect(account2.cash).toBe(150);
   });
-
 });

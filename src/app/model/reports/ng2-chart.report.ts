@@ -21,11 +21,17 @@ export interface Ng2ChartConfiguration {
   normalize?: boolean;
 }
 
+export interface Ng2ChartAnnotation {
+  show: string;
+  color: string;
+}
+
 export interface INg2ChartReport {
   start?: Date;
   end?: Date;
   preProcessors?: PreProcessor[];
   configurations: Ng2ChartConfiguration[],
+  annotations?: Ng2ChartAnnotation[]
 }
 
 class XChartPoint implements ChartPoint {
@@ -91,7 +97,7 @@ export class Ng2ChartReport implements Report {
   public end: number;
   public dataSets: ChartDataSets[];
   public labels: Label[];
-  public options: ChartOptions = {
+  public options: (ChartOptions & { annotation: any }) = {
       animation: {
         duration: 0
       },
@@ -119,21 +125,26 @@ export class Ng2ChartReport implements Report {
           }
         }],
       },
+      annotation: {
+        annotations: []
+      },
       plugins: {
         zoom: {
           pan: {
             enabled: true,
-            mode: 'xy'
+            mode: 'x'
           },
           zoom: {
             enabled: true,
-            mode: 'xy'
+            mode: 'x'
           }
         }
       }
     };
+  private annotations: any[] = this.options.annotation.annotations;
   private mapOfDatasets: Map<String, ChartDataSets>;
   private mapOfConfigurations: Map<String, Ng2ChartConfiguration>;
+  private mapOfAnnotations: Map<String, Ng2ChartAnnotation>;
   private preProcessors: PreProcessor[] = [];
   private reporters: Reporter[] = [];
 
@@ -144,6 +155,7 @@ export class Ng2ChartReport implements Report {
   public initialize(obj = {} as INg2ChartReport): void {
     this.mapOfDatasets = new Map<String, ChartDataSets>();
     this.mapOfConfigurations = new Map<String, Ng2ChartConfiguration>();
+    this.mapOfAnnotations = new Map<String, Ng2ChartAnnotation>();
     this.dataSets = [];
     this.labels = [];
 
@@ -151,7 +163,8 @@ export class Ng2ChartReport implements Report {
       start,
       end,
       preProcessors = [],
-      configurations = []
+      configurations = [],
+      annotations = []
     } = obj;
     if (start) {
       this.start = start.valueOf();
@@ -174,9 +187,13 @@ export class Ng2ChartReport implements Report {
       this.mapOfConfigurations.set(show.show, show);
       this.dataSets.push(dataSet);
     });
+
+    annotations.forEach(annotation => {
+      this.mapOfAnnotations.set(annotation.show, annotation);
+    });
   }
 
-  private leftAxisIsUsed:boolean = false;
+  private leftAxisIsUsed: boolean = false;
   private rightAxisIsUsed: boolean = false;
 
   private showOn(showOn: ShowDataOn):string {
@@ -276,18 +293,44 @@ export class Ng2ChartReport implements Report {
   }
 
   receiveData(providedData: ReportedData): void {
+    this.preProcessors.forEach(preProcessor => {
+      preProcessor.receiveData(providedData);
+    });
     if (this.x) {
-      this.preProcessors.forEach(preProcessor => {
-        preProcessor.receiveData(providedData);
-      });
-
-      let dataSet: ChartDataSets = this.mapOfDatasets.get(providedData.sourceName);
-      if (dataSet) {
-        let data: ChartPoint[] = dataSet.data as ChartPoint[];
-        let normalizedY: number = this.normalize(providedData.sourceName, providedData.y);
-        let chartPoint: XChartPoint = {x: this.x, y: normalizedY, originalValue: providedData.y};
-        data.push(chartPoint);
+      if (providedData.y) {
+        this.placeAPoint(providedData);
+      } else {
+        this.placeAnAnnotation(providedData);
       }
+    }
+  }
+
+  private placeAPoint(providedData: ReportedData): void {
+    let dataSet: ChartDataSets = this.mapOfDatasets.get(providedData.sourceName);
+    if (dataSet) {
+      let data: ChartPoint[] = dataSet.data as ChartPoint[];
+      let normalizedY: number = this.normalize(providedData.sourceName, providedData.y);
+      let chartPoint: XChartPoint = {x: this.x, y: normalizedY, originalValue: providedData.y};
+      data.push(chartPoint);
+    }
+  }
+
+  private placeAnAnnotation(providedData: ReportedData): void {
+    let annotation: Ng2ChartAnnotation = this.mapOfAnnotations.get(providedData.sourceName);
+    if (annotation) {
+      this.annotations.push({
+        type: 'line',
+        mode: 'vertical',
+        scaleID: 'x-axis-0',
+        value: this.x,
+        borderColor: annotation.color,
+        borderWidth: 1,
+        label: {
+          enabled: true,
+          fontColor: annotation.color,
+          content: providedData.sourceName
+        }
+      });
     }
   }
 

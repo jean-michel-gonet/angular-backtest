@@ -12,8 +12,9 @@ import {
   Reporter,
   ReportedData} from 'src/app/model/core/reporting';
 import { ChartReportConfigurationComponent } from './chart-report-configuration.component';
-import { Ng2ChartReport, Ng2ChartConfiguration, Ng2ChartReportFactory } from 'src/app/model/reports/ng2-chart.report';
+import { Ng2ChartReport, Ng2ChartConfiguration, Ng2ChartReportFactory, Ng2ChartAnnotation } from 'src/app/model/reports/ng2-chart.report';
 import { StringUtils } from 'src/app/model/utils/string-utils';
+import { ChartReportAnnotationComponent } from './chart-report-annotation.component';
 
 @Component({
   selector: 'chart-report',
@@ -49,7 +50,10 @@ export class ChartReportComponent implements AfterViewInit, Report {
   }
 
   @ContentChildren(ChartReportConfigurationComponent)
-  private show: QueryList<ChartReportConfigurationComponent>;
+  private configurationComponents: QueryList<ChartReportConfigurationComponent>;
+
+  @ContentChildren(ChartReportAnnotationComponent)
+  private annotationComponents: QueryList<ChartReportAnnotationComponent>;
 
   public reportIsReady: boolean;
 
@@ -61,11 +65,18 @@ export class ChartReportComponent implements AfterViewInit, Report {
 
   ngAfterViewInit() {
     let configurations: Ng2ChartConfiguration[] = [];
-    this.show.forEach(configurationComponent => {
+    this.configurationComponents.forEach(configurationComponent => {
       configurations.push(configurationComponent.asNg2ChartConfiguration());
     });
+
+    let annotations: Ng2ChartAnnotation[] = [];
+    this.annotationComponents.forEach(annotationComponent => {
+      annotations.push(annotationComponent.asNg2ChartAnnotation());
+    });
+
     this.ng2ChartReport = this.ng2ChartReportFactory.newInstance({
       configurations: configurations,
+      annotations: annotations,
       start: this.start,
       end: this.end
     });

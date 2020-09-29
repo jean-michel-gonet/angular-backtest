@@ -65,6 +65,12 @@
                            periods="13"
                            threshold="1"
                            periodLength="SEMIMONTHLY"></candle-filter>
+             <stop-loss assetName="SPY"
+                        id="SL"
+                        status="BULL"
+                        threshold="2"
+                        safety="5"
+                        recovery="0"></stop-loss>
           </market-timing>
         </buy-and-hold>
       </strategy>

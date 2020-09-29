@@ -351,7 +351,6 @@ describe('Ng2ChartReport', () => {
         pointRadius: 1.2
       }, {
         data: [
-          {x: today.valueOf(), y: 0/0, originalValue: 0},
           {x: tomorrow.valueOf(), y: 100, originalValue: 20}
         ],
         label: "VALUE2",
