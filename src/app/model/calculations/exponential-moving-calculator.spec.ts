@@ -1,12 +1,12 @@
 import { MovingAverageSource, MovingAveragePreprocessing } from './moving-calculator';
-import { ExponentialMovingAverage } from './exponential-moving-average';
+import { ExponentialMovingCalculator } from './exponential-moving-calculator';
 import { PeriodLength } from '../core/period';
 import { Candlestick } from '../core/quotes';
 
 describe('ExponentialMovingAverage', () => {
 
   it('Can calculate daily EMA as in https://investsolver.com/exponential-moving-average-in-excel/', () => {
-    let ema = new ExponentialMovingAverage({numberOfPeriods: 13, periodLength: PeriodLength.DAILY});
+    let ema = new ExponentialMovingCalculator({numberOfPeriods: 13, periodLength: PeriodLength.DAILY});
     ema.setLastValue(38.68);
 
     expect(ema.calculate(new Date(2019, 7 - 1, 19), new Candlestick({close: 39.48}))).toBeCloseTo(38.79, 2);
@@ -28,7 +28,7 @@ describe('ExponentialMovingAverage', () => {
    * - Add Indicators -> EMA, 21, Colsed
    */
   it('Can calculate weekly 21 period EMA based on last closing price', () => {
-    let ema = new ExponentialMovingAverage({
+    let ema = new ExponentialMovingCalculator({
       numberOfPeriods: 21,
       periodLength: PeriodLength.WEEKLY,
       source: MovingAverageSource.CLOSE,

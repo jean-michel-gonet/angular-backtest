@@ -1,3 +1,5 @@
+import { OnlineMovingAverage } from './online-moving-average';
+
 /**
  * Online implementation of the Exponential Moving Average of provided
  * values.
@@ -5,16 +7,17 @@
  * in the order that the input is fed to the algorithm, without having the entire
  * input available from the start (https://en.wikipedia.org/wiki/Online_algorithm).
  */
-export class OnlineEma {
-
-  private lastValue: number;
-
+export class ExponentialMovingAverage extends OnlineMovingAverage {
+  private k: number;
   /**
    * Class constructor.
    * @param {number} numberOfPeriods The number of periods over which calculating
    * the moving average.
    */
-  constructor(public numberOfPeriods: number) {}
+  constructor(public numberOfPeriods: number) {
+    super(numberOfPeriods);
+    this.k = 2 / (numberOfPeriods + 1);
+  }
 
   /**
    * Calculates the EMA based on this number and all numbers previously
@@ -22,24 +25,7 @@ export class OnlineEma {
    * @param {number} value The value to calculate the EMA.
    * @return {number} The current EMA, based on this and all previous values.
    */
-  emaOf(value: number): number {
-    let ema: number;
-    if (this.lastValue) {
-      let k: number = 2 / (this.numberOfPeriods + 1);
-      ema = value * k + this.lastValue * (1 - k);
-    } else {
-      ema = value;
-    }
-    this.lastValue = ema;
-    return ema;
-  }
-
-  /**
-   * Force the last EMA value.
-   * A method useful for unit testing, for example.
-   * @param {number} value The forced last ema value.
-   */
-  public setLastValue(value: number): void {
-    this.lastValue = value;
+  protected calculateAverage(previousAverage: number, value: number): number {
+    return value * this.k + previousAverage * (1 - this.k);
   }
 }

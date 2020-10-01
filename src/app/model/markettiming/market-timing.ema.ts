@@ -3,7 +3,7 @@ import { Quote, InstantQuotes } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { PeriodLength } from '../core/period';
 import { MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-calculator';
-import { ExponentialMovingAverage } from '../calculations/exponential-moving-average';
+import { ExponentialMovingCalculator } from '../calculations/exponential-moving-calculator';
 
 export class IEMAMarketTiming {
   assetName: string;
@@ -32,9 +32,9 @@ export class EMAMarketTiming implements MarketTiming {
   threshold: number;
   offset: number;
 
-  fastEMA: ExponentialMovingAverage;
+  fastEMA: ExponentialMovingCalculator;
   fastEMAValue: number;
-  slowEMA: ExponentialMovingAverage;
+  slowEMA: ExponentialMovingCalculator;
   slowEMAValue: number;
 
   difference: number;
@@ -60,14 +60,14 @@ export class EMAMarketTiming implements MarketTiming {
     this.threshold = threshold;
     this.offset = offset;
 
-    this.slowEMA = new ExponentialMovingAverage({
+    this.slowEMA = new ExponentialMovingCalculator({
       numberOfPeriods: slowPeriod,
       periodLength: periodLength,
       source: source,
       preprocessing: preprocessing
     });
 
-    this.fastEMA = new ExponentialMovingAverage({
+    this.fastEMA = new ExponentialMovingCalculator({
       numberOfPeriods: fastPeriod,
       periodLength: periodLength,
       source: source,

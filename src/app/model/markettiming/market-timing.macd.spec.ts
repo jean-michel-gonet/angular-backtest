@@ -34,7 +34,7 @@ describe('MACDMarketTiming', () => {
 
     macdFilter.fastEma.setLastValue(282.78);
     macdFilter.slowEma.setLastValue(277.64);
-    macdFilter.signalEma.setLastValue(2.50);
+    macdFilter.signalEma.setPreviousAverage(2.50);
 
     macdFilter.record(new InstantQuotes({instant: new Date(2019, 4 - 1, 29), quotes: [new Quote({name: 'SPY', close: 293.87})]}));
     macdFilter.record(new InstantQuotes({instant: new Date(2019, 4 - 1, 30), quotes: [new Quote({name: 'SPY', close: 294.02})]}));

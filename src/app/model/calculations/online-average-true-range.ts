@@ -1,5 +1,5 @@
 import { Candlestick } from '../core/quotes';
-import { OnlineSma } from './online-sma';
+import { SmoothedMovingAverage } from './moving-average/smoothed-moving-average';
 
 /**
  * Calculates the True Range of the specified candlestick.
@@ -29,15 +29,15 @@ export class OnlineTrueRange {
  */
 export class OnlineAverageTrueRange {
   private onlineTrueRange: OnlineTrueRange;
-  private onlineSma: OnlineSma;
+  private sma: SmoothedMovingAverage;
 
   constructor(numberOfPeriods: number) {
     this.onlineTrueRange = new OnlineTrueRange();
-    this.onlineSma = new OnlineSma(numberOfPeriods);
+    this.sma = new SmoothedMovingAverage(numberOfPeriods);
   }
 
   public atr(current: Candlestick): number {
     let trueRange = this.onlineTrueRange.trueRange(current);
-    return this.onlineSma.smaOf(trueRange);
+    return this.sma.movingAverageOf(trueRange);
   }
 }

@@ -1,4 +1,4 @@
-import { OnlineAverage } from './online-average';
+import { CumulativeMovingAverage } from './moving-average/cumulative-moving-average';
 
 /**
  * Calculates the standard deviation over the provided population.
@@ -12,7 +12,7 @@ import { OnlineAverage } from './online-average';
  * @class {OnlineStandardDeviation}
  */
 export class OnlineStandardDeviation {
-  private onlineAverage: OnlineAverage = new OnlineAverage();
+  private cumulative: CumulativeMovingAverage = new CumulativeMovingAverage();
   private previousAverage: number;
   private n: number = 0;
   private m2: number;
@@ -23,7 +23,7 @@ export class OnlineStandardDeviation {
    * @return{number} The standard deviation of samples provided so far.
    */
   std(sample: number):number {
-      let currentAverage: number = this.onlineAverage.average(sample);
+      let currentAverage: number = this.cumulative.movingAverageOf(sample);
       if (this.n == 0) {
         this.m2 = 0;
       } else {

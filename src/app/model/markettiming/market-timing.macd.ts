@@ -3,8 +3,8 @@ import { Quote, InstantQuotes } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { PeriodLength } from '../core/period';
 import { MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-calculator';
-import { ExponentialMovingAverage } from '../calculations/exponential-moving-average';
-import { OnlineEma } from '../calculations/online-ema';
+import { ExponentialMovingCalculator } from '../calculations/exponential-moving-calculator';
+import { ExponentialMovingAverage } from '../calculations/moving-average/exponential-moving-average';
 
 class IMACDMarketTiming {
   assetName: string;
@@ -39,11 +39,11 @@ export class MACDMarketTiming implements MarketTiming {
   assetName: string;
   id: string;
   status: BearBull;
-  slowEma: ExponentialMovingAverage;
+  slowEma: ExponentialMovingCalculator;
   slowEmaValue: number;
-  fastEma: ExponentialMovingAverage;
+  fastEma: ExponentialMovingCalculator;
   fastEmaValue: number;
-  signalEma: OnlineEma;
+  signalEma: ExponentialMovingAverage;
   macd: number;
   signal: number;
 
@@ -62,19 +62,19 @@ export class MACDMarketTiming implements MarketTiming {
     this.assetName = assetName;
     this.id = id;
     this.status = status;
-    this.slowEma = new ExponentialMovingAverage({
+    this.slowEma = new ExponentialMovingCalculator({
       numberOfPeriods: slowPeriod,
       periodLength: periodLength,
       source: source,
       preprocessing: preprocessing,
     });
-    this.fastEma = new ExponentialMovingAverage({
+    this.fastEma = new ExponentialMovingCalculator({
       numberOfPeriods: fastPeriod,
       periodLength: periodLength,
       source: source,
       preprocessing: preprocessing,
     });
-    this.signalEma = new OnlineEma(signalPeriod);
+    this.signalEma = new ExponentialMovingAverage(signalPeriod);
   }
 
   record(instantQuotes: InstantQuotes): void {
@@ -90,7 +90,7 @@ export class MACDMarketTiming implements MarketTiming {
     this.fastEmaValue = this.fastEma.calculate(instant, quote);
     if (this.slowEmaValue) {
         this.macd = this.fastEmaValue - this.slowEmaValue;
-        this.signal = this.signalEma.emaOf(this.macd);
+        this.signal = this.signalEma.movingAverageOf(this.macd);
 
         switch(this.status) {
           case BearBull.BEAR:
