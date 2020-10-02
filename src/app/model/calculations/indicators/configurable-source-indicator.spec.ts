@@ -7,10 +7,8 @@ import { Quote } from '../../core/quotes';
  * Mock moving average calculator that does nothing much.
  */
 class TestMovingCalculator extends ConfigurableSourceIndicator {
-  public instant: Date;
   public value: number;
-  protected compute(instant: Date, value: number): number {
-    this.instant = instant;
+  protected compute(value: number): number {
     this.value = value;
     return value;
   }

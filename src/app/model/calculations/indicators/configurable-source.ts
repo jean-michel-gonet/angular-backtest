@@ -15,7 +15,7 @@ export enum ConfigurablePreprocessing {
   FIRST = 'FIRST'
 }
 
-export class IMovingCalculator {
+export class IndicatorConfiguration {
   numberOfPeriods: number;
   periodLength: PeriodLength;
   source?: ConfigurableSource;

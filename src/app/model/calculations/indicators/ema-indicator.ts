@@ -1,6 +1,6 @@
 import { ConfigurableSourceIndicator } from './configurable-source-indicator';
 import { ExponentialMovingAverage } from '../moving-average/exponential-moving-average';
-import { IMovingCalculator } from './configurable-source';
+import { IndicatorConfiguration } from './configurable-source';
 
 /**
  * Calculates the Exponential Moving Average of the quotes provided
@@ -26,7 +26,7 @@ export class EmaIndicator extends ConfigurableSourceIndicator {
    * the moving average.
    * @param {PeriodLength} periodLength The period period length.
    */
-  constructor(obj = {} as IMovingCalculator) {
+  constructor(obj = {} as IndicatorConfiguration) {
     super(obj);
     this.exponential = new ExponentialMovingAverage(this.numberOfPeriods);
   }
@@ -36,7 +36,7 @@ export class EmaIndicator extends ConfigurableSourceIndicator {
    * @param {number} value The value.
    * @return {number} The EMA for this and all previously provided values.
    */
-  protected compute(instant: Date, value: number): number {
+  protected compute(value: number): number {
     return this.exponential.movingAverageOf(value);
   }
 

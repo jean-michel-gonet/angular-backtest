@@ -1,7 +1,7 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
 import { Candlestick, InstantQuotes } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
-import { OnlineAverageTrueRange } from '../calculations/online-average-true-range';
+import { AtrIndicator } from '../calculations/indicators/atr-indicator';
 
 interface IStopLossMarketTiming {
   /** The name of the asset to watch.*/
@@ -32,7 +32,7 @@ export class StopLossMarketTiming implements MarketTiming {
   public threshold: number;
   public status: BearBull;
 
-  private averageTrueRange: OnlineAverageTrueRange;
+  private averageTrueRange: AtrIndicator;
 
   private atr: number;
   private l1: number
@@ -50,7 +50,7 @@ export class StopLossMarketTiming implements MarketTiming {
     this.id = id;
     this.status = status;
     this.threshold = threshold;
-    this.averageTrueRange = new OnlineAverageTrueRange(14);
+    this.averageTrueRange = new AtrIndicator(14);
   }
 
   record(instantQuotes: InstantQuotes): void {
@@ -63,7 +63,7 @@ export class StopLossMarketTiming implements MarketTiming {
 
   recordQuote(instant: Date, candlestick: Candlestick) {
     // Updates the ATR:
-    this.atr = this.averageTrueRange.atr(candlestick);
+    this.atr = this.averageTrueRange.calculate(instant, candlestick);
 
     let status: BearBull;
 

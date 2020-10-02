@@ -1,7 +1,7 @@
 import { Indicator } from './indicator';
 import { PeriodLength, Period } from '../../core/period';
 import { Candlestick } from '../../core/quotes';
-import { ConfigurableSource, ConfigurablePreprocessing, IMovingCalculator } from './configurable-source';
+import { ConfigurableSource, ConfigurablePreprocessing, IndicatorConfiguration } from './configurable-source';
 
 /**
  * Base class for indicators whose source values can be configured.
@@ -18,7 +18,7 @@ export abstract class ConfigurableSourceIndicator implements Indicator {
 
   private sourceValues: number[];
 
-  constructor(obj = {} as IMovingCalculator) {
+  constructor(obj = {} as IndicatorConfiguration) {
     let {
       numberOfPeriods,
       periodLength,
@@ -49,11 +49,11 @@ export abstract class ConfigurableSourceIndicator implements Indicator {
       if (this.periodLength == PeriodLength.DAILY) {
         let sourceValue = this.extractSourceValue(candlestick);
         let preprocessedValue = this.preprocess([sourceValue]);
-        result = this.compute(instant, preprocessedValue);
+        result = this.compute(preprocessedValue);
       } else {
         if (this.sourceValues) {
           let preprocessedValue = this.preprocess(this.sourceValues);
-          result = this.compute(instant, preprocessedValue);
+          result = this.compute(preprocessedValue);
         }
       }
       this.sourceValues = [];
@@ -137,5 +137,5 @@ export abstract class ConfigurableSourceIndicator implements Indicator {
    * @param {number}  value The value to perform the calculation on.
    * @return {number} The result of the calculation.
    */
-  protected abstract compute(instant: Date, value: number): number;
+  protected abstract compute(value: number): number;
 }
