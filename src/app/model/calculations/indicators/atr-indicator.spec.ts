@@ -4,39 +4,39 @@ import { Candlestick } from '../../core/quotes';
 /**
  * Examples from https://school.stockcharts.com/doku.php?id=technical_indicators:average_true_range_atr
  */
-describe("OnlineTrueRange", () => {
+describe("TrueRange", () => {
   it("Can create a new instance", () => {
-    let onlineTrueRange = new TrueRange();
-    expect(onlineTrueRange).toBeTruthy();
+    let trueRange = new TrueRange();
+    expect(trueRange).toBeTruthy();
   });
 
   it("Can detect TR of the first sample", () => {
-    let onlineTrueRange = new TrueRange();
-    let tr: number = onlineTrueRange.trueRange(new Candlestick({high: 48.70, low: 47.79, close: 48.16}));
+    let trueRange = new TrueRange();
+    let tr: number = trueRange.trueRange(new Candlestick({high: 48.70, low: 47.79, close: 48.16}));
     expect(tr).toBeCloseTo(0.91, 2);
   });
 
   it("Can detect TR of the second sample", () => {
-    let onlineTrueRange = new TrueRange();
-    onlineTrueRange.trueRange(new Candlestick({high: 48.70, low: 47.79, close: 48.16}));
-    let tr: number = onlineTrueRange.trueRange(new Candlestick({high: 48.72, low: 48.14, close: 48.61}));
+    let trueRange = new TrueRange();
+    trueRange.trueRange(new Candlestick({high: 48.70, low: 47.79, close: 48.16}));
+    let tr: number = trueRange.trueRange(new Candlestick({high: 48.72, low: 48.14, close: 48.61}));
     expect(tr).toBeCloseTo(0.58, 2);
   });
 
   it("Can detect TR in different cases", () => {
-    let onlineTrueRange = new TrueRange();
+    let trueRange = new TrueRange();
     let tr: number;
-    tr = onlineTrueRange.trueRange(new Candlestick({high: 49.05, low: 48.64, close: 49.03}));
+    tr = trueRange.trueRange(new Candlestick({high: 49.05, low: 48.64, close: 49.03}));
 
-    tr = onlineTrueRange.trueRange(new Candlestick({high: 49.20, low: 48.94, close: 49.07}));
+    tr = trueRange.trueRange(new Candlestick({high: 49.20, low: 48.94, close: 49.07}));
     expect(tr).toBeCloseTo(0.26, 2);
-    tr = onlineTrueRange.trueRange(new Candlestick({high: 49.35, low: 48.86, close: 49.32}));
+    tr = trueRange.trueRange(new Candlestick({high: 49.35, low: 48.86, close: 49.32}));
     expect(tr).toBeCloseTo(0.49, 2);
-    tr = onlineTrueRange.trueRange(new Candlestick({high: 49.92, low: 49.50, close: 49.91}));
+    tr = trueRange.trueRange(new Candlestick({high: 49.92, low: 49.50, close: 49.91}));
     expect(tr).toBeCloseTo(0.60, 2);
-    tr = onlineTrueRange.trueRange(new Candlestick({high: 50.19, low: 49.87, close: 50.13}));
+    tr = trueRange.trueRange(new Candlestick({high: 50.19, low: 49.87, close: 50.13}));
     expect(tr).toBeCloseTo(0.32, 2);
-    tr = onlineTrueRange.trueRange(new Candlestick({high: 50.12, low: 49.20, close: 49.53}));
+    tr = trueRange.trueRange(new Candlestick({high: 50.12, low: 49.20, close: 49.53}));
     expect(tr).toBeCloseTo(0.93, 2);
   });
 });

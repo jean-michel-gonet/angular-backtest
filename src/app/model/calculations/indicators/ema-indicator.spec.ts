@@ -3,7 +3,7 @@ import { PeriodLength } from '../../core/period';
 import { Candlestick } from '../../core/quotes';
 import { ConfigurableSource, ConfigurablePreprocessing } from './configurable-source';
 
-describe('ExponentialMovingAverage', () => {
+describe('EmaIndicator', () => {
 
   it('Can calculate daily EMA as in https://investsolver.com/exponential-moving-average-in-excel/', () => {
     let ema = new EmaIndicator({numberOfPeriods: 13, periodLength: PeriodLength.DAILY});

@@ -14,7 +14,7 @@ class TestMovingCalculator extends ConfigurableSourceIndicator {
   }
 }
 
-describe('MovingCalculator', () => {
+describe('ConfigurableSourceIndicator', () => {
   it('Can use the closing price as input ', () => {
     let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
 
