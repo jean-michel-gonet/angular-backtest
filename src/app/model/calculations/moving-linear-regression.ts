@@ -1,5 +1,6 @@
-import { MovingCalculator, IMovingCalculator } from './moving-calculator';
 import { OnlineLinearRegression } from './online-linear-regression';
+import { IMovingCalculator } from './indicators/configurable-source';
+import { ConfigurableSourceIndicator } from './indicators/configurable-source-indicator';
 
 const MILLISECONDS_IN_A_YEAR: number = 1000 * 24 * 60 * 60 * 365;
 
@@ -9,7 +10,7 @@ const MILLISECONDS_IN_A_YEAR: number = 1000 * 24 * 60 * 60 * 365;
  * Linear regression is calculated in annual rate vs days.
  * @class {MovingLinearRegression}
  */
-export class MovingLinearRegression extends MovingCalculator {
+export class MovingLinearRegression extends ConfigurableSourceIndicator {
   private instantValues: {instant: Date, value: number}[] = [];
 
   constructor(obj = {} as IMovingCalculator) {

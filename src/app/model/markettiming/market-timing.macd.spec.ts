@@ -2,7 +2,7 @@ import { Quote, InstantQuotes } from '../core/quotes'
 import { BearBull } from '../core/market-timing';
 import { MACDMarketTiming } from './market-timing.macd';
 import { PeriodLength } from '../core/period';
-import { MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-calculator';
+import { ConfigurableSource, ConfigurablePreprocessing } from '../calculations/indicators/configurable-source';
 
 describe('MACDMarketTiming', () => {
   it('Can create a new instance', () => {
@@ -23,8 +23,8 @@ describe('MACDMarketTiming', () => {
     let macdFilter: MACDMarketTiming = new MACDMarketTiming({
       assetName: "SPY",
       id: "MACD",
-      source: MovingAverageSource.CLOSE,
-      preprocessing: MovingAveragePreprocessing.LAST,
+      source: ConfigurableSource.CLOSE,
+      preprocessing: ConfigurablePreprocessing.LAST,
       periodLength: PeriodLength.WEEKLY,
       slowPeriod: 26,
       fastPeriod: 12,

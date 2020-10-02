@@ -5,7 +5,6 @@ import { SuperthonMarketTiming } from 'src/app/model/markettiming/market-timing.
 import { PeriodLength } from 'src/app/model/core/period';
 import { EMAMarketTiming } from 'src/app/model/markettiming/market-timing.ema';
 import { MACDMarketTiming } from 'src/app/model/markettiming/market-timing.macd';
-import { MovingAverageSource, MovingAveragePreprocessing } from 'src/app/model/calculations/moving-calculator';
 import { EMAMarketTimingComponent } from './market-timing.ema.component';
 import { MarketTimingComponent } from './market-timing.component';
 import { SuperthonMarketTimingComponent } from './market-timing.superthon.component';
@@ -13,6 +12,7 @@ import { MACDMarketTimingComponent } from './market-timing.macd.component';
 import { MultipleMarketTiming } from 'src/app/model/markettiming/market-timing.multiple';
 import { StopLossMarketTiming } from 'src/app/model/markettiming/market-timing.stop-loss';
 import { StopLossMarketTimingComponent } from './market-timing.stop-loss.component';
+import { ConfigurableSource, ConfigurablePreprocessing } from 'src/app/model/calculations/indicators/configurable-source';
 
 @Component({
   selector: 'parent',
@@ -99,12 +99,12 @@ describe('MarketTimingComponent', () => {
       expect(emaFilter.bearBull()).toBe(BearBull.BEAR);
       expect(emaFilter.fastEMA.numberOfPeriods).toBe(7);
       expect(emaFilter.fastEMA.periodLength).toBe(PeriodLength.WEEKLY);
-      expect(emaFilter.fastEMA.source).toBe(MovingAverageSource.OPEN);
-      expect(emaFilter.fastEMA.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
+      expect(emaFilter.fastEMA.source).toBe(ConfigurableSource.OPEN);
+      expect(emaFilter.fastEMA.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
       expect(emaFilter.slowEMA.numberOfPeriods).toBe(14);
       expect(emaFilter.slowEMA.periodLength).toBe(PeriodLength.WEEKLY);
-      expect(emaFilter.slowEMA.source).toBe(MovingAverageSource.OPEN);
-      expect(emaFilter.slowEMA.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
+      expect(emaFilter.slowEMA.source).toBe(ConfigurableSource.OPEN);
+      expect(emaFilter.slowEMA.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
   });
 
   it('Can instantiate a MACD filter', () => {
@@ -135,13 +135,13 @@ describe('MarketTimingComponent', () => {
       expect(macdFilter.bearBull()).toBe(BearBull.BEAR);
       expect(macdFilter.fastEma.numberOfPeriods).toBe(9);
       expect(macdFilter.fastEma.periodLength).toBe(PeriodLength.SEMIMONTHLY);
-      expect(macdFilter.fastEma.source).toBe(MovingAverageSource.OPEN);
-      expect(macdFilter.fastEma.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
+      expect(macdFilter.fastEma.source).toBe(ConfigurableSource.OPEN);
+      expect(macdFilter.fastEma.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
 
       expect(macdFilter.slowEma.numberOfPeriods).toBe(14);
       expect(macdFilter.slowEma.periodLength).toBe(PeriodLength.SEMIMONTHLY);
-      expect(macdFilter.slowEma.source).toBe(MovingAverageSource.OPEN);
-      expect(macdFilter.slowEma.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
+      expect(macdFilter.slowEma.source).toBe(ConfigurableSource.OPEN);
+      expect(macdFilter.slowEma.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
 
       expect(macdFilter.signalEma.numberOfPeriods).toBe(16);
   });

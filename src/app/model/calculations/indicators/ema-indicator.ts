@@ -1,5 +1,6 @@
-import { ExponentialMovingAverage } from './moving-average/exponential-moving-average';
-import { MovingCalculator, IMovingCalculator } from './moving-calculator';
+import { ConfigurableSourceIndicator } from './configurable-source-indicator';
+import { ExponentialMovingAverage } from '../moving-average/exponential-moving-average';
+import { IMovingCalculator } from './configurable-source';
 
 /**
  * Calculates the Exponential Moving Average of the quotes provided
@@ -15,7 +16,7 @@ import { MovingCalculator, IMovingCalculator } from './moving-calculator';
  * {@code undefined} most of the time, except when there is a change of
  * period. In this case, the first day of each month.
  */
-export class ExponentialMovingCalculator extends MovingCalculator {
+export class EmaIndicator extends ConfigurableSourceIndicator {
 
   public exponential: ExponentialMovingAverage;
 

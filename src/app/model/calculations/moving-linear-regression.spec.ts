@@ -1,24 +1,25 @@
 import { MovingLinearRegression } from "./moving-linear-regression";
 import { PeriodLength } from '../core/period';
-import { MovingAveragePreprocessing, MovingAverageSource, MovingCalculator } from './moving-calculator';
 import { Candlestick } from '../core/quotes'
+import { ConfigurablePreprocessing, ConfigurableSource } from './indicators/configurable-source';
+import { Indicator } from './indicators/indicator';
 describe("MovingLinearRegression", () => {
   it("Can instantiate", () => {
-    let mlr: MovingCalculator = new MovingLinearRegression({
+    let mlr: Indicator = new MovingLinearRegression({
       numberOfPeriods: 10,
       periodLength: PeriodLength.MONTHLY,
-      preprocessing: MovingAveragePreprocessing.FIRST,
-      source: MovingAverageSource.CLOSE
+      preprocessing: ConfigurablePreprocessing.FIRST,
+      source: ConfigurableSource.CLOSE
     });
     expect(mlr).toBeTruthy();
   });
 
   it("Can calculate a moving linear regression over 5 days", () => {
-    let mlr: MovingCalculator = new MovingLinearRegression({
+    let mlr: Indicator = new MovingLinearRegression({
       numberOfPeriods: 5,
       periodLength: PeriodLength.DAILY,
-      preprocessing: MovingAveragePreprocessing.FIRST,
-      source: MovingAverageSource.CLOSE
+      preprocessing: ConfigurablePreprocessing.FIRST,
+      source: ConfigurableSource.CLOSE
     });
 
     expect(mlr.calculate(new Date(2001, 1 - 1,  1), new Candlestick({close: 30}))).toBeFalsy();
@@ -37,11 +38,11 @@ describe("MovingLinearRegression", () => {
   });
 
   it("Can calculate a moving linear regression over 5 days unevenly distributed", () => {
-    let mlr: MovingCalculator = new MovingLinearRegression({
+    let mlr: Indicator = new MovingLinearRegression({
       numberOfPeriods: 5,
       periodLength: PeriodLength.DAILY,
-      preprocessing: MovingAveragePreprocessing.FIRST,
-      source: MovingAverageSource.CLOSE
+      preprocessing: ConfigurablePreprocessing.FIRST,
+      source: ConfigurableSource.CLOSE
     });
 
     expect(mlr.calculate(new Date(2001, 1 - 1,  1), new Candlestick({close: 30}))).toBeFalsy();

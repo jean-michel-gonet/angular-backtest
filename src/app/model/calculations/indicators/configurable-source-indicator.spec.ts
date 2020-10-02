@@ -1,13 +1,12 @@
-import { MovingAverageSource,
-         MovingAveragePreprocessing,
-         MovingCalculator } from './moving-calculator';
-import { PeriodLength } from '../core/period';
-import { Quote } from '../core/quotes';
+import { ConfigurableSourceIndicator } from './configurable-source-indicator';
+import { ConfigurableSource, ConfigurablePreprocessing } from './configurable-source';
+import { PeriodLength } from '../../core/period';
+import { Quote } from '../../core/quotes';
 
 /**
  * Mock moving average calculator that does nothing much.
  */
-class TestMovingCalculator extends MovingCalculator {
+class TestMovingCalculator extends ConfigurableSourceIndicator {
   public instant: Date;
   public value: number;
   protected compute(instant: Date, value: number): number {
@@ -24,8 +23,8 @@ describe('MovingCalculator', () => {
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: MovingAverageSource.CLOSE,
-      preprocessing: MovingAveragePreprocessing.LAST
+      source: ConfigurableSource.CLOSE,
+      preprocessing: ConfigurablePreprocessing.LAST
     });
 
     expect(ema.calculate(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();
@@ -43,8 +42,8 @@ describe('MovingCalculator', () => {
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: MovingAverageSource.OPEN,
-      preprocessing: MovingAveragePreprocessing.LAST
+      source: ConfigurableSource.OPEN,
+      preprocessing: ConfigurablePreprocessing.LAST
     });
 
     expect(ema.calculate(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: 0, open: values[0]}))).toBeUndefined();
@@ -62,8 +61,8 @@ describe('MovingCalculator', () => {
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: MovingAverageSource.HIGH,
-      preprocessing: MovingAveragePreprocessing.LAST
+      source: ConfigurableSource.HIGH,
+      preprocessing: ConfigurablePreprocessing.LAST
     });
 
     expect(ema.calculate(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: 0, high: values[0]}))).toBeUndefined();
@@ -81,8 +80,8 @@ describe('MovingCalculator', () => {
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: MovingAverageSource.LOW,
-      preprocessing: MovingAveragePreprocessing.LAST
+      source: ConfigurableSource.LOW,
+      preprocessing: ConfigurablePreprocessing.LAST
     });
 
     expect(ema.calculate(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: 0, low: values[0]}))).toBeUndefined();
@@ -101,8 +100,8 @@ describe('MovingCalculator', () => {
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: MovingAverageSource.MID,
-      preprocessing: MovingAveragePreprocessing.LAST
+      source: ConfigurableSource.MID,
+      preprocessing: ConfigurablePreprocessing.LAST
     });
 
     expect(ema.calculate(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: 0, high: highValues[0], low: lowValues[0]}))).toBeUndefined();
@@ -120,8 +119,8 @@ describe('MovingCalculator', () => {
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: MovingAverageSource.CLOSE,
-      preprocessing: MovingAveragePreprocessing.FIRST
+      source: ConfigurableSource.CLOSE,
+      preprocessing: ConfigurablePreprocessing.FIRST
     });
 
     expect(ema.calculate(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();
@@ -141,8 +140,8 @@ describe('MovingCalculator', () => {
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: MovingAverageSource.CLOSE,
-      preprocessing: MovingAveragePreprocessing.TYPICAL
+      source: ConfigurableSource.CLOSE,
+      preprocessing: ConfigurablePreprocessing.TYPICAL
     });
 
     expect(ema.calculate(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();
@@ -160,8 +159,8 @@ describe('MovingCalculator', () => {
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: MovingAverageSource.CLOSE,
-      preprocessing: MovingAveragePreprocessing.MEDIAN
+      source: ConfigurableSource.CLOSE,
+      preprocessing: ConfigurablePreprocessing.MEDIAN
     });
 
     expect(ema.calculate(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();
@@ -179,8 +178,8 @@ describe('MovingCalculator', () => {
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
       periodLength: PeriodLength.WEEKLY,
-      source: MovingAverageSource.CLOSE,
-      preprocessing: MovingAveragePreprocessing.MEDIAN
+      source: ConfigurableSource.CLOSE,
+      preprocessing: ConfigurablePreprocessing.MEDIAN
     });
 
     expect(ema.calculate(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: values[0]}))).toBeUndefined();

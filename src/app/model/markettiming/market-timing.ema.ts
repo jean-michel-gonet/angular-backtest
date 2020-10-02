@@ -2,14 +2,14 @@ import { MarketTiming, BearBull } from '../core/market-timing';
 import { Quote, InstantQuotes } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { PeriodLength } from '../core/period';
-import { MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-calculator';
-import { ExponentialMovingCalculator } from '../calculations/exponential-moving-calculator';
+import { ConfigurableSource, ConfigurablePreprocessing } from '../calculations/indicators/configurable-source';
+import { EmaIndicator } from '../calculations/indicators/ema-indicator';
 
 export class IEMAMarketTiming {
   assetName: string;
   id?: string;
-  source?: MovingAverageSource;
-  preprocessing?: MovingAveragePreprocessing;
+  source?: ConfigurableSource;
+  preprocessing?: ConfigurablePreprocessing;
   periodLength?: PeriodLength;
   fastPeriod?: number;
   slowPeriod?: number;
@@ -32,9 +32,9 @@ export class EMAMarketTiming implements MarketTiming {
   threshold: number;
   offset: number;
 
-  fastEMA: ExponentialMovingCalculator;
+  fastEMA: EmaIndicator;
   fastEMAValue: number;
-  slowEMA: ExponentialMovingCalculator;
+  slowEMA: EmaIndicator;
   slowEMAValue: number;
 
   difference: number;
@@ -45,8 +45,8 @@ export class EMAMarketTiming implements MarketTiming {
     let {
       assetName,
       id = "EMA",
-      source = MovingAverageSource.CLOSE,
-      preprocessing = MovingAveragePreprocessing.LAST,
+      source = ConfigurableSource.CLOSE,
+      preprocessing = ConfigurablePreprocessing.LAST,
       periodLength = PeriodLength.MONTHLY,
       fastPeriod = 5,
       slowPeriod = 15,
@@ -60,14 +60,14 @@ export class EMAMarketTiming implements MarketTiming {
     this.threshold = threshold;
     this.offset = offset;
 
-    this.slowEMA = new ExponentialMovingCalculator({
+    this.slowEMA = new EmaIndicator({
       numberOfPeriods: slowPeriod,
       periodLength: periodLength,
       source: source,
       preprocessing: preprocessing
     });
 
-    this.fastEMA = new ExponentialMovingCalculator({
+    this.fastEMA = new EmaIndicator({
       numberOfPeriods: fastPeriod,
       periodLength: periodLength,
       source: source,
