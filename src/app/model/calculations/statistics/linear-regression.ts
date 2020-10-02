@@ -11,9 +11,9 @@
  * Online algorithms can process its input piece-by-piece in a serial fashion,
  * in the order that the input is fed to the algorithm, without having the entire
  * input available from the start (https://en.wikipedia.org/wiki/Online_algorithm).
- * @class{OnlineLinearRegression}
+ * @class{LinearRegression}
  */
-export class OnlineLinearRegression {
+export class LinearRegression {
   private meanX: number = 0;
   private meanY: number = 0;
   private varX: number = 0;

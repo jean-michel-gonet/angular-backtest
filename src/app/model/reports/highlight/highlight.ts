@@ -1,7 +1,7 @@
 import { Highlight } from './highlight-report';
 import { ReportedData } from '../../core/reporting';
 import { CumulativeMovingAverage } from '../../calculations/moving-average/cumulative-moving-average';
-import { OnlineStandardDeviation } from '../../calculations/online-standard-deviation';
+import { StandardDeviation } from '../../calculations/statistics/standard-deviation';
 
 export abstract class BaseHighlight implements Highlight {
   protected instant: Date;
@@ -79,12 +79,12 @@ export class AvgHighlight extends BaseHighlight {
 }
 
 export class StdHighlight extends BaseHighlight {
-  private onlineStandardDeviation: OnlineStandardDeviation = new OnlineStandardDeviation();
+  private standardDeviation: StandardDeviation = new StandardDeviation();
   public std: number;
 
   receiveData(providedData: ReportedData): void {
     if (providedData.sourceName == this.sourceName) {
-      this.std = this.onlineStandardDeviation.std(providedData.y);
+      this.std = this.standardDeviation.std(providedData.y);
     }
   }
 }

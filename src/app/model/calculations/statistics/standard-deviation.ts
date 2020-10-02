@@ -1,4 +1,4 @@
-import { CumulativeMovingAverage } from './moving-average/cumulative-moving-average';
+import { CumulativeMovingAverage } from '../moving-average/cumulative-moving-average';
 
 /**
  * Calculates the standard deviation over the provided population.
@@ -9,9 +9,9 @@ import { CumulativeMovingAverage } from './moving-average/cumulative-moving-aver
  * Online algorithms can process its input piece-by-piece in a serial fashion,
  * in the order that the input is fed to the algorithm, without having the entire
  * input available from the start (https://en.wikipedia.org/wiki/Online_algorithm).
- * @class {OnlineStandardDeviation}
+ * @class {StandardDeviation}
  */
-export class OnlineStandardDeviation {
+export class StandardDeviation {
   private cumulative: CumulativeMovingAverage = new CumulativeMovingAverage();
   private previousAverage: number;
   private n: number = 0;
