@@ -31,10 +31,10 @@ export abstract class OnlineMovingAverage implements MovingAverage {
     // While waiting for the required number of periods, calculates the
     // simple average (not moving) of available samples:
     if (this.count++ < this.numberOfPeriods) {
-      if (this.previousAverage) {
-        movingAverage = this.previousAverage + (value - this.previousAverage) / this.count;
-      } else {
+      if (this.previousAverage == undefined) {
         movingAverage = value;
+      } else {
+        movingAverage = this.previousAverage + (value - this.previousAverage) / this.count;
       }
     }
 

@@ -13,7 +13,6 @@ export abstract class ConfigurableSourceIndicator implements Indicator {
   public periodLength: PeriodLength;
   public source: ConfigurableSource;
   public preprocessing: ConfigurablePreprocessing;
-
   protected period: Period;
 
   private sourceValues: number[];

@@ -15,7 +15,7 @@ export enum ConfigurablePreprocessing {
   FIRST = 'FIRST'
 }
 
-export class IndicatorConfiguration {
+export interface IndicatorConfiguration {
   numberOfPeriods: number;
   periodLength: PeriodLength;
   source?: ConfigurableSource;
