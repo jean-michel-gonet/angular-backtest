@@ -428,8 +428,15 @@ This is some of my reference documentation:
 * **Average True Range (ATR)**
   * Explanation of ATR, and Excel example.
   * https://school.stockcharts.com/doku.php?id=technical_indicators:average_true_range_atr
+* **Relative strength index**
+  * The Wikipedia article about the RSI explains how to calculate it, and how to use it.
+  * https://en.wikipedia.org/wiki/Relative_strength_index
+* **RSI Indicator – The COMPLETE Guide to Relative Strength Index (How to Use RSI in Trading)**
+  * Explanation about the RSI indicator, and how to use it.
+  * https://therobusttrader.com/rsi/
 
 On technical matters:
+
 * **Angular ``ng-content`` and Content Projection: A Complete Guide: How To Use ``ng-content`` To Improve Component API Design**
   * An explanation of ``ng-content``, what it is, what problems it solve, and some examples.
   * https://blog.angular-university.io/angular-ng-content/
