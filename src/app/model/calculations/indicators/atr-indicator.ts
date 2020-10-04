@@ -39,6 +39,8 @@ export class AtrIndicator implements Indicator {
 
   calculate(instant: Date, candlestick: Candlestick): number {
     let trueRange = this.trueRange.trueRange(candlestick);
-    return this.sma.movingAverageOf(trueRange);
+    if (trueRange) {
+      return this.sma.movingAverageOf(trueRange);
+    }
   }
 }

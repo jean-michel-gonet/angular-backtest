@@ -13,11 +13,10 @@ interface IStopLossMarketTiming {
   /** The initial status.*/
   status?: BearBull;
 
-  /**
-   * The multiple of ATR that triggers the stop loss.
-   * Specify 3 if you want to stop your losses (or collect your gains )
-   * after a variation of three times the ATR.
-   */
+  /** The number of periods used to calculate the ATR. */
+  numberOfPeriods?: number;
+
+  /** The multiple of ATR that triggers the stop loss. */
   threshold?: number;
 }
 
@@ -34,6 +33,7 @@ export class StopLossMarketTiming implements MarketTiming {
 
   private averageTrueRange: AtrIndicator;
 
+  private countDown: number;
   private atr: number;
   private l1: number
 
@@ -44,13 +44,15 @@ export class StopLossMarketTiming implements MarketTiming {
       assetName,
       id = 'STOPLOSS',
       status = BearBull.BULL,
-      threshold = 2,
+      numberOfPeriods = 14,
+      threshold = 2
     } = obj;
     this.assetName = assetName;
     this.id = id;
     this.status = status;
     this.threshold = threshold;
-    this.averageTrueRange = new AtrIndicator(14);
+    this.countDown = numberOfPeriods;
+    this.averageTrueRange = new AtrIndicator(numberOfPeriods);
   }
 
   record(instantQuotes: InstantQuotes): void {
@@ -61,13 +63,13 @@ export class StopLossMarketTiming implements MarketTiming {
     }
   }
 
-  recordQuote(instant: Date, candlestick: Candlestick) {
+  private recordQuote(instant: Date, candlestick: Candlestick) {
     // Updates the ATR:
     this.atr = this.averageTrueRange.calculate(instant, candlestick);
 
     let status: BearBull;
 
-    if (this.atr) {
+    if (this.atr && --this.countDown <= 0) {
       // Updates the L1:
       let l1: number = candlestick.close - this.threshold * this.atr;
       if (!this.l1) {
