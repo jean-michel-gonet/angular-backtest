@@ -13,6 +13,8 @@ import { MultipleMarketTiming } from 'src/app/model/markettiming/market-timing.m
 import { StopLossMarketTiming } from 'src/app/model/markettiming/market-timing.stop-loss';
 import { StopLossMarketTimingComponent } from './market-timing.stop-loss.component';
 import { ConfigurableSource, ConfigurablePreprocessing } from 'src/app/model/calculations/indicators/configurable-source';
+import { RsiMarketTimingComponent } from './market-timing.rsi.component';
+import { RsiMarketTiming } from 'src/app/model/markettiming/market-timing.rsi';
 
 @Component({
   selector: 'parent',
@@ -35,7 +37,8 @@ describe('MarketTimingComponent', () => {
         EMAMarketTimingComponent,
         SuperthonMarketTimingComponent,
         MACDMarketTimingComponent,
-        StopLossMarketTimingComponent
+        StopLossMarketTimingComponent,
+        RsiMarketTimingComponent
       ]
     });
   }));
@@ -168,6 +171,42 @@ describe('MarketTimingComponent', () => {
       expect(stopLossFilter.id).toBe("XX");
       expect(stopLossFilter.threshold).toBe(4);
       expect(stopLossFilter.bearBull()).toBe(BearBull.BEAR);
+  });
+
+  it('Can instantiate a RSI Filter', () => {
+    TestBed.overrideComponent(TestWrapperComponent, {
+        set: {
+          template: `
+          <market-timing>
+            <rsi-filter
+                  assetName="ASS"
+                  id="RSIID"
+                  status="BEAR"
+                  source="OPEN"
+                  preprocessing="MEDIAN"
+                  periodLength="SEMIMONTHLY"
+                  numberOfPeriods="19"
+                  rsiAverage="CUTLER"
+                  upperThreshold="71"
+                  lowerThreshold="31"></rsi-filter>
+          </market-timing>`
+        }
+      }).compileComponents();
+      const fixture: ComponentFixture<TestWrapperComponent>
+        = TestBed.createComponent(TestWrapperComponent);
+      fixture.detectChanges();
+      component = fixture.componentInstance.marketTimingComponent;
+      let multipleMarketTiming = component.asMarketTiming() as MultipleMarketTiming;
+      let rsiMarketTiming = multipleMarketTiming.marketTimings[0] as RsiMarketTiming;
+      expect(rsiMarketTiming.assetName).toBe("ASS");
+      expect(rsiMarketTiming.id).toBe("RSIID");
+      expect(rsiMarketTiming.bearBull()).toBe(BearBull.BEAR);
+      expect(rsiMarketTiming.rsiIndicator.source).toBe(ConfigurableSource.OPEN);
+      expect(rsiMarketTiming.rsiIndicator.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
+      expect(rsiMarketTiming.rsiIndicator.periodLength).toBe(PeriodLength.SEMIMONTHLY);
+      expect(rsiMarketTiming.rsiIndicator.numberOfPeriods).toBe(19);
+      expect(rsiMarketTiming.upperThreshold).toBe(71);
+      expect(rsiMarketTiming.lowerThreshold).toBe(31);
   });
 
   it('Can instantiate multiple filters filter', () => {

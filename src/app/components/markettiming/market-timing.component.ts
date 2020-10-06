@@ -5,6 +5,7 @@ import { MACDMarketTimingComponent } from './market-timing.macd.component';
 import { SuperthonMarketTimingComponent } from './market-timing.superthon.component';
 import { StopLossMarketTimingComponent } from './market-timing.stop-loss.component';
 import { MultipleMarketTiming } from 'src/app/model/markettiming/market-timing.multiple';
+import { RsiMarketTimingComponent } from './market-timing.rsi.component';
 
 @Component({
   selector: 'market-timing',
@@ -23,6 +24,9 @@ export class MarketTimingComponent {
   @ContentChildren(StopLossMarketTimingComponent)
   private stopLossFilter: QueryList<StopLossMarketTimingComponent>;
 
+  @ContentChildren(RsiMarketTimingComponent)
+  private risFilter: QueryList<RsiMarketTimingComponent>;
+
   public asMarketTiming(): MarketTiming {
     let marketTimings: MarketTiming[] = [];
 
@@ -40,6 +44,10 @@ export class MarketTimingComponent {
 
     this.stopLossFilter.forEach(f => {
       marketTimings.push(f.asSuperthonMarketTimingComponent());
+    });
+
+    this.risFilter.forEach(f => {
+      marketTimings.push(f.asRsiMarketTiming());
     });
 
     return new MultipleMarketTiming(marketTimings);

@@ -1,11 +1,39 @@
 <h2>What is the best market timing?</h2>
-<h3>Candle filter</h3>
-<p>The best Candle filter configuration to use with S&amp;P500 is:</p>
-<ul>
-  <li>Period length: SEMIMONTHLY</li>
-  <li>Number of periods: 11</li>
-</ul>
-<p>This is a simulation of it:</p>
+<h3>Rsi Filter</h3>
+<simulation start="2009-04-01" end="2020-09-04" quotes="ACWX">
+  <reports>
+    <chart-report>
+      <chart-report-configuration show="ACC.NAV"         showDataAs="LINE" showDataOn="RIGHT" normalize="true"  ></chart-report-configuration>
+      <chart-report-configuration show="ACWX.CLOSE"      showDataAs="LINE" showDataOn="RIGHT" normalize="true"  ></chart-report-configuration>
+      <chart-report-configuration show="MT.RSI"     showDataAs="LINE" showDataOn="LEFT" normalize="false" ></chart-report-configuration>
+      <chart-report-annotation show="MT.BULL" color="blue"></chart-report-annotation>
+      <chart-report-annotation show="MT.BEAR" color="red"></chart-report-annotation>
+    </chart-report>
+  </reports>
+  <accounts>
+    <swiss-quote id="ACC" cash="100000">
+      <strategy>
+        <buy-and-hold assetName="ACWX">
+          <market-timing>
+            <rsi-filter
+                  assetName="ACWX"
+                  id="MT"
+                  status="BULL"
+                  periodLength="WEEKLY"
+                  numberOfPeriods="14"
+                  source="CLOSE"
+                  preprocessing="TYPICAL"
+                  rsiAverage="CUTLER"
+                  upperThreshold="56"
+                  lowerThreshold="34"></rsi-filter>
+          </market-timing>
+        </buy-and-hold>
+      </strategy>
+    </swiss-quote>
+  </accounts>
+</simulation>
+
+<h3>Stop Loss Filter</h3>
 <simulation start="2009-04-01" end="2020-09-04" quotes="ACWX">
   <reports>
     <chart-report>

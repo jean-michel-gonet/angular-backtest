@@ -34,6 +34,7 @@ export class RsiMarketTiming implements MarketTiming {
   countDown: number;
 
   rsi: number;
+  previousRsi: number;
   numberOfTriggers: number = 0;
 
   rsiIndicator: RsiIndicator;
@@ -80,12 +81,13 @@ export class RsiMarketTiming implements MarketTiming {
     this.rsi = this.rsiIndicator.calculate(instant, quote);
 
     if (this.rsi && --this.countDown < 0) {
-      if (this.rsi > this.upperThreshold) {
-        this.status = BearBull.BULL;
-      }
-      if (this.rsi < this.lowerThreshold) {
+      if (this.previousRsi >= this.upperThreshold && this.rsi < this.upperThreshold) {
         this.status = BearBull.BEAR;
       }
+      if (this.previousRsi <= this.lowerThreshold && this.rsi > this.lowerThreshold) {
+        this.status = BearBull.BULL;
+      }
+      this.previousRsi = this.rsi;
     }
   }
 

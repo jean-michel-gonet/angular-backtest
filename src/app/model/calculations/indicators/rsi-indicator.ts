@@ -10,16 +10,16 @@ export enum RsiAverage {
    * Wilder originally formulated the calculation of the moving average as
    * using Smoothed Moving Average.
    */
-  WILDER,
+  WILDER = 'WILDER',
   /**
    * A variation called Cutler's RSI is based on a simple moving average of U and D.
    */
-  CUTLER,
+  CUTLER = 'CUTLER',
   /**
    * Some commercial packages, like AIQ, use a standard exponential
    * moving average (EMA).
    */
-   EMA
+   EMA = 'EMA'
 }
 
 export interface RsiIndicatorConfiguration extends IndicatorConfiguration {
