@@ -9,6 +9,7 @@ class MockMarketTiming implements MarketTiming {
   public reportedTo: Report;
   public instant: Date;
   public candlestick: Candlestick;
+  public id:string = "MOCK";
 
   constructor(private assetName: string, private response: BearBull) {}
 

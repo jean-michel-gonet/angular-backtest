@@ -39,7 +39,7 @@ export class RsiMarketTiming implements MarketTiming {
 
   rsiIndicator: RsiIndicator;
 
-  constructor(obj = {} as IRsiMarketTiming){
+  constructor(obj = {} as IRsiMarketTiming) {
     let {
       assetName,
       id = "RSI",
@@ -115,5 +115,4 @@ export class RsiMarketTiming implements MarketTiming {
       }));
     }
   }
-
 }

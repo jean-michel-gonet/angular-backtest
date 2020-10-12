@@ -1,4 +1,50 @@
 <h2>What is the best market timing?</h2>
+<h3>Rsi Filter with SP500</h3>
+<simulation start="2001-04-01" end="2020-09-04" quotes="SP500">
+  <reports>
+    <highlight-report>
+      <dl>
+        <dt>RSI max</dt>
+        <dd><highlight-max sourceName="MT.RSI"></highlight-max> (<highlight-date-max sourceName="MT.RSI"></highlight-date-max>)</dd>
+        <dt>RSI min</dt>
+        <dd><highlight-min sourceName="MT.RSI"></highlight-min> (<highlight-date-min sourceName="MT.RSI"></highlight-date-min>)</dd>
+        <dt>RSI average</dt>
+        <dd><highlight-avg sourceName="MT.RSI"></highlight-avg></dd>
+        <dt>RSI Standard deviation</dt>
+        <dd><highlight-std sourceName="MT.RSI"></highlight-std></dd>
+      </dl>
+    </highlight-report>
+    <chart-report>
+      <chart-report-configuration show="ACC.NAV"         showDataAs="LINE" showDataOn="RIGHT" normalize="true"  ></chart-report-configuration>
+      <chart-report-configuration show="SP500.CLOSE"      showDataAs="LINE" showDataOn="RIGHT" normalize="true"  ></chart-report-configuration>
+      <chart-report-configuration show="MT.RSI"     showDataAs="LINE" showDataOn="LEFT" normalize="false" ></chart-report-configuration>
+      <chart-report-annotation show="MT.BULL" color="blue"></chart-report-annotation>
+      <chart-report-annotation show="MT.BEAR" color="red"></chart-report-annotation>
+    </chart-report>
+  </reports>
+  <accounts>
+    <swiss-quote id="ACC" cash="100000">
+      <strategy>
+        <buy-and-hold assetName="SP500">
+          <market-timing>
+            <rsi-filter
+                  assetName="SP500"
+                  id="MT"
+                  status="BULL"
+                  periodLength="WEEKLY"
+                  numberOfPeriods="14"
+                  source="CLOSE"
+                  preprocessing="TYPICAL"
+                  rsiAverage="CUTLER"
+                  upperThreshold="45"
+                  lowerThreshold="32"></rsi-filter>
+          </market-timing>
+        </buy-and-hold>
+      </strategy>
+    </swiss-quote>
+  </accounts>
+</simulation>
+
 <h3>Rsi Filter</h3>
 <simulation start="2009-04-01" end="2020-09-04" quotes="ACWX">
   <reports>

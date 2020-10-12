@@ -37,8 +37,6 @@ export class StopLossMarketTiming implements MarketTiming {
   private atr: number;
   private l1: number
 
-  private annotations: string[] = [];
-
   constructor(obj = {} as IStopLossMarketTiming) {
     let {
       assetName,
@@ -67,8 +65,6 @@ export class StopLossMarketTiming implements MarketTiming {
     // Updates the ATR:
     this.atr = this.averageTrueRange.calculate(instant, candlestick);
 
-    let status: BearBull;
-
     if (this.atr && --this.countDown <= 0) {
       // Updates the L1:
       let l1: number = candlestick.close - this.threshold * this.atr;
@@ -77,19 +73,13 @@ export class StopLossMarketTiming implements MarketTiming {
       } else {
         if (l1 > this.l1) {
           this.l1 = l1;
-          status = BearBull.BULL;
+          this.status = BearBull.BULL;
         }
         if (candlestick.close < this.l1) {
           this.l1 = candlestick.close;
-          status = BearBull.BEAR;
+          this.status = BearBull.BEAR;
         }
       }
-    }
-
-    // Annotates the status variation:
-    if (status && status != this.status) {
-      this.annotations.push(status);
-      this.status = status;
     }
   }
 
@@ -116,11 +106,5 @@ export class StopLossMarketTiming implements MarketTiming {
         y: this.l1
       }));
     }
-    this.annotations = this.annotations.filter(annotation =>{
-      report.receiveData(new ReportedData({
-        sourceName: this.id + "." + annotation
-      }))
-      return false;
-    });
   }
 }
