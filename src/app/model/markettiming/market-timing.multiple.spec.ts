@@ -105,8 +105,8 @@ describe("MultipleMarketTiming", () => {
     let report: NullReport = new NullReport();
 
     multipleMarketTiming.doRegister(report);
-    expect(marketTiming1.registeredTo).toBe(report);
-    expect(marketTiming2.registeredTo).toBe(report);
+    expect(marketTiming1.registeredTo).toBeUndefined();
+    expect(marketTiming2.registeredTo).toBeUndefined();
 
     let instant: Date = new Date();
     multipleMarketTiming.startReportingCycle(instant);
