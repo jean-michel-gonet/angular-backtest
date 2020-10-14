@@ -13,9 +13,11 @@ export class IRsiMarketTiming {
   preprocessing?: ConfigurablePreprocessing;
   periodLength?: PeriodLength;
   numberOfPeriods?: number;
+
   rsiAverage?: RsiAverage;
   upperThreshold?: number;
   lowerThreshold?: number;
+  lag?: number;
 }
 
 /**
@@ -104,7 +106,7 @@ export class RsiMarketTiming implements MarketTiming {
   }
 
   reportTo(report: Report): void {
-    if (this.rsi) {
+    if (this.rsi && this.countDown < 0) {
       report.receiveData(new ReportedData({
         sourceName: this.id + ".RSI",
         y: this.rsi
