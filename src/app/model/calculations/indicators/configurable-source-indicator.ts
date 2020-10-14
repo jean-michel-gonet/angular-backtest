@@ -1,44 +1,28 @@
-import { PeriodLength, Period } from '../core/period';
-import { Candlestick } from '../core/quotes';
+import { Indicator } from './indicator';
+import { PeriodLength, Period } from '../../core/period';
+import { Candlestick } from '../../core/quotes';
+import { ConfigurableSource, ConfigurablePreprocessing, IndicatorConfiguration } from './configurable-source';
 
-export enum MovingAveragePreprocessing {
-  TYPICAL = 'TYPICAL',
-  MEDIAN = 'MEDIAN',
-  LAST = 'LAST',
-  FIRST = 'FIRST'
-}
-
-export enum MovingAverageSource {
-  OPEN = 'OPEN',
-  CLOSE = 'CLOSE',
-  HIGH = 'HIGH',
-  LOW = 'LOW',
-  MID = 'MID'
-}
-
-export class IMovingCalculator {
-  numberOfPeriods: number;
-  periodLength: PeriodLength;
-  source?: MovingAverageSource;
-  preprocessing?: MovingAveragePreprocessing;
-}
-
-export abstract class MovingCalculator {
+/**
+ * Base class for indicators whose source values can be configured.
+ * For example: EMA, RSI...
+ * Counter-example: ATR...
+ */
+export abstract class ConfigurableSourceIndicator implements Indicator {
   public numberOfPeriods: number;
   public periodLength: PeriodLength;
-  public source: MovingAverageSource;
-  public preprocessing: MovingAveragePreprocessing;
-
+  public source: ConfigurableSource;
+  public preprocessing: ConfigurablePreprocessing;
   protected period: Period;
 
   private sourceValues: number[];
 
-  constructor(obj = {} as IMovingCalculator) {
+  constructor(obj = {} as IndicatorConfiguration) {
     let {
       numberOfPeriods,
       periodLength,
-      source = MovingAverageSource.CLOSE,
-      preprocessing = MovingAveragePreprocessing.LAST
+      source = ConfigurableSource.CLOSE,
+      preprocessing = ConfigurablePreprocessing.LAST
     } = obj;
 
     this.numberOfPeriods = numberOfPeriods;
@@ -64,11 +48,11 @@ export abstract class MovingCalculator {
       if (this.periodLength == PeriodLength.DAILY) {
         let sourceValue = this.extractSourceValue(candlestick);
         let preprocessedValue = this.preprocess([sourceValue]);
-        result = this.compute(instant, preprocessedValue);
+        result = this.compute(preprocessedValue);
       } else {
         if (this.sourceValues) {
           let preprocessedValue = this.preprocess(this.sourceValues);
-          result = this.compute(instant, preprocessedValue);
+          result = this.compute(preprocessedValue);
         }
       }
       this.sourceValues = [];
@@ -86,19 +70,19 @@ export abstract class MovingCalculator {
    */
   private extractSourceValue(candlestick: Candlestick): number {
     switch(this.source) {
-      case MovingAverageSource.CLOSE:
+      case ConfigurableSource.CLOSE:
         return candlestick.close;
 
-      case MovingAverageSource.HIGH:
+      case ConfigurableSource.HIGH:
         return candlestick.high;
 
-      case MovingAverageSource.LOW:
+      case ConfigurableSource.LOW:
         return candlestick.low;
 
-      case MovingAverageSource.OPEN:
+      case ConfigurableSource.OPEN:
         return candlestick.open;
 
-      case MovingAverageSource.MID:
+      case ConfigurableSource.MID:
         return (candlestick.high + candlestick.low) / 2;
     }
   }
@@ -111,16 +95,16 @@ export abstract class MovingCalculator {
    */
   private preprocess(values: number[]):number {
     switch(this.preprocessing) {
-      case MovingAveragePreprocessing.LAST:
+      case ConfigurablePreprocessing.LAST:
         return values[values.length - 1];
 
-      case MovingAveragePreprocessing.FIRST:
+      case ConfigurablePreprocessing.FIRST:
         return values[0];
 
-      case MovingAveragePreprocessing.TYPICAL:
+      case ConfigurablePreprocessing.TYPICAL:
         return this.meanOf(values);
 
-      case MovingAveragePreprocessing.MEDIAN:
+      case ConfigurablePreprocessing.MEDIAN:
         return this.medianOf(values);
     }
   }
@@ -152,5 +136,5 @@ export abstract class MovingCalculator {
    * @param {number}  value The value to perform the calculation on.
    * @return {number} The result of the calculation.
    */
-  protected abstract compute(instant: Date, value: number): number;
+  protected abstract compute(value: number): number;
 }

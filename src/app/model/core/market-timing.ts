@@ -21,6 +21,12 @@ export enum BearBull {
  */
 export interface MarketTiming extends Reporter {
   /**
+   * Identity of the market timing.
+   * @return {string} The identity of the market timing. Any unique string.
+   */
+  id: string;
+
+  /**
    * Receives regular quote updates, and decides if time is good to invest.
    * @param {Date} instant The current instant.
    * @param {Candlestick} candlestick The relevant quote at specified instant.
@@ -41,6 +47,8 @@ export interface MarketTiming extends Reporter {
  * @class{DefaultMarketTiming}
  */
 export class DefaultMarketTiming implements MarketTiming {
+  id: string = "DEF";
+
   /**
    * Does nothing with the instant quotes.
    */

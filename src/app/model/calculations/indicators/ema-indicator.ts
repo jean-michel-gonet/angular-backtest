@@ -1,5 +1,6 @@
-import { OnlineEma } from './online-ema';
-import { MovingCalculator, IMovingCalculator } from './moving-calculator';
+import { ConfigurableSourceIndicator } from './configurable-source-indicator';
+import { ExponentialMovingAverage } from '../moving-average/exponential-moving-average';
+import { IndicatorConfiguration } from './configurable-source';
 
 /**
  * Calculates the Exponential Moving Average of the quotes provided
@@ -15,9 +16,9 @@ import { MovingCalculator, IMovingCalculator } from './moving-calculator';
  * {@code undefined} most of the time, except when there is a change of
  * period. In this case, the first day of each month.
  */
-export class ExponentialMovingAverage extends MovingCalculator {
+export class EmaIndicator extends ConfigurableSourceIndicator {
 
-  public onlineEma: OnlineEma;
+  public exponential: ExponentialMovingAverage;
 
   /**
    * Class constructor.
@@ -25,9 +26,9 @@ export class ExponentialMovingAverage extends MovingCalculator {
    * the moving average.
    * @param {PeriodLength} periodLength The period period length.
    */
-  constructor(obj = {} as IMovingCalculator) {
+  constructor(obj = {} as IndicatorConfiguration) {
     super(obj);
-    this.onlineEma = new OnlineEma(this.numberOfPeriods);
+    this.exponential = new ExponentialMovingAverage(this.numberOfPeriods);
   }
 
   /**
@@ -35,8 +36,8 @@ export class ExponentialMovingAverage extends MovingCalculator {
    * @param {number} value The value.
    * @return {number} The EMA for this and all previously provided values.
    */
-  protected compute(instant: Date, value: number): number {
-    return this.onlineEma.emaOf(value);
+  protected compute(value: number): number {
+    return this.exponential.movingAverageOf(value);
   }
 
   /**
@@ -45,6 +46,6 @@ export class ExponentialMovingAverage extends MovingCalculator {
    * @param {number} value The forced last ema value.
    */
   setLastValue(value: number): void  {
-    this.onlineEma.setLastValue(value);
+    this.exponential.setPreviousAverage(value);
   }
 }

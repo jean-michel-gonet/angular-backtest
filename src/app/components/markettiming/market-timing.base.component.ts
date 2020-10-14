@@ -1,7 +1,7 @@
 import { Input } from "@angular/core";
-import { MovingAverageSource, MovingAveragePreprocessing } from 'src/app/model/calculations/moving-calculator';
 import { PeriodLength } from 'src/app/model/core/period';
 import { BearBull } from 'src/app/model/core/market-timing';
+import { ConfigurableSource, ConfigurablePreprocessing } from 'src/app/model/calculations/indicators/configurable-source';
 
 export class BaseMarketTimingComponent {
   @Input()
@@ -10,11 +10,11 @@ export class BaseMarketTimingComponent {
   @Input()
   protected id: string;
 
-  protected _source: MovingAverageSource;
+  protected _source: ConfigurableSource;
   @Input()
-  set source(value: MovingAverageSource) {
+  set source(value: ConfigurableSource) {
     if (typeof value == 'string') {
-      this._source = MovingAverageSource[value];
+      this._source = ConfigurableSource[value];
     } else {
       this._source = value;
     }
@@ -23,11 +23,11 @@ export class BaseMarketTimingComponent {
     return this._source;
   }
 
-  protected _preprocessing: MovingAveragePreprocessing;
+  protected _preprocessing: ConfigurablePreprocessing;
   @Input()
-  set preprocessing(value: MovingAveragePreprocessing) {
+  set preprocessing(value: ConfigurablePreprocessing) {
     if (typeof value == 'string') {
-      this._preprocessing = MovingAveragePreprocessing[value];
+      this._preprocessing = ConfigurablePreprocessing[value];
     } else {
       this._preprocessing = value;
     }

@@ -2,16 +2,16 @@ import { MarketTiming, BearBull } from '../core/market-timing';
 import { Quote, InstantQuotes } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { PeriodLength } from '../core/period';
-import { MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-calculator';
-import { ExponentialMovingAverage } from '../calculations/exponential-moving-average';
-import { OnlineEma } from '../calculations/online-ema';
+import { ExponentialMovingAverage } from '../calculations/moving-average/exponential-moving-average';
+import { ConfigurableSource, ConfigurablePreprocessing } from '../calculations/indicators/configurable-source';
+import { EmaIndicator } from '../calculations/indicators/ema-indicator';
 
 class IMACDMarketTiming {
   assetName: string;
   id?: string;
   periodLength?: PeriodLength;
-  source?: MovingAverageSource;
-  preprocessing?: MovingAveragePreprocessing;
+  source?: ConfigurableSource;
+  preprocessing?: ConfigurablePreprocessing;
 
   fastPeriod?: number;
   slowPeriod?: number;
@@ -39,11 +39,11 @@ export class MACDMarketTiming implements MarketTiming {
   assetName: string;
   id: string;
   status: BearBull;
-  slowEma: ExponentialMovingAverage;
+  slowEma: EmaIndicator;
   slowEmaValue: number;
-  fastEma: ExponentialMovingAverage;
+  fastEma: EmaIndicator;
   fastEmaValue: number;
-  signalEma: OnlineEma;
+  signalEma: ExponentialMovingAverage;
   macd: number;
   signal: number;
 
@@ -51,8 +51,8 @@ export class MACDMarketTiming implements MarketTiming {
     let {
       assetName,
       id = "MACD",
-      source = MovingAverageSource.CLOSE,
-      preprocessing = MovingAveragePreprocessing.LAST,
+      source = ConfigurableSource.CLOSE,
+      preprocessing = ConfigurablePreprocessing.LAST,
       periodLength = PeriodLength.MONTHLY,
       fastPeriod = 12,
       slowPeriod = 26,
@@ -62,19 +62,19 @@ export class MACDMarketTiming implements MarketTiming {
     this.assetName = assetName;
     this.id = id;
     this.status = status;
-    this.slowEma = new ExponentialMovingAverage({
+    this.slowEma = new EmaIndicator({
       numberOfPeriods: slowPeriod,
       periodLength: periodLength,
       source: source,
       preprocessing: preprocessing,
     });
-    this.fastEma = new ExponentialMovingAverage({
+    this.fastEma = new EmaIndicator({
       numberOfPeriods: fastPeriod,
       periodLength: periodLength,
       source: source,
       preprocessing: preprocessing,
     });
-    this.signalEma = new OnlineEma(signalPeriod);
+    this.signalEma = new ExponentialMovingAverage(signalPeriod);
   }
 
   record(instantQuotes: InstantQuotes): void {
@@ -90,7 +90,7 @@ export class MACDMarketTiming implements MarketTiming {
     this.fastEmaValue = this.fastEma.calculate(instant, quote);
     if (this.slowEmaValue) {
         this.macd = this.fastEmaValue - this.slowEmaValue;
-        this.signal = this.signalEma.emaOf(this.macd);
+        this.signal = this.signalEma.movingAverageOf(this.macd);
 
         switch(this.status) {
           case BearBull.BEAR:

@@ -2,7 +2,7 @@ import { Quote, InstantQuotes } from '../core/quotes'
 import { BearBull } from '../core/market-timing';
 import { MACDMarketTiming } from './market-timing.macd';
 import { PeriodLength } from '../core/period';
-import { MovingAverageSource, MovingAveragePreprocessing } from '../calculations/moving-calculator';
+import { ConfigurableSource, ConfigurablePreprocessing } from '../calculations/indicators/configurable-source';
 
 describe('MACDMarketTiming', () => {
   it('Can create a new instance', () => {
@@ -23,8 +23,8 @@ describe('MACDMarketTiming', () => {
     let macdFilter: MACDMarketTiming = new MACDMarketTiming({
       assetName: "SPY",
       id: "MACD",
-      source: MovingAverageSource.CLOSE,
-      preprocessing: MovingAveragePreprocessing.LAST,
+      source: ConfigurableSource.CLOSE,
+      preprocessing: ConfigurablePreprocessing.LAST,
       periodLength: PeriodLength.WEEKLY,
       slowPeriod: 26,
       fastPeriod: 12,
@@ -34,7 +34,7 @@ describe('MACDMarketTiming', () => {
 
     macdFilter.fastEma.setLastValue(282.78);
     macdFilter.slowEma.setLastValue(277.64);
-    macdFilter.signalEma.setLastValue(2.50);
+    macdFilter.signalEma.setPreviousAverage(2.50);
 
     macdFilter.record(new InstantQuotes({instant: new Date(2019, 4 - 1, 29), quotes: [new Quote({name: 'SPY', close: 293.87})]}));
     macdFilter.record(new InstantQuotes({instant: new Date(2019, 4 - 1, 30), quotes: [new Quote({name: 'SPY', close: 294.02})]}));

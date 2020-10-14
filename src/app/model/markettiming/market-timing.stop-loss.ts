@@ -1,7 +1,7 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
 import { Candlestick, InstantQuotes } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
-import { OnlineAverageTrueRange } from '../calculations/online-average-true-range';
+import { AtrIndicator } from '../calculations/indicators/atr-indicator';
 
 interface IStopLossMarketTiming {
   /** The name of the asset to watch.*/
@@ -13,11 +13,10 @@ interface IStopLossMarketTiming {
   /** The initial status.*/
   status?: BearBull;
 
-  /**
-   * The multiple of ATR that triggers the stop loss.
-   * Specify 3 if you want to stop your losses (or collect your gains )
-   * after a variation of three times the ATR.
-   */
+  /** The number of periods used to calculate the ATR. */
+  numberOfPeriods?: number;
+
+  /** The multiple of ATR that triggers the stop loss. */
   threshold?: number;
 }
 
@@ -32,25 +31,26 @@ export class StopLossMarketTiming implements MarketTiming {
   public threshold: number;
   public status: BearBull;
 
-  private averageTrueRange: OnlineAverageTrueRange;
+  private averageTrueRange: AtrIndicator;
 
+  private countDown: number;
   private atr: number;
   private l1: number
-
-  private annotations: string[] = [];
 
   constructor(obj = {} as IStopLossMarketTiming) {
     let {
       assetName,
       id = 'STOPLOSS',
       status = BearBull.BULL,
-      threshold = 2,
+      numberOfPeriods = 14,
+      threshold = 2
     } = obj;
     this.assetName = assetName;
     this.id = id;
     this.status = status;
     this.threshold = threshold;
-    this.averageTrueRange = new OnlineAverageTrueRange(14);
+    this.countDown = numberOfPeriods;
+    this.averageTrueRange = new AtrIndicator(numberOfPeriods);
   }
 
   record(instantQuotes: InstantQuotes): void {
@@ -61,13 +61,11 @@ export class StopLossMarketTiming implements MarketTiming {
     }
   }
 
-  recordQuote(instant: Date, candlestick: Candlestick) {
+  private recordQuote(instant: Date, candlestick: Candlestick) {
     // Updates the ATR:
-    this.atr = this.averageTrueRange.atr(candlestick);
+    this.atr = this.averageTrueRange.calculate(instant, candlestick);
 
-    let status: BearBull;
-
-    if (this.atr) {
+    if (this.atr && --this.countDown <= 0) {
       // Updates the L1:
       let l1: number = candlestick.close - this.threshold * this.atr;
       if (!this.l1) {
@@ -75,19 +73,13 @@ export class StopLossMarketTiming implements MarketTiming {
       } else {
         if (l1 > this.l1) {
           this.l1 = l1;
-          status = BearBull.BULL;
+          this.status = BearBull.BULL;
         }
         if (candlestick.close < this.l1) {
           this.l1 = candlestick.close;
-          status = BearBull.BEAR;
+          this.status = BearBull.BEAR;
         }
       }
-    }
-
-    // Annotates the status variation:
-    if (status && status != this.status) {
-      this.annotations.push(status);
-      this.status = status;
     }
   }
 
@@ -114,11 +106,5 @@ export class StopLossMarketTiming implements MarketTiming {
         y: this.l1
       }));
     }
-    this.annotations = this.annotations.filter(annotation =>{
-      report.receiveData(new ReportedData({
-        sourceName: this.id + "." + annotation
-      }))
-      return false;
-    });
   }
 }

@@ -1,16 +1,16 @@
-import { OnlineLinearRegression } from '../../calculations/online-linear-regression';
+import { LinearRegression } from '../../calculations/statistics/linear-regression';
 import { Record, BasePreprocessor, IBasePreprocessor } from './base-preprocessor';
 
 const MILLISECONDS_IN_A_YEAR: number = 1000 * 24 * 60 * 60 * 365;
 
 class RegressionRecord extends Record {
-  private onlineLinearRegression: OnlineLinearRegression;
+  private linearRegression: LinearRegression;
   private year0: number;
   private x: number;
 
   constructor(public endDate: Date) {
     super(endDate);
-    this.onlineLinearRegression = new OnlineLinearRegression();
+    this.linearRegression = new LinearRegression();
   }
 
   compute(instant: Date, y: number): void {
@@ -19,12 +19,12 @@ class RegressionRecord extends Record {
       this.year0 = year;
     }
     this.x = year - this.year0;
-    this.onlineLinearRegression.regression(this.x, y);
+    this.linearRegression.regression(this.x, y);
   }
 
   getValue(): number {
-    let a: number = this.onlineLinearRegression.getA();
-    let b: number = this.onlineLinearRegression.getB();
+    let a: number = this.linearRegression.getA();
+    let b: number = this.linearRegression.getB();
 
     return 100 * (a / b);
   }

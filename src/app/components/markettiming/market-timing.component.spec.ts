@@ -5,7 +5,6 @@ import { SuperthonMarketTiming } from 'src/app/model/markettiming/market-timing.
 import { PeriodLength } from 'src/app/model/core/period';
 import { EMAMarketTiming } from 'src/app/model/markettiming/market-timing.ema';
 import { MACDMarketTiming } from 'src/app/model/markettiming/market-timing.macd';
-import { MovingAverageSource, MovingAveragePreprocessing } from 'src/app/model/calculations/moving-calculator';
 import { EMAMarketTimingComponent } from './market-timing.ema.component';
 import { MarketTimingComponent } from './market-timing.component';
 import { SuperthonMarketTimingComponent } from './market-timing.superthon.component';
@@ -13,6 +12,9 @@ import { MACDMarketTimingComponent } from './market-timing.macd.component';
 import { MultipleMarketTiming } from 'src/app/model/markettiming/market-timing.multiple';
 import { StopLossMarketTiming } from 'src/app/model/markettiming/market-timing.stop-loss';
 import { StopLossMarketTimingComponent } from './market-timing.stop-loss.component';
+import { ConfigurableSource, ConfigurablePreprocessing } from 'src/app/model/calculations/indicators/configurable-source';
+import { RsiMarketTimingComponent } from './market-timing.rsi.component';
+import { RsiMarketTiming } from 'src/app/model/markettiming/market-timing.rsi';
 
 @Component({
   selector: 'parent',
@@ -35,7 +37,8 @@ describe('MarketTimingComponent', () => {
         EMAMarketTimingComponent,
         SuperthonMarketTimingComponent,
         MACDMarketTimingComponent,
-        StopLossMarketTimingComponent
+        StopLossMarketTimingComponent,
+        RsiMarketTimingComponent
       ]
     });
   }));
@@ -99,12 +102,12 @@ describe('MarketTimingComponent', () => {
       expect(emaFilter.bearBull()).toBe(BearBull.BEAR);
       expect(emaFilter.fastEMA.numberOfPeriods).toBe(7);
       expect(emaFilter.fastEMA.periodLength).toBe(PeriodLength.WEEKLY);
-      expect(emaFilter.fastEMA.source).toBe(MovingAverageSource.OPEN);
-      expect(emaFilter.fastEMA.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
+      expect(emaFilter.fastEMA.source).toBe(ConfigurableSource.OPEN);
+      expect(emaFilter.fastEMA.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
       expect(emaFilter.slowEMA.numberOfPeriods).toBe(14);
       expect(emaFilter.slowEMA.periodLength).toBe(PeriodLength.WEEKLY);
-      expect(emaFilter.slowEMA.source).toBe(MovingAverageSource.OPEN);
-      expect(emaFilter.slowEMA.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
+      expect(emaFilter.slowEMA.source).toBe(ConfigurableSource.OPEN);
+      expect(emaFilter.slowEMA.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
   });
 
   it('Can instantiate a MACD filter', () => {
@@ -135,13 +138,13 @@ describe('MarketTimingComponent', () => {
       expect(macdFilter.bearBull()).toBe(BearBull.BEAR);
       expect(macdFilter.fastEma.numberOfPeriods).toBe(9);
       expect(macdFilter.fastEma.periodLength).toBe(PeriodLength.SEMIMONTHLY);
-      expect(macdFilter.fastEma.source).toBe(MovingAverageSource.OPEN);
-      expect(macdFilter.fastEma.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
+      expect(macdFilter.fastEma.source).toBe(ConfigurableSource.OPEN);
+      expect(macdFilter.fastEma.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
 
       expect(macdFilter.slowEma.numberOfPeriods).toBe(14);
       expect(macdFilter.slowEma.periodLength).toBe(PeriodLength.SEMIMONTHLY);
-      expect(macdFilter.slowEma.source).toBe(MovingAverageSource.OPEN);
-      expect(macdFilter.slowEma.preprocessing).toBe(MovingAveragePreprocessing.MEDIAN);
+      expect(macdFilter.slowEma.source).toBe(ConfigurableSource.OPEN);
+      expect(macdFilter.slowEma.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
 
       expect(macdFilter.signalEma.numberOfPeriods).toBe(16);
   });
@@ -168,6 +171,42 @@ describe('MarketTimingComponent', () => {
       expect(stopLossFilter.id).toBe("XX");
       expect(stopLossFilter.threshold).toBe(4);
       expect(stopLossFilter.bearBull()).toBe(BearBull.BEAR);
+  });
+
+  it('Can instantiate a RSI Filter', () => {
+    TestBed.overrideComponent(TestWrapperComponent, {
+        set: {
+          template: `
+          <market-timing>
+            <rsi-filter
+                  assetName="ASS"
+                  id="RSIID"
+                  status="BEAR"
+                  source="OPEN"
+                  preprocessing="MEDIAN"
+                  periodLength="SEMIMONTHLY"
+                  numberOfPeriods="19"
+                  rsiAverage="CUTLER"
+                  upperThreshold="71"
+                  lowerThreshold="31"></rsi-filter>
+          </market-timing>`
+        }
+      }).compileComponents();
+      const fixture: ComponentFixture<TestWrapperComponent>
+        = TestBed.createComponent(TestWrapperComponent);
+      fixture.detectChanges();
+      component = fixture.componentInstance.marketTimingComponent;
+      let multipleMarketTiming = component.asMarketTiming() as MultipleMarketTiming;
+      let rsiMarketTiming = multipleMarketTiming.marketTimings[0] as RsiMarketTiming;
+      expect(rsiMarketTiming.assetName).toBe("ASS");
+      expect(rsiMarketTiming.id).toBe("RSIID");
+      expect(rsiMarketTiming.bearBull()).toBe(BearBull.BEAR);
+      expect(rsiMarketTiming.rsiIndicator.source).toBe(ConfigurableSource.OPEN);
+      expect(rsiMarketTiming.rsiIndicator.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
+      expect(rsiMarketTiming.rsiIndicator.periodLength).toBe(PeriodLength.SEMIMONTHLY);
+      expect(rsiMarketTiming.rsiIndicator.numberOfPeriods).toBe(19);
+      expect(rsiMarketTiming.upperThreshold).toBe(71);
+      expect(rsiMarketTiming.lowerThreshold).toBe(31);
   });
 
   it('Can instantiate multiple filters filter', () => {
