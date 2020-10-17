@@ -71,7 +71,7 @@ export class RsiMarketTimingComponent extends BaseMarketTimingComponent {
       preprocessing: this.preprocessing,
       periodLength: this.periodLength,
       numberOfPeriods: this.numberOfPeriods,
-      rsiAverage: RsiAverage.CUTLER,
+      rsiAverage: this.rsiAverage,
       upperThreshold: this.upperThreshold,
       lowerThreshold: this.lowerThreshold
     });
