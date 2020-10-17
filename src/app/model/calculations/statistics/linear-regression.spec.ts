@@ -26,5 +26,9 @@ describe("LinearRegression" , () => {
 
     expect(linearRegression.getA()).toBeCloseTo(6.260, 3);
     expect(linearRegression.getB()).toBeCloseTo(1.946, 3);
-  })
+
+    expect(linearRegression.getR()).toBeCloseTo(0.6938, 3);
+    expect(linearRegression.getR2()).toBeCloseTo(0.4814, 3);
+  });
+
 });
