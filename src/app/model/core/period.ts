@@ -1,4 +1,4 @@
-export enum PeriodLength {
+export enum Periodicity {
   YEARLY = 'YEARLY',
   MONTHLY = 'MONTHLY',
   SEMIMONTHLY = 'SEMIMONTHLY',
@@ -12,11 +12,49 @@ export enum PeriodLength {
  */
 export class Period {
   private static readonly MONDAY_1970: number = Date.UTC(1970, 0, 5);
-
+  private firstPeriodNumber: number;
   private lastPeriodNumber: number;
 
-  public constructor(private periodLength: PeriodLength) {}
+  /**
+   * Class constructor.
+   * @param {Periodicity} periodicity The length of the period.
+   */
+  public constructor(private periodicity: Periodicity) {}
 
+
+  /**
+   * Indicates whether the specified number of periods has passed since the
+   * first call to this method.
+   * @param {Date} instant Current instant.
+   * @param {number} numberOfPeriods The number of periods to wait.
+   * @return {boolean} <pre>true</pre> If the specified number of periods has
+   * passed.
+   */
+  public timeIsUp(instant: Date, numberOfPeriods: number): boolean {
+    // Obtain the period number:
+    let periodNumber: number = this.periodNumber(instant);
+    this.lastPeriodNumber = periodNumber;
+
+    if (this.firstPeriodNumber) {
+      if (periodNumber - this.firstPeriodNumber >= numberOfPeriods) {
+        return true;
+      }
+    } else {
+      this.firstPeriodNumber = periodNumber;
+    }
+    return false;
+  }
+
+  /**
+   * Detects when the provided instant in in a different period,
+   * considering the period length and the previously provided instant.
+   * When the period length is DAILY,
+   * @param {Date} instant The current instant. The method compares it
+   * with the previous instant.
+   * @return {boolean} If this instant belongs to a different period than
+   * the previous. The first call to the method always returns <pre>false</pre>
+   * because it is not possible to establish if there is a change of period.
+   */
   public changeOfPeriod(instant: Date): boolean {
 
     // Obtain the period number:
@@ -28,6 +66,7 @@ export class Period {
       periodChanged = periodNumber != this.lastPeriodNumber;
     } else {
       periodChanged = true;
+      this.firstPeriodNumber = periodNumber;
     }
 
     // Remember this period number:
@@ -37,26 +76,30 @@ export class Period {
     return periodChanged;
   }
 
+  /**
+   * For a given date, return the period number.
+   */
   private periodNumber(instant: Date): number {
-    switch(this.periodLength) {
-      case PeriodLength.DAILY:
+    switch(this.periodicity) {
+      case Periodicity.DAILY:
         return Math.floor(instant.valueOf() / 86400000);
 
-      case PeriodLength.WEEKLY:
+      case Periodicity.WEEKLY:
         return this.weekNumber(instant);
 
-      case PeriodLength.SEMIMONTHLY:
+      case Periodicity.SEMIMONTHLY:
         return this.semiMonthNumber(instant);
 
-      case PeriodLength.MONTHLY:
+      case Periodicity.MONTHLY:
         return this.monthNumber(instant);
 
-      case PeriodLength.YEARLY:
+      case Periodicity.YEARLY:
         return instant.getFullYear();
     }
   }
 
-  /* For a given date, get the ISO week number.
+  /*
+   * For a given date, return the ISO week number.
    * The week number can be described by counting the Thursdays: week 12
    * contains the 12th Thursday of the year.
    * https://en.wikipedia.org/wiki/ISO_8601#Week_dates
@@ -69,6 +112,9 @@ export class Period {
     return Math.floor(numberOfWeeks);
   }
 
+  /*
+   * For a given date, return the number of semi-month since year 0.
+   */
   private semiMonthNumber(instant: Date): number {
     let semiMonthNumber = instant.getMonth() * 2;
     if (instant.getDate() >= 15) {
@@ -78,6 +124,9 @@ export class Period {
     return semiMonthNumber;
   }
 
+  /*
+   * For a given date, return the number of months since year 0.
+   */
   private monthNumber(instant: Date): number {
     let monthNumber = instant.getMonth();
     monthNumber += instant.getFullYear() * 12;

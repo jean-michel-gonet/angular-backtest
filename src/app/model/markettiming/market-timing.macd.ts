@@ -1,7 +1,7 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
 import { Quote, InstantQuotes } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
-import { PeriodLength } from '../core/period';
+import { Periodicity } from '../core/period';
 import { ExponentialMovingAverage } from '../calculations/moving-average/exponential-moving-average';
 import { ConfigurableSource, ConfigurablePreprocessing } from '../calculations/indicators/configurable-source';
 import { EmaIndicator } from '../calculations/indicators/ema-indicator';
@@ -9,7 +9,7 @@ import { EmaIndicator } from '../calculations/indicators/ema-indicator';
 class IMACDMarketTiming {
   assetName: string;
   id?: string;
-  periodLength?: PeriodLength;
+  periodicity?: Periodicity;
   source?: ConfigurableSource;
   preprocessing?: ConfigurablePreprocessing;
 
@@ -53,7 +53,7 @@ export class MACDMarketTiming implements MarketTiming {
       id = "MACD",
       source = ConfigurableSource.CLOSE,
       preprocessing = ConfigurablePreprocessing.LAST,
-      periodLength = PeriodLength.MONTHLY,
+      periodicity = Periodicity.MONTHLY,
       fastPeriod = 12,
       slowPeriod = 26,
       signalPeriod = 9,
@@ -64,13 +64,13 @@ export class MACDMarketTiming implements MarketTiming {
     this.status = status;
     this.slowEma = new EmaIndicator({
       numberOfPeriods: slowPeriod,
-      periodLength: periodLength,
+      periodicity: periodicity,
       source: source,
       preprocessing: preprocessing,
     });
     this.fastEma = new EmaIndicator({
       numberOfPeriods: fastPeriod,
-      periodLength: periodLength,
+      periodicity: periodicity,
       source: source,
       preprocessing: preprocessing,
     });

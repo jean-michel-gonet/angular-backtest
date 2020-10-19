@@ -1,13 +1,13 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
 import { Report, ReportedData } from '../core/reporting';
 import { Candlestick, CandlestickType, InstantQuotes } from '../core/quotes';
-import { PeriodLength, Period } from '../core/period';
+import { Periodicity, Period } from '../core/period';
 
 class ISuperthonMarketTiming {
   assetName: string;
   id?: string;
   periods?: number;
-  periodLength?: PeriodLength;
+  periodicity?: Periodicity;
   threshold?: number;
   status?: BearBull;
 }
@@ -21,7 +21,7 @@ export class SuperthonMarketTiming implements MarketTiming {
   assetName: string;
   id: string;
   periods: number;
-  periodLength: PeriodLength;
+  periodicity: Periodicity;
   threshold: number;
   private period?: Period;
   private candles: Candlestick[] = [];
@@ -35,20 +35,20 @@ export class SuperthonMarketTiming implements MarketTiming {
       assetName,
       id = "SPT",
       periods = 12,
-      periodLength = PeriodLength.MONTHLY,
+      periodicity = Periodicity.MONTHLY,
       threshold = 1,
       status = BearBull.BULL
     } = obj;
     this.assetName = assetName;
     this.id = id;
     this.periods = periods;
-    this.periodLength = periodLength;
+    this.periodicity = periodicity;
     this.threshold = threshold;
-    this.period = new Period(periodLength);
+    this.period = new Period(periodicity);
     this.status = status;
     console.log("Superthon id=" + this.id +
                 " periods=" + this.periods +
-                " periodLength=" + this.periodLength +
+                " periodicity=" + this.periodicity +
                 " threshold=" + this.threshold +
                 " status=" + this.status);
   }

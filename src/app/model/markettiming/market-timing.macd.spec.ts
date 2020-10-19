@@ -1,7 +1,7 @@
 import { Quote, InstantQuotes } from '../core/quotes'
 import { BearBull } from '../core/market-timing';
 import { MACDMarketTiming } from './market-timing.macd';
-import { PeriodLength } from '../core/period';
+import { Periodicity } from '../core/period';
 import { ConfigurableSource, ConfigurablePreprocessing } from '../calculations/indicators/configurable-source';
 
 describe('MACDMarketTiming', () => {
@@ -25,7 +25,7 @@ describe('MACDMarketTiming', () => {
       id: "MACD",
       source: ConfigurableSource.CLOSE,
       preprocessing: ConfigurablePreprocessing.LAST,
-      periodLength: PeriodLength.WEEKLY,
+      periodicity: Periodicity.WEEKLY,
       slowPeriod: 26,
       fastPeriod: 12,
       signalPeriod: 9,

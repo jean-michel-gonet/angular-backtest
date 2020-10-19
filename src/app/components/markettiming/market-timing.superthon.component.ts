@@ -25,7 +25,7 @@ export class SuperthonMarketTimingComponent extends BaseMarketTimingComponent {
       assetName: this.assetName,
       id: this.id,
       periods: this.periods,
-      periodLength: this.periodLength,
+      periodicity: this.periodicity,
       threshold: this.threshold,
       status: this.status
     });

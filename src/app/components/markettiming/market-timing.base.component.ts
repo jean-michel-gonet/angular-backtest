@@ -1,5 +1,5 @@
 import { Input } from "@angular/core";
-import { PeriodLength } from 'src/app/model/core/period';
+import { Periodicity } from 'src/app/model/core/period';
 import { BearBull } from 'src/app/model/core/market-timing';
 import { ConfigurableSource, ConfigurablePreprocessing } from 'src/app/model/calculations/indicators/configurable-source';
 
@@ -36,17 +36,17 @@ export class BaseMarketTimingComponent {
     return this._preprocessing;
   }
 
-  protected _periodLength: PeriodLength;
+  protected _periodicity: Periodicity;
   @Input()
-  set periodLength(value: PeriodLength) {
+  set periodicity(value: Periodicity) {
     if (typeof value == 'string') {
-      this._periodLength = PeriodLength[value];
+      this._periodicity = Periodicity[value];
     } else {
-      this._periodLength = value;
+      this._periodicity = value;
     }
   }
-  get periodLength() {
-    return this._periodLength;
+  get periodicity() {
+    return this._periodicity;
   }
 
   protected _status: BearBull;

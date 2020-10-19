@@ -1,14 +1,16 @@
 import { ConfigurableSourceIndicator } from './configurable-source-indicator';
 import { ConfigurableSource, ConfigurablePreprocessing } from './configurable-source';
-import { PeriodLength } from '../../core/period';
+import { Periodicity } from '../../core/period';
 import { Quote } from '../../core/quotes';
 
 /**
  * Mock moving average calculator that does nothing much.
  */
 class TestMovingCalculator extends ConfigurableSourceIndicator {
+  public instant: Date;
   public value: number;
-  protected compute(value: number): number {
+  protected compute(instant: Date, value: number): number {
+    this.instant = instant;
     this.value = value;
     return value;
   }
@@ -20,7 +22,7 @@ describe('ConfigurableSourceIndicator', () => {
 
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
-      periodLength: PeriodLength.WEEKLY,
+      periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.CLOSE,
       preprocessing: ConfigurablePreprocessing.LAST
     });
@@ -39,7 +41,7 @@ describe('ConfigurableSourceIndicator', () => {
 
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
-      periodLength: PeriodLength.WEEKLY,
+      periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.OPEN,
       preprocessing: ConfigurablePreprocessing.LAST
     });
@@ -58,7 +60,7 @@ describe('ConfigurableSourceIndicator', () => {
 
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
-      periodLength: PeriodLength.WEEKLY,
+      periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.HIGH,
       preprocessing: ConfigurablePreprocessing.LAST
     });
@@ -77,7 +79,7 @@ describe('ConfigurableSourceIndicator', () => {
 
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
-      periodLength: PeriodLength.WEEKLY,
+      periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.LOW,
       preprocessing: ConfigurablePreprocessing.LAST
     });
@@ -97,7 +99,7 @@ describe('ConfigurableSourceIndicator', () => {
 
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
-      periodLength: PeriodLength.WEEKLY,
+      periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.MID,
       preprocessing: ConfigurablePreprocessing.LAST
     });
@@ -116,7 +118,7 @@ describe('ConfigurableSourceIndicator', () => {
 
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
-      periodLength: PeriodLength.WEEKLY,
+      periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.CLOSE,
       preprocessing: ConfigurablePreprocessing.FIRST
     });
@@ -137,7 +139,7 @@ describe('ConfigurableSourceIndicator', () => {
 
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
-      periodLength: PeriodLength.WEEKLY,
+      periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.CLOSE,
       preprocessing: ConfigurablePreprocessing.TYPICAL
     });
@@ -156,7 +158,7 @@ describe('ConfigurableSourceIndicator', () => {
 
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
-      periodLength: PeriodLength.WEEKLY,
+      periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.CLOSE,
       preprocessing: ConfigurablePreprocessing.MEDIAN
     });
@@ -175,7 +177,7 @@ describe('ConfigurableSourceIndicator', () => {
 
     let ema = new TestMovingCalculator({
       numberOfPeriods:5,
-      periodLength: PeriodLength.WEEKLY,
+      periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.CLOSE,
       preprocessing: ConfigurablePreprocessing.MEDIAN
     });

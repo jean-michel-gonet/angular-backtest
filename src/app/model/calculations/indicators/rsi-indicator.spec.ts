@@ -1,6 +1,6 @@
 import { RsiIndicator, RsiAverage } from "./rsi-indicator";
 import { ConfigurablePreprocessing, ConfigurableSource } from './configurable-source';
-import { PeriodLength } from '../../core/period';
+import { Periodicity } from '../../core/period';
 import { Candlestick } from '../../core/quotes';
 
 describe("RsiIndicator" , () => {
@@ -8,7 +8,7 @@ describe("RsiIndicator" , () => {
   it("Can calculate the Wilder RSI", () => {
 
     let rsiIndicator: RsiIndicator = new RsiIndicator({
-      periodLength: PeriodLength.DAILY,
+      periodicity: Periodicity.DAILY,
       numberOfPeriods: 14,
       preprocessing: ConfigurablePreprocessing.LAST,
       source: ConfigurableSource.CLOSE,
@@ -48,7 +48,7 @@ describe("RsiIndicator" , () => {
   it("Can calculate the Cutler RSI", () => {
 
     let rsiIndicator: RsiIndicator = new RsiIndicator({
-      periodLength: PeriodLength.DAILY,
+      periodicity: Periodicity.DAILY,
       numberOfPeriods: 14,
       preprocessing: ConfigurablePreprocessing.LAST,
       source: ConfigurableSource.CLOSE,
@@ -78,7 +78,7 @@ describe("RsiIndicator" , () => {
   it("Can calculate the EMA RSI", () => {
 
     let rsiIndicator: RsiIndicator = new RsiIndicator({
-      periodLength: PeriodLength.DAILY,
+      periodicity: Periodicity.DAILY,
       numberOfPeriods: 14,
       preprocessing: ConfigurablePreprocessing.LAST,
       source: ConfigurableSource.CLOSE,

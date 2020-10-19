@@ -1,5 +1,5 @@
 import { Indicator } from './indicator';
-import { PeriodLength, Period } from '../../core/period';
+import { Periodicity, Period } from '../../core/period';
 import { Candlestick } from '../../core/quotes';
 import { ConfigurableSource, ConfigurablePreprocessing, IndicatorConfiguration } from './configurable-source';
 
@@ -10,7 +10,7 @@ import { ConfigurableSource, ConfigurablePreprocessing, IndicatorConfiguration }
  */
 export abstract class ConfigurableSourceIndicator implements Indicator {
   public numberOfPeriods: number;
-  public periodLength: PeriodLength;
+  public periodicity: Periodicity;
   public source: ConfigurableSource;
   public preprocessing: ConfigurablePreprocessing;
   protected period: Period;
@@ -20,17 +20,17 @@ export abstract class ConfigurableSourceIndicator implements Indicator {
   constructor(obj = {} as IndicatorConfiguration) {
     let {
       numberOfPeriods,
-      periodLength,
+      periodicity,
       source = ConfigurableSource.CLOSE,
       preprocessing = ConfigurablePreprocessing.LAST
     } = obj;
 
     this.numberOfPeriods = numberOfPeriods;
-    this.periodLength = periodLength;
+    this.periodicity = periodicity;
     this.source = source;
     this.preprocessing = preprocessing;
 
-    this.period = new Period(periodLength);
+    this.period = new Period(periodicity);
   }
 
   /**
@@ -45,14 +45,14 @@ export abstract class ConfigurableSourceIndicator implements Indicator {
     let result: number;
 
     if (this.period.changeOfPeriod(instant)) {
-      if (this.periodLength == PeriodLength.DAILY) {
+      if (this.periodicity == Periodicity.DAILY) {
         let sourceValue = this.extractSourceValue(candlestick);
         let preprocessedValue = this.preprocess([sourceValue]);
-        result = this.compute(preprocessedValue);
+        result = this.compute(instant, preprocessedValue);
       } else {
         if (this.sourceValues) {
           let preprocessedValue = this.preprocess(this.sourceValues);
-          result = this.compute(preprocessedValue);
+          result = this.compute(instant, preprocessedValue);
         }
       }
       this.sourceValues = [];
@@ -133,8 +133,9 @@ export abstract class ConfigurableSourceIndicator implements Indicator {
 
   /**
    * Extend this method to implement the corresponding calculation.
-   * @param {number}  value The value to perform the calculation on.
+   * @param {Date}  instant The instant,
+   * @param {number}  value And the value to perform the calculation on.
    * @return {number} The result of the calculation.
    */
-  protected abstract compute(value: number): number;
+  protected abstract compute(instant: Date, value: number): number;
 }

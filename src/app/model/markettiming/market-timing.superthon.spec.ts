@@ -1,13 +1,13 @@
 import { SuperthonMarketTiming } from "./market-timing.superthon";
 import { Candlestick, InstantQuotes, Quote } from '../core/quotes'
 import { BearBull } from '../core/market-timing';
-import { PeriodLength } from '../core/period';
+import { Periodicity } from '../core/period';
 
 describe('SuperthonMarketTiming', () => {
   it('Can create a new instance', () => {
     expect(new SuperthonMarketTiming({
       assetName: "ANY",
-      periodLength: PeriodLength.MONTHLY,
+      periodicity: Periodicity.MONTHLY,
       periods: 12
     })).toBeTruthy();
   });
@@ -15,7 +15,7 @@ describe('SuperthonMarketTiming', () => {
   let makeSuperthon = function(start: Date, values:Candlestick[]): SuperthonMarketTiming {
     let superthon: SuperthonMarketTiming = new SuperthonMarketTiming({
       assetName: "ANY",
-      periodLength: PeriodLength.MONTHLY,
+      periodicity: Periodicity.MONTHLY,
       periods: 12
     });
     for (let n: number = 0; n < values.length; n++){
@@ -78,7 +78,7 @@ describe('SuperthonMarketTiming', () => {
   it('Can follow a real case <<loscanalesdesuperthon>> Jun 2017', () => {
     let superthon: SuperthonMarketTiming = new SuperthonMarketTiming({
       assetName: "ANY",
-      periodLength: PeriodLength.MONTHLY,
+      periodicity: Periodicity.MONTHLY,
       periods: 12,
       threshold: 1,
       status: BearBull.BEAR
@@ -104,7 +104,7 @@ describe('SuperthonMarketTiming', () => {
   it('Can use a threshold value different that 1', () => {
     let superthon: SuperthonMarketTiming = new SuperthonMarketTiming({
       assetName: "ANY",
-      periodLength: PeriodLength.MONTHLY,
+      periodicity: Periodicity.MONTHLY,
       periods: 12,
       threshold: 4,
       status: BearBull.BEAR
@@ -180,7 +180,7 @@ describe('SuperthonMarketTiming', () => {
   it('Can follow daily updates', () => {
     let superthon: SuperthonMarketTiming = new SuperthonMarketTiming({
       assetName: "ANY",
-      periodLength: PeriodLength.MONTHLY,
+      periodicity: Periodicity.MONTHLY,
       periods: 12
     });
     // ([0-9]+)-([0-9]+)-([0-9]+)\,([0-9.]+)\,[0-9.]+\,[0-9.]+\,([0-9.]+)\,[0-9.]+\,[0-9.]+

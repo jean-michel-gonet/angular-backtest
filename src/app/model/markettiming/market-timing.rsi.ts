@@ -1,7 +1,7 @@
 import { MarketTiming, BearBull } from '../core/market-timing';
 import { Quote, InstantQuotes } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
-import { PeriodLength } from '../core/period';
+import { Periodicity } from '../core/period';
 import { ConfigurableSource, ConfigurablePreprocessing } from '../calculations/indicators/configurable-source';
 import { RsiIndicator, RsiAverage } from '../calculations/indicators/rsi-indicator';
 
@@ -11,7 +11,7 @@ export class IRsiMarketTiming {
   status?: BearBull;
   source?: ConfigurableSource;
   preprocessing?: ConfigurablePreprocessing;
-  periodLength?: PeriodLength;
+  periodicity?: Periodicity;
   numberOfPeriods?: number;
 
   rsiAverage?: RsiAverage;
@@ -48,7 +48,7 @@ export class RsiMarketTiming implements MarketTiming {
       status = BearBull.BEAR,
       source = ConfigurableSource.CLOSE,
       preprocessing = ConfigurablePreprocessing.LAST,
-      periodLength = PeriodLength.DAILY,
+      periodicity = Periodicity.DAILY,
       numberOfPeriods = 14,
       rsiAverage = RsiAverage.WILDER,
       upperThreshold = 70,
@@ -63,7 +63,7 @@ export class RsiMarketTiming implements MarketTiming {
 
     this.rsiIndicator = new RsiIndicator({
       numberOfPeriods: numberOfPeriods,
-      periodLength: periodLength,
+      periodicity: periodicity,
       preprocessing: preprocessing,
       source: source,
       rsiAverage: rsiAverage});
