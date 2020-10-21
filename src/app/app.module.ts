@@ -27,6 +27,8 @@ import { EMAMarketTimingComponent } from './components/markettiming/market-timin
 import { SuperthonMarketTimingComponent } from './components/markettiming/market-timing.superthon.component';
 import { MACDMarketTimingComponent } from './components/markettiming/market-timing.macd.component';
 import { StopLossMarketTimingComponent } from './components/markettiming/market-timing.stop-loss.component';
+import { RsiMarketTimingComponent } from './components/markettiming/market-timing.rsi.component';
+import { MomentumMarketTiming } from './model/markettiming/market-timing.momentum';
 import { MarketTimingComponent } from './components/markettiming/market-timing.component';
 
 import { SimulationComponent } from './components/simulation/simulation.component';
@@ -47,7 +49,6 @@ import { OptimizationSuperthonPage } from './pages/optimization/optimization-sup
 import 'hammerjs';
 import 'chartjs-plugin-zoom';
 import 'chartjs-plugin-annotation';
-import { RsiMarketTimingComponent } from './components/markettiming/market-timing.rsi.component';
 
 @NgModule({
   declarations: [
@@ -73,6 +74,7 @@ import { RsiMarketTimingComponent } from './components/markettiming/market-timin
     MACDMarketTimingComponent,
     StopLossMarketTimingComponent,
     RsiMarketTimingComponent,
+    MomentumMarketTiming,
     MarketTimingComponent,
 
     SwissQuoteAccountComponent,

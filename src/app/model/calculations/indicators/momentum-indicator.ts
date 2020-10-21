@@ -27,13 +27,12 @@ class Record {
   public getR2(): number {
     return this.exponential.getR2();
   }
-  public getProcessedValue(): number {
-    return this.exponential.getCAGR() * this.exponential.getR2();
-  }
 }
 
 export class MomentumIndicator extends ConfigurableSourceIndicator {
   private records: Record[];
+  public cagr: number;
+  public r2: number;
 
   constructor(configuration = {} as IndicatorConfiguration) {
     super(configuration);
@@ -43,17 +42,19 @@ export class MomentumIndicator extends ConfigurableSourceIndicator {
   compute(instant: Date, value: number): number {
     this.records.push(new Record(this.periodicity, this.numberOfPeriods));
 
-    let processedValue: number;
+    let result: number;
 
     this.records = this.records.filter(r => {
       r.compute(instant, value);
       if (r.isFinished(instant)) {
-        processedValue = r.getProcessedValue();
+        this.r2 = r.getR2();
+        this.cagr = r.getCAGR();
+        result = this.cagr * this.r2;
         return false;
       }
       return true;
     });
 
-    return processedValue;
+    return result;
   }
 }

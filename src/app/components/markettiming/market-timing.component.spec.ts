@@ -15,6 +15,8 @@ import { StopLossMarketTimingComponent } from './market-timing.stop-loss.compone
 import { ConfigurableSource, ConfigurablePreprocessing } from 'src/app/model/calculations/indicators/configurable-source';
 import { RsiMarketTimingComponent } from './market-timing.rsi.component';
 import { RsiMarketTiming } from 'src/app/model/markettiming/market-timing.rsi';
+import { MomentumMarketTimingComponent } from './market-timing.momentum.component';
+import { MomentumMarketTiming } from 'src/app/model/markettiming/market-timing.momentum';
 
 @Component({
   selector: 'parent',
@@ -38,7 +40,8 @@ describe('MarketTimingComponent', () => {
         SuperthonMarketTimingComponent,
         MACDMarketTimingComponent,
         StopLossMarketTimingComponent,
-        RsiMarketTimingComponent
+        RsiMarketTimingComponent,
+        MomentumMarketTimingComponent
       ]
     });
   }));
@@ -207,6 +210,41 @@ describe('MarketTimingComponent', () => {
       expect(rsiMarketTiming.rsiIndicator.numberOfPeriods).toBe(19);
       expect(rsiMarketTiming.upperThreshold).toBe(71);
       expect(rsiMarketTiming.lowerThreshold).toBe(31);
+  });
+
+  it('Can instantiate a Momentum Filter', () => {
+    TestBed.overrideComponent(TestWrapperComponent, {
+        set: {
+          template: `
+          <market-timing>
+            <momentum-filter
+                  assetName="ASS"
+                  id="MOID"
+                  status="BEAR"
+                  source="OPEN"
+                  preprocessing="MEDIAN"
+                  periodicity="SEMIMONTHLY"
+                  numberOfPeriods="19"
+                  upperThreshold="71"
+                  lowerThreshold="31"></momentum-filter>
+          </market-timing>`
+        }
+      }).compileComponents();
+      const fixture: ComponentFixture<TestWrapperComponent>
+        = TestBed.createComponent(TestWrapperComponent);
+      fixture.detectChanges();
+      component = fixture.componentInstance.marketTimingComponent;
+      let multipleMarketTiming = component.asMarketTiming() as MultipleMarketTiming;
+      let momentumMarketTiming = multipleMarketTiming.marketTimings[0] as MomentumMarketTiming;
+      expect(momentumMarketTiming.assetName).toBe("ASS");
+      expect(momentumMarketTiming.id).toBe("MOID");
+      expect(momentumMarketTiming.bearBull()).toBe(BearBull.BEAR);
+      expect(momentumMarketTiming.momentumIndicator.source).toBe(ConfigurableSource.OPEN);
+      expect(momentumMarketTiming.momentumIndicator.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
+      expect(momentumMarketTiming.momentumIndicator.periodicity).toBe(Periodicity.SEMIMONTHLY);
+      expect(momentumMarketTiming.momentumIndicator.numberOfPeriods).toBe(19);
+      expect(momentumMarketTiming.upperThreshold).toBe(71);
+      expect(momentumMarketTiming.lowerThreshold).toBe(31);
   });
 
   it('Can instantiate multiple filters filter', () => {
