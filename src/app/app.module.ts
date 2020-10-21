@@ -28,7 +28,7 @@ import { SuperthonMarketTimingComponent } from './components/markettiming/market
 import { MACDMarketTimingComponent } from './components/markettiming/market-timing.macd.component';
 import { StopLossMarketTimingComponent } from './components/markettiming/market-timing.stop-loss.component';
 import { RsiMarketTimingComponent } from './components/markettiming/market-timing.rsi.component';
-import { MomentumMarketTiming } from './model/markettiming/market-timing.momentum';
+import { MomentumMarketTimingComponent } from './components/markettiming/market-timing.momentum.component';
 import { MarketTimingComponent } from './components/markettiming/market-timing.component';
 
 import { SimulationComponent } from './components/simulation/simulation.component';
@@ -74,7 +74,7 @@ import 'chartjs-plugin-annotation';
     MACDMarketTimingComponent,
     StopLossMarketTimingComponent,
     RsiMarketTimingComponent,
-    MomentumMarketTiming,
+    MomentumMarketTimingComponent,
     MarketTimingComponent,
 
     SwissQuoteAccountComponent,
