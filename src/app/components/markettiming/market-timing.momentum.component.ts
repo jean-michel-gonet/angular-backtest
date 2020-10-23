@@ -25,7 +25,7 @@ export class MomentumMarketTimingComponent extends BaseMarketTimingComponent {
   @Input()
   set upperThreshold(value: number) {
     if (typeof value == 'string') {
-      this._upperThreshold = parseInt(value);
+      this._upperThreshold = parseFloat(value);
     } else {
       this._upperThreshold = value;
     }
@@ -38,7 +38,7 @@ export class MomentumMarketTimingComponent extends BaseMarketTimingComponent {
   @Input()
   set lowerThreshold(value: number) {
     if (typeof value == 'string') {
-      this._lowerThreshold = parseInt(value);
+      this._lowerThreshold = parseFloat(value);
     } else {
       this._lowerThreshold = value;
     }

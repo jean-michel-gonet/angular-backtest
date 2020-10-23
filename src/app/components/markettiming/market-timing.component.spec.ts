@@ -160,6 +160,7 @@ describe('MarketTimingComponent', () => {
             <stop-loss assetName="SANY"
                        id="XX"
                        status="BEAR"
+                       numberOfPeriods="17"
                        threshold="4"></stop-loss>
           </market-timing>`
         }
@@ -172,7 +173,8 @@ describe('MarketTimingComponent', () => {
       let stopLossFilter = multipleMarketTiming.marketTimings[0] as StopLossMarketTiming;
       expect(stopLossFilter.assetName).toBe("SANY");
       expect(stopLossFilter.id).toBe("XX");
-      expect(stopLossFilter.threshold).toBe(4);
+      expect(stopLossFilter.atrIndicator.threshold).toBe(4);
+      expect(stopLossFilter.atrIndicator.numberOfPeriods).toBe(17);
       expect(stopLossFilter.bearBull()).toBe(BearBull.BEAR);
   });
 
@@ -225,8 +227,8 @@ describe('MarketTimingComponent', () => {
                   preprocessing="MEDIAN"
                   periodicity="SEMIMONTHLY"
                   numberOfPeriods="19"
-                  upperThreshold="71"
-                  lowerThreshold="31"></momentum-filter>
+                  upperThreshold="0.056"
+                  lowerThreshold="0.045"></momentum-filter>
           </market-timing>`
         }
       }).compileComponents();
@@ -243,8 +245,8 @@ describe('MarketTimingComponent', () => {
       expect(momentumMarketTiming.momentumIndicator.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
       expect(momentumMarketTiming.momentumIndicator.periodicity).toBe(Periodicity.SEMIMONTHLY);
       expect(momentumMarketTiming.momentumIndicator.numberOfPeriods).toBe(19);
-      expect(momentumMarketTiming.upperThreshold).toBe(71);
-      expect(momentumMarketTiming.lowerThreshold).toBe(31);
+      expect(momentumMarketTiming.upperThreshold).toBe(0.056);
+      expect(momentumMarketTiming.lowerThreshold).toBe(0.045);
   });
 
   it('Can instantiate multiple filters filter', () => {

@@ -1,104 +1,108 @@
-import { TrueRange, AtrIndicator } from "./atr-indicator";
 import { Candlestick } from '../../core/quotes';
+import { AtrIndicator } from './atr-indicator';
 
 /**
  * Examples from https://school.stockcharts.com/doku.php?id=technical_indicators:average_true_range_atr
  */
-describe("TrueRange", () => {
-  it("Can create a new instance", () => {
-    let trueRange = new TrueRange();
-    expect(trueRange).toBeTruthy();
-  });
-
-  it("Can detect TR of the first sample", () => {
-    let trueRange = new TrueRange();
-    let tr: number = trueRange.trueRange(new Candlestick({high: 48.70, low: 47.79, close: 48.16}));
-    expect(tr).toBeCloseTo(0.91, 2);
-  });
-
-  it("Can detect TR of the second sample", () => {
-    let trueRange = new TrueRange();
-    trueRange.trueRange(new Candlestick({high: 48.70, low: 47.79, close: 48.16}));
-    let tr: number = trueRange.trueRange(new Candlestick({high: 48.72, low: 48.14, close: 48.61}));
-    expect(tr).toBeCloseTo(0.58, 2);
-  });
-
-  it("Can detect TR in different cases", () => {
-    let trueRange = new TrueRange();
-    let tr: number;
-    tr = trueRange.trueRange(new Candlestick({high: 49.05, low: 48.64, close: 49.03}));
-
-    tr = trueRange.trueRange(new Candlestick({high: 49.20, low: 48.94, close: 49.07}));
-    expect(tr).toBeCloseTo(0.26, 2);
-    tr = trueRange.trueRange(new Candlestick({high: 49.35, low: 48.86, close: 49.32}));
-    expect(tr).toBeCloseTo(0.49, 2);
-    tr = trueRange.trueRange(new Candlestick({high: 49.92, low: 49.50, close: 49.91}));
-    expect(tr).toBeCloseTo(0.60, 2);
-    tr = trueRange.trueRange(new Candlestick({high: 50.19, low: 49.87, close: 50.13}));
-    expect(tr).toBeCloseTo(0.32, 2);
-    tr = trueRange.trueRange(new Candlestick({high: 50.12, low: 49.20, close: 49.53}));
-    expect(tr).toBeCloseTo(0.93, 2);
-  });
-});
-
 describe("AtrIndicator", () => {
   it("Can create a new instance", () => {
-    let atrIndicator: AtrIndicator = new AtrIndicator(10);
+    let atrIndicator: AtrIndicator = new AtrIndicator(10, 3);
     expect(atrIndicator).toBeTruthy();
   });
 
   it("Can calculate the ATR using Simple Moving Average over 14 periods", () => {
-    let atrIndicator: AtrIndicator = new AtrIndicator(14);
+    let atrIndicator: AtrIndicator = new AtrIndicator(14, 1.5);
 
-    atrIndicator.calculate(null, new Candlestick({high: 48.70, low: 47.79, close: 48.16}));
-    atrIndicator.calculate(null, new Candlestick({high: 48.72, low: 48.14, close: 48.61}));
-    atrIndicator.calculate(null, new Candlestick({high: 48.90, low: 48.39, close: 48.75}));
-    atrIndicator.calculate(null, new Candlestick({high: 48.87, low: 48.37, close: 48.63}));
-    atrIndicator.calculate(null, new Candlestick({high: 48.82, low: 48.24, close: 48.74}));
-    atrIndicator.calculate(null, new Candlestick({high: 49.05, low: 48.64, close: 49.03}));
-    atrIndicator.calculate(null, new Candlestick({high: 49.20, low: 48.94, close: 49.07}));
-    atrIndicator.calculate(null, new Candlestick({high: 49.35, low: 48.86, close: 49.32}));
-    atrIndicator.calculate(null, new Candlestick({high: 49.92, low: 49.50, close: 49.91}));
-    atrIndicator.calculate(null, new Candlestick({high: 50.19, low: 49.87, close: 50.13}));
-    atrIndicator.calculate(null, new Candlestick({high: 50.12, low: 49.20, close: 49.53}));
-    atrIndicator.calculate(null, new Candlestick({high: 49.66, low: 48.90, close: 49.50}));
-    atrIndicator.calculate(null, new Candlestick({high: 49.88, low: 49.43, close: 49.75}));
+    expect(atrIndicator.calculate(null, new Candlestick({low: 13, high: 14, close: 14}))).toBeFalsy();
+    expect(atrIndicator.calculate(null, new Candlestick({close:  2}))).toBeFalsy();
+    expect(atrIndicator.calculate(null, new Candlestick({close:  6}))).toBeFalsy();
+    expect(atrIndicator.calculate(null, new Candlestick({close: 11}))).toBeFalsy();
+    expect(atrIndicator.calculate(null, new Candlestick({close: 16}))).toBeFalsy();
+    expect(atrIndicator.calculate(null, new Candlestick({close: 24}))).toBeFalsy();
+    expect(atrIndicator.calculate(null, new Candlestick({close: 22}))).toBeFalsy();
+    expect(atrIndicator.calculate(null, new Candlestick({close: 34}))).toBeFalsy();
+    expect(atrIndicator.calculate(null, new Candlestick({close: 26}))).toBeFalsy();
+    expect(atrIndicator.calculate(null, new Candlestick({close: 32}))).toBeFalsy();
+    expect(atrIndicator.calculate(null, new Candlestick({close: 30}))).toBeFalsy();
+    expect(atrIndicator.calculate(null, new Candlestick({close: 45}))).toBeFalsy();
+    expect(atrIndicator.calculate(null, new Candlestick({close: 43}))).toBeFalsy();
 
-    let atr: number;
+    expect(atrIndicator.calculate(null, new Candlestick({close: 36}))).toBeCloseTo(26.46);
+    expect(atrIndicator.downsInARow).toBe(0);
+    expect(atrIndicator.upsInARow).toBe(0);
 
-    atr = atrIndicator.calculate(null, new Candlestick({high: 50.19, low: 49.73, close: 50.03}));
-    expect(atr).toBeCloseTo(0.555, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 50.36, low: 49.26, close: 50.31}));
-    expect(atr).toBeCloseTo(0.594, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 50.57, low: 50.09, close: 50.52}));
-    expect(atr).toBeCloseTo(0.586, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 50.65, low: 50.30, close: 50.41}));
-    expect(atr).toBeCloseTo(0.569, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 50.43, low: 49.21, close: 49.34}));
-    expect(atr).toBeCloseTo(0.615, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 49.63, low: 48.98, close: 49.37}));
-    expect(atr).toBeCloseTo(0.618, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 50.33, low: 49.61, close: 50.23}));
-    expect(atr).toBeCloseTo(0.642, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 50.29, low: 49.20, close: 49.24}));
-    expect(atr).toBeCloseTo(0.674, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 50.17, low: 49.43, close: 49.93}));
-    expect(atr).toBeCloseTo(0.693, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 49.32, low: 48.08, close: 48.43}));
-    expect(atr).toBeCloseTo(0.775, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 48.50, low: 47.64, close: 48.18}));
-    expect(atr).toBeCloseTo(0.781, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 48.32, low: 41.55, close: 46.57}));
-    expect(atr).toBeCloseTo(1.209, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 46.80, low: 44.28, close: 45.41}));
-    expect(atr).toBeCloseTo(1.303, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 47.80, low: 47.31, close: 47.77}));
-    expect(atr).toBeCloseTo(1.380, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 48.39, low: 47.20, close: 47.72}));
-    expect(atr).toBeCloseTo(1.367, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 48.66, low: 47.90, close: 48.62}));
-    expect(atr).toBeCloseTo(1.336, 2);
-    atr = atrIndicator.calculate(null, new Candlestick({high: 48.79, low: 47.73, close: 47.85}));
-    expect(atr).toBeCloseTo(1.316, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  43}))).toBeCloseTo( 33.40, 2);
+    expect(atrIndicator.downsInARow).toBe(0);
+    expect(atrIndicator.upsInARow).toBe(1);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  63}))).toBeCloseTo( 51.94, 2);
+    expect(atrIndicator.downsInARow).toBe(0);
+    expect(atrIndicator.upsInARow).toBe(2);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  41}))).toBeCloseTo( 41.00, 2);
+    expect(atrIndicator.downsInARow).toBe(1);
+    expect(atrIndicator.upsInARow).toBe(0);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  62}))).toBeCloseTo( 48.02, 2);
+    expect(atrIndicator.downsInARow).toBe(0);
+    expect(atrIndicator.upsInARow).toBe(1);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  52}))).toBeCloseTo( 48.02, 2);
+    expect(atrIndicator.downsInARow).toBe(0);
+    expect(atrIndicator.upsInARow).toBe(0);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  61}))).toBeCloseTo( 48.02, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  48}))).toBeCloseTo( 48.00, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  61}))).toBeCloseTo( 48.00, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  65}))).toBeCloseTo( 50.86, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  85}))).toBeCloseTo( 69.73, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  85}))).toBeCloseTo( 70.82, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  79}))).toBeCloseTo( 70.82, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  72}))).toBeCloseTo( 70.82, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  70}))).toBeCloseTo( 70.00, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  94}))).toBeCloseTo( 79.52, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  94}))).toBeCloseTo( 80.56, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 108}))).toBeCloseTo( 94.02, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 110}))).toBeCloseTo( 96.80, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 103}))).toBeCloseTo( 96.80, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  88}))).toBeCloseTo( 88.00, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close:  95}))).toBeCloseTo( 88.00, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 103}))).toBeCloseTo( 89.65, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 111}))).toBeCloseTo( 97.74, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 103}))).toBeCloseTo( 97.74, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 117}))).toBeCloseTo(103.28, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 126}))).toBeCloseTo(112.29, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 108}))).toBeCloseTo(108.00, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 123}))).toBeCloseTo(108.00, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 127}))).toBeCloseTo(112.44, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 131}))).toBeCloseTo(117.05, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 141}))).toBeCloseTo(126.98, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 132}))).toBeCloseTo(126.98, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 135}))).toBeCloseTo(126.98, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 146}))).toBeCloseTo(132.46, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 148}))).toBeCloseTo(135.22, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 152}))).toBeCloseTo(139.70, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 160}))).toBeCloseTo(147.72, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 171}))).toBeCloseTo(158.42, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 165}))).toBeCloseTo(158.42, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 177}))).toBeCloseTo(164.27, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 163}))).toBeCloseTo(163.00, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 181}))).toBeCloseTo(166.70, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 163}))).toBeCloseTo(163.00, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 167}))).toBeCloseTo(163.00, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 180}))).toBeCloseTo(165.10, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 177}))).toBeCloseTo(165.10, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 172}))).toBeCloseTo(165.10, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 194}))).toBeCloseTo(178.94, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 184}))).toBeCloseTo(178.94, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 198}))).toBeCloseTo(182.52, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 210}))).toBeCloseTo(194.34, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 195}))).toBeCloseTo(194.34, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 209}))).toBeCloseTo(194.34, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 214}))).toBeCloseTo(198.15, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 195}))).toBeCloseTo(195.00, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 203}))).toBeCloseTo(195.00, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 209}))).toBeCloseTo(195.00, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 223}))).toBeCloseTo(206.75, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 227}))).toBeCloseTo(211.48, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 220}))).toBeCloseTo(211.48, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 212}))).toBeCloseTo(211.48, 2);
+    expect(atrIndicator.calculate(null, new Candlestick({close: 214}))).toBeCloseTo(211.48, 2);
+
   });
 });

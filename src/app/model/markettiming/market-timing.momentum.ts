@@ -32,7 +32,10 @@ export class MomentumMarketTiming implements MarketTiming {
   upperThreshold: number;
   lowerThreshold: number;
 
-  momentum: number;
+  previousMomentum: number;
+  cagr: number;
+  r2: number;
+
   numberOfTriggers: number = 0;
 
   momentumIndicator: MomentumIndicator;
@@ -61,7 +64,7 @@ export class MomentumMarketTiming implements MarketTiming {
       preprocessing: preprocessing,
       source: source});
 
-    console.log("RSI Market Timing", this);
+    console.log("Momentum Market Timing", this);
   }
 
   record(instantQuotes: InstantQuotes): void {
@@ -73,12 +76,18 @@ export class MomentumMarketTiming implements MarketTiming {
   }
 
   recordQuote(instant: Date, quote: Quote): void {
-    this.momentum = this.momentumIndicator.calculate(instant, quote);
-    if (this.momentum < this.lowerThreshold) {
-      this.status = BearBull.BEAR;
-    }
-    if (this.momentum > this.upperThreshold) {
-      this.status = BearBull.BULL;
+    let momentum = this.momentumIndicator.calculate(instant, quote);
+
+    if (momentum) {
+      this.r2 = this.momentumIndicator.r2;
+      this.cagr = this.momentumIndicator.cagr;
+      if (momentum < this.lowerThreshold) {
+        this.status = BearBull.BEAR;
+      }
+      if (momentum > this.upperThreshold) {
+        this.status = BearBull.BULL;
+      }
+      this.previousMomentum = momentum;
     }
   }
 
@@ -95,10 +104,18 @@ export class MomentumMarketTiming implements MarketTiming {
   }
 
   reportTo(report: Report): void {
-    if (this.momentum != undefined) {
+    if (this.previousMomentum != undefined) {
       report.receiveData(new ReportedData({
-        sourceName: this.id + ".MOM",
-        y: this.momentum
+        sourceName: this.id + ".M",
+        y: this.previousMomentum
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".CAGR",
+        y: this.cagr
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".R2",
+        y: this.r2
       }));
     }
     report.receiveData(new ReportedData({

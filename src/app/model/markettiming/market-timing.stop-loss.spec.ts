@@ -21,7 +21,7 @@ describe("StopLosMarketTiming", () => {
       numberOfPeriods: numberOfPeriods
     });
     let n: number;
-    for(n = 0; n <= numberOfPeriods; n++) {
+    for(n = 0; n < numberOfPeriods; n++) {
       stopLossMarketTiming.record(new InstantQuotes({
           instant: new Date(),
           quotes: [new Quote({name: 'ANY', close: n * 10})]
@@ -30,7 +30,7 @@ describe("StopLosMarketTiming", () => {
     }
     stopLossMarketTiming.record(new InstantQuotes({
         instant: new Date(),
-        quotes: [new Quote({name: 'ANY', close: numberOfPeriods * n})]
+        quotes: [new Quote({name: 'ANY', close: numberOfPeriods * 10})]
       }));
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
   });
@@ -44,16 +44,14 @@ describe("StopLosMarketTiming", () => {
     });
     let atr: number = 10;
     let close: number;
-    for(var n = 0; n <= 14; n++) {
+    for(var n = 0; n < 14; n++) {
       close = n * atr;
       stopLossMarketTiming.record(new InstantQuotes({
           instant: new Date(),
-          quotes: [new Quote({name: 'ANY', close: close})]
+          quotes: [new Quote({name: 'ANY', low: close  - atr, high: close, close: close})]
         }));
     }
 
-    expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
-    stopLossMarketTiming.record(new InstantQuotes({instant: new Date(), quotes: [new Quote({name: 'ANY', close: close})]}));;
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
     stopLossMarketTiming.record(new InstantQuotes({instant: new Date(), quotes: [new Quote({name: 'ANY', close: close + atr})]}));;
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
@@ -75,16 +73,14 @@ describe("StopLosMarketTiming", () => {
 
     let atr: number = 10;
     let close: number;
-    for(var n = 0; n <= 14; n++) {
+    for(var n = 0; n < 14; n++) {
       close = n * atr;
       stopLossMarketTiming.record(new InstantQuotes({
           instant: new Date(),
-          quotes: [new Quote({name: 'ANY', close: close})]
+          quotes: [new Quote({name: 'ANY', low: close - atr, high: close, close: close})]
         }));
     }
 
-    expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
-    stopLossMarketTiming.record(new InstantQuotes({instant: new Date(), quotes: [new Quote({name: 'ANY', close: close})]}));;
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
     stopLossMarketTiming.record(new InstantQuotes({instant: new Date(), quotes: [new Quote({name: 'ANY', close: close - atr})]}));;
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
@@ -105,16 +101,14 @@ describe("StopLosMarketTiming", () => {
 
     let atr: number = 10;
     let close: number;
-    for(var n = 0; n <= 14; n++) {
+    for(var n = 0; n < 14; n++) {
       close = n * atr;
       stopLossMarketTiming.record(new InstantQuotes({
           instant: new Date(),
-          quotes: [new Quote({name: 'ANY', close: close})]
+          quotes: [new Quote({name: 'ANY', low: close - atr, high: close, close: close})]
         }));
     }
 
-    expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
-    stopLossMarketTiming.record(new InstantQuotes({instant: new Date(), quotes: [new Quote({name: 'ANY', close: close})]}));;
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
     stopLossMarketTiming.record(new InstantQuotes({instant: new Date(), quotes: [new Quote({name: 'ANY', close: close - atr})]}));;
     expect(stopLossMarketTiming.bearBull()).toBe(BearBull.BULL);
