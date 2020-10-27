@@ -227,8 +227,8 @@ describe('MarketTimingComponent', () => {
                   preprocessing="MEDIAN"
                   periodicity="SEMIMONTHLY"
                   numberOfPeriods="19"
-                  upperThreshold="0.056"
-                  lowerThreshold="0.045"></momentum-filter>
+                  upperThreshold="0.5"
+                  lowerThreshold="-0.7"></momentum-filter>
           </market-timing>`
         }
       }).compileComponents();
@@ -245,8 +245,8 @@ describe('MarketTimingComponent', () => {
       expect(momentumMarketTiming.momentumIndicator.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
       expect(momentumMarketTiming.momentumIndicator.periodicity).toBe(Periodicity.SEMIMONTHLY);
       expect(momentumMarketTiming.momentumIndicator.numberOfPeriods).toBe(19);
-      expect(momentumMarketTiming.upperThreshold).toBe(0.056);
-      expect(momentumMarketTiming.lowerThreshold).toBe(0.045);
+      expect(momentumMarketTiming.upperThreshold).toBe(0.5);
+      expect(momentumMarketTiming.lowerThreshold).toBe(-0.7);
   });
 
   it('Can instantiate multiple filters filter', () => {

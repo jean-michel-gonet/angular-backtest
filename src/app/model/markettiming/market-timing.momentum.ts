@@ -29,12 +29,10 @@ export class MomentumMarketTiming implements MarketTiming {
   assetName: string;
   id: string;
   status: BearBull;
-  upperThreshold: number;
-  lowerThreshold: number;
+  upperThreshold?: number;
+  lowerThreshold?: number;
 
-  previousMomentum: number;
-  cagr: number;
-  r2: number;
+  momentum: number;
 
   numberOfTriggers: number = 0;
 
@@ -49,8 +47,8 @@ export class MomentumMarketTiming implements MarketTiming {
       preprocessing = ConfigurablePreprocessing.LAST,
       periodicity = Periodicity.DAILY,
       numberOfPeriods = 14,
-      upperThreshold = 70,
-      lowerThreshold = 30
+      upperThreshold = 0.12,
+      lowerThreshold = -0.08
     } = obj;
     this.assetName = assetName;
     this.id = id;
@@ -62,7 +60,8 @@ export class MomentumMarketTiming implements MarketTiming {
       numberOfPeriods: numberOfPeriods,
       periodicity: periodicity,
       preprocessing: preprocessing,
-      source: source});
+      source: source
+    });
 
     console.log("Momentum Market Timing", this);
   }
@@ -78,16 +77,21 @@ export class MomentumMarketTiming implements MarketTiming {
   recordQuote(instant: Date, quote: Quote): void {
     let momentum = this.momentumIndicator.calculate(instant, quote);
 
-    if (momentum) {
-      this.r2 = this.momentumIndicator.r2;
-      this.cagr = this.momentumIndicator.cagr;
-      if (momentum < this.lowerThreshold) {
-        this.status = BearBull.BEAR;
+    if (momentum != undefined) {
+      switch(this.status) {
+        case BearBull.BEAR:
+          if (this.momentum <= this.upperThreshold && momentum > this.upperThreshold) {
+            this.status = BearBull.BULL;
+          }
+          break;
+
+        case BearBull.BULL:
+          if (this.momentum >= this.lowerThreshold && momentum < this.lowerThreshold) {
+            this.status = BearBull.BEAR;
+          }
+          break;
       }
-      if (momentum > this.upperThreshold) {
-        this.status = BearBull.BULL;
-      }
-      this.previousMomentum = momentum;
+      this.momentum = momentum;
     }
   }
 
@@ -104,18 +108,10 @@ export class MomentumMarketTiming implements MarketTiming {
   }
 
   reportTo(report: Report): void {
-    if (this.previousMomentum != undefined) {
+    if (this.momentum != undefined) {
       report.receiveData(new ReportedData({
         sourceName: this.id + ".M",
-        y: this.previousMomentum
-      }));
-      report.receiveData(new ReportedData({
-        sourceName: this.id + ".CAGR",
-        y: this.cagr
-      }));
-      report.receiveData(new ReportedData({
-        sourceName: this.id + ".R2",
-        y: this.r2
+        y: this.momentum
       }));
     }
     report.receiveData(new ReportedData({
