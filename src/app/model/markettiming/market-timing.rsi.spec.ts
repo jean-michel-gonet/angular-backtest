@@ -1,6 +1,6 @@
 import { RsiMarketTiming } from "./market-timing.rsi";
 import { BearBull } from '../core/market-timing';
-import { PeriodLength } from '../core/period';
+import { Periodicity } from '../core/period';
 import { ConfigurableSource, ConfigurablePreprocessing } from '../calculations/indicators/configurable-source';
 import { RsiAverage } from '../calculations/indicators/rsi-indicator';
 import { InstantQuotes, Quote } from '../core/quotes';
@@ -14,7 +14,7 @@ describe("RsiMarketTiming", () => {
       status: BearBull.BEAR,
       source: ConfigurableSource.CLOSE,
       preprocessing: ConfigurablePreprocessing.FIRST,
-      periodLength: PeriodLength.DAILY,
+      periodicity: Periodicity.DAILY,
       numberOfPeriods: 14,
       rsiAverage: RsiAverage.CUTLER,
       upperThreshold: 70,
@@ -26,7 +26,7 @@ describe("RsiMarketTiming", () => {
     let source = ConfigurableSource.CLOSE;
     let status = BearBull.BEAR;
     let preprocessing = ConfigurablePreprocessing.FIRST;
-    let periodLength = PeriodLength.DAILY;
+    let periodicity = Periodicity.DAILY;
     let numberOfPeriods = 23;
 
     let marketTiming: RsiMarketTiming = new RsiMarketTiming({
@@ -35,14 +35,14 @@ describe("RsiMarketTiming", () => {
       status: status,
       source: source,
       preprocessing: preprocessing,
-      periodLength: periodLength,
+      periodicity: periodicity,
       numberOfPeriods: numberOfPeriods,
       rsiAverage: RsiAverage.CUTLER,
       upperThreshold: 70,
       lowerThreshold: 30
     });
     expect(marketTiming.rsiIndicator.numberOfPeriods).toBe(numberOfPeriods);
-    expect(marketTiming.rsiIndicator.periodLength).toBe(periodLength);
+    expect(marketTiming.rsiIndicator.periodicity).toBe(periodicity);
     expect(marketTiming.rsiIndicator.preprocessing).toBe(preprocessing);
     expect(marketTiming.rsiIndicator.source).toBe(source);
   })
@@ -54,7 +54,7 @@ describe("RsiMarketTiming", () => {
       status: BearBull.BULL,
       source: ConfigurableSource.CLOSE,
       preprocessing: ConfigurablePreprocessing.FIRST,
-      periodLength: PeriodLength.DAILY,
+      periodicity: Periodicity.DAILY,
       numberOfPeriods: 14,
       rsiAverage: RsiAverage.WILDER,
       upperThreshold: 70,

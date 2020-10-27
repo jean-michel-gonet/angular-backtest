@@ -1,4 +1,4 @@
-import { PeriodLength } from '../../core/period';
+import { Periodicity } from '../../core/period';
 
 export enum ConfigurableSource {
   OPEN = 'OPEN',
@@ -17,7 +17,7 @@ export enum ConfigurablePreprocessing {
 
 export interface IndicatorConfiguration {
   numberOfPeriods: number;
-  periodLength: PeriodLength;
+  periodicity: Periodicity;
   source?: ConfigurableSource;
   preprocessing?: ConfigurablePreprocessing;
 }

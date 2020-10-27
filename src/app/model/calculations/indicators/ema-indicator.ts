@@ -24,7 +24,7 @@ export class EmaIndicator extends ConfigurableSourceIndicator {
    * Class constructor.
    * @param {number} numberOfPeriods The number of periods over which calculating
    * the moving average.
-   * @param {PeriodLength} periodLength The period period length.
+   * @param {Periodicity} periodicity The period period length.
    */
   constructor(obj = {} as IndicatorConfiguration) {
     super(obj);
@@ -33,10 +33,11 @@ export class EmaIndicator extends ConfigurableSourceIndicator {
 
   /**
    * Performs the EMA calculation.
+   * @param {Date} instant The instant (not used).
    * @param {number} value The value.
    * @return {number} The EMA for this and all previously provided values.
    */
-  protected compute(value: number): number {
+  protected compute(instant: Date, value: number): number {
     return this.exponential.movingAverageOf(value);
   }
 

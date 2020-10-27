@@ -6,6 +6,7 @@ import { SuperthonMarketTimingComponent } from './market-timing.superthon.compon
 import { StopLossMarketTimingComponent } from './market-timing.stop-loss.component';
 import { MultipleMarketTiming } from 'src/app/model/markettiming/market-timing.multiple';
 import { RsiMarketTimingComponent } from './market-timing.rsi.component';
+import { MomentumMarketTimingComponent } from './market-timing.momentum.component';
 
 @Component({
   selector: 'market-timing',
@@ -26,6 +27,9 @@ export class MarketTimingComponent {
 
   @ContentChildren(RsiMarketTimingComponent)
   private risFilter: QueryList<RsiMarketTimingComponent>;
+
+  @ContentChildren(MomentumMarketTimingComponent)
+  private momentumFilter: QueryList<MomentumMarketTimingComponent>;
 
   public asMarketTiming(): MarketTiming {
     let marketTimings: MarketTiming[] = [];
@@ -48,6 +52,10 @@ export class MarketTimingComponent {
 
     this.risFilter.forEach(f => {
       marketTimings.push(f.asRsiMarketTiming());
+    });
+
+    this.momentumFilter.forEach(f => {
+      marketTimings.push(f.asMomentumMarketTiming());
     });
 
     return new MultipleMarketTiming(marketTimings);

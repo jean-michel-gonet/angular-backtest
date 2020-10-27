@@ -2,7 +2,7 @@ import { ViewChild, Component, NO_ERRORS_SCHEMA } from "@angular/core";
 import { ComponentFixture, async, TestBed } from '@angular/core/testing';
 import { BearBull } from 'src/app/model/core/market-timing';
 import { SuperthonMarketTiming } from 'src/app/model/markettiming/market-timing.superthon';
-import { PeriodLength } from 'src/app/model/core/period';
+import { Periodicity } from 'src/app/model/core/period';
 import { EMAMarketTiming } from 'src/app/model/markettiming/market-timing.ema';
 import { MACDMarketTiming } from 'src/app/model/markettiming/market-timing.macd';
 import { EMAMarketTimingComponent } from './market-timing.ema.component';
@@ -15,6 +15,8 @@ import { StopLossMarketTimingComponent } from './market-timing.stop-loss.compone
 import { ConfigurableSource, ConfigurablePreprocessing } from 'src/app/model/calculations/indicators/configurable-source';
 import { RsiMarketTimingComponent } from './market-timing.rsi.component';
 import { RsiMarketTiming } from 'src/app/model/markettiming/market-timing.rsi';
+import { MomentumMarketTimingComponent } from './market-timing.momentum.component';
+import { MomentumMarketTiming } from 'src/app/model/markettiming/market-timing.momentum';
 
 @Component({
   selector: 'parent',
@@ -38,7 +40,8 @@ describe('MarketTimingComponent', () => {
         SuperthonMarketTimingComponent,
         MACDMarketTimingComponent,
         StopLossMarketTimingComponent,
-        RsiMarketTimingComponent
+        RsiMarketTimingComponent,
+        MomentumMarketTimingComponent
       ]
     });
   }));
@@ -51,7 +54,7 @@ describe('MarketTimingComponent', () => {
             <candle-filter assetName="ANY"
                            id="XX"
                            periods="10"
-                           periodLength="MONTHLY"
+                           periodicity="MONTHLY"
                            threshold="3"
                            status="BEAR"></candle-filter>
           </market-timing>`
@@ -66,7 +69,7 @@ describe('MarketTimingComponent', () => {
       expect(candleFilter.assetName).toBe("ANY")
       expect(candleFilter.id).toBe("XX");
       expect(candleFilter.periods).toBe(10);
-      expect(candleFilter.periodLength).toBe(PeriodLength.MONTHLY);
+      expect(candleFilter.periodicity).toBe(Periodicity.MONTHLY);
       expect(candleFilter.threshold).toBe(3);
       expect(candleFilter.bearBull()).toBe(BearBull.BEAR);
   });
@@ -82,7 +85,7 @@ describe('MarketTimingComponent', () => {
                         preprocessing="MEDIAN"
                         fastPeriod="7"
                         slowPeriod="14"
-                        periodLength="WEEKLY"
+                        periodicity="WEEKLY"
                         status="BEAR"
                         threshold="1.5"
                         offset="3.3"></ema-filter>
@@ -101,11 +104,11 @@ describe('MarketTimingComponent', () => {
       expect(emaFilter.offset).toBe(3.3);
       expect(emaFilter.bearBull()).toBe(BearBull.BEAR);
       expect(emaFilter.fastEMA.numberOfPeriods).toBe(7);
-      expect(emaFilter.fastEMA.periodLength).toBe(PeriodLength.WEEKLY);
+      expect(emaFilter.fastEMA.periodicity).toBe(Periodicity.WEEKLY);
       expect(emaFilter.fastEMA.source).toBe(ConfigurableSource.OPEN);
       expect(emaFilter.fastEMA.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
       expect(emaFilter.slowEMA.numberOfPeriods).toBe(14);
-      expect(emaFilter.slowEMA.periodLength).toBe(PeriodLength.WEEKLY);
+      expect(emaFilter.slowEMA.periodicity).toBe(Periodicity.WEEKLY);
       expect(emaFilter.slowEMA.source).toBe(ConfigurableSource.OPEN);
       expect(emaFilter.slowEMA.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
   });
@@ -122,7 +125,7 @@ describe('MarketTimingComponent', () => {
                          fastPeriod="9"
                          slowPeriod="14"
                          signalPeriod="16"
-                         periodLength="SEMIMONTHLY"
+                         periodicity="SEMIMONTHLY"
                          status="BEAR"></macd-filter>
           </market-timing>`
         }
@@ -137,12 +140,12 @@ describe('MarketTimingComponent', () => {
       expect(macdFilter.id).toBe("XX");
       expect(macdFilter.bearBull()).toBe(BearBull.BEAR);
       expect(macdFilter.fastEma.numberOfPeriods).toBe(9);
-      expect(macdFilter.fastEma.periodLength).toBe(PeriodLength.SEMIMONTHLY);
+      expect(macdFilter.fastEma.periodicity).toBe(Periodicity.SEMIMONTHLY);
       expect(macdFilter.fastEma.source).toBe(ConfigurableSource.OPEN);
       expect(macdFilter.fastEma.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
 
       expect(macdFilter.slowEma.numberOfPeriods).toBe(14);
-      expect(macdFilter.slowEma.periodLength).toBe(PeriodLength.SEMIMONTHLY);
+      expect(macdFilter.slowEma.periodicity).toBe(Periodicity.SEMIMONTHLY);
       expect(macdFilter.slowEma.source).toBe(ConfigurableSource.OPEN);
       expect(macdFilter.slowEma.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
 
@@ -157,6 +160,7 @@ describe('MarketTimingComponent', () => {
             <stop-loss assetName="SANY"
                        id="XX"
                        status="BEAR"
+                       numberOfPeriods="17"
                        threshold="4"></stop-loss>
           </market-timing>`
         }
@@ -169,7 +173,8 @@ describe('MarketTimingComponent', () => {
       let stopLossFilter = multipleMarketTiming.marketTimings[0] as StopLossMarketTiming;
       expect(stopLossFilter.assetName).toBe("SANY");
       expect(stopLossFilter.id).toBe("XX");
-      expect(stopLossFilter.threshold).toBe(4);
+      expect(stopLossFilter.atrIndicator.threshold).toBe(4);
+      expect(stopLossFilter.atrIndicator.numberOfPeriods).toBe(17);
       expect(stopLossFilter.bearBull()).toBe(BearBull.BEAR);
   });
 
@@ -184,7 +189,7 @@ describe('MarketTimingComponent', () => {
                   status="BEAR"
                   source="OPEN"
                   preprocessing="MEDIAN"
-                  periodLength="SEMIMONTHLY"
+                  periodicity="SEMIMONTHLY"
                   numberOfPeriods="19"
                   rsiAverage="CUTLER"
                   upperThreshold="71"
@@ -203,10 +208,45 @@ describe('MarketTimingComponent', () => {
       expect(rsiMarketTiming.bearBull()).toBe(BearBull.BEAR);
       expect(rsiMarketTiming.rsiIndicator.source).toBe(ConfigurableSource.OPEN);
       expect(rsiMarketTiming.rsiIndicator.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
-      expect(rsiMarketTiming.rsiIndicator.periodLength).toBe(PeriodLength.SEMIMONTHLY);
+      expect(rsiMarketTiming.rsiIndicator.periodicity).toBe(Periodicity.SEMIMONTHLY);
       expect(rsiMarketTiming.rsiIndicator.numberOfPeriods).toBe(19);
       expect(rsiMarketTiming.upperThreshold).toBe(71);
       expect(rsiMarketTiming.lowerThreshold).toBe(31);
+  });
+
+  it('Can instantiate a Momentum Filter', () => {
+    TestBed.overrideComponent(TestWrapperComponent, {
+        set: {
+          template: `
+          <market-timing>
+            <momentum-filter
+                  assetName="ASS"
+                  id="MOID"
+                  status="BEAR"
+                  source="OPEN"
+                  preprocessing="MEDIAN"
+                  periodicity="SEMIMONTHLY"
+                  numberOfPeriods="19"
+                  upperThreshold="0.5"
+                  lowerThreshold="-0.7"></momentum-filter>
+          </market-timing>`
+        }
+      }).compileComponents();
+      const fixture: ComponentFixture<TestWrapperComponent>
+        = TestBed.createComponent(TestWrapperComponent);
+      fixture.detectChanges();
+      component = fixture.componentInstance.marketTimingComponent;
+      let multipleMarketTiming = component.asMarketTiming() as MultipleMarketTiming;
+      let momentumMarketTiming = multipleMarketTiming.marketTimings[0] as MomentumMarketTiming;
+      expect(momentumMarketTiming.assetName).toBe("ASS");
+      expect(momentumMarketTiming.id).toBe("MOID");
+      expect(momentumMarketTiming.bearBull()).toBe(BearBull.BEAR);
+      expect(momentumMarketTiming.momentumIndicator.source).toBe(ConfigurableSource.OPEN);
+      expect(momentumMarketTiming.momentumIndicator.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);
+      expect(momentumMarketTiming.momentumIndicator.periodicity).toBe(Periodicity.SEMIMONTHLY);
+      expect(momentumMarketTiming.momentumIndicator.numberOfPeriods).toBe(19);
+      expect(momentumMarketTiming.upperThreshold).toBe(0.5);
+      expect(momentumMarketTiming.lowerThreshold).toBe(-0.7);
   });
 
   it('Can instantiate multiple filters filter', () => {
@@ -217,7 +257,7 @@ describe('MarketTimingComponent', () => {
             <candle-filter assetName="ANY"
                            id="XX"
                            periods="10"
-                           periodLength="MONTHLY"
+                           periodicity="MONTHLY"
                            threshold="3"
                            status="BEAR"></candle-filter>
             <ema-filter assetName="ANY"
@@ -226,7 +266,7 @@ describe('MarketTimingComponent', () => {
                         preprocessing="MEDIAN"
                         fastPeriod="7"
                         slowPeriod="14"
-                        periodLength="WEEKLY"
+                        periodicity="WEEKLY"
                         status="BEAR"></ema-filter>
             <macd-filter assetName="ANY"
                          id="XX"
@@ -235,7 +275,7 @@ describe('MarketTimingComponent', () => {
                          fastPeriod="9"
                          slowPeriod="14"
                          signalPeriod="16"
-                         periodLength="SEMIMONTHLY"
+                         periodicity="SEMIMONTHLY"
                          status="BEAR"></macd-filter>
           </market-timing>`
         }

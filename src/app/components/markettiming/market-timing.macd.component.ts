@@ -53,7 +53,7 @@ export class MACDMarketTimingComponent extends BaseMarketTimingComponent {
       id: this.id,
       source: this._source,
       preprocessing: this._preprocessing,
-      periodLength: this.periodLength,
+      periodicity: this.periodicity,
       fastPeriod: this.fastPeriod,
       slowPeriod: this.slowPeriod,
       signalPeriod: this.signalPeriod,

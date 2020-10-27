@@ -59,7 +59,7 @@ export class RsiIndicator extends ConfigurableSourceIndicator {
     }
   }
 
-  compute(value: number): number {
+  compute(instant: Date, value: number): number {
     let u: number, d: number;
     let rsi: number;
     if (this.previous) {

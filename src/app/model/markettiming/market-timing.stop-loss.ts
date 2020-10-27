@@ -28,13 +28,10 @@ interface IStopLossMarketTiming {
 export class StopLossMarketTiming implements MarketTiming {
   public assetName: string;
   public id: string;
-  public threshold: number;
   public status: BearBull;
 
-  private averageTrueRange: AtrIndicator;
+  public atrIndicator: AtrIndicator;
 
-  private countDown: number;
-  private atr: number;
   private l1: number
 
   constructor(obj = {} as IStopLossMarketTiming) {
@@ -48,9 +45,7 @@ export class StopLossMarketTiming implements MarketTiming {
     this.assetName = assetName;
     this.id = id;
     this.status = status;
-    this.threshold = threshold;
-    this.countDown = numberOfPeriods;
-    this.averageTrueRange = new AtrIndicator(numberOfPeriods);
+    this.atrIndicator = new AtrIndicator(numberOfPeriods, threshold);
   }
 
   record(instantQuotes: InstantQuotes): void {
@@ -63,23 +58,13 @@ export class StopLossMarketTiming implements MarketTiming {
 
   private recordQuote(instant: Date, candlestick: Candlestick) {
     // Updates the ATR:
-    this.atr = this.averageTrueRange.calculate(instant, candlestick);
+    this.l1 = this.atrIndicator.calculate(instant, candlestick);
 
-    if (this.atr && --this.countDown <= 0) {
-      // Updates the L1:
-      let l1: number = candlestick.close - this.threshold * this.atr;
-      if (!this.l1) {
-        this.l1 = l1;
-      } else {
-        if (l1 > this.l1) {
-          this.l1 = l1;
-          this.status = BearBull.BULL;
-        }
-        if (candlestick.close < this.l1) {
-          this.l1 = candlestick.close;
-          this.status = BearBull.BEAR;
-        }
-      }
+    if (this.atrIndicator.downsInARow > 0) {
+      this.status = BearBull.BEAR;
+    }
+    if (this.atrIndicator.upsInARow > 0) {
+      this.status = BearBull.BULL;
     }
   }
 
@@ -96,14 +81,22 @@ export class StopLossMarketTiming implements MarketTiming {
   }
 
   reportTo(report: Report): void {
-    if (this.atr) {
-      report.receiveData(new ReportedData({
-        sourceName: this.id + ".ATR",
-        y: this.atr
-      }));
+    if (this.l1) {
       report.receiveData(new ReportedData({
         sourceName: this.id + ".L1",
         y: this.l1
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".ATR",
+        y: this.atrIndicator.atr
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".UPS",
+        y: this.atrIndicator.upsInARow
+      }));
+      report.receiveData(new ReportedData({
+        sourceName: this.id + ".DOWNS",
+        y: this.atrIndicator.downsInARow
       }));
     }
   }

@@ -1,13 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { BaseMarketTimingComponent } from './market-timing.base.component';
-import { RsiMarketTiming } from 'src/app/model/markettiming/market-timing.rsi';
-import { RsiAverage } from 'src/app/model/calculations/indicators/rsi-indicator';
+import { MomentumMarketTiming } from 'src/app/model/markettiming/market-timing.momentum';
 
 @Component({
-  selector: 'rsi-filter',
+  selector: 'momentum-filter',
   template: ''
 })
-export class RsiMarketTimingComponent extends BaseMarketTimingComponent {
+export class MomentumMarketTimingComponent extends BaseMarketTimingComponent {
 
   private _numberOfPeriods: number;
   @Input()
@@ -22,25 +21,11 @@ export class RsiMarketTimingComponent extends BaseMarketTimingComponent {
     return this._numberOfPeriods;
   }
 
-  protected _rsiAverage: RsiAverage;
-  @Input()
-  set rsiAverage(value: RsiAverage) {
-    if (typeof value == 'string') {
-      this._rsiAverage = RsiAverage[value];
-    } else {
-      this._rsiAverage = value;
-    }
-  }
-  get rsiAverage() {
-    return this._rsiAverage;
-  }
-
-
   private _upperThreshold: number;
   @Input()
   set upperThreshold(value: number) {
     if (typeof value == 'string') {
-      this._upperThreshold = parseInt(value);
+      this._upperThreshold = parseFloat(value);
     } else {
       this._upperThreshold = value;
     }
@@ -53,7 +38,7 @@ export class RsiMarketTimingComponent extends BaseMarketTimingComponent {
   @Input()
   set lowerThreshold(value: number) {
     if (typeof value == 'string') {
-      this._lowerThreshold = parseInt(value);
+      this._lowerThreshold = parseFloat(value);
     } else {
       this._lowerThreshold = value;
     }
@@ -62,8 +47,8 @@ export class RsiMarketTimingComponent extends BaseMarketTimingComponent {
     return this._lowerThreshold;
   }
 
-  asRsiMarketTiming(): RsiMarketTiming {
-    return new RsiMarketTiming({
+  asMomentumMarketTiming(): MomentumMarketTiming {
+    return new MomentumMarketTiming({
       assetName: this.assetName,
       id: this.id,
       status: this.status,
@@ -71,7 +56,6 @@ export class RsiMarketTimingComponent extends BaseMarketTimingComponent {
       preprocessing: this.preprocessing,
       periodicity: this.periodicity,
       numberOfPeriods: this.numberOfPeriods,
-      rsiAverage: this.rsiAverage,
       upperThreshold: this.upperThreshold,
       lowerThreshold: this.lowerThreshold
     });

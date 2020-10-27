@@ -4,7 +4,7 @@ import { Simulation } from 'src/app/model/core/simulation';
 import { SwissQuoteAccount } from 'src/app/model/accounts/account.swissquote';
 import { BuyAndHoldStrategy } from 'src/app/model/strategies/strategy.buy-and-hold';
 import { EMAMarketTiming } from 'src/app/model/markettiming/market-timing.ema';
-import { PeriodLength } from 'src/app/model/core/period';
+import { Periodicity } from 'src/app/model/core/period';
 import { HighlightReport } from 'src/app/model/reports/highlight/highlight-report';
 import { MaxHighlight, MinHighlight, StdHighlight, AvgHighlight } from 'src/app/model/reports/highlight/highlight';
 import { Reports } from 'src/app/model/reports/reports';
@@ -102,7 +102,7 @@ export class OptimizationEmaPage implements OnInit {
           marketTiming: new EMAMarketTiming({
             assetName: "SMI",
             id: "EMA",
-            periodLength: PeriodLength.DAILY,
+            periodicity: Periodicity.DAILY,
             fastPeriod: shortEma,
             slowPeriod: longEma
           })
