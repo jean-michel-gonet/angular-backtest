@@ -64,11 +64,11 @@ describe("LinearRegression" , () => {
     linear.regression(new Date(2019,  2 - 1, 15), 1947.98658109145);
 
 
-    expect(linear.getA()).toBeCloseTo(44.2778, 3);
-    expect(linear.getB()).toBeCloseTo(2007.212, 3);
+    expect(linear.getA()).toBeCloseTo(44.2778, 2);
+    expect(linear.getB()).toBeCloseTo(2007.212, 2);
 
-    expect(linear.getR()).toBeCloseTo(0.26645, 3);
-    expect(linear.getR2()).toBeCloseTo(0.07099, 3);
+    expect(linear.getR()).toBeCloseTo(0.26645, 2);
+    expect(linear.getR2()).toBeCloseTo(0.07099, 2);
   });
 
 });
