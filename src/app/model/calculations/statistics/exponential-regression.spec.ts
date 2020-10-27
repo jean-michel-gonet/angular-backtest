@@ -53,9 +53,9 @@ describe("ExponentialRegression" , () => {
     exponential.regression(new Date(2019,  2 - 1, 15), 1947.98658109145);
 
 
-    expect(exponential.getCAGR()).toBeCloseTo(0.02166, 3);
-    expect(exponential.getP()).toBeCloseTo(2007.0073, 3);
-    expect(exponential.getR2()).toBeCloseTo(0.06872, 3);
+    expect(exponential.getCAGR()).toBeCloseTo(0.02166, 2);
+    expect(exponential.getP()).toBeCloseTo(2007.0073, 2);
+    expect(exponential.getR2()).toBeCloseTo(0.06872, 2);
   });
 
 });
