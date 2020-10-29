@@ -41,19 +41,17 @@ export class MomentumIndicator extends ConfigurableSourceIndicator {
 
   compute(instant: Date, value: number): number {
     this.records.push(new Record(this.periodicity, this.numberOfPeriods));
+    this.records.forEach(r => {
+      r.compute(instant, value);
+    });
 
     let result: number;
-
-    this.records = this.records.filter(r => {
-      r.compute(instant, value);
-      if (r.isFinished(instant)) {
-        this.r2 = r.getR2();
-        this.cagr = r.getCAGR();
-        result = this.cagr * this.r2;
-        return false;
-      }
-      return true;
-    });
+    while(this.records.length > this.numberOfPeriods) {
+      let r = this.records.shift();
+      this.r2 = r.getR2();
+      this.cagr = r.getCAGR();
+      result = this.cagr * this.r2;
+    }
 
     return result;
   }
