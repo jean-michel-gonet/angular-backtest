@@ -473,3 +473,7 @@ On technical matters:
 * **Component with <ng-content>**
   * A question about using ``<ng-content></ng-content>`` in the root component.
   * https://stackoverflow.com/questions/32568808/component-with-ng-content
+* **Native Typescript in Node.js**
+  * A hands-on explanation on how to execute locally execute scripts written
+    in typescript.
+  * https://expressflow.com/blog/posts/native-typescript-in-node-js
