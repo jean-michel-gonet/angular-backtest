@@ -29,7 +29,7 @@
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/popper.js/dist/umd/popper.min.js",
+              "node_modules/popper.js/dist/umd/popper.min.js"
             ]
           },
           "configurations": {
@@ -124,6 +124,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "angular-backtest"
+    }
+  },
+  "defaultProject": "angular-backtest",
+  "cli": {
+    "analytics": "ad262f74-b874-47a8-9752-b77502821d97"
+  }
 }
