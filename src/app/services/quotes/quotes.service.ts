@@ -4,12 +4,12 @@ import { map } from 'rxjs/operators';
 import { QuotesFromSixService } from './quotes-from-six.service';
 import { QuotesFromYahooService } from './quotes-from-yahoo.service';
 import { HistoricalQuotes } from 'src/app/model/core/quotes';
-import { QuotesConfigurationService, NamedQuoteSource, QuoteProvider,
-  QuoteSource, DividendSource, DataSource, ExchangeRateSource } from './quotes-configuration.service';
+import { QuotesConfigurationService } from './quotes-configuration.service';
 import { PlainDataService } from './plain-data.service';
 import { EnrichWithDividends, EnrichWithTotalReturn } from 'src/app/model/utils/quotes-enrich';
 import { QuotesFromInvestingService } from './quotes-from-investing.service';
 import { ApplyExchangeRate } from 'src/app/model/utils/quotes-exchange-rate';
+import { NamedQuoteSource, QuoteProvider, DividendSource, DataSource, QuoteSource, ExchangeRateSource } from './quote-configuration';
 
 /**
  * Retrieves instantQuotes data from a provider, and then broadcasts the
