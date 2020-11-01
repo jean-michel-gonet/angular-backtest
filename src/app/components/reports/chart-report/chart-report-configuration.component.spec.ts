@@ -1,8 +1,7 @@
 import { Component, ViewChild, NO_ERRORS_SCHEMA } from "@angular/core";
 import { ChartReportConfigurationComponent } from './chart-report-configuration.component';
 import { ComponentFixture, async, TestBed } from '@angular/core/testing';
-import { ShowDataOn, ShowDataAs } from 'src/app/model/reports/ng2-chart.report';
-
+import { ShowDataAs, ShowDataOn } from 'src/app/model/reports/chart-report';
 
 @Component({
   selector: 'parent',

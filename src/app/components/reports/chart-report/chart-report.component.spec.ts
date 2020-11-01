@@ -3,8 +3,9 @@ import { ChartReportComponent } from './chart-report.component';
 import { ComponentFixture, async, TestBed } from '@angular/core/testing';
 import { ChartReportConfigurationComponent } from './chart-report-configuration.component';
 import { Report, Reporter, ReportedData } from 'src/app/model/core/reporting';
-import { ShowDataAs, ShowDataOn, INg2ChartReport, Ng2ChartReportFactory } from 'src/app/model/reports/ng2-chart.report';
+import { Ng2ChartReportFactory } from 'src/app/model/reports/ng2-chart.report';
 import { ChartReportAnnotationComponent } from './chart-report-annotation.component';
+import { IChartReport, ShowDataAs, ShowDataOn } from 'src/app/model/reports/chart-report';
 
 @Component({
   selector: 'parent',
@@ -22,7 +23,7 @@ class TestWrapperComponent {
   public chartReportComponent: ChartReportComponent;
 }
 class TestReportFactory {
-  public newInstance(configuration: INg2ChartReport) : TestReport {
+  public newInstance(configuration: IChartReport) : TestReport {
     return new TestReport(configuration);
   }
 }
@@ -32,7 +33,7 @@ class TestReport implements Report {
   public reportsHaveBeenCollected: boolean = false;
   public reportHasBeenCompleted: boolean = false;
 
-  constructor(public configuration: INg2ChartReport) {}
+  constructor(public configuration: IChartReport) {}
 
   register(reporter: Reporter): void {
     this.registeredReporter = reporter;

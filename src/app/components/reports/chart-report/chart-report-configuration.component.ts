@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Ng2ChartConfiguration, ShowDataAs, ShowDataOn } from 'src/app/model/reports/ng2-chart.report';
+import { ShowDataAs, ShowDataOn, ChartConfiguration } from 'src/app/model/reports/chart-report';
 
 @Component({
   selector: 'chart-report-configuration',
@@ -54,7 +54,7 @@ export class ChartReportConfigurationComponent {
   @Input()
   public show: string;
 
-  asNg2ChartConfiguration(): Ng2ChartConfiguration {
+  asNg2ChartConfiguration(): ChartConfiguration {
     return  {
       show: this.show,
       as: this.showDataAs,

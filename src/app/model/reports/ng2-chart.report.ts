@@ -3,36 +3,7 @@ import { Label } from 'ng2-charts';
 import { Report, Reporter, ReportedData, PreProcessor } from '../core/reporting';
 import { Injectable } from '@angular/core';
 import { StringUtils } from '../utils/string-utils';
-
-export enum ShowDataAs {
-  LINE = 'LINE',
-  SCATTER = 'SCATTER'
-};
-
-export enum ShowDataOn {
-  LEFT = 'LEFT',
-  RIGHT = 'RIGHT'
-};
-
-export interface Ng2ChartConfiguration {
-  show: string;
-  as: ShowDataAs;
-  on: ShowDataOn;
-  normalize?: boolean;
-}
-
-export interface Ng2ChartAnnotation {
-  show: string;
-  color: string;
-}
-
-export interface INg2ChartReport {
-  start?: Date;
-  end?: Date;
-  preProcessors?: PreProcessor[];
-  configurations: Ng2ChartConfiguration[],
-  annotations?: Ng2ChartAnnotation[]
-}
+import { IChartReport, ChartConfiguration, ChartAnnotation, ShowDataOn, ShowDataAs } from './chart-report';
 
 class XChartPoint implements ChartPoint {
   x?: number;
@@ -81,7 +52,7 @@ let formatLabel = function(tooltipItem: Chart.ChartTooltipItem, data: Chart.Char
    providedIn: 'root'
  })
 export class Ng2ChartReportFactory {
-  public newInstance(obj = {} as INg2ChartReport): Ng2ChartReport {
+  public newInstance(obj = {} as IChartReport): Ng2ChartReport {
     console.log("New Ng2ChartReport");
     return new Ng2ChartReport(obj);
   }
@@ -143,19 +114,19 @@ export class Ng2ChartReport implements Report {
     };
   private annotations: any[] = this.options.annotation.annotations;
   private mapOfDatasets: Map<String, ChartDataSets>;
-  private mapOfConfigurations: Map<String, Ng2ChartConfiguration>;
-  private mapOfAnnotations: Map<String, Ng2ChartAnnotation>;
+  private mapOfConfigurations: Map<String, ChartConfiguration>;
+  private mapOfAnnotations: Map<String, ChartAnnotation>;
   private preProcessors: PreProcessor[] = [];
   private reporters: Reporter[] = [];
 
-  constructor(obj = {} as INg2ChartReport) {
+  constructor(obj = {} as IChartReport) {
     this.initialize(obj);
   }
 
-  public initialize(obj = {} as INg2ChartReport): void {
+  public initialize(obj = {} as IChartReport): void {
     this.mapOfDatasets = new Map<String, ChartDataSets>();
-    this.mapOfConfigurations = new Map<String, Ng2ChartConfiguration>();
-    this.mapOfAnnotations = new Map<String, Ng2ChartAnnotation>();
+    this.mapOfConfigurations = new Map<String, ChartConfiguration>();
+    this.mapOfAnnotations = new Map<String, ChartAnnotation>();
     this.dataSets = [];
     this.labels = [];
 
@@ -316,7 +287,7 @@ export class Ng2ChartReport implements Report {
   }
 
   private placeAnAnnotation(providedData: ReportedData): void {
-    let annotation: Ng2ChartAnnotation = this.mapOfAnnotations.get(providedData.sourceName);
+    let annotation: ChartAnnotation = this.mapOfAnnotations.get(providedData.sourceName);
     if (annotation) {
       this.annotations.push({
         type: 'line',
@@ -341,7 +312,7 @@ export class Ng2ChartReport implements Report {
   private normalizationMap: Map<string, number> = new Map<string, number>();
 
   private normalize(sourceName: string, y: number): number {
-    let configuration: Ng2ChartConfiguration = this.mapOfConfigurations.get(sourceName);
+    let configuration: ChartConfiguration = this.mapOfConfigurations.get(sourceName);
     if (configuration) {
       if (configuration.normalize) {
         let normalizationId: string = sourceName + ":" + configuration.on;

@@ -1,5 +1,6 @@
-import { Ng2ChartReport, ShowDataAs, ShowDataOn } from "./ng2-chart.report";
+import { Ng2ChartReport } from "./ng2-chart.report";
 import { ReportedData, PreProcessor, Report, Reporter } from '../core/reporting';
+import { ShowDataAs, ShowDataOn } from './chart-report';
 
 describe('Ng2ChartReport', () => {
   let yesterday = new Date(2015, 8, 17);
