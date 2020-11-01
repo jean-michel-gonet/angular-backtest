@@ -1,5 +1,5 @@
 import { HistoricalQuotes, Quote, HistoricalValue } from '../core/quotes';
-import { ExchangeRateOperation } from 'src/app/services/quotes/quotes-configuration.service';
+import { ExchangeRateOperation } from 'src/app/services/quotes/quote-configuration';
 
 /**
  * An utility class to enrich historical quotes with dividends based
