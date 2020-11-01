@@ -1,6 +1,6 @@
 import { HistoricalQuotes, InstantQuotes, Quote } from "../core/quotes";
 import { ApplyExchangeRate } from './quotes-exchange-rate';
-import { ExchangeRateOperation } from 'src/app/services/quotes/quotes-configuration.service';
+import { ExchangeRateOperation } from 'src/app/services/quotes/quote-configuration';
 
 let now: Date = new Date();
 let today: Date =           new Date(now.getFullYear(), now.getMonth(), now.getDate() + 0);

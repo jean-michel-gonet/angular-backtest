@@ -6,9 +6,10 @@ import { QuotesService } from './quotes.service';
 import { IQuotesService } from './quotes.service.interface';
 import { Observable } from 'rxjs';
 import { HistoricalQuotes, InstantQuotes, Quote, HistoricalValue } from 'src/app/model/core/quotes';
-import { QuotesConfigurationService, NamedQuoteSource, QuoteProvider, DataFormat, IQuotesConfigurationService } from './quotes-configuration.service';
+import { QuotesConfigurationService, IQuotesConfigurationService } from './quotes-configuration.service';
 import { PlainDataService, IPlainDataService } from './plain-data.service';
 import { QuotesFromInvestingService } from './quotes-from-investing.service';
+import { NamedQuoteSource, QuoteProvider, DataFormat } from './quote-configuration';
 
 class PlainDataServiceMock implements IPlainDataService {
   private dividends: Map<string, HistoricalValue[]> = new Map<string, HistoricalValue[]>();

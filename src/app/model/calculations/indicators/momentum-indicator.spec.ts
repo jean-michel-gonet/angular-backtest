@@ -5,7 +5,7 @@ import { MomentumIndicator } from './momentum-indicator';
 describe('MomentumIndicator', () => {
 
   it('Can calculate daily regression', () => {
-    let momentum = new MomentumIndicator({numberOfPeriods: 10, periodicity: Periodicity.DAILY});
+    let momentum = new MomentumIndicator({numberOfPeriods: 13, periodicity: Periodicity.DAILY});
 
     expect(momentum.calculate(new Date(2020, 1 - 1, 13), new Candlestick({close: 100.00}))).toBeUndefined();
     expect(momentum.calculate(new Date(2020, 1 - 1, 14), new Candlestick({close: 100.01}))).toBeUndefined();
