@@ -7,6 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { ChartReportComponent } from './components/reports/chart-report/chart-report.component';
+import { HighchartsReportComponent } from './components/reports/chart-report/highcharts-report.component';
 import { ChartReportConfigurationComponent } from './components/reports/chart-report/chart-report-configuration.component';
 import { ChartReportAnnotationComponent } from './components/reports/chart-report/chart-report-annotation.component';
 import { HighlightReportComponent } from './components/reports/highlight-report/highlight-report.component';
@@ -41,6 +42,7 @@ import { HighlightMaxComponent,
          HighlightStdComponent } from './components/reports/highlight-report/highlight.component';
 
 import { HomePage } from './pages/home/home.page';
+import { HighchartsPage } from './pages/highcharts/highcharts.page';
 import { MarketTimingPage } from './pages/market-timing/market-timing.page';
 import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear.page';
 import { OptimizationEmaPage } from './pages/optimization/optimization-ema.page';
@@ -67,6 +69,7 @@ import 'chartjs-plugin-annotation';
     PerformancePreprocessorComponent,
     RegressionPreprocessorComponent,
     ChartReportComponent,
+    HighchartsReportComponent,
     ReportsComponent,
 
     EMAMarketTimingComponent,
@@ -90,6 +93,7 @@ import 'chartjs-plugin-annotation';
     SimulationComponent,
 
     HomePage,
+    HighchartsPage,
     MarketTimingPage,
     InvestingInBearPage,
     OptimizationEmaPage,
