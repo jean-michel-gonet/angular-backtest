@@ -40,12 +40,14 @@
         </tfoot>
       </table>
     </highlight-report>
-    <highcharts-report>
+    <highcharts-report title="Superthon Semimontly 13">
       <chart-report-configuration show="USDCHF.CLOSE"  showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="SPYCHF.CLOSE"  showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="SPY.CLOSE"  showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="ACC.NAV"      showDataAs="LINE" showDataOn="LEFT"  normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="MT.SUPERTHON" showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
+      <chart-report-annotation show="MT.BULL" color="blue"></chart-report-annotation>
+      <chart-report-annotation show="MT.BEAR" color="red"></chart-report-annotation>
     </highcharts-report>
     <preprocessors>
       <performance-preprocessor source="ACC.NAV" over= "3" unitOfTime="YEAR" output="ACC.P03"></performance-preprocessor>

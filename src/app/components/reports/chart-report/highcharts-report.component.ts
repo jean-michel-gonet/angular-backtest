@@ -19,9 +19,10 @@ import * as Highcharts from 'highcharts';
 
 class ClippingBox {
   axis: any;
-  max: number;
-  a: number;
-  start: number;
+  y: number;
+  yMin: number;
+  yMax: number;
+  h: number;
 }
 
 @Component({
@@ -31,120 +32,6 @@ class ClippingBox {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HighchartsReportComponent implements AfterViewInit, Report {
-
-  public static normalize(event: any) {
-    let chart: any = event.point.series.chart;
-    let min: number = chart.xAxis[0].min;
-    let max: number = chart.xAxis[0].max;
-    let clicked: number = event.point.x;
-
-    let clippingBoxes: ClippingBox[] =
-        HighchartsReportComponent.findClippingBoxes(min, max, clicked, chart.series);
-
-    let referenceClippingBox =
-      HighchartsReportComponent.findReferenceClippingBox(clippingBoxes);
-
-    clippingBoxes.forEach(clippingBox => {
-      if (clippingBox == referenceClippingBox) {
-        clippingBox.axis.setExtremes(0, clippingBox.max);
-      } else {
-        let sMax = clippingBox.start / referenceClippingBox.a;
-        clippingBox.axis.setExtremes(0, sMax);
-      }
-    });
-  }
-
-
-  private static findReferenceClippingBox(clippingBoxes: ClippingBox[]): ClippingBox {
-    let referenceClippingBox: ClippingBox;
-    clippingBoxes.forEach(clippingBox => {
-      if (referenceClippingBox) {
-        if (clippingBox.a < referenceClippingBox.a) {
-          referenceClippingBox = clippingBox;
-        }
-      } else {
-        referenceClippingBox = clippingBox;
-      }
-    });
-    return referenceClippingBox;
-  }
-
-  private static findClippingBoxes(min: number, max: number, clicked: number, series: any[]) {
-    let clippingBoxes: ClippingBox[] = [];
-    series.forEach(series => {
-      if (!series.yAxis.opposite) {
-        let index: number = 0;
-        let startIndex: number = 0;
-        let endIndex: number = series.xData.length - 1;
-        let clickedIndex: number = 0;
-        series.xData.forEach(x => {
-          if (x <= min) {
-            startIndex = index;
-          }
-          if (x <= clicked) {
-            clickedIndex = index;
-          }
-          if (x <= max) {
-            endIndex = index;
-          }
-          index++;
-        });
-        let y0: number = series.yData[clickedIndex];
-        let maxY: number = series.yData[startIndex];
-        for(var n = startIndex; n <= endIndex; n++) {
-          if (series.yData[n] > maxY) {
-            maxY = series.yData[n];
-          }
-        }
-        let clippingBox: ClippingBox = {
-          axis: series.yAxis,
-          max: maxY,
-          a: y0 / maxY,
-          start: y0
-        };
-        clippingBoxes.push(clippingBox);
-      }
-    });
-    return clippingBoxes;
-  }
-
-  public options: any = {
-        chart: {
-          type: 'scatter',
-          height: 700,
-          zoomType: 'x',
-          panning: true,
-          panKey: 'shift',
-          animation: false,
-        },
-        annotations: [],
-        title: {
-          text: 'Sample Scatter Plot'
-        },
-        credits: {
-          enabled: false
-        },
-        tooltip: {
-          split: true,
-          pointFormatter: function() {
-                return '<span style="color:{point.color}">\u25CF</span> '
-                    + [this.series.name] + ': <b>' + this.y.toFixed(2) + '</b><br/>';
-            },
-        },
-        yAxis: [],
-        xAxis: {
-          type: 'datetime',
-          scrollbar: {
-            enabled: true
-          },
-          labels: {
-            formatter: function() {
-              return Highcharts.dateFormat('%e %b %y', this.value);
-            }
-          }
-        },
-        series: []
-      };
 
   private _start: Date;
   @Input()
@@ -181,6 +68,51 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
     return this._id
   }
 
+  private _title: string;
+  @Input()
+  set title(value: string) {
+    this._title = value;
+  }
+  get title(): string {
+    return this._title
+  }
+
+  public options: any = {
+        chart: {
+          type: 'scatter',
+          height: 700,
+          zoomType: 'x',
+          panning: true,
+          panKey: 'shift',
+          animation: false,
+        },
+        annotations: [],
+        title: {
+          text: this.title
+        },
+        credits: {
+          enabled: false
+        },
+        tooltip: {
+          split: true,
+          pointFormatter: function() {
+                return '<span style="color:{point.color}">\u25CF</span> '
+                    + [this.series.name] + ': <b>' + this.y.toFixed(2) + '</b><br/>';
+            },
+        },
+        yAxis: [],
+        xAxis: {
+          type: 'datetime',
+          plotLines:[],
+          labels: {
+            formatter: function() {
+              return Highcharts.dateFormat('%e %b %y', this.value);
+            }
+          }
+        },
+        series: []
+      };
+
   @ContentChildren(ChartReportConfigurationComponent)
   private configurationComponents: QueryList<ChartReportConfigurationComponent>;
 
@@ -203,6 +135,7 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
 
   private initializeAnnotations(): void {
     this.mapOfAnnotations = new Map<string, ChartReportAnnotationComponent>();
+    this.options.title.text = this.title;
     this.annotationComponents.forEach(annotationComponent => {
       this.mapOfAnnotations.set(annotationComponent.show, annotationComponent);
     });
@@ -288,6 +221,15 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
   }
 
   private placeAnAnnotation(providedData: ReportedData): void {
+      let annotation: ChartReportAnnotationComponent =
+        this.mapOfAnnotations.get(providedData.sourceName);
+      if (annotation) {
+        this.options.xAxis.plotLines.push({
+            color: annotation.color,
+            width: 1,
+            value: this.x
+        });
+      }
   }
 
   startReportingCycle(instant: Date): void {
@@ -314,4 +256,85 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
     this.reportIsReady = true;
     this.cdr.detectChanges();
   }
+
+  public static normalize(event: any) {
+    let chart: any = event.point.series.chart;
+    let min: number = chart.xAxis[0].min;
+    let max: number = chart.xAxis[0].max;
+    let clicked: number = event.point.x;
+
+    let clippingBoxes: ClippingBox[] =
+        HighchartsReportComponent.findClippingBoxes(min, max, clicked, chart.series);
+
+    let referenceClippingBox =
+      HighchartsReportComponent.findReferenceClippingBox(clippingBoxes);
+
+    clippingBoxes.forEach(clippingBox => {
+      if (clippingBox == referenceClippingBox) {
+        clippingBox.axis.setExtremes(clippingBox.yMin, clippingBox.yMax);
+      } else {
+        let sMax = (clippingBox.y - clippingBox.yMin) / referenceClippingBox.h + clippingBox.yMin;
+        clippingBox.axis.setExtremes(clippingBox.yMin, sMax);
+      }
+    });
+  }
+
+  private static findReferenceClippingBox(clippingBoxes: ClippingBox[]): ClippingBox {
+    let referenceClippingBox: ClippingBox;
+    clippingBoxes.forEach(clippingBox => {
+      if (referenceClippingBox) {
+        if (clippingBox.h < referenceClippingBox.h) {
+          referenceClippingBox = clippingBox;
+        }
+      } else {
+        referenceClippingBox = clippingBox;
+      }
+    });
+    return referenceClippingBox;
+  }
+
+  private static findClippingBoxes(min: number, max: number, clicked: number, series: any[]) {
+    let clippingBoxes: ClippingBox[] = [];
+    series.forEach(series => {
+      if (!series.yAxis.opposite) {
+        let index: number = 0;
+        let startIndex: number = 0;
+        let endIndex: number = series.xData.length - 1;
+        let clickedIndex: number = 0;
+        series.xData.forEach(x => {
+          if (x <= min) {
+            startIndex = index;
+          }
+          if (x <= clicked) {
+            clickedIndex = index;
+          }
+          if (x <= max) {
+            endIndex = index;
+          }
+          index++;
+        });
+        let y: number = series.yData[clickedIndex];
+        let yMin: number = y;
+        let yMax: number = y;
+        for(var n = startIndex; n <= endIndex; n++) {
+          if (series.yData[n] < yMin) {
+            yMin = series.yData[n];
+          }
+          if (series.yData[n] > yMax) {
+            yMax = series.yData[n];
+          }
+        }
+        let clippingBox: ClippingBox = {
+          axis: series.yAxis,
+          yMax: yMax,
+          yMin: yMin,
+          y: y,
+          h: (y - yMin) / (yMax - yMin)
+        };
+        clippingBoxes.push(clippingBox);
+      }
+    });
+    return clippingBoxes;
+  }
+
 }
