@@ -33,10 +33,14 @@ class ClippingBox {
 export class HighchartsReportComponent implements AfterViewInit, Report {
 
   public static normalize(event: any) {
-    let {min, max} =
-        HighchartsReportComponent.selectedXRange(event);
+    let chart: any = event.point.series.chart;
+    let min: number = chart.xAxis[0].min;
+    let max: number = chart.xAxis[0].max;
+    let clicked: number = event.point.x;
+
     let clippingBoxes: ClippingBox[] =
-        HighchartsReportComponent.findClippingBoxes(min, max, event.target.series);
+        HighchartsReportComponent.findClippingBoxes(min, max, clicked, chart.series);
+
     let referenceClippingBox =
       HighchartsReportComponent.findReferenceClippingBox(clippingBoxes);
 
@@ -65,37 +69,27 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
     return referenceClippingBox;
   }
 
-  private static selectedXRange(event: any): {min: number, max:number} {
-    let min: number;
-    let max: number;
-    // Find the selected range in X axis:
-    if (event.xAxis) {
-      min = event.xAxis[0].min;
-      max = event.xAxis[0].max;
-    } else {
-      min = event.target.xAxis[0].dataMin;
-      max = event.target.xAxis[0].dataMax;
-    }
-    return {min: min, max: max};
-  }
-
-  private static findClippingBoxes(min: number, max: number, series: any[]) {
+  private static findClippingBoxes(min: number, max: number, clicked: number, series: any[]) {
     let clippingBoxes: ClippingBox[] = [];
     series.forEach(series => {
       if (!series.yAxis.opposite) {
         let index: number = 0;
         let startIndex: number = 0;
         let endIndex: number = series.xData.length - 1;
+        let clickedIndex: number = 0;
         series.xData.forEach(x => {
           if (x <= min) {
             startIndex = index;
+          }
+          if (x <= clicked) {
+            clickedIndex = index;
           }
           if (x <= max) {
             endIndex = index;
           }
           index++;
         });
-        let y0: number = series.yData[startIndex];
+        let y0: number = series.yData[clickedIndex];
         let maxY: number = series.yData[startIndex];
         for(var n = startIndex; n <= endIndex; n++) {
           if (series.yData[n] > maxY) {
@@ -119,11 +113,9 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
           type: 'scatter',
           height: 700,
           zoomType: 'x',
-          events: {
-            selection: HighchartsReportComponent.normalize
-          },
           panning: true,
-          panKey: 'shift'
+          panKey: 'shift',
+          animation: false,
         },
         annotations: [],
         title: {
@@ -133,10 +125,11 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
           enabled: false
         },
         tooltip: {
-          formatter: function() {
-            return '<b>x: </b>' + Highcharts.dateFormat('%e %b %y %H:%M:%S', this.x) +
-              ' <br> <b>y: </b>' + this.y.toFixed(2);
-          }
+          split: true,
+          pointFormatter: function() {
+                return '<span style="color:{point.color}">\u25CF</span> '
+                    + [this.series.name] + ': <b>' + this.y.toFixed(2) + '</b><br/>';
+            },
         },
         yAxis: [],
         xAxis: {
@@ -223,8 +216,11 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
         type: configurationComponent.showDataAs.toLowerCase(),
         name: configurationComponent.show,
         events: {
-          click: function(e: any) {
-            alert(e);
+          click: HighchartsReportComponent.normalize
+        },
+        states: {
+          inactive: {
+            enabled: false
           }
         },
         yAxis: this.createYAxis(configurationComponent.show, configurationComponent.showDataOn),
@@ -242,6 +238,9 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
       opposite: showDataOn == ShowDataOn.RIGHT,
       alignTicks: false,
       endOnTick: false,
+      title: {
+        text: show
+      }
     };
     this.options.yAxis.push(yAxis);
     return show;
