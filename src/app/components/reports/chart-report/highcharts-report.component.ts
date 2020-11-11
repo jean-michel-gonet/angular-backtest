@@ -314,8 +314,8 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
           index++;
         });
         let y: number = series.yData[clickedIndex];
-        let yMin: number = y;
-        let yMax: number = y;
+        let yMin: number = y * 0.2;
+        let yMax: number = y * 1.2;
         for(var n = startIndex; n <= endIndex; n++) {
           if (series.yData[n] < yMin) {
             yMin = series.yData[n];
