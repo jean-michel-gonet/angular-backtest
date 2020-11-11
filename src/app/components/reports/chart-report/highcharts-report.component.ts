@@ -114,10 +114,10 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
       };
 
   @ContentChildren(ChartReportConfigurationComponent)
-  private configurationComponents: QueryList<ChartReportConfigurationComponent>;
+  public configurationComponents: QueryList<ChartReportConfigurationComponent>;
 
   @ContentChildren(ChartReportAnnotationComponent)
-  private annotationComponents: QueryList<ChartReportAnnotationComponent>;
+  public annotationComponents: QueryList<ChartReportAnnotationComponent>;
 
   public reportIsReady: boolean;
 
