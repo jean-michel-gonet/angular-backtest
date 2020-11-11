@@ -7,8 +7,10 @@ import { HighlightMaxComponent, HighlightMinComponent } from './highlight.compon
   selector: 'parent',
   template: `
   <highlight-report>
-    <highlight-max sourceName="SMAX"></highlight-max>
-    <highlight-min sourceName="SMIN"></highlight-min>
+    <ul>
+      <li><highlight-max sourceName="SMAX"></highlight-max></li>
+      <li><highlight-min sourceName="SMIN"></highlight-min></li>
+    </ul>
   <highlight-report>`})
 class TestWrapperComponent {
   @ViewChild(HighlightReportComponent, {static: true})
