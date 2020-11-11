@@ -80,13 +80,13 @@
 <h3>Momentum Filter with IBEX</h3>
 <simulation start="2009-04-01" end="2020-09-04" quotes="IBEX35">
   <reports>
-    <chart-report>
+    <highcharts-report>
       <chart-report-configuration show="ACC.NAV" showDataAs="LINE" showDataOn="LEFT" normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="IBEX35.CLOSE" showDataAs="LINE" showDataOn="LEFT" normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="MT.M" showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
       <chart-report-annotation show="MT.BULL" color="blue"></chart-report-annotation>
       <chart-report-annotation show="MT.BEAR" color="red"></chart-report-annotation>
-    </chart-report>
+    </highcharts-report>
   </reports>
   <accounts>
     <swiss-quote id="ACC" cash="100000">
@@ -117,13 +117,13 @@
 <h3>Rsi Filter with IBEX</h3>
 <simulation start="2001-04-01" end="2020-09-04" quotes="IBEX35">
   <reports>
-    <chart-report>
+    <highcharts-report>
       <chart-report-configuration show="ACC.NAV"         showDataAs="LINE" showDataOn="RIGHT" normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="IBEX35.CLOSE"      showDataAs="LINE" showDataOn="LEFT" normalize="false"  ></chart-report-configuration>
       <chart-report-configuration show="MT.RSI"     showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
       <chart-report-annotation show="MT.BULL" color="blue"></chart-report-annotation>
       <chart-report-annotation show="MT.BEAR" color="red"></chart-report-annotation>
-    </chart-report>
+    </highcharts-report>
   </reports>
   <accounts>
     <swiss-quote id="ACC" cash="100000">
@@ -151,7 +151,7 @@
 <h3>Stop Loss Filter</h3>
 <simulation start="2009-04-01" end="2020-09-04" quotes="IBEX35">
   <reports>
-    <chart-report>
+    <highcharts-report>
       <chart-report-configuration show="ACC.NAV"         showDataAs="LINE" showDataOn="RIGHT" normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="IBEX35.CLOSE"      showDataAs="LINE" showDataOn="RIGHT" normalize="true"  ></chart-report-configuration>
       <chart-report-configuration show="STOP.ATR"        showDataAs="LINE" showDataOn="LEFT" normalize="false" ></chart-report-configuration>
@@ -159,7 +159,7 @@
       <chart-report-configuration show="STOP.L2"       showDataAs="LINE" showDataOn="LEFT" normalize="false" ></chart-report-configuration>
       <chart-report-annotation show="STOP.BULL" color="blue"></chart-report-annotation>
       <chart-report-annotation show="STOP.BEAR" color="red"></chart-report-annotation>
-    </chart-report>
+    </highcharts-report>
   </reports>
   <accounts>
     <swiss-quote id="ACC" cash="100000">
