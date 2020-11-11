@@ -8,8 +8,7 @@ import { ShowDataAs, ShowDataOn } from 'src/app/model/reports/chart-report';
   template: `
   <chart-report-configuration show="XX"
                               showDataAs="LINE"
-                              showDataOn="RIGHT"
-                              normalize="true"></chart-report-configuration>`})
+                              showDataOn="RIGHT"></chart-report-configuration>`})
 class TestWrapperComponent {
     @ViewChild(ChartReportConfigurationComponent, {static: true})
     public chartReportConfigurationComponent: ChartReportConfigurationComponent
@@ -39,8 +38,7 @@ describe('ChartReportConfigurationComponent', () => {
     expect(component.asNg2ChartConfiguration()).toEqual({
       show: "XX",
       as: ShowDataAs.LINE,
-      on: ShowDataOn.RIGHT,
-      normalize: true
+      on: ShowDataOn.RIGHT
     });
   });
 });

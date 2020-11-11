@@ -157,7 +157,6 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
           }
         },
         yAxis: this.createYAxis(configurationComponent.show, configurationComponent.showDataOn),
-        normalize: configurationComponent.normalize,
         data: []
       };
       this.mapOfSeries.set(configurationComponent.show, serie);

@@ -33,24 +33,6 @@ export class ChartReportConfigurationComponent {
     return this._showDataOn;
   }
 
-  private _normalize: boolean
-  @Input()
-  set normalize(value: boolean) {
-    if (typeof value == 'string') {
-      if (value == 'yes' || value == 'true') {
-        this._normalize = true;
-      } else {
-        this._normalize = false;
-      }
-    } else {
-      this._normalize = value;
-    }
-  }
-
-  get normalize(): boolean {
-    return this._normalize;
-  }
-
   @Input()
   public show: string;
 
@@ -58,8 +40,7 @@ export class ChartReportConfigurationComponent {
     return  {
       show: this.show,
       as: this.showDataAs,
-      on: this.showDataOn,
-      normalize: this.normalize
+      on: this.showDataOn
     };
   }
 }
