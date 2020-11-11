@@ -1,20 +1,18 @@
 import { ViewChild, Component, NO_ERRORS_SCHEMA } from "@angular/core";
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { NullReport, Report } from 'src/app/model/core/reporting';
-import { Ng2ChartReportFactory } from 'src/app/model/reports/ng2-chart.report';
 import { PreprocessorsComponent } from './preprocessors/preprocessors.component';
 import { PerformancePreprocessorComponent } from './preprocessors/performance-preprocessor.component';
 import { ReportsComponent } from './reports.component';
 import { Reports } from 'src/app/model/reports/reports';
-import { ChartReportComponent } from './chart-report/chart-report.component';
 import { ChartReportConfigurationComponent } from './chart-report/chart-report-configuration.component';
 import { HighlightReportComponent } from './highlight-report/highlight-report.component';
+import { HighchartsReportComponent } from './chart-report/highcharts-report.component';
 
 @Component({
   selector: 'parent',
   template: `
   <reports>
-    <chart-report></chart-report>
+    <highcharts-report></highcharts-report>
     <highlight-report></highlight-report>
     <preprocessors></preprocessors>
   </reports>`
@@ -22,11 +20,6 @@ import { HighlightReportComponent } from './highlight-report/highlight-report.co
 class TestWrapperComponent {
   @ViewChild(ReportsComponent, {static: true})
   public reportsComponent: ReportsComponent;
-}
-class TestReportFactory {
-  public newInstance() : Report {
-    return new NullReport();
-  }
 }
 
 describe('ReportsComponent', () => {
@@ -40,13 +33,10 @@ describe('ReportsComponent', () => {
         TestWrapperComponent,
         HighlightReportComponent,
         ReportsComponent,
-        ChartReportComponent,
+        HighchartsReportComponent,
         ChartReportConfigurationComponent,
         PreprocessorsComponent,
         PerformancePreprocessorComponent,
-      ],
-      providers: [
-        { provide: Ng2ChartReportFactory, useClass: TestReportFactory }
       ]
     }).compileComponents();
   }));
