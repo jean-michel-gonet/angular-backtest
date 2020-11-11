@@ -1,6 +1,6 @@
 import { Component, ViewChild, NO_ERRORS_SCHEMA } from "@angular/core";
 import { ChartReportConfigurationComponent } from './chart-report-configuration.component';
-import { ComponentFixture, async, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ShowDataAs, ShowDataOn } from 'src/app/model/reports/chart-report';
 
 @Component({
@@ -19,7 +19,7 @@ describe('ChartReportConfigurationComponent', () => {
   let component: ChartReportConfigurationComponent;
   let fixture: ComponentFixture<TestWrapperComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       schemas: [ NO_ERRORS_SCHEMA ],
       declarations: [

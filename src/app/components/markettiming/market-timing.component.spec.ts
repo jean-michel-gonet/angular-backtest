@@ -1,5 +1,5 @@
 import { ViewChild, Component, NO_ERRORS_SCHEMA } from "@angular/core";
-import { ComponentFixture, async, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BearBull } from 'src/app/model/core/market-timing';
 import { SuperthonMarketTiming } from 'src/app/model/markettiming/market-timing.superthon';
 import { Periodicity } from 'src/app/model/core/period';
@@ -30,7 +30,7 @@ class TestWrapperComponent {
 describe('MarketTimingComponent', () => {
   let component: MarketTimingComponent;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [

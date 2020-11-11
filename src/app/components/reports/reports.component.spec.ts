@@ -1,5 +1,5 @@
 import { ViewChild, Component, NO_ERRORS_SCHEMA } from "@angular/core";
-import { ComponentFixture, async, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { NullReport, Report } from 'src/app/model/core/reporting';
 import { Ng2ChartReportFactory } from 'src/app/model/reports/ng2-chart.report';
 import { PreprocessorsComponent } from './preprocessors/preprocessors.component';
@@ -33,7 +33,7 @@ describe('ReportsComponent', () => {
   let component: ReportsComponent;
   let fixture: ComponentFixture<TestWrapperComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       schemas: [ NO_ERRORS_SCHEMA ],
       declarations: [

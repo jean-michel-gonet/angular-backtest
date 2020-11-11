@@ -1,5 +1,5 @@
 import { ViewChild, Component, NO_ERRORS_SCHEMA } from "@angular/core";
-import { ComponentFixture, async, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { PerformancePreprocessorComponent } from './performance-preprocessor.component';
 import { PerformancePreprocessor } from 'src/app/model/reports/preprocessors/performance-preprocessor';
 import { UnitOfTime } from 'src/app/model/reports/preprocessors/unit-of-time';
@@ -20,7 +20,7 @@ describe('SlidingPerformanceComponent', () => {
   let component: PerformancePreprocessorComponent;
   let fixture: ComponentFixture<TestWrapperComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       schemas: [ NO_ERRORS_SCHEMA ],
       declarations: [

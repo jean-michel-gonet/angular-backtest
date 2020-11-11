@@ -1,5 +1,5 @@
 import { ViewChild, Component, NO_ERRORS_SCHEMA } from "@angular/core";
-import { ComponentFixture, async, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RegressionPreprocessorComponent } from './regression-preprocessor.component';
 import { PerformancePreprocessorComponent } from './performance-preprocessor.component';
 import { PreprocessorsComponent } from './preprocessors.component';
@@ -27,7 +27,7 @@ describe('ChartReportPreprocessorsComponent', () => {
   let component: PreprocessorsComponent;
   let fixture: ComponentFixture<TestWrapperComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       schemas: [ NO_ERRORS_SCHEMA ],
       declarations: [

@@ -1,6 +1,6 @@
 import { Component, ViewChild, NO_ERRORS_SCHEMA } from "@angular/core";
 import { BuyAndHoldStrategyComponent } from './b-a-h.strategy.component';
-import { async, TestBed, ComponentFixture } from '@angular/core/testing';
+import { TestBed, ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { TransferToComponent } from '../accounts/transfer-to.component';
 import { MarketTimingComponent } from '../markettiming/market-timing.component';
 import { EMAMarketTimingComponent } from '../markettiming/market-timing.ema.component';
@@ -19,7 +19,7 @@ class TestWrapperComponent {
 describe('BuyAndHoldStrategyComponent', () => {
   let component: BuyAndHoldStrategyComponent;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [
