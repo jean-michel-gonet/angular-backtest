@@ -5,10 +5,12 @@ import { MarketTimingPage } from './pages/market-timing/market-timing.page';
 import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear.page';
 import { OptimizationEmaPage } from './pages/optimization/optimization-ema.page';
 import { OptimizationSuperthonPage } from './pages/optimization/optimization-superthon.page';
+import { HighchartsPage } from './pages/highcharts/highcharts.page';
 
 
 const routes: Routes = [
   { path: 'home', component: HomePage },
+  { path: 'highcharts', component: HighchartsPage },
   { path: 'market-timing', component: MarketTimingPage},
   { path: 'investing-in-bear', component: InvestingInBearPage},
   { path: 'optimization-ema', component: OptimizationEmaPage},

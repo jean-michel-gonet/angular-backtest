@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Ng2ChartAnnotation } from 'src/app/model/reports/ng2-chart.report';
+import { ChartAnnotation } from 'src/app/model/reports/chart-report';
 
 @Component({
   selector: 'chart-report-annotation',
@@ -13,7 +13,7 @@ export class ChartReportAnnotationComponent {
   @Input()
   public color: string;
 
-  asNg2ChartAnnotation(): Ng2ChartAnnotation {
+  asNg2ChartAnnotation(): ChartAnnotation {
     return  {
       show: this.show,
       color: this.color,

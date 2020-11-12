@@ -7,7 +7,7 @@ import { HighlightComponent } from './highlight.component';
   template: '<ng-content></ng-content>'
 })
 export class HighlightReportComponent extends HighlightReport implements AfterViewInit {
-  @ContentChildren(HighlightComponent)
+  @ContentChildren(HighlightComponent, {descendants: true})
   public highlightComponents: QueryList<HighlightComponent>;
 
   ngAfterViewInit(): void {

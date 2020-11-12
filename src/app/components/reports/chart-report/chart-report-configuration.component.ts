@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Ng2ChartConfiguration, ShowDataAs, ShowDataOn } from 'src/app/model/reports/ng2-chart.report';
+import { ShowDataAs, ShowDataOn, ChartConfiguration } from 'src/app/model/reports/chart-report';
 
 @Component({
   selector: 'chart-report-configuration',
@@ -33,33 +33,14 @@ export class ChartReportConfigurationComponent {
     return this._showDataOn;
   }
 
-  private _normalize: boolean
-  @Input()
-  set normalize(value: boolean) {
-    if (typeof value == 'string') {
-      if (value == 'yes' || value == 'true') {
-        this._normalize = true;
-      } else {
-        this._normalize = false;
-      }
-    } else {
-      this._normalize = value;
-    }
-  }
-
-  get normalize(): boolean {
-    return this._normalize;
-  }
-
   @Input()
   public show: string;
 
-  asNg2ChartConfiguration(): Ng2ChartConfiguration {
+  asNg2ChartConfiguration(): ChartConfiguration {
     return  {
       show: this.show,
       as: this.showDataAs,
-      on: this.showDataOn,
-      normalize: this.normalize
+      on: this.showDataOn
     };
   }
 }
