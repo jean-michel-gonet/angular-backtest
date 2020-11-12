@@ -86,6 +86,9 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
           panKey: 'shift',
           animation: false,
         },
+        time: {
+          useUTC: false
+        },
         annotations: [],
         title: {
           text: this.title
@@ -99,7 +102,8 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
                 return '<span style="color:{point.color}">\u25CF</span> '
                     + [this.series.name] + ': <b>' + this.y.toFixed(2) + '</b><br/>';
             },
-          xDateFormat: '%Y-%m-%d, %a',
+          // https://api.highcharts.com/class-reference/Highcharts#dateFormat
+          xDateFormat: '%a %Y-%m-%d',
         },
         yAxis: [],
         xAxis: {
