@@ -99,6 +99,7 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
                 return '<span style="color:{point.color}">\u25CF</span> '
                     + [this.series.name] + ': <b>' + this.y.toFixed(2) + '</b><br/>';
             },
+          xDateFormat: '%Y-%m-%d, %a',
         },
         yAxis: [],
         xAxis: {
@@ -106,7 +107,7 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
           plotLines:[],
           labels: {
             formatter: function() {
-              return Highcharts.dateFormat('%e %b %y', this.value);
+              return Highcharts.dateFormat('%Y-%m-%d', this.value);
             }
           }
         },
