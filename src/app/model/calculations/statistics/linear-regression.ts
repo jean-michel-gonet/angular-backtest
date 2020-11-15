@@ -1,4 +1,4 @@
-const MILLISECONDS_IN_A_YEAR: number = 1000 * 24 * 60 * 60 * 365;
+import { DayToYearConversion } from '../../utils/day-to-year-conversion';
 
 /**
  * Calculates the linear regression for a series of x / y points
@@ -16,7 +16,7 @@ const MILLISECONDS_IN_A_YEAR: number = 1000 * 24 * 60 * 60 * 365;
  * @class{LinearRegression}
  */
 export class LinearRegression {
-  private year0: Date;
+  private dayToYearConversion: DayToYearConversion = new DayToYearConversion();
   private meanX: number = 0;
   private meanY: number = 0;
   private varX: number = 0;
@@ -32,7 +32,7 @@ export class LinearRegression {
   regression(instant: number | Date, y: number): void {
     this.n++;
 
-    let x: number = this.obtainX(instant);
+    let x: number = this.dayToYearConversion.convert(instant);
 
     let dx = x - this.meanX;
     let dy = y - this.meanY;
@@ -43,20 +43,6 @@ export class LinearRegression {
 
     this.meanX += dx / this.n;
     this.meanY += dy / this.n;
-  }
-
-  private obtainX(instant: number | Date): number {
-    let x: number;
-    if (instant instanceof Date) {
-      if (this.year0 == undefined) {
-        this.year0 = instant;
-      }
-      x = instant.valueOf() - this.year0.valueOf();
-      x /= MILLISECONDS_IN_A_YEAR;
-    } else {
-      x = instant;
-    }
-    return x;
   }
 
   getA(): number {
