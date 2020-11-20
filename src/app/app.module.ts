@@ -11,6 +11,7 @@ import { ChartReportAnnotationComponent } from './components/reports/chart-repor
 import { HighlightReportComponent } from './components/reports/highlight-report/highlight-report.component';
 import { PerformancePreprocessorComponent} from './components/reports/preprocessors/performance-preprocessor.component';
 import { RegressionPreprocessorComponent} from './components/reports/preprocessors/regression-preprocessor.component';
+import { LowessPreprocessorComponent} from './components/reports/preprocessors/lowess-preprocessor.component';
 import { PreprocessorsComponent } from './components/reports/preprocessors/preprocessors.component';
 import { ReportsComponent } from './components/reports/reports.component';
 
@@ -62,6 +63,7 @@ import { OptimizationSuperthonPage } from './pages/optimization/optimization-sup
     HighlightStdComponent,
     PerformancePreprocessorComponent,
     RegressionPreprocessorComponent,
+    LowessPreprocessorComponent,
     HighchartsReportComponent,
     ReportsComponent,
 

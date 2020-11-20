@@ -1,12 +1,8 @@
 import { LinearRegression } from '../../calculations/statistics/linear-regression';
 import { Record, BasePreprocessor, IBasePreprocessor } from './base-preprocessor';
 
-const MILLISECONDS_IN_A_YEAR: number = 1000 * 24 * 60 * 60 * 365;
-
 class RegressionRecord extends Record {
   private linearRegression: LinearRegression;
-  private year0: number;
-  private x: number;
 
   constructor(public endDate: Date) {
     super(endDate);
@@ -14,12 +10,7 @@ class RegressionRecord extends Record {
   }
 
   compute(instant: Date, y: number): void {
-    let year: number = instant.valueOf() / MILLISECONDS_IN_A_YEAR;
-    if (!this.year0) {
-      this.year0 = year;
-    }
-    this.x = year - this.year0;
-    this.linearRegression.regression(this.x, y);
+    this.linearRegression.regression(instant, y);
   }
 
   getValue(): number {
