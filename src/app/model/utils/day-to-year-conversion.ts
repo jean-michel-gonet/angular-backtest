@@ -25,7 +25,7 @@ export class DayToYearConversion {
     let x: number;
     if (value instanceof Date) {
       if (this.year0 == undefined) {
-        this.year0 = value;
+        this.year0 = new Date(value);
       }
       x = value.valueOf() - this.year0.valueOf();
       x /= MILLISECONDS_IN_A_YEAR;

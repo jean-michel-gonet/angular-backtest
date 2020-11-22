@@ -1,26 +1,28 @@
-import { LowessRegression } from '../../calculations/statistics/lowess-regression';
+import { LocalRegression } from '../../calculations/statistics/local-regression';
 import { Record, BasePreprocessor, IBasePreprocessor } from './base-preprocessor';
 
 class LowessRecord extends Record {
-  private lowessRegression: LowessRegression;
+  private lowessRegression: LocalRegression;
+  private sampleNumber: number;
 
   constructor(public endDate: Date) {
     super(endDate);
-    this.lowessRegression = new LowessRegression();
+    this.lowessRegression = new LocalRegression();
+    this.sampleNumber = 0;
   }
 
   compute(instant: Date, y: number): void {
-    this.lowessRegression.sample(instant, y);
+    this.lowessRegression.sample(this.sampleNumber, y);
+    this.sampleNumber++;
   }
 
   getValue(): number {
-    let y = this.lowessRegression.regression().y;
-    return y;
+    return this.lowessRegression.regression();
   }
 }
 
 /**
- * Applies a local regression to smooth the provided signal.
+ * Applies local regression to smooth the provided signal.
  * @class{LowessPreprocessor}
  */
 export class LowessPreprocessor extends BasePreprocessor {

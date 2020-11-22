@@ -43,7 +43,6 @@
     </highlight-report>
     <highcharts-report>
       <chart-report-configuration show="SPYCHF.CLOSE"  showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
-      <chart-report-configuration show="SPY.SMOOTH"  showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
       <chart-report-configuration show="SPY.CLOSE"  showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
       <chart-report-configuration show="ACC.NAV"      showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
       <chart-report-configuration show="MT.SUPERTHON" showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
@@ -51,10 +50,9 @@
       <chart-report-annotation show="MT.BEAR" color="red"></chart-report-annotation>
     </highcharts-report>
     <preprocessors>
-      <regression-preprocessor source="ACC.NAV" over= "3" unitOfTime="YEAR" output="ACC.P03"></regression-preprocessor>
-      <regression-preprocessor source="ACC.NAV" over= "7" unitOfTime="YEAR" output="ACC.P07"></regression-preprocessor>
-      <regression-preprocessor source="ACC.NAV" over="10" unitOfTime="YEAR" output="ACC.P10"></regression-preprocessor>
-      <lowess-preprocessor source="SPY.CLOSE" over="10" unitOfTime="WEEK" output="SPY.SMOOTH"></lowess-preprocessor>
+      <performance-preprocessor source="ACC.NAV" over= "3" unitOfTime="YEAR" output="ACC.P03"></performance-preprocessor>
+      <performance-preprocessor source="ACC.NAV" over= "7" unitOfTime="YEAR" output="ACC.P07"></performance-preprocessor>
+      <performance-preprocessor source="ACC.NAV" over="10" unitOfTime="YEAR" output="ACC.P10"></performance-preprocessor>
     </preprocessors>
   </reports>
   <accounts>
@@ -119,6 +117,7 @@
     </highlight-report>
     <highcharts-report>
       <chart-report-configuration show="ACWX.CLOSE"      showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
+      <chart-report-configuration show="ACWX.SMOOTH"      showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
       <chart-report-configuration show="ACWXCHFTR.CLOSE" showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
       <chart-report-configuration show="ACC.NAV"         showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
       <chart-report-configuration show="MT.SUPERTHON"    showDataAs="LINE" showDataOn="RIGHT" normalize="false" ></chart-report-configuration>
@@ -129,6 +128,7 @@
       <performance-preprocessor source="ACC.NAV" over= "3" unitOfTime="YEAR" output="ACC.P03"></performance-preprocessor>
       <performance-preprocessor source="ACC.NAV" over= "7" unitOfTime="YEAR" output="ACC.P07"></performance-preprocessor>
       <performance-preprocessor source="ACC.NAV" over="10" unitOfTime="YEAR" output="ACC.P10"></performance-preprocessor>
+      <lowess-preprocessor source="ACWX.CLOSE" over="50" unitOfTime="DAY" output="ACWX.SMOOTH"></lowess-preprocessor>
     </preprocessors>
   </reports>
   <accounts>
