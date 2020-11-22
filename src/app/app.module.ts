@@ -1,17 +1,17 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { ChartsModule } from 'ng2-charts';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { ChartReportComponent } from './components/reports/chart-report/chart-report.component';
+import { HighchartsReportComponent } from './components/reports/chart-report/highcharts-report.component';
 import { ChartReportConfigurationComponent } from './components/reports/chart-report/chart-report-configuration.component';
 import { ChartReportAnnotationComponent } from './components/reports/chart-report/chart-report-annotation.component';
 import { HighlightReportComponent } from './components/reports/highlight-report/highlight-report.component';
 import { PerformancePreprocessorComponent} from './components/reports/preprocessors/performance-preprocessor.component';
 import { RegressionPreprocessorComponent} from './components/reports/preprocessors/regression-preprocessor.component';
+import { LowessPreprocessorComponent} from './components/reports/preprocessors/lowess-preprocessor.component';
 import { PreprocessorsComponent } from './components/reports/preprocessors/preprocessors.component';
 import { ReportsComponent } from './components/reports/reports.component';
 
@@ -41,14 +41,11 @@ import { HighlightMaxComponent,
          HighlightStdComponent } from './components/reports/highlight-report/highlight.component';
 
 import { HomePage } from './pages/home/home.page';
+import { HighchartsPage } from './pages/highcharts/highcharts.page';
 import { MarketTimingPage } from './pages/market-timing/market-timing.page';
 import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear.page';
 import { OptimizationEmaPage } from './pages/optimization/optimization-ema.page';
 import { OptimizationSuperthonPage } from './pages/optimization/optimization-superthon.page';
-
-import 'hammerjs';
-import 'chartjs-plugin-zoom';
-import 'chartjs-plugin-annotation';
 
 @NgModule({
   declarations: [
@@ -66,7 +63,8 @@ import 'chartjs-plugin-annotation';
     HighlightStdComponent,
     PerformancePreprocessorComponent,
     RegressionPreprocessorComponent,
-    ChartReportComponent,
+    LowessPreprocessorComponent,
+    HighchartsReportComponent,
     ReportsComponent,
 
     EMAMarketTimingComponent,
@@ -90,6 +88,7 @@ import 'chartjs-plugin-annotation';
     SimulationComponent,
 
     HomePage,
+    HighchartsPage,
     MarketTimingPage,
     InvestingInBearPage,
     OptimizationEmaPage,
@@ -98,8 +97,7 @@ import 'chartjs-plugin-annotation';
   imports: [
     BrowserModule,
     HttpClientModule,
-    AppRoutingModule,
-    ChartsModule
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]

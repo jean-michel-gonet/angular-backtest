@@ -1,23 +1,23 @@
 import { ViewChild, Component, NO_ERRORS_SCHEMA } from "@angular/core";
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { PerformancePreprocessorComponent } from './performance-preprocessor.component';
-import { PerformancePreprocessor } from 'src/app/model/reports/preprocessors/performance-preprocessor';
+import { LowessPreprocessor } from 'src/app/model/reports/preprocessors/lowess-preprocessor';
 import { UnitOfTime } from 'src/app/model/reports/preprocessors/unit-of-time';
+import { LowessPreprocessorComponent } from './lowess-preprocessor.component';
 
 @Component({
   selector: 'parent',
   template: `
-  <performance-preprocessor source="MACD.NAV"
+  <lowess-preprocessor source="MACD.NAV"
                             over="3"
                             unitOfTime="YEAR"
-                            output="PERFORMANCE3"></performance-preprocessor>`})
+                            output="PERFORMANCE3"></lowess-preprocessor>`})
 class TestWrapperComponent {
-  @ViewChild(PerformancePreprocessorComponent, {static: true})
-  public slidingPerformanceComponent: PerformancePreprocessorComponent;
+  @ViewChild(LowessPreprocessorComponent, {static: true})
+  public slidingPerformanceComponent: LowessPreprocessorComponent;
 }
 
 describe('SlidingPerformanceComponent', () => {
-  let component: PerformancePreprocessorComponent;
+  let component: LowessPreprocessorComponent;
   let fixture: ComponentFixture<TestWrapperComponent>;
 
   beforeEach(waitForAsync(() => {
@@ -25,7 +25,7 @@ describe('SlidingPerformanceComponent', () => {
       schemas: [ NO_ERRORS_SCHEMA ],
       declarations: [
         TestWrapperComponent,
-        PerformancePreprocessorComponent
+        LowessPreprocessorComponent
       ],
       providers: []
     }).compileComponents();
@@ -42,11 +42,11 @@ describe('SlidingPerformanceComponent', () => {
   });
 
   it('Can instantiate a SlidingPerformance preprocessor', () => {
-    let performancePreprocessor: PerformancePreprocessor = component.asPerformancePreprocessor();
-    expect(performancePreprocessor).toBeTruthy();
-    expect(performancePreprocessor.source).toBe("MACD.NAV");
-    expect(performancePreprocessor.unitsOfTime.over).toBe(3);
-    expect(performancePreprocessor.unitsOfTime.unitOfTime).toBe(UnitOfTime.YEAR);
-    expect(performancePreprocessor.output).toBe("PERFORMANCE3");
+    let lowessPreprocessor: LowessPreprocessor = component.asLowessPreprocessor();
+    expect(lowessPreprocessor).toBeTruthy();
+    expect(lowessPreprocessor.source).toBe("MACD.NAV");
+    expect(lowessPreprocessor.unitsOfTime.over).toBe(3);
+    expect(lowessPreprocessor.unitsOfTime.unitOfTime).toBe(UnitOfTime.YEAR);
+    expect(lowessPreprocessor.output).toBe("PERFORMANCE3");
   });
 });

@@ -19,6 +19,9 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": false,
+            "allowedCommonJsDependencies": [
+              "highcharts"
+            ],
             "assets": [
               "src/favicon.ico",
               "src/assets"

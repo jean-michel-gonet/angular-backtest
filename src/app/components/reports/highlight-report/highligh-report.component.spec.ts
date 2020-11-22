@@ -1,14 +1,16 @@
 import { ViewChild, Component, NO_ERRORS_SCHEMA } from "@angular/core";
 import { HighlightReportComponent } from './highlight-report.component';
-import { ComponentFixture, async, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HighlightMaxComponent, HighlightMinComponent } from './highlight.component';
 
 @Component({
   selector: 'parent',
   template: `
   <highlight-report>
-    <highlight-max sourceName="SMAX"></highlight-max>
-    <highlight-min sourceName="SMIN"></highlight-min>
+    <ul>
+      <li><highlight-max sourceName="SMAX"></highlight-max></li>
+      <li><highlight-min sourceName="SMIN"></highlight-min></li>
+    </ul>
   <highlight-report>`})
 class TestWrapperComponent {
   @ViewChild(HighlightReportComponent, {static: true})
@@ -19,7 +21,7 @@ describe('HighlightReportComponent', () => {
   let component: HighlightReportComponent;
   let fixture: ComponentFixture<TestWrapperComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       schemas: [ NO_ERRORS_SCHEMA ],
       declarations: [

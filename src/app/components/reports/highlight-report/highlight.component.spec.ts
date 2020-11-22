@@ -1,6 +1,6 @@
 import { Component, ViewChild, NO_ERRORS_SCHEMA } from "@angular/core";
 import { HighlightMaxComponent, HighlightDateMaxComponent, HighlightMinComponent, HighlightDateMinComponent, HighlightAvgComponent, HighlightStdComponent, HighlightComponent } from './highlight.component';
-import { async, TestBed, ComponentFixture } from '@angular/core/testing';
+import { TestBed, ComponentFixture, waitForAsync } from '@angular/core/testing';
 
 @Component({
   selector: 'parent',
@@ -13,7 +13,7 @@ class TestWrapperComponent {
 
 describe('HighlightComponent', () => {
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [
