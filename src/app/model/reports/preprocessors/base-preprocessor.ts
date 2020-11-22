@@ -55,9 +55,10 @@ export abstract class BasePreprocessor implements PreProcessor {
   reportTo(report: Report): void {
     if (this.records.length > 0) {
       let record: Record;
-
-      while (this.records[0].endDate <= this.instant) {
+      if (this.records[0].endDate <= this.instant) {
         record = this.records.shift();
+      }
+      if (record) {
         let y: number = record.getValue();
         report.receiveData(new ReportedData({sourceName: this.output, y: y}));
       }
