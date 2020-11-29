@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { QuotesFromYahooService, YahooConverter } from './quotes-from-yahoo.service';
+import { QuotesFromYahooService, YahooReader } from './quotes-from-yahoo.service';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { HistoricalQuotes, IInstantQuotes, Quote } from 'src/app/model/core/quotes';
 import { HttpRequest } from '@angular/common/http';
@@ -41,10 +41,10 @@ describe('QuotesFromYahooService', () => {
   });
 });
 
-describe('YahooConverter', () => {
+describe('YahooReader', () => {
   it('Can convert responses from Yahoo into HistoricalQuotes', () => {
-    let yahooConverter: YahooConverter = new YahooConverter("ISIN1", yahooResponse);
-    let xx: HistoricalQuotes = yahooConverter.asHistoricalQuotes();
+    let yahooReader: YahooReader = new YahooReader("ISIN1", yahooResponse);
+    let xx: HistoricalQuotes = yahooReader.asHistoricalQuotes();
     let iStock: IInstantQuotes[] = xx.asIStock();
     expect(iStock).toEqual(
       jasmine.arrayWithExactContents([

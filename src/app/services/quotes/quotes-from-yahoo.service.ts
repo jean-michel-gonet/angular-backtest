@@ -7,9 +7,9 @@ import { IQuotesService } from './quotes.service.interface';
 
 /**
  * Converts Yahoo data into HistoricalQuotes.
- * @class{YahooConverter}
+ * @class{YahooReader}
  */
-export class YahooConverter {
+export class YahooReader {
   /**
    * Class constructor.
    * @param{string} yahooData The raw data returned by SIX.
@@ -99,8 +99,8 @@ export class QuotesFromYahooService implements IQuotesService {
 
   getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
     return this.http.get(source,{responseType: 'text'}).pipe(map(s => {
-        let yahooConverter: YahooConverter = new YahooConverter(name, s as string);
-        return yahooConverter.asHistoricalQuotes();
+        let yahooReader: YahooReader = new YahooReader(name, s as string);
+        return yahooReader.asHistoricalQuotes();
       }));
   }
 }

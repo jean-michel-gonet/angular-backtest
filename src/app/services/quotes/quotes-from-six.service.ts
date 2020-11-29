@@ -7,9 +7,9 @@ import { IQuotesService } from './quotes.service.interface';
 
 /**
  * Converts SIX data into HistoricalQuotes.
- * @class{SixConverter}
+ * @class{SixReader}
  */
-export class SixConverter {
+export class SixReader {
   /**
    * Class constructor.
    * @param{any} sixData The raw data returned by SIX.
@@ -86,8 +86,8 @@ export class QuotesFromSixService implements IQuotesService {
 
   getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
     return this.http.get(source).pipe(map(sixData => {
-        let sixConverter: SixConverter = new SixConverter(name, sixData);
-        return sixConverter.asHistoricalQuotes();
+        let sixReader: SixReader = new SixReader(name, sixData);
+        return sixReader.asHistoricalQuotes();
       }));
   }
 }

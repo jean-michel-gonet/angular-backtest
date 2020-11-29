@@ -7,9 +7,9 @@ import { IQuotesService } from './quotes.service.interface';
 
 /**
  * Converts Market Stack data into HistoricalQuotes.
- * @class{MarketStackConverter}
+ * @class{MarketStackReader}
  */
-export class MarketStackConverter {
+export class MarketStackReader {
   /**
    * Class constructor.
    * @param{any} sixData The raw data returned by SIX.
@@ -74,8 +74,8 @@ export class QuotesFromMarketStackService implements IQuotesService {
 
   getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
     return this.http.get(source).pipe(map(marketStackData => {
-        let sixConverter: MarketStackConverter = new MarketStackConverter(name, marketStackData);
-        return sixConverter.asHistoricalQuotes();
+        let sixReader: MarketStackReader = new MarketStackReader(name, marketStackData);
+        return sixReader.asHistoricalQuotes();
       }));
   }
 }

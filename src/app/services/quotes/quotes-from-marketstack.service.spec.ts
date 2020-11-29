@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { HistoricalQuotes, IInstantQuotes, Quote } from 'src/app/model/core/quotes';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { HttpRequest } from '@angular/common/http';
-import { MarketStackConverter, QuotesFromMarketStackService } from './quotes-from-marketstack.service';
+import { MarketStackReader, QuotesFromMarketStackService } from './quotes-from-marketstack.service';
 
 // Example of response downloaded from
 // http://api.marketstack.com/v1/eod?access_key=XXX&symbols=SPY&limit=3
@@ -93,11 +93,11 @@ describe('QuotesFromMarketStackService', () => {
 });
 
 
-describe('MarketStackConverter', () => {
+describe('MarketStackReader', () => {
 
   it('Can convert responses from Market Stack into HistoricalQuotes', () => {
-    let sixConverter: MarketStackConverter = new MarketStackConverter("ISIN", marketStackResponse);
-    let xx: HistoricalQuotes = sixConverter.asHistoricalQuotes();
+    let sixReader: MarketStackReader = new MarketStackReader("ISIN", marketStackResponse);
+    let xx: HistoricalQuotes = sixReader.asHistoricalQuotes();
     let iStock: IInstantQuotes[] = xx.asIStock();
     expect(iStock).toEqual(
       jasmine.arrayWithExactContents([

@@ -7,9 +7,9 @@ import { IQuotesService } from './quotes.service.interface';
 
 /**
  * Converts Investing data into HistoricalQuotes.
- * @class{InvestingConverter}
+ * @class{InvestingReader}
  */
-export class InvestingConverter {
+export class InvestingReader {
   /**
    * Class constructor.
    * @param{string} investingData The raw data downloaded from Investing.com.
@@ -152,8 +152,8 @@ export class QuotesFromInvestingService implements IQuotesService {
 
   getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
     return this.http.get(source,{responseType: 'text'}).pipe(map(s => {
-        let investingConverter: InvestingConverter = new InvestingConverter(name, s as string);
-        return investingConverter.asHistoricalQuotes();
+        let investingReader: InvestingReader = new InvestingReader(name, s as string);
+        return investingReader.asHistoricalQuotes();
       }));
   }
 }

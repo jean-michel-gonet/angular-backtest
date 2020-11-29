@@ -1,4 +1,4 @@
-import { QuotesFromInvestingService, InvestingConverter } from "./quotes-from-investing.service";
+import { QuotesFromInvestingService, InvestingReader } from "./quotes-from-investing.service";
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { HistoricalQuotes, IInstantQuotes, Quote } from 'src/app/model/core/quotes';
@@ -41,10 +41,10 @@ describe('QuotesFromInvestingService', () => {
   });
 });
 
-describe('InvestingConverter', () => {
+describe('InvestingReader', () => {
   it('Can convert files downloaded from Investing.com', () => {
-    let investingConverter: InvestingConverter = new InvestingConverter("ISIN1", investingResponse);
-    let xx: HistoricalQuotes = investingConverter.asHistoricalQuotes();
+    let investingReader: InvestingReader = new InvestingReader("ISIN1", investingResponse);
+    let xx: HistoricalQuotes = investingReader.asHistoricalQuotes();
     let iStock: IInstantQuotes[] = xx.asIStock();
     expect(iStock).toEqual(
       jasmine.arrayWithExactContents([
