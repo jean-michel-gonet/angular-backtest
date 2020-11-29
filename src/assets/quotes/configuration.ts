@@ -1,7 +1,7 @@
 import {
   NamedQuoteSource,
   QuoteProvider,
-  ExchangeRateOperation } from 'src/app/services/quotes/quote-configuration';
+  ExchangeRateOperation } from '../../app/services/quotes/quote-configuration';
 
 export const QUOTE_SOURCES: NamedQuoteSource[] = [
   {
