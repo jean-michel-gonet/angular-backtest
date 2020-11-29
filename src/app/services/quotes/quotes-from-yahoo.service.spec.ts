@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { QuotesFromYahooService, YahooReader } from './quotes-from-yahoo.service';
+import { QuotesFromYahooService, YahooReader, YahooWriter } from './quotes-from-yahoo.service';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { HistoricalQuotes, IInstantQuotes, Quote } from 'src/app/model/core/quotes';
 import { HttpRequest } from '@angular/common/http';
@@ -20,8 +20,8 @@ describe('QuotesFromYahooService', () => {
     TestBed.configureTestingModule({
       imports:[HttpClientTestingModule]
     });
-    service = TestBed.get(QuotesFromYahooService);
-    httpMock = TestBed.get(HttpTestingController);
+    service = TestBed.inject(QuotesFromYahooService);
+    httpMock = TestBed.inject(HttpTestingController);
   });
 
   it('Can return InstantQuotes Data from Yahoo', () => {
@@ -38,6 +38,86 @@ describe('QuotesFromYahooService', () => {
       req.flush(yahooResponse);
 
       httpMock.verify();
+  });
+});
+describe('YahooWriter', () => {
+  let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
+    new IInstantQuotes({
+      instant: new Date(2001, 12 - 1, 25),
+      quotes: [
+        new Quote({name: "SP500",  open: 100, close: 90, high: 110, low: 80, volume: 100000}),
+        new Quote({name: "FTSE100", open:  10, close:  9, high:  11, low:  8, volume:    600})
+      ]
+    }),
+    new IInstantQuotes({
+      instant: new Date(2001, 12 - 1, 26),
+      quotes: [
+        new Quote({name: "SP500",  open: 105, close: 95, high: 115, low: 85, volume: 150000}),
+        new Quote({name: "FTSE100", open:  20, close: 19, high:  21, low: 18, volume:    300})
+      ]
+    }),
+  ]);
+
+  it('Can convert historical quotes into Yahoo CSV file', () => {
+    let yahooWriter1: YahooWriter = new YahooWriter("SP500", historicalQuotes);
+    let yahooWriter2: YahooWriter = new YahooWriter("FTSE100", historicalQuotes);
+
+    let csv1: string = yahooWriter1.asYahooCsvFile();
+    expect(csv1).toBe("Date,Open,High,Low,Close,Adj Close,Volume\r\n" +
+	     "2001-12-25,100.000000,110.000000,80.000000,90.000000,90.000000,100000.000000\r\n" +
+	     "2001-12-26,105.000000,115.000000,85.000000,95.000000,95.000000,150000.000000\r\n");
+
+    let csv2: string = yahooWriter2.asYahooCsvFile();
+    expect(csv2).toBe("Date,Open,High,Low,Close,Adj Close,Volume\r\n" +
+	     "2001-12-25,10.000000,11.000000,8.000000,9.000000,9.000000,600.000000\r\n" +
+	     "2001-12-26,20.000000,21.000000,18.000000,19.000000,19.000000,300.000000\r\n");
+  });
+
+  it('Can cycle convert historical Yahoo CSV file', () =>{
+    let yahooWriter: YahooWriter = new YahooWriter("SP500", historicalQuotes);
+    let csv: string = yahooWriter.asYahooCsvFile();
+    let yahooReader: YahooReader = new YahooReader("SP500", csv);
+    let cycledHistoricalQuotes: HistoricalQuotes = yahooReader.asHistoricalQuotes();
+
+    expect(cycledHistoricalQuotes.asIStock()).toEqual(
+      jasmine.arrayWithExactContents([
+        new IInstantQuotes({
+          instant: new Date(2001, 12 - 1, 25),
+          quotes: [
+            new Quote({name: "SP500",  open: 100, close: 90, high: 110, low: 80, volume: 100000}),
+          ]
+        }),
+        new IInstantQuotes({
+          instant: new Date(2001, 12 - 1, 26),
+          quotes: [
+            new Quote({name: "SP500",  open: 105, close: 95, high: 115, low: 85, volume: 150000}),
+          ]
+        })
+      ]));
+  });
+
+  it('Can convert historical quotes with missing data into Yahoo CSV file', () => {
+    let incompleteQuotes: HistoricalQuotes = new HistoricalQuotes([
+      new IInstantQuotes({
+        instant: new Date(2001, 12 - 1, 25),
+        quotes: [
+          new Quote({name: "SP500",  close: 90})
+        ]
+      }),
+      new IInstantQuotes({
+        instant: new Date(2001, 12 - 1, 26),
+        quotes: [
+          new Quote({name: "SP500",  close: 95})
+        ]
+      }),
+    ]);
+
+    let yahooWriter: YahooWriter = new YahooWriter("SP500", incompleteQuotes);
+
+    let csv1: string = yahooWriter.asYahooCsvFile();
+    expect(csv1).toBe("Date,Open,High,Low,Close,Adj Close,Volume\r\n" +
+       "2001-12-25,90.000000,90.000000,90.000000,90.000000,90.000000,0.000000\r\n" +
+       "2001-12-26,95.000000,95.000000,95.000000,95.000000,95.000000,0.000000\r\n");
   });
 });
 

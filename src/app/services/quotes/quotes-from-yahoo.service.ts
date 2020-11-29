@@ -5,6 +5,56 @@ import { HistoricalQuotes, InstantQuotes, Quote } from 'src/app/model/core/quote
 import { map } from 'rxjs/operators';
 import { IQuotesService } from './quotes.service.interface';
 
+const YAHOO_HEADER: string = "Date,Open,High,Low,Close,Adj Close,Volume";
+
+export class YahooWriter {
+  /**
+   * Class constructor.
+   * @param{string} name The name of the quote to export.
+   * @param{HistoricalQuotes} historicalQuotes Historical data containing
+   * the quote to export.
+   */
+  constructor(private name: string, private historicalQuotes: HistoricalQuotes) {
+  }
+
+  /**
+   * Returns a string containing a csv file with the data extracetd from
+   * the historical quotes.
+   * @return{string} The yahoo flavored csv file.
+   */
+  public asYahooCsvFile(): string {
+    let csv = YAHOO_HEADER + "\r\n";
+    this.historicalQuotes.forEachDate(instantQuotes => {
+      let date: Date = instantQuotes.instant;
+      let quote: Quote = instantQuotes.quote(this.name);
+      let line: string =
+        this.formatDate(date) + "," +
+        quote.open.toFixed(6) + "," +
+        quote.high.toFixed(6) + "," +
+        quote.low.toFixed(6) + "," +
+        quote.close.toFixed(6) + "," +
+        quote.close.toFixed(6) + "," +
+        quote.volume.toFixed(6) + "\r\n";
+      csv += line;
+    });
+    return csv;
+  }
+
+  private formatDate(date: Date): string {
+    let nMonth: number = date.getMonth() + 1;
+    let sMonth: string;
+    if (nMonth < 10) {
+      sMonth = "0" + nMonth.toString();
+    } else {
+      sMonth = nMonth.toString();
+    }
+    let sDay = date.getDate().toString()
+    let sYear = date.getFullYear().toString();
+
+    return sYear + "-" + sMonth + "-" + sDay;
+  }
+}
+
 /**
  * Converts Yahoo data into HistoricalQuotes.
  * @class{YahooReader}
