@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HistoricalQuotes, InstantQuotes, Quote } from 'src/app/model/core/quotes';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IQuotesService } from './quotes.service.interface';
+import { HistoricalQuotes, InstantQuotes, Quote } from '../../../app/model/core/quotes';
 
 /**
  * Converts Market Stack data into HistoricalQuotes.
