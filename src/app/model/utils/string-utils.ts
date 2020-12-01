@@ -38,7 +38,7 @@ export class StringUtils {
    * @param value Can be a number, a string or a Date.
    * @return {String} A string representing the provided date.
    */
-  public static formatAsDate(value: any): string {
+  public static formatAsDate(value: any, separator: string = "."): string {
     if (!value) {
       return "";
     }
@@ -66,7 +66,7 @@ export class StringUtils {
     } else {
       sDay = "" + day;
     }
-    let s = sYear + "." + sMonth + "." + sDay
+    let s = sYear + separator + sMonth + separator + sDay
     return s;
   }
 

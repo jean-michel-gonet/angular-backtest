@@ -7,6 +7,7 @@ import { MARKET_STACK_ACCESS_KEY } from './market-stack.access-key';
 import { readFile, writeFile} from 'fs';
 import { join } from 'path';
 import { get } from 'http';
+import { StringUtils } from '../app/model/utils/string-utils';
 
 export class RefreshQuotes {
 
@@ -76,7 +77,7 @@ export class RefreshQuotes {
   private downloadMarketStackData(name: string, dateFrom: Date, callback: (any: any) => void): void {
     let url: string = "http://api.marketstack.com/v1/eod?access_key=" + MARKET_STACK_ACCESS_KEY
         + "&symbols=" + name
-        + "&date_from=" + this.formatDateYYYYMMDD(dateFrom, "-");
+        + "&date_from=" + StringUtils.formatAsDate(dateFrom, "-");
 
     get(url, incomingMessage => {
 
@@ -131,28 +132,6 @@ export class RefreshQuotes {
       }
     });
     return mostRecentDate;
-  }
-
-  private formatDateYYYYMMDD(date: Date, separator: string): string {
-    let nMonth: number = date.getMonth() + 1;
-    let sMonth: string;
-    if (nMonth < 10) {
-      sMonth = "0" + nMonth.toString();
-    } else {
-      sMonth = nMonth.toString();
-    }
-
-    let nDay = date.getDate();
-    let sDay: string;
-    if (nDay < 10) {
-      sDay = "0" + nDay.toString();
-    } else {
-      sDay = nDay.toString();
-    }
-
-    let sYear = date.getFullYear().toString();
-
-    return sYear + separator + sMonth + separator + sDay;
   }
 
   private makeRelativePath(uri: string): string {
