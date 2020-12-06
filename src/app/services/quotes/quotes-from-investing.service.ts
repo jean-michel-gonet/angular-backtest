@@ -5,6 +5,106 @@ import { HistoricalQuotes, InstantQuotes, Quote } from 'src/app/model/core/quote
 import { map } from 'rxjs/operators';
 import { IQuotesService } from './quotes.service.interface';
 
+const INVESTING_HEADER: string = `"Date","Price","Open","High","Low","Vol.","Change %"`;
+
+/**
+ * Converts Historical quotes into Yahoo data.
+ * @class{InvestingWriter}
+ */
+export class InvestingWriter {
+  /**
+   * Class constructor.
+   * @param{string} name The name of the quote to convert.
+   * @param{HistoricalQuotes} historicalQuotes Historical data containing
+   * the quote to convert.
+   */
+  constructor(private name: string, private historicalQuotes: HistoricalQuotes) {
+  }
+
+  /**
+   * Returns a string containing a csv file with the data extracetd from
+   * the historical quotes.
+   * @return{string} The yahoo flavored csv file.
+   */
+  public asInvestingCsvFile(): string {
+    let csv = INVESTING_HEADER + "\r\n";
+    this.historicalQuotes.forEachDate(instantQuotes => {
+      let date: Date = instantQuotes.instant;
+      let quote: Quote = instantQuotes.quote(this.name);
+      let change: number;
+
+      if (quote.open) {
+        change = (quote.close - quote.open) / quote.open;
+      } else {
+        change = 0;
+      }
+
+      let line: string =
+        this.addQuotes(this.convertDate(date)) + "," +
+        this.addQuotes(this.convertNumber(quote.close)) + "," +
+        this.addQuotes(this.convertNumber(quote.open)) + "," +
+        this.addQuotes(this.convertNumber(quote.high)) + "," +
+        this.addQuotes(this.convertNumber(quote.low)) + "," +
+        this.addQuotes(this.convertNumber(quote.volume)) + "," +
+        this.addQuotes(this.convertNumber(change * 100) + "%") + "\r\n";
+      csv += line;
+    });
+    return csv;
+  }
+
+  private convertDate(value: Date): string {
+    let sMonth = this.convertMonth(value.getMonth());
+    let sDay: string;
+    if (value.getDate() < 10) {
+      sDay = "0" + value.getDate();
+    } else {
+      sDay = value.getDate().toString();
+    }
+    let sYear = value.getFullYear().toString();
+
+    return sMonth + " " + sDay + ", " + sYear;
+  }
+
+  private convertMonth(month: number): string {
+    switch(month) {
+      case 0:
+        return('Jan');
+      case 1:
+        return 'Feb';
+      case 2:
+        return 'Mar';
+      case 3:
+        return 'Apr';
+      case 4:
+        return 'May';
+      case 5:
+        return 'Jun';
+      case 6:
+        return 'Jul';
+      case 7:
+        return 'Aug';
+      case 8:
+        return 'Sep';
+      case 9:
+        return 'Oct';
+      case 10:
+        return 'Nov';
+      case 11:
+        return 'Dec';
+    }
+    return null;
+  }
+
+  private convertNumber(value: number): string {
+    return value.toLocaleString('en-US', {maximumFractionDigits:2})
+  }
+
+  private addQuotes(s: string): string {
+    return "\"" + s  + "\"";
+  }
+
+}
+
 /**
  * Converts Investing data into HistoricalQuotes.
  * @class{InvestingReader}

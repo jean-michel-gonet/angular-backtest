@@ -1,4 +1,4 @@
-import { QuotesFromInvestingService, InvestingReader } from "./quotes-from-investing.service";
+import { QuotesFromInvestingService, InvestingReader, InvestingWriter } from "./quotes-from-investing.service";
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { HistoricalQuotes, IInstantQuotes, Quote } from 'src/app/model/core/quotes';
@@ -40,6 +40,89 @@ describe('QuotesFromInvestingService', () => {
     httpMock.verify();
   });
 });
+
+describe('InvestingWriter', () => {
+  let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
+    new IInstantQuotes({
+      instant: new Date(2001, 12 - 1, 25),
+      quotes: [
+        new Quote({name: "SP500",  open: 10000.23, close: 9000.25, high: 11000.26, low: 8000.27, volume: 100000.28}),
+        new Quote({name: "FTSE100", open:  10.24, close:  9.25, high:  11.26, low:  8.27, volume: 600.28})
+      ]
+    }),
+    new IInstantQuotes({
+      instant: new Date(2001, 12 - 1, 26),
+      quotes: [
+        new Quote({name: "SP500",  open: 10500, close: 9500, high: 11500, low: 8500, volume: 150000}),
+        new Quote({name: "FTSE100", open:  20, close: 19, high:  21, low: 18, volume:    300})
+      ]
+    }),
+  ]);
+
+  it('Can convert historical quotes into Investing CSV file', () => {
+    let investingWriter1: InvestingWriter = new InvestingWriter("SP500", historicalQuotes);
+    let investingWriter2: InvestingWriter = new InvestingWriter("FTSE100", historicalQuotes);
+
+    let csv1: string = investingWriter1.asInvestingCsvFile();
+    expect(csv1).toBe(`"Date","Price","Open","High","Low","Vol.","Change %"\r\n` +
+	     `"Dec 25, 2001","9,000.25","10,000.23","11,000.26","8,000.27","100,000.28","-10%"\r\n` +
+	     `"Dec 26, 2001","9,500","10,500","11,500","8,500","150,000","-9.52%"\r\n`);
+
+    let csv2: string = investingWriter2.asInvestingCsvFile();
+    expect(csv2).toBe(`"Date","Price","Open","High","Low","Vol.","Change %"\r\n` +
+	     `"Dec 25, 2001","9.25","10.24","11.26","8.27","600.28","-9.67%"\r\n` +
+	     `"Dec 26, 2001","19","20","21","18","300","-5%"\r\n`);
+  });
+
+  it('Can cycle convert historical Investing CSV file', () =>{
+    let investingWriter: InvestingWriter = new InvestingWriter("SP500", historicalQuotes);
+    let csv: string = investingWriter.asInvestingCsvFile();
+    let yahooReader: InvestingReader = new InvestingReader("SP500", csv);
+    let cycledHistoricalQuotes: HistoricalQuotes = yahooReader.asHistoricalQuotes();
+
+    expect(cycledHistoricalQuotes.asIStock()).toEqual(
+      jasmine.arrayWithExactContents([
+        new IInstantQuotes({
+          instant: new Date(2001, 12 - 1, 25),
+          quotes: [
+            new Quote({name: "SP500",  open: 10000.23, close: 9000.25, high: 11000.26, low: 8000.27, volume: 100000.28}),
+
+          ]
+        }),
+        new IInstantQuotes({
+          instant: new Date(2001, 12 - 1, 26),
+          quotes: [
+            new Quote({name: "SP500",  open: 10500, close: 9500, high: 11500, low: 8500, volume: 150000}),
+          ]
+        })
+      ]));
+  });
+
+  it('Can convert historical quotes with missing data into Investing CSV file', () => {
+    let incompleteQuotes: HistoricalQuotes = new HistoricalQuotes([
+      new IInstantQuotes({
+        instant: new Date(2001, 12 - 1, 25),
+        quotes: [
+          new Quote({name: "SP500",  close: 90})
+        ]
+      }),
+      new IInstantQuotes({
+        instant: new Date(2001, 12 - 1, 26),
+        quotes: [
+          new Quote({name: "SP500",  close: 95})
+        ]
+      }),
+    ]);
+
+    let investingWriter: InvestingWriter = new InvestingWriter("SP500", incompleteQuotes);
+
+    let csv1: string = investingWriter.asInvestingCsvFile();
+    expect(csv1).toBe(`"Date","Price","Open","High","Low","Vol.","Change %"\r\n` +
+	     `"Dec 25, 2001","90","90","90","90","0","0%"\r\n` +
+	     `"Dec 26, 2001","95","95","95","95","0","0%"\r\n`);
+  });
+});
+
 
 describe('InvestingReader', () => {
   it('Can convert files downloaded from Investing.com', () => {

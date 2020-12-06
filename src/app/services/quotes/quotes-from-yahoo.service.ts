@@ -7,6 +7,10 @@ import { IQuotesService } from './quotes.service.interface';
 
 const YAHOO_HEADER: string = "Date,Open,High,Low,Close,Adj Close,Volume";
 
+/**
+ * Converts Historical quotes into Yahoo data.
+ * @class{YahooWriter}
+ */
 export class YahooWriter {
   /**
    * Class constructor.
