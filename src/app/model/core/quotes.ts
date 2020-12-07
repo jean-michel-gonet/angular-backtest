@@ -259,6 +259,32 @@ export class HistoricalQuotes implements Reporter {
   }
 
   /**
+   * Returns the maximum date present in this historical quote series.
+   * @param {string} name The name of the quote to verify.
+   */
+  maxDate(name?: string): Date {
+    let maxDate: Date;
+    this.instantQuotes.forEach(instantQuote => {
+      let skipIt: boolean;
+      if (name) {
+        skipIt = instantQuote.quote(name) == null;
+      } else {
+        skipIt = false;
+      }
+      if (!skipIt) {
+        if (maxDate) {
+          if (instantQuote.instant.valueOf() > maxDate.valueOf()) {
+            maxDate = instantQuote.instant;
+          }
+        } else {
+          maxDate = instantQuote.instant;
+        }
+      }
+    });
+    return maxDate;
+  }
+
+  /**
    * Merge this instantQuotes data with another.
    * This instantQuotes data gets modified.
    * @param {HistoricalQuotes} otherHistoricalQuotes The other data.
