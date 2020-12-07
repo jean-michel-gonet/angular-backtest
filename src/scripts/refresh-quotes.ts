@@ -1,137 +1,207 @@
+import { readFile, writeFile} from 'fs';
+import { join } from 'path';
+import * as https from 'https';
+import * as http  from 'http';
+import { Observable, Observer } from 'rxjs';
+
+import { QUOTE_SOURCES } from '../assets/quotes/configuration';
+import { MARKET_STACK_ACCESS_KEY } from './market-stack.access-key';
+
 import { NamedQuoteSource, QuoteProvider } from '../app/services/quotes/quote-configuration';
 import { HistoricalQuotes } from '../app/model/core/quotes';
 import { YahooReader, YahooWriter } from '../app/services/quotes/quotes-from-yahoo.service';
 import { MarketStackReader } from '../app/services/quotes/quotes-from-marketstack.service';
-import { QUOTE_SOURCES } from '../assets/quotes/configuration';
-import { MARKET_STACK_ACCESS_KEY } from './market-stack.access-key';
-import { readFile, writeFile} from 'fs';
-import { join } from 'path';
-import { get } from 'http';
+import { InvestingReader, InvestingWriter } from '../app/services/quotes/quotes-from-investing.service';
 import { StringUtils } from '../app/model/utils/string-utils';
 
 export class RefreshQuotes {
 
-  /**
-   * Refreshes all elligible quotes in the QUOTE_SOURCES configuration.
-   * For a quote to be elligible:
-   * - It has to be in YAHOO format.
-   * - It has to be in the local file system.
-   */
-  public doIt():void {
-    QUOTE_SOURCES.forEach(namedQuoteSource => {
-      if (namedQuoteSource.quote.provider == QuoteProvider.YAHOO) {
-        let fileSystemPath = this.makeRelativePath(namedQuoteSource.quote.uri);
-        readFile(fileSystemPath, {encoding: 'utf-8'}, (err, data) => {
-          if (err != null) {
-            console.log(`Ignoring: ${fileSystemPath} - ${err}`);
-          } else {
-            console.log(`Processing ${fileSystemPath}: ${data.length} bytes long.`);
-            this.update(namedQuoteSource, data, updatedData => {
-              writeFile(fileSystemPath + "1", updatedData, {encoding: 'utf-8'}, () => {
-                console.log(`Finished processing ${fileSystemPath}`);
-              });
-            });
-          }
+  public refreshAll():void {
+    // Make the list of all elligible files to refresh:
+    let quotesToRefresh = this.quotesToRefresh();
+
+    // Refresh each file.
+    quotesToRefresh.forEach(namedQuoteSource => {
+      let fileName = this.makeRelativePath(namedQuoteSource.quote.local.fileName);
+      readFile(fileName, {encoding: 'utf-8'}, (err, localData) => {
+        if (err != null) {
+          console.info(`Dropping ${namedQuoteSource.name} - ${fileName}: ${err}`);
+        } else {
+          console.info(`Processing ${namedQuoteSource.name} - ${fileName}: ${localData.length} bytes long.`);
+          this.refresh(namedQuoteSource, localData).subscribe(
+            updatedData => {
+              writeFile(fileName + "1", updatedData, {encoding: 'utf-8'}, () => {
+                console.info(`Finished processing ${namedQuoteSource.name} - ${fileName}`);
+              }),
+              (error: any) => {
+                console.error(`Error processing ${namedQuoteSource.name} - ${fileName}: ${error}`);
+              }
+          });
+        }
+      });
+    });
+  }
+
+  private refresh(namedQuoteSource: NamedQuoteSource, localData: string): Observable<string> {
+    let format = namedQuoteSource.quote.local.format;
+    switch(format) {
+      case QuoteProvider.YAHOO:
+        return this.refreshYahoo(namedQuoteSource, localData);
+      case QuoteProvider.INVESTING:
+        return this.refreshInvesting(namedQuoteSource, localData);
+      default:
+        return new Observable<string>(observer => {
+          observer.error(new Error("Local format not supported - " + format));
         });
-      } else {
-        console.log(`Skipping: ${namedQuoteSource.name} - Only YAHOO format is supported`);
-      }
+    }
+  }
+
+  private refreshYahoo(namedQuoteSource: NamedQuoteSource, localData: string): Observable<string> {
+    return new Observable<string>(observer => {
+      let reader = new YahooReader(namedQuoteSource.name, localData);
+      let localHistoricalQuotes = reader.asHistoricalQuotes();
+      let dateFrom = localHistoricalQuotes.maxDate(namedQuoteSource.name);
+      console.info(`Local quotes ${namedQuoteSource.name} available in Yahoo format up to ${dateFrom}`);
+      this.downloadMoreFrom(namedQuoteSource, dateFrom).subscribe(
+        historicalQuotes => {
+          localHistoricalQuotes.merge(historicalQuotes);
+          let writer = new YahooWriter(namedQuoteSource.name, localHistoricalQuotes);
+          let csvFile = writer.asYahooCsvFile()
+          observer.next(csvFile);
+          observer.complete();
+        },
+        (error: any) => {
+          observer.error(error);
+        });
     });
   }
 
-  private update(namedQuoteSource: NamedQuoteSource, localData: string, callback: (updatedData: string) => void): void {
-    let name: string = namedQuoteSource.name;
-
-    // Loads local data:
-    let yahooReader: YahooReader = new YahooReader(name, localData);
-    let historicalQuotes: HistoricalQuotes = yahooReader.asHistoricalQuotes();
-
-    // Find the most recent available date:
-    let mostRecentDate: Date = this.mostRecentDateOf(historicalQuotes);
-
-    // Download additional market data:
-    this.downloadMarketStackData(name, mostRecentDate, data => {
-      // Parse remote data:
-      let marketStackReader: MarketStackReader = new MarketStackReader(name, data);
-      let additionalHistoricalQuotes = marketStackReader.asHistoricalQuotes();
-
-      // Merge local and remote data:
-      historicalQuotes.merge(additionalHistoricalQuotes);
-
-      // Make a CSV file with the result:
-      let yahooWriter: YahooWriter = new YahooWriter(name, historicalQuotes);
-      let updatedData: string = yahooWriter.asYahooCsvFile();
-
-      // Pass on the result:
-      callback(updatedData);
+  private refreshInvesting(namedQuoteSource: NamedQuoteSource, localData: string): Observable<string> {
+    return new Observable<string>(observer => {
+      let reader = new InvestingReader(namedQuoteSource.name, localData);
+      let localHistoricalQuotes = reader.asHistoricalQuotes();
+      let dateFrom = localHistoricalQuotes.maxDate(namedQuoteSource.name);
+      console.info(`Local quotes ${namedQuoteSource.name} available in Investing format up to ${dateFrom}`);
+      this.downloadMoreFrom(namedQuoteSource, dateFrom).subscribe(
+        historicalQuotes => {
+          localHistoricalQuotes.merge(historicalQuotes);
+          let writer = new InvestingWriter(namedQuoteSource.name, localHistoricalQuotes);
+          let csvFile = writer.asInvestingCsvFile()
+          observer.next(csvFile);
+          observer.complete();
+        },
+        (error: any) => {
+          observer.error(error);
+        });
     });
   }
 
-  /**
-   * Handles the transport of data from Market Stack, and parses it as JSON.
-   * @param{string} name The ticker to download.
-   * @param{Date} dateFrom Downloads data from this date, including it.
-   * @param{callback: (any: any) => void} callback Method called when the
-   * download is complete.
-   */
-  private downloadMarketStackData(name: string, dateFrom: Date, callback: (any: any) => void): void {
+  private downloadMoreFrom(namedQuoteSource: NamedQuoteSource, dateFrom: Date): Observable<HistoricalQuotes> {
+    let provider = namedQuoteSource.quote.remote.provider;
+    switch(provider) {
+      case QuoteProvider.YAHOO:
+        return this.downloadMoreFromYahoo(namedQuoteSource, dateFrom);
+      case QuoteProvider.MARKETSTACK:
+        return this.downloadMoreFromMarketStack(namedQuoteSource, dateFrom);
+      default:
+        return new Observable<HistoricalQuotes>(observer => {
+          observer.error(new Error("Remote provider not supported - " + provider));
+        });
+    }
+  }
+  // 1607367683677
+  // 1607365153
+  private downloadMoreFromYahoo(namedQuoteSource: NamedQuoteSource, dateFrom: Date): Observable<HistoricalQuotes> {
+    let ticker = namedQuoteSource.quote.remote.ticker;
+    let period1 = Math.floor(new Date(dateFrom.getFullYear(), dateFrom.getMonth(), dateFrom.getDate()).valueOf() / 1000);
+    let today = new Date();
+    let period2 = Math.floor(new Date(today.getFullYear(), today.getMonth(), today.getDate()).valueOf() / 1000);
+    let url: string = "https://query1.finance.yahoo.com/v7/finance/download/" + ticker + "?"
+        + "period1=" + period1.toString()
+        + "&period2=" + period2.toString()
+        + "&interval=1d&events=history&includeAdjustedClose=true";
+
+    return new Observable<HistoricalQuotes>(observer => {
+      this.downloadFromUrl(url).subscribe(
+        remoteData => {
+          console.info(`Retrieved ${namedQuoteSource.name} as ${ticker} from Yahoo - ${remoteData.length} bytes of data`);
+          let reader = new YahooReader(namedQuoteSource.name, remoteData);
+          let remoteHistoricalQuotes = reader.asHistoricalQuotes();
+          observer.next(remoteHistoricalQuotes);
+        },
+        (error: any) => {
+          observer.error(error);
+        });
+    });
+  }
+
+  private downloadMoreFromMarketStack(namedQuoteSource: NamedQuoteSource, dateFrom: Date): Observable<HistoricalQuotes> {
+    let ticker = namedQuoteSource.quote.remote.ticker;
     let url: string = "http://api.marketstack.com/v1/eod?access_key=" + MARKET_STACK_ACCESS_KEY
-        + "&symbols=" + name
+        + "&symbols=" + ticker
         + "&date_from=" + StringUtils.formatAsDate(dateFrom, "-");
 
-    get(url, incomingMessage => {
+    return new Observable<HistoricalQuotes>(observer => {
+      this.downloadFromUrl(url).subscribe(
+        remoteData => {
+          console.info(`Retrieved ${namedQuoteSource.name} as ${ticker} from MarketStack - ${remoteData.length} bytes of data`);
+          let json = JSON.parse(remoteData);
+          let reader = new MarketStackReader(namedQuoteSource.name, json);
+          let remoteHistoricalQuotes = reader.asHistoricalQuotes();
+          observer.next(remoteHistoricalQuotes);
+        },
+        (error: any) => {
+          observer.error(error);
+        });
+    });
+  }
 
-      // Check that there are no errors in the incoming message:
-      let statusCode: number = incomingMessage.statusCode;
-      let contentType: string = incomingMessage.headers['content-type'];
-      let error: Error;
-      if (statusCode != 200) {
-        error = new Error('Request to ' + url + ' failed. Status code: ' + statusCode);
-      } else if (!/^application\/json/.test(contentType)) {
-        error = new Error('Invalid content type. Expected "application/json" but got ' + contentType);
-      }
-      if (error) {
-        console.error(error);
-        incomingMessage.resume();
-        return;
-      }
+  private downloadFromUrl(url: string): Observable<string> {
+    if (url.startsWith("https")) {
+      console.info("Retrieving HTTPS from " + url);
+      return new Observable<string>(observer => {
+        https.get(url, incomingMessage => {
+          this.incomingMessage(incomingMessage, observer);
+        }).on("error", (e) => {
+          observer.error(e);
+        });
+      });
+    } else {
+      console.info("Retrieving HTTP from " + url);
+      return new Observable<string>(observer => {
+        http.get(url, incomingMessage => {
+          this.incomingMessage(incomingMessage, observer);
+        }).on("error", (e) => {
+          observer.error(e);
+        });
+      });
+    }
+  }
 
-      // Obtain the whole content of the message:
+  private incomingMessage(incomingMessage: http.IncomingMessage, observer: Observer<string>): void {
+    // Check that there are no errors in the incoming message:
+    let statusCode: number = incomingMessage.statusCode;
+    if (statusCode != 200) {
+      observer.error(new Error('Request failed. Status code: ' + statusCode));
+      incomingMessage.resume();
+      return;
+    }
+    else {
+      // Set the encoding
       incomingMessage.setEncoding('utf-8');
+
+      // Donwload the message:
       let rawData = "";
       incomingMessage.on('data', chunk => {
         rawData += chunk;
       });
+
+      // Send the message to the observer:
       incomingMessage.on('end', () => {
-        try {
-
-          // Parse as JSON:
-          const parsedData = JSON.parse(rawData);
-
-          // Pass it on:
-          callback(parsedData);
-        } catch (e) {
-          console.error(e.message);
-        }
+        observer.next(rawData);
+        observer.complete();
       });
-    })
-    .on('error', e => {
-      console.log(`Error while downloading data from ${url} for ${name}: ${e.message}`);
-    });
-  }
-
-  private mostRecentDateOf(historicalQuotes: HistoricalQuotes): Date {
-    let mostRecentDate: Date;
-    historicalQuotes.forEachDate(instantQuotes => {
-      if (mostRecentDate) {
-        if (instantQuotes.instant.valueOf() > mostRecentDate.valueOf()) {
-          mostRecentDate = instantQuotes.instant;
-        }
-      } else {
-        mostRecentDate = instantQuotes.instant;
-      }
-    });
-    return mostRecentDate;
+    }
   }
 
   private makeRelativePath(uri: string): string {
@@ -141,7 +211,64 @@ export class RefreshQuotes {
       return join(__dirname, "../assets/quotes/", uri);
     }
   }
+
+  /**
+   * Establishes the list of all files to refresh.
+   */
+  private quotesToRefresh(): NamedQuoteSource[] {
+    let fileNames: Map<string, NamedQuoteSource> = new Map();
+
+    QUOTE_SOURCES.forEach(namedQuoteSource => {
+      let skipIt: boolean = false;
+
+      let remote = namedQuoteSource.quote.remote;
+      let local = namedQuoteSource.quote.local;
+      let format = local.format;
+      let fileName = local.fileName;
+
+      // If the local file is already in the list, then avoid repetition:
+      if (fileNames.has(fileName)) {
+        skipIt = true;
+      } else {
+        // If the remote location is not defined, then skip it.
+        if (remote) {
+
+          // If remote provider is not supported, then skip it.
+          let provider = remote.provider;
+          switch(provider) {
+            case QuoteProvider.YAHOO:
+            case QuoteProvider.MARKETSTACK:
+              break;
+            default:
+              console.info(`Skipping ${fileName} - Remote provider ${provider} is not supported`);
+              skipIt = true;
+          }
+        } else {
+          console.info(`Skipping ${fileName} - Remote provider not specified`);
+          skipIt = true;
+        }
+
+        // If the local format is not supported, then skip it:
+        switch(format) {
+          case QuoteProvider.YAHOO:
+          case QuoteProvider.INVESTING:
+            break;
+          default:
+            console.info(`Skipping ${fileName} - Local format ${format} is not supported`);
+            skipIt = true;
+        }
+      }
+
+      // Add it to the list:
+      if (!skipIt) {
+        fileNames.set(fileName, namedQuoteSource);
+        console.info(`Adding ${fileName} for refresh data`);
+      }
+    });
+
+    return Array.from(fileNames.values());
+  }
 }
 
-let hello: RefreshQuotes = new RefreshQuotes();
-hello.doIt();
+let refreshQuots: RefreshQuotes = new RefreshQuotes();
+refreshQuots.refreshAll();

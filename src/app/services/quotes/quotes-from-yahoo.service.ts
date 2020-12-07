@@ -52,7 +52,13 @@ export class YahooWriter {
     } else {
       sMonth = nMonth.toString();
     }
-    let sDay = date.getDate().toString()
+    let nDay = date.getDate();
+    let sDay;
+    if (nDay < 10) {
+      sDay = "0" + nDay.toString();
+    } else {
+      sDay = nDay.toString();
+    }
     let sYear = date.getFullYear().toString();
 
     return sYear + "-" + sMonth + "-" + sDay;

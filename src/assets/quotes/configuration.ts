@@ -35,7 +35,7 @@ export const QUOTE_SOURCES: NamedQuoteSource[] = [
       },
       remote: {
         provider: QuoteProvider.YAHOO,
-        ticker: "GSPC"
+        ticker: "^GSPC"
       }
     }
   },
@@ -43,7 +43,7 @@ export const QUOTE_SOURCES: NamedQuoteSource[] = [
     name: "USDCHF",
     quote: {
       local: {
-        format: QuoteProvider.YAHOO,
+        format: QuoteProvider.INVESTING,
         fileName: "forex/usd-chf-investing.csv"
       },
       remote: {
@@ -92,6 +92,10 @@ export const QUOTE_SOURCES: NamedQuoteSource[] = [
       local: {
         format: QuoteProvider.INVESTING,
         fileName: "instruments/spy-investing.csv"
+      },
+      remote: {
+        provider: QuoteProvider.MARKETSTACK,
+        ticker: "SPY"
       }
     }
   },
@@ -119,6 +123,10 @@ export const QUOTE_SOURCES: NamedQuoteSource[] = [
       local: {
         format: QuoteProvider.YAHOO,
         fileName: "instruments/agg-yahoo.csv"
+      },
+      remote: {
+        provider: QuoteProvider.MARKETSTACK,
+        ticker: "AGG"
       }
     },
     dividends: {

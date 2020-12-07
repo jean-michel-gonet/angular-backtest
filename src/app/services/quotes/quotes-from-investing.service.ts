@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { HistoricalQuotes, InstantQuotes, Quote } from 'src/app/model/core/quotes';
 import { map } from 'rxjs/operators';
+
+import { HistoricalQuotes, InstantQuotes, Quote } from '../../../app/model/core/quotes';
 import { IQuotesService } from './quotes.service.interface';
 
 const INVESTING_HEADER: string = `"Date","Price","Open","High","Low","Vol.","Change %"`;
@@ -96,7 +97,7 @@ export class InvestingWriter {
   }
 
   private convertNumber(value: number): string {
-    return value.toLocaleString('en-US', {maximumFractionDigits:2})
+    return value.toLocaleString('en-US', {maximumFractionDigits:4})
   }
 
   private addQuotes(s: string): string {
