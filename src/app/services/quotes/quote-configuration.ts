@@ -20,7 +20,8 @@ export class DataSource {
 export enum QuoteProvider {
   YAHOO = 'finance.yahoo.com',
   SIX = 'www.six-group.com',
-  INVESTING = 'www.investing.com'
+  INVESTING = 'www.investing.com',
+  MARKETSTACK = 'www.marketstack.com'
 };
 
 export enum ExchangeRateOperation {
