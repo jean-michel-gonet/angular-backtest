@@ -62,17 +62,18 @@ export class QuotesService {
   }
 
   private retrieveQuote(name: string, quoteSource: QuoteSource): Observable<HistoricalQuotes> {
-    let uri = this.makeRelativePath(quoteSource.uri);
+    let fileName = this.makeRelativePath(quoteSource.local.fileName);
+    let format = quoteSource.local.format;
 
-    switch(quoteSource.provider) {
+    switch(format) {
       case QuoteProvider.SIX:
-        return this.quotesFromSixService.getHistoricalQuotes(uri, name);
+        return this.quotesFromSixService.getHistoricalQuotes(fileName, name);
       case QuoteProvider.YAHOO:
-        return this.quotesFromYahooService.getHistoricalQuotes(uri, name);
+        return this.quotesFromYahooService.getHistoricalQuotes(fileName, name);
       case QuoteProvider.INVESTING:
-        return this.quotesFromInvestingService.getHistoricalQuotes(uri, name);
+        return this.quotesFromInvestingService.getHistoricalQuotes(fileName, name);
       default:
-        console.warn(quoteSource.provider + " - Unsupported provider");
+        console.warn(format + " - Unsupported provider");
         return null;
     }
   }

@@ -20,7 +20,8 @@ export class DataSource {
 export enum QuoteProvider {
   YAHOO = 'finance.yahoo.com',
   SIX = 'www.six-group.com',
-  INVESTING = 'www.investing.com'
+  INVESTING = 'www.investing.com',
+  MARKETSTACK = 'www.marketstack.com'
 };
 
 export enum ExchangeRateOperation {
@@ -29,18 +30,59 @@ export enum ExchangeRateOperation {
 }
 
 /**
+ * Describes a local quote source.
+ * Local quote sources are stored in local file sytem,
+ * and are described by their file name location and
+ * their format.
+ * @class{LocalQuoteSource}
+ */
+export class LocalQuoteSource {
+  /**
+   * The format.
+   */
+  format: QuoteProvider;
+
+  /**
+   * The file name to access the source.
+   * Path and filename to access the data. If the path is relative,
+   * then it is relative from this ``quote-configuration.ts`` file.
+   */
+  fileName: string;
+}
+
+/**
+ * Describes a remote quote source.
+ * Remote quote sources are accessible through a provider. Also, the ticker
+ * in the provider's system may not be the same as the name of the quote
+ * used in the simulation.
+ * @class{RemoteQuoteSource}
+ */
+export class RemoteQuoteSource {
+  /**
+   * The download scripts use the provider to deduce the URL and the format
+   * to use.
+   */
+  provider: QuoteProvider;
+  /**
+   * The ticker is the name of the quote in the provider's system.
+   */
+  ticker: String;
+}
+
+/**
  * Describes a quote source.
  */
 export class QuoteSource {
   /**
-   * The provider.
+   * Local quote source.
+   * Used for simulations.
    */
-  provider: QuoteProvider;
-
+  local: LocalQuoteSource;
   /**
-   * The URI to access the source.
+   * Remote quote source.
+   * Used by scripts to download additional data
    */
-  uri: string;
+  remote?: RemoteQuoteSource;
 }
 
 /**

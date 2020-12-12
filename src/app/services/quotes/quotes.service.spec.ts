@@ -104,8 +104,10 @@ describe('QuotesService', () => {
     configurationService.when("ISIN3", {
       name: "ISIN3",
       quote: {
-        provider: QuoteProvider.INVESTING,
-        uri: "xx",
+        local: {
+          format: QuoteProvider.INVESTING,
+          fileName: "xx",
+        }
       }
     });
     let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
@@ -125,8 +127,10 @@ describe('QuotesService', () => {
     configurationService.when("ISIN3", {
       name: "ISIN3",
       quote: {
-        provider: QuoteProvider.YAHOO,
-        uri: "xx",
+        local: {
+          format: QuoteProvider.YAHOO,
+          fileName: "xx",
+        }
       },
       dividends: {
         level1TaxWitholding: 0.34,
@@ -156,14 +160,18 @@ describe('QuotesService', () => {
     configurationService.when("ISIN3", {
       name: "ISIN3",
       quote: {
-        provider: QuoteProvider.SIX,
-        uri: "xx",
+        local: {
+          format: QuoteProvider.SIX,
+          fileName: "xx",
+        }
       },
       dividends: {
         level1TaxWitholding: 0.34,
         totalReturn: {
-          provider: QuoteProvider.YAHOO,
-          uri: "yy"
+          local: {
+            format: QuoteProvider.YAHOO,
+            fileName: "yy"
+          }
         }
       }
     });
