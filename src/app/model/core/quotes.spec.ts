@@ -398,4 +398,27 @@ describe('HistoricalQuotes', () => {
     }, beforeYesterday, beforeYesterday);
     expect(numberOfCalls).toBe(1);
   });
+
+  it('Can find the maximum date in the series', () => {
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: beforeYesterday, quotes: [
+        new Quote({name: "ISIN1", close: 1.1}),
+        new Quote({name: "ISIN2", close: 1.2}),
+      ]}),
+      new InstantQuotes({instant: yesterday, quotes: [
+        new Quote({name: "ISIN2", close: 2.1}),
+        new Quote({name: "ISIN3", close: 2.2}),
+      ]}),
+      new InstantQuotes({instant: today, quotes: [
+        new Quote({name: "ISIN3", close: 3.1}),
+        new Quote({name: "ISIN4", close: 3.2}),
+      ]})
+    ]);
+    expect(historicalQuotes.maxDate("ISIN1")).toEqual(beforeYesterday);
+    expect(historicalQuotes.maxDate("ISIN2")).toEqual(yesterday);
+    expect(historicalQuotes.maxDate("ISIN3")).toEqual(today);
+    expect(historicalQuotes.maxDate("ISIN4")).toEqual(today);
+    expect(historicalQuotes.maxDate("ISIN5")).toBeFalsy();
+    expect(historicalQuotes.maxDate()).toEqual(today);
+  });
 });

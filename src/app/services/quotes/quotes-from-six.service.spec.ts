@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { QuotesFromSixService, SixConverter } from './quotes-from-six.service';
+import { QuotesFromSixService, SixReader } from './quotes-from-six.service';
 import { HistoricalQuotes, IInstantQuotes, Quote } from 'src/app/model/core/quotes';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { HttpRequest } from '@angular/common/http';
@@ -63,11 +63,11 @@ describe('QuotesFromSixService', () => {
 });
 
 
-describe('SixConverter', () => {
+describe('SixReader', () => {
 
   it('Can convert responses from SIX into HistoricalQuotes', () => {
-    let sixConverter: SixConverter = new SixConverter("ISIN", sixResponse);
-    let xx: HistoricalQuotes = sixConverter.asHistoricalQuotes();
+    let sixReader: SixReader = new SixReader("ISIN", sixResponse);
+    let xx: HistoricalQuotes = sixReader.asHistoricalQuotes();
     let iStock: IInstantQuotes[] = xx.asIStock();
     expect(iStock).toEqual(
       jasmine.arrayWithExactContents([
