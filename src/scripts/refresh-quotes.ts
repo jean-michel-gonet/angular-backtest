@@ -36,6 +36,9 @@ export class RefreshQuotes {
               (error: any) => {
                 console.error(`Error processing ${namedQuoteSource.name} - ${fileName}: ${error}`);
               }
+          },
+          (error: any) => {
+            console.error("Error " + error.message);
           });
         }
       });
@@ -71,7 +74,9 @@ export class RefreshQuotes {
           observer.complete();
         },
         (error: any) => {
-          observer.error(error);
+          observer.error(new Error(
+            "retrieving " + namedQuoteSource.name +
+            " from YAHOO: " +error.message));
         });
     });
   }
@@ -91,7 +96,9 @@ export class RefreshQuotes {
           observer.complete();
         },
         (error: any) => {
-          observer.error(error);
+          observer.error(new Error(
+            "retrieving " + namedQuoteSource.name +
+            " from MARKETSTACK: " +error.message));
         });
     });
   }
@@ -130,7 +137,7 @@ export class RefreshQuotes {
           observer.next(remoteHistoricalQuotes);
         },
         (error: any) => {
-          observer.error(error);
+          observer.error(new Error(`downloading from ${url}: ${error.message}`));
         });
     });
   }
@@ -151,7 +158,7 @@ export class RefreshQuotes {
           observer.next(remoteHistoricalQuotes);
         },
         (error: any) => {
-          observer.error(error);
+          observer.error(new Error(`downloading from ${url}: ${error.message}`));
         });
     });
   }
@@ -182,7 +189,7 @@ export class RefreshQuotes {
     // Check that there are no errors in the incoming message:
     let statusCode: number = incomingMessage.statusCode;
     if (statusCode != 200) {
-      observer.error(new Error('Request failed. Status code: ' + statusCode));
+      observer.error(new Error("Status code: " + statusCode));
       incomingMessage.resume();
       return;
     }
