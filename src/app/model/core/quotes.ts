@@ -303,15 +303,15 @@ export class HistoricalQuotes implements Reporter {
   /**
    * Adjusts all quotes of the specified name, up to the specified instant,
    * based on the specified values.
-   * @param {string} name The name of the quote to adjust.
    * @param {Date} instant All quotes up to this instant (including this)
    * instant) are adjusted.
    * @param {Quote} quote The quote to perform the adjustment.
    */
-  adjust(name: string, instant: Date, adjustment: Quote): void {
+  adjust(instant: Date, adjustment: Quote): void {
     // Obtain the adjustment factors:
     let quotes: InstantQuotes = this.get(instant);
     if (quotes) {
+      let name = adjustment.name;
       let quoteAtSeamPoint: Quote = quotes.quote(name);
       if (quoteAtSeamPoint) {
         let closeAdjustment: number = adjustment.close / quoteAtSeamPoint.close;

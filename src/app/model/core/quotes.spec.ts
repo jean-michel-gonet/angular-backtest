@@ -421,4 +421,43 @@ describe('HistoricalQuotes', () => {
     expect(historicalQuotes.maxDate("ISIN5")).toBeFalsy();
     expect(historicalQuotes.maxDate()).toEqual(today);
   });
+
+  it('Can adjust past prices based on a quote', () => {
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: threeDaysAgo, quotes: [
+        new Quote({name: "ISIN1", open: 10, high: 20, low: 5, close: 10, adjustedClose: 9, volume: 1000}),
+      ]}),
+      new InstantQuotes({instant: beforeYesterday, quotes: [
+        new Quote({name: "ISIN1", open: 9, high: 18, low: 4, close: 9, adjustedClose: 9, volume: 1000}),
+      ]}),
+      new InstantQuotes({instant: yesterday, quotes: [
+        new Quote({name: "ISIN1", open: 9, high: 12, low: 3, close: 5, adjustedClose: 5, volume: 1000}),
+      ]})
+    ]);
+
+    historicalQuotes.adjust(yesterday, new Quote(new Quote({
+      name: "ISIN1",
+      open: 18,
+      high: 24,
+      low: 6,
+      close: 10,
+      adjustedClose: 10,
+      volume: 2000
+    })));
+
+    expect(historicalQuotes.get(threeDaysAgo).quotes)
+      .toEqual(jasmine.arrayWithExactContents([
+        new Quote({name: "ISIN1", open: 20, high: 40, low: 10, close: 20, adjustedClose: 18, volume: 2000})
+      ]));
+
+    expect(historicalQuotes.get(beforeYesterday).quotes)
+      .toEqual(jasmine.arrayWithExactContents([
+        new Quote({name: "ISIN1", open: 18, high: 36, low: 8, close: 18, adjustedClose: 18, volume: 2000})
+      ]));
+
+    expect(historicalQuotes.get(yesterday).quotes)
+      .toEqual(jasmine.arrayWithExactContents([
+        new Quote({name: "ISIN1", open: 18, high: 24, low: 6, close: 10, adjustedClose: 10, volume: 2000})
+      ]));
+  });
 });
