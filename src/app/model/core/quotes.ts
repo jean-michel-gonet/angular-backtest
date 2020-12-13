@@ -106,6 +106,7 @@ export class Candlestick {
 
 class IQuote extends ICandleStick {
   name: string;
+  adjustedClose?: number;
   volume?: number;
   spread?: number;
   dividend?: number;
@@ -122,6 +123,15 @@ class IQuote extends ICandleStick {
 export class Quote extends Candlestick {
   /** The asset name. */
   name: string;
+
+  /**
+   * Adjusted closing price changes a stock’s closing price to correctly
+   * reveal that stock’s value after accounting for every action of some
+   * company. So, it is recognized as the accurate price of the stock.
+   * It is necessary when you want to examine historical returns.
+   * see https://traders-paradise.com/magazine/2020/02/adjusted-closing-price-find-stock-return/
+   */
+  adjustedClose?: number;
 
   /**
    * The number of shares or contracts traded in a security or an
@@ -160,12 +170,18 @@ export class Quote extends Candlestick {
     super(obj);
     let {
       name = "",
+      adjustedClose = 0,
       volume = 0,
       spread = 0,
       dividend = 0,
       alert
     } = obj;
     this.name = name;
+    if (adjustedClose) {
+      this.adjustedClose = adjustedClose;
+    } else {
+      this.adjustedClose = this.close;
+    }
     this.volume = volume;
     this.spread = spread;
     this.dividend = dividend;
@@ -285,6 +301,41 @@ export class HistoricalQuotes implements Reporter {
   }
 
   /**
+   * Adjusts all quotes of the specified name, up to the specified instant,
+   * based on the specified values.
+   * @param {string} name The name of the quote to adjust.
+   * @param {Date} instant All quotes up to this instant (including this)
+   * instant) are adjusted.
+   * @param {Quote} quote The quote to perform the adjustment.
+   */
+  adjust(name: string, instant: Date, adjustment: Quote): void {
+    // Obtain the adjustment factors:
+    let quotes: InstantQuotes = this.get(instant);
+    if (quotes) {
+      let quoteAtSeamPoint: Quote = quotes.quote(name);
+      if (quoteAtSeamPoint) {
+        let closeAdjustment: number = adjustment.close / quoteAtSeamPoint.close;
+        let openAdjustment: number = adjustment.open / quoteAtSeamPoint.open;
+        let highAdjustment: number = adjustment.high / quoteAtSeamPoint.high;
+        let lowAdjustment: number = adjustment.low / quoteAtSeamPoint.low;
+        let adjAdjustment: number = adjustment.adjustedClose / quoteAtSeamPoint.adjustedClose;
+        let volumeAdjustment: number = adjustment.volume / quoteAtSeamPoint.volume;
+
+        // Adjust all previous in series:
+        this.forEachDate(instantQuotes => {
+          let q = instantQuotes.quote(name);
+          q.close = q.close * closeAdjustment;
+          q.open = q.open * openAdjustment;
+          q.high = q.high * highAdjustment;
+          q.low = q.low * lowAdjustment;
+          q.volume = q.volume * volumeAdjustment;
+          q.adjustedClose = q.adjustedClose * adjAdjustment;
+        }, null, instant);
+      }
+    }
+  }
+
+  /**
    * Merge this instantQuotes data with another.
    * This instantQuotes data gets modified.
    * @param {HistoricalQuotes} otherHistoricalQuotes The other data.
@@ -378,6 +429,12 @@ export class HistoricalQuotes implements Reporter {
     return iStock;
   }
 
+  /**
+   * Iterates through all available dates between (and including) the specified ones.
+   * @param {(InstantQuotes) => void} callbackfn The call back function.
+   * @param {Date} start Start from this date.
+   * @param {Date} end End with this date.
+   */
   forEachDate(callbackfn:(instantQuotes:InstantQuotes)=>void, start?:Date, end?: Date):void {
     let firstIndex: number;
 
