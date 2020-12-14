@@ -386,6 +386,18 @@ export class HistoricalQuotes implements Reporter {
   }
 
   /**
+   * Complete this historical quotes with the other historical quotes.
+   * @param {string} name The name of the instrument to complete.
+   * @param {Date} dateFrom The date to start the completion.
+   * @param {HistoricalQuotes} other The other historical quotes.
+   */
+  complete(name: string, seamDate: Date, other: HistoricalQuotes) {
+    let adjustmentQuote = other.get(seamDate).quote(name);
+    this.adjust(seamDate, adjustmentQuote);
+    this.merge(other);    
+  }
+
+  /**
    * Returns the instantQuotes at the specified date or, if date is not found,
    * then instantQuotes at the pior date.
    * @param {Date} instant The relevant date.
