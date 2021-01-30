@@ -125,7 +125,7 @@ export const QUOTE_SOURCES: NamedQuoteSource[] = [
         fileName: "instruments/agg-yahoo.csv"
       },
       remote: {
-        provider: QuoteProvider.MARKETSTACK,
+        provider: QuoteProvider.YAHOO,
         ticker: "AGG"
       }
     },

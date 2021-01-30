@@ -278,16 +278,10 @@ export class HistoricalQuotes implements Reporter {
    * Returns the maximum date present in this historical quote series.
    * @param {string} name The name of the quote to verify.
    */
-  maxDate(name?: string): Date {
+  maxDate(name: string): Date {
     let maxDate: Date;
     this.instantQuotes.forEach(instantQuote => {
-      let skipIt: boolean;
-      if (name) {
-        skipIt = instantQuote.quote(name) == null;
-      } else {
-        skipIt = false;
-      }
-      if (!skipIt) {
+      if (instantQuote.quote(name)) {
         if (maxDate) {
           if (instantQuote.instant.valueOf() > maxDate.valueOf()) {
             maxDate = instantQuote.instant;
@@ -298,6 +292,26 @@ export class HistoricalQuotes implements Reporter {
       }
     });
     return maxDate;
+  }
+
+  /**
+   * Returns the maximum date present in this historical quote series.
+   * @param {string} name The name of the quote to verify.
+   */
+  minDate(name: string): Date {
+    let minDate: Date;
+    this.instantQuotes.forEach(instantQuote => {
+      if (instantQuote.quote(name)) {
+        if (minDate) {
+          if (instantQuote.instant.valueOf() < minDate.valueOf()) {
+            minDate = instantQuote.instant;
+          }
+        } else {
+          minDate = instantQuote.instant;
+        }
+      }
+    });
+    return minDate;
   }
 
   /**
@@ -386,15 +400,15 @@ export class HistoricalQuotes implements Reporter {
   }
 
   /**
-   * Complete this historical quotes with the other historical quotes.
+   * Append this historical quotes with the other historical quotes.
    * @param {string} name The name of the instrument to complete.
-   * @param {Date} dateFrom The date to start the completion.
    * @param {HistoricalQuotes} other The other historical quotes.
    */
-  complete(name: string, seamDate: Date, other: HistoricalQuotes) {
+  append(name: string, other: HistoricalQuotes) {
+    let seamDate = other.minDate(name);
     let adjustmentQuote = other.get(seamDate).quote(name);
     this.adjust(seamDate, adjustmentQuote);
-    this.merge(other);    
+    this.merge(other);
   }
 
   /**
