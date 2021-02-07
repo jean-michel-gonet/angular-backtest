@@ -38,7 +38,7 @@ export class YahooWriter {
         quote.low.toFixed(6) + "," +
         quote.close.toFixed(6) + "," +
         quote.adjustedClose.toFixed(6) + "," +
-        quote.volume.toFixed(6) + "\r\n";
+        (100*Math.round(quote.volume / 100)).toString() + "\r\n";
       csv += line;
     });
     return csv;
