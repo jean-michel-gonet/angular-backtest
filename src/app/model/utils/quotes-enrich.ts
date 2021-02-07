@@ -1,6 +1,79 @@
 import { HistoricalValue, HistoricalQuotes, Quote } from '../core/quotes';
 
 /**
+ * Generic interface for all methods of computing dividends.
+ */
+export interface DividendComputer {
+  /**
+   * Computes the dividends of the named instrument in the provided historical
+   * quotes based on the implemented method.
+   * @param {string} name The name of the instrument to enrich.
+   * @param {HistoricalQuotes} priceHistoricalQuotes The quotes containing
+   * the instrument to compute the dividends of.
+   */
+  of(name: string, priceHistoricalQuotes: HistoricalQuotes): void;
+}
+
+/**
+ * Convenience class to instantiate dividend computation classes.
+ * @class{ComputeDividends}
+ */
+export class ComputeDividends {
+  /**
+   *
+   */
+  public static withTotalReturn(totalReturnName: string, totalReturnHistoricalQuotes: HistoricalQuotes): EnrichWithTotalReturn {
+    return new EnrichWithTotalReturn(totalReturnName, totalReturnHistoricalQuotes);
+  }
+
+  /**
+   * Computes dividends based on the adjusted closing price.
+   */
+  public static withAdjustedClose(): ComputeDividendsWithAdjustedClose {
+    return new ComputeDividendsWithAdjustedClose();
+  }
+}
+
+/**
+ * Computes dividends of specified historical quotes based
+ * on comparing the close price with adjusted close price.
+ * @class {ComputeDividendsWithAdjustedClose}
+ */
+export class ComputeDividendsWithAdjustedClose implements DividendComputer {
+
+  /**
+   * Class constructor.
+   */
+  constructor() {
+  }
+
+  of(name: string, historicalQuotes: HistoricalQuotes): void {
+    let lastClose: number;
+    let lastAdjustedClose: number;
+    historicalQuotes.forEachDate(instantQuotes => {
+      let quote: Quote = instantQuotes.quote(name);
+      if (quote) {
+        let close: number = quote.close;
+        let adjustedClose: number = quote.adjustedClose;
+        if (lastClose && lastAdjustedClose) {
+          let variationClose = lastClose - close
+          let variationAdjustedClose = lastAdjustedClose - adjustedClose;
+          let dividend = variationClose - variationAdjustedClose;
+          let rounding = Math.abs(Math.round(100000 * dividend / close));
+          if (rounding > 1) {
+            quote.dividend = dividend;
+          } else {
+            quote.dividend = 0;
+          }
+        }
+        lastClose = close;
+        lastAdjustedClose = adjustedClose;
+      }
+    });
+  }
+}
+
+/**
  * A utility class to enrich historical quotes with dividends.
  * @class{EnrichWithDividends}
  */
@@ -36,7 +109,7 @@ export class EnrichWithDividends {
 }
 
 /**
- * An utility class to enrich historical quotes with dividends based
+ * A utility class to enrich historical quotes with dividends based
  * on comparing the price quotes with total return quotes.
  * @class {EnrichWithTotalReturn}
  */
