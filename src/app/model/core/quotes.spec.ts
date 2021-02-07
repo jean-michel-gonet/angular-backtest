@@ -419,7 +419,6 @@ describe('HistoricalQuotes', () => {
     expect(historicalQuotes.maxDate("ISIN3")).toEqual(today);
     expect(historicalQuotes.maxDate("ISIN4")).toEqual(today);
     expect(historicalQuotes.maxDate("ISIN5")).toBeFalsy();
-    expect(historicalQuotes.maxDate()).toEqual(today);
   });
 
   it('Can adjust past prices based on a quote', () => {
