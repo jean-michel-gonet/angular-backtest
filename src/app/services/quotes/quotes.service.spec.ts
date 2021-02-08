@@ -210,4 +210,43 @@ describe('QuotesService', () => {
     });
   });
 
+  it('Can retrieve quotes from Yahoo and enrich based on adjusted close', (done: DoneFn) => {
+    configurationService.when("ISIN3", {
+      name: "ISIN3",
+      quote: {
+        local: {
+          format: QuoteProvider.SIX,
+          fileName: "xx",
+        }
+      }
+    });
+
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: threeDaysAgo, quotes: [
+        new Quote({name: "ISIN3", close: 1.3, adjustedClose: 1.0})
+      ]}),
+      new InstantQuotes({instant: beforeYesterday, quotes: [
+        new Quote({name: "ISIN3", close: 1.4, adjustedClose: 1.3})
+      ]}),
+      new InstantQuotes({instant: yesterday, quotes: [
+        new Quote({name: "ISIN3", close: 1.5, adjustedClose: 1.5})
+      ]}),
+    ]);
+
+    six.whenQuotes(quotesService.makeRelativePath("xx"), historicalQuotes);
+
+    quotesService.getQuotes(["ISIN3"]).subscribe(data => {
+      expect(data.get(threeDaysAgo).quote("ISIN3").close).toBe(1.3);
+      expect(data.get(threeDaysAgo).quote("ISIN3").dividend).toBe(0);
+
+      expect(data.get(beforeYesterday).quote("ISIN3").close).toBe(1.4);
+      expect(data.get(beforeYesterday).quote("ISIN3").dividend).toBeCloseTo(0.2, 3);
+
+      expect(data.get(yesterday).quote("ISIN3").close).toBe(1.5);
+      expect(data.get(yesterday).quote("ISIN3").dividend).toBeCloseTo(0.1, 3);
+
+      done();
+    });
+  });
+
 });

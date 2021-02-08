@@ -1,5 +1,5 @@
-import { HistoricalQuotes, InstantQuotes, Quote } from "../core/quotes";
-import { ComputeDividends, ComputeDividendsWithAdjustedClose, EnrichWithDividends, EnrichWithTotalReturn } from './quotes-enrich';
+import { HistoricalQuotes, InstantQuotes, Quote } from "../../model/core/quotes";
+import { ComputeDividends } from './quotes-dividends';
 
 let now: Date = new Date();
 let tomorrow: Date =        new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
@@ -25,12 +25,10 @@ describe('EnrichWithDividends', () => {
       ]})
     ]);
 
-    let enrichWithDividends: EnrichWithDividends =
-      new EnrichWithDividends([
+    ComputeDividends.withDirectDividends([
           {instant: beforeYesterday, value: 2.5},
           {instant: today, value: 1.5}
-        ]);
-    enrichWithDividends.enrich("ISIN1", historicalQuotes);
+        ]).of("ISIN1", historicalQuotes);
 
     expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").dividend).toBe(2.5);
     expect(historicalQuotes.get(yesterday).quote("ISIN1").dividend).toBe(0);
@@ -49,12 +47,10 @@ describe('EnrichWithDividends', () => {
       ]})
     ]);
 
-    let enrichWithDividends: EnrichWithDividends =
-      new EnrichWithDividends([
+    ComputeDividends.withDirectDividends([
         {instant: beforeYesterday, value: 2.5},
         {instant: today, value: 1.5},
-      ]);
-    enrichWithDividends.enrich("ISIN1", historicalQuotes);
+      ]).of("ISIN1", historicalQuotes);
 
     expect(historicalQuotes.get(yesterday).quote("ISIN1").dividend).toBe(2.5);
     expect(historicalQuotes.get(today).quote("ISIN1").dividend).toBe(1.5);
@@ -75,12 +71,10 @@ describe('EnrichWithDividends', () => {
         new Quote({name: "ISIN2", close: 300}),
       ]})
     ]);
-    let enrichWithDividends: EnrichWithDividends =
-      new EnrichWithDividends([
+    ComputeDividends.withDirectDividends([
         {instant: yesterday, value: 2.5},
         {instant: today, value: 1.5},
-      ]);
-    enrichWithDividends.enrich("ISIN1", historicalQuotes);
+      ]).of("ISIN1", historicalQuotes);
 
     expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").dividend).toBe(0);
     expect(historicalQuotes.get(today).quote("ISIN1").dividend).toBe(2.5);
@@ -102,12 +96,10 @@ describe('EnrichWithDividends', () => {
         new Quote({name: "ISIN2", close: 300}),
       ]})
     ]);
-    let enrichWithDividends: EnrichWithDividends =
-      new EnrichWithDividends([
+    ComputeDividends.withDirectDividends([
         {instant: beforeYesterday, value: 2.5},
         {instant: yesterday, value: 1.5},
-      ]);
-    enrichWithDividends.enrich("ISIN1", historicalQuotes);
+      ]).of("ISIN1", historicalQuotes);
 
     expect(historicalQuotes.get(beforeYesterday).quote("ISIN1").dividend).toBe(2.5);
     expect(historicalQuotes.get(yesterday).quote("ISIN1").dividend).toBe(1.5);
@@ -183,7 +175,7 @@ describe('ComputeDividendsWithAdjustedClose', () => {
 
 // 0*([0-9]+)\/0*([0-9]+)\/18\s([0-9]+)\,([0-9]+)
 // new InstantQuotes({instant: new Date(2018, $2 - 1, $1), quotes: [new Quote({name:"SP500", close: $3.$4})]}),
-describe('EnrichWithTotalReturn', () => {
+describe('ComputeDividends.withTotalReturn', () => {
 
   it('Can calculate dividends of SP500 in 2018', () => {
 
@@ -202,9 +194,9 @@ describe('EnrichWithTotalReturn', () => {
     ]);
 
     // When enriching the price quote with total return quote:
-    let enrichWithTotalReturn: EnrichWithTotalReturn =
-      new EnrichWithTotalReturn("SP500TR", totalReturn);
-    enrichWithTotalReturn.enrich("SP500", price);
+    ComputeDividends
+      .withTotalReturn("SP500TR", totalReturn)
+      .of("SP500", price);
 
     // Then calculated dividends should be actual dividends
     let calculatedDividends: number = 0;
@@ -336,9 +328,9 @@ describe('EnrichWithTotalReturn', () => {
     ]);
 
     // When enriching the price quote with total return quote:
-    let enrichWithTotalReturn: EnrichWithTotalReturn =
-      new EnrichWithTotalReturn("SP500TR", totalReturn);
-    enrichWithTotalReturn.enrich("SP500", price);
+    ComputeDividends
+      .withTotalReturn("SP500TR", totalReturn)
+      .of("SP500", price);
 
     // Then calculated dividends should be actual dividends
     let calculatedDividends: number = 0;
@@ -370,9 +362,9 @@ describe('EnrichWithTotalReturn', () => {
     ]);
 
     // When enriching the price quote with total return quote:
-    let enrichWithTotalReturn: EnrichWithTotalReturn =
-      new EnrichWithTotalReturn("TR", totalReturn);
-    enrichWithTotalReturn.enrich("PR", price);
+    ComputeDividends
+      .withTotalReturn("TR", totalReturn)
+      .of("PR", price);
 
     // Then calculated dividends should be 10% per month:
     let calculatedDividends: number = 0;
@@ -402,9 +394,9 @@ describe('EnrichWithTotalReturn', () => {
     ]);
 
     // When enriching the price quote with total return quote:
-    let enrichWithTotalReturn: EnrichWithTotalReturn =
-      new EnrichWithTotalReturn("TR", totalReturn);
-    enrichWithTotalReturn.enrich("PR", price);
+    ComputeDividends
+      .withTotalReturn("TR", totalReturn)
+      .of("PR", price);
 
     // Then calculated dividends should be 10% per month:
     let calculatedDividends: number = 0;
