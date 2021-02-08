@@ -106,6 +106,7 @@ export class Candlestick {
 
 class IQuote extends ICandleStick {
   name: string;
+  adjustedClose?: number;
   volume?: number;
   spread?: number;
   dividend?: number;
@@ -122,6 +123,15 @@ class IQuote extends ICandleStick {
 export class Quote extends Candlestick {
   /** The asset name. */
   name: string;
+
+  /**
+   * Adjusted closing price changes a stock’s closing price to correctly
+   * reveal that stock’s value after accounting for every action of some
+   * company. So, it is recognized as the accurate price of the stock.
+   * It is necessary when you want to examine historical returns.
+   * see https://traders-paradise.com/magazine/2020/02/adjusted-closing-price-find-stock-return/
+   */
+  adjustedClose?: number;
 
   /**
    * The number of shares or contracts traded in a security or an
@@ -160,12 +170,18 @@ export class Quote extends Candlestick {
     super(obj);
     let {
       name = "",
+      adjustedClose = 0,
       volume = 0,
       spread = 0,
       dividend = 0,
       alert
     } = obj;
     this.name = name;
+    if (adjustedClose) {
+      this.adjustedClose = adjustedClose;
+    } else {
+      this.adjustedClose = this.close;
+    }
     this.volume = volume;
     this.spread = spread;
     this.dividend = dividend;
@@ -262,16 +278,10 @@ export class HistoricalQuotes implements Reporter {
    * Returns the maximum date present in this historical quote series.
    * @param {string} name The name of the quote to verify.
    */
-  maxDate(name?: string): Date {
+  maxDate(name: string): Date {
     let maxDate: Date;
     this.instantQuotes.forEach(instantQuote => {
-      let skipIt: boolean;
-      if (name) {
-        skipIt = instantQuote.quote(name) == null;
-      } else {
-        skipIt = false;
-      }
-      if (!skipIt) {
+      if (instantQuote.quote(name)) {
         if (maxDate) {
           if (instantQuote.instant.valueOf() > maxDate.valueOf()) {
             maxDate = instantQuote.instant;
@@ -282,6 +292,61 @@ export class HistoricalQuotes implements Reporter {
       }
     });
     return maxDate;
+  }
+
+  /**
+   * Returns the maximum date present in this historical quote series.
+   * @param {string} name The name of the quote to verify.
+   */
+  minDate(name: string): Date {
+    let minDate: Date;
+    this.instantQuotes.forEach(instantQuote => {
+      if (instantQuote.quote(name)) {
+        if (minDate) {
+          if (instantQuote.instant.valueOf() < minDate.valueOf()) {
+            minDate = instantQuote.instant;
+          }
+        } else {
+          minDate = instantQuote.instant;
+        }
+      }
+    });
+    return minDate;
+  }
+
+  /**
+   * Adjusts all quotes of the specified name, up to the specified instant,
+   * based on the specified values.
+   * @param {Date} instant All quotes up to this instant (including this)
+   * instant) are adjusted.
+   * @param {Quote} quote The quote to perform the adjustment.
+   */
+  adjust(instant: Date, adjustment: Quote): void {
+    // Obtain the adjustment factors:
+    let quotes: InstantQuotes = this.get(instant);
+    if (quotes) {
+      let name = adjustment.name;
+      let quoteAtSeamPoint: Quote = quotes.quote(name);
+      if (quoteAtSeamPoint) {
+        let closeAdjustment: number = adjustment.close / quoteAtSeamPoint.close;
+        let openAdjustment: number = adjustment.open / quoteAtSeamPoint.open;
+        let highAdjustment: number = adjustment.high / quoteAtSeamPoint.high;
+        let lowAdjustment: number = adjustment.low / quoteAtSeamPoint.low;
+        let adjAdjustment: number = adjustment.adjustedClose / quoteAtSeamPoint.adjustedClose;
+        let volumeAdjustment: number = adjustment.volume / quoteAtSeamPoint.volume;
+
+        // Adjust all previous in series:
+        this.forEachDate(instantQuotes => {
+          let q = instantQuotes.quote(name);
+          q.close = q.close * closeAdjustment;
+          q.open = q.open * openAdjustment;
+          q.high = q.high * highAdjustment;
+          q.low = q.low * lowAdjustment;
+          q.volume = q.volume * volumeAdjustment;
+          q.adjustedClose = q.adjustedClose * adjAdjustment;
+        }, null, instant);
+      }
+    }
   }
 
   /**
@@ -335,6 +400,18 @@ export class HistoricalQuotes implements Reporter {
   }
 
   /**
+   * Append this historical quotes with the other historical quotes.
+   * @param {string} name The name of the instrument to complete.
+   * @param {HistoricalQuotes} other The other historical quotes.
+   */
+  append(name: string, other: HistoricalQuotes) {
+    let seamDate = other.minDate(name);
+    let adjustmentQuote = other.get(seamDate).quote(name);
+    this.adjust(seamDate, adjustmentQuote);
+    this.merge(other);
+  }
+
+  /**
    * Returns the instantQuotes at the specified date or, if date is not found,
    * then instantQuotes at the pior date.
    * @param {Date} instant The relevant date.
@@ -378,6 +455,12 @@ export class HistoricalQuotes implements Reporter {
     return iStock;
   }
 
+  /**
+   * Iterates through all available dates between (and including) the specified ones.
+   * @param {(InstantQuotes) => void} callbackfn The call back function.
+   * @param {Date} start Start from this date.
+   * @param {Date} end End with this date.
+   */
   forEachDate(callbackfn:(instantQuotes:InstantQuotes)=>void, start?:Date, end?: Date):void {
     let firstIndex: number;
 

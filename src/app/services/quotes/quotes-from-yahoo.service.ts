@@ -37,8 +37,8 @@ export class YahooWriter {
         quote.high.toFixed(6) + "," +
         quote.low.toFixed(6) + "," +
         quote.close.toFixed(6) + "," +
-        quote.close.toFixed(6) + "," +
-        quote.volume.toFixed(6) + "\r\n";
+        quote.adjustedClose.toFixed(6) + "," +
+        (100*Math.round(quote.volume / 100)).toString() + "\r\n";
       csv += line;
     });
     return csv;
@@ -107,6 +107,7 @@ export class YahooReader {
                 close: closePrice,
                 high: this.convertToNumber(high),
                 low: this.convertToNumber(low),
+                adjustedClose: this.convertToNumber(adjustedClose),
                 volume: this.convertToNumber(volume),
                 spread: 0,
                 dividend: 0})

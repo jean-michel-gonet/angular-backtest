@@ -110,6 +110,7 @@ describe('MarketStackReader', () => {
               high: 364.18,
               low: 362.58,
               close: 363.67,
+              adjustedClose: 363.67,
               volume: 28514072.0,
               spread: 0,
               dividend: 0
@@ -125,6 +126,7 @@ describe('MarketStackReader', () => {
               high: 363.16,
               low: 361.48,
               close: 362.66,
+              adjustedClose: 362.66,
               volume: 45330890.0,
               spread: 0,
               dividend: 0
@@ -140,6 +142,7 @@ describe('MarketStackReader', () => {
               high: 363.81,
               low: 359.29,
               close: 363.22,
+              adjustedClose: 363.22,
               volume: 60985003.0,
               spread: 0,
               dividend: 0

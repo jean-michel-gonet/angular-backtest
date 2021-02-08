@@ -67,7 +67,7 @@ export class RefreshQuotes {
       console.info(`Local quotes ${namedQuoteSource.name} available in Yahoo format up to ${dateFrom}`);
       this.downloadMoreFrom(namedQuoteSource, dateFrom).subscribe(
         historicalQuotes => {
-          localHistoricalQuotes.merge(historicalQuotes);
+          localHistoricalQuotes.append(namedQuoteSource.name, historicalQuotes);
           let writer = new YahooWriter(namedQuoteSource.name, localHistoricalQuotes);
           let csvFile = writer.asYahooCsvFile()
           observer.next(csvFile);
@@ -89,7 +89,7 @@ export class RefreshQuotes {
       console.info(`Local quotes ${namedQuoteSource.name} available in Investing format up to ${dateFrom}`);
       this.downloadMoreFrom(namedQuoteSource, dateFrom).subscribe(
         historicalQuotes => {
-          localHistoricalQuotes.merge(historicalQuotes);
+          localHistoricalQuotes.append(namedQuoteSource.name, historicalQuotes);
           let writer = new InvestingWriter(namedQuoteSource.name, localHistoricalQuotes);
           let csvFile = writer.asInvestingCsvFile()
           observer.next(csvFile);

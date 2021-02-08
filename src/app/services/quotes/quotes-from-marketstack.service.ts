@@ -31,6 +31,7 @@ export class MarketStackReader {
       let high: number = datum.high;
       let low: number = datum.low;
       let close:number = datum.close;
+      let adjustedClose: number = datum.adj_close;
       let volume: number = datum.volume;
 
       let instantQuotes: InstantQuotes = new InstantQuotes({
@@ -42,6 +43,7 @@ export class MarketStackReader {
             open: open,
             high: high,
             low: low,
+            adjustedClose: adjustedClose,
             volume: volume,
             spread: 0,
             dividend: 0

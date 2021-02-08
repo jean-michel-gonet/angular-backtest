@@ -6,10 +6,10 @@ import { QuotesFromYahooService } from './quotes-from-yahoo.service';
 import { HistoricalQuotes } from 'src/app/model/core/quotes';
 import { QuotesConfigurationService } from './quotes-configuration.service';
 import { PlainDataService } from './plain-data.service';
-import { EnrichWithDividends, EnrichWithTotalReturn } from 'src/app/model/utils/quotes-enrich';
 import { QuotesFromInvestingService } from './quotes-from-investing.service';
 import { ApplyExchangeRate } from 'src/app/model/utils/quotes-exchange-rate';
 import { NamedQuoteSource, QuoteProvider, DividendSource, DataSource, QuoteSource, ExchangeRateSource } from './quote-configuration';
+import { ComputeDividends } from './quotes-dividends';
 
 /**
  * Retrieves instantQuotes data from a provider, and then broadcasts the
@@ -86,9 +86,9 @@ export class QuotesService {
         let uri = this.makeRelativePath(directDividendsSource.uri);
         return new Observable<HistoricalQuotes>(observer => {
           this.plainDataService.getHistoricalValues(uri).subscribe(directDividends => {
-            let enrichWithDividends: EnrichWithDividends =
-              new EnrichWithDividends(directDividends);
-            enrichWithDividends.enrich(namedQuoteSource.name, historicalQuotes);
+            ComputeDividends
+              .withDirectDividends(directDividends)
+              .of(namedQuoteSource.name, historicalQuotes);
             observer.next(historicalQuotes);
             observer.complete();
           });
@@ -98,9 +98,9 @@ export class QuotesService {
         if (totalReturnSource) {
           return new Observable<HistoricalQuotes>(observer => {
             this.retrieveQuote("TR", totalReturnSource).subscribe(totalReturnQuotes => {
-              let enrichWithTotalReturn: EnrichWithTotalReturn =
-                new EnrichWithTotalReturn("TR", totalReturnQuotes);
-              enrichWithTotalReturn.enrich(namedQuoteSource.name, historicalQuotes);
+              ComputeDividends
+                .withTotalReturn("TR", totalReturnQuotes)
+                .of(namedQuoteSource.name, historicalQuotes);
               observer.next(historicalQuotes);
               observer.complete();
             });
@@ -108,6 +108,9 @@ export class QuotesService {
         }
       }
     } else {
+      ComputeDividends
+        .withAdjustedClose()
+        .of(namedQuoteSource.name, historicalQuotes);
       return of(historicalQuotes);
     }
   }

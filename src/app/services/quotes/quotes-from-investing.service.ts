@@ -97,7 +97,11 @@ export class InvestingWriter {
   }
 
   private convertNumber(value: number): string {
-    return value.toLocaleString('en-US', {maximumFractionDigits:4})
+    if (value > 1000000) {
+      value /= 1000000;
+      return value.toLocaleString('en-US', {maximumFractionDigits:2}) + "M";
+    }
+    return value.toLocaleString('en-US', {maximumFractionDigits:2})
   }
 
   private addQuotes(s: string): string {

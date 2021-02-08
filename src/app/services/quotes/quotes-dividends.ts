@@ -1,10 +1,96 @@
-import { HistoricalValue, HistoricalQuotes, Quote } from '../core/quotes';
+import { HistoricalQuotes, HistoricalValue, Quote } from '../../model/core/quotes';
+
+/**
+ * Generic interface for all methods of computing dividends.
+ */
+export interface DividendComputer {
+  /**
+   * Computes the dividends of the named instrument in the provided historical
+   * quotes based on the implemented method.
+   * @param {string} name The name of the instrument to enrich.
+   * @param {HistoricalQuotes} priceHistoricalQuotes The quotes containing
+   * the instrument to compute the dividends of.
+   */
+  of(name: string, priceHistoricalQuotes: HistoricalQuotes): void;
+}
+
+/**
+ * Convenience class to instantiate dividend computation classes.
+ * @class{ComputeDividends}
+ */
+export class ComputeDividends {
+  /**
+   * Injects direct dividends into the quotes.
+   * @param {HistoricalValue[]} directDividends The dividend data.
+   */
+  public static withDirectDividends(directDividends: HistoricalValue[]): DividendComputer {
+    return new ComputeDividendsWithDirectData(directDividends);
+  }
+
+  /**
+   * Computes dividends based on the total return version of the instrument.
+   * @param {string} name The name of the total return instrument.
+   * @param {HistoricalQuotes} historicalQuotes Historical quotes containing
+   * the total return of the specified instrument.
+   * @return {DividendComputer} A dividend computer ready to use.
+   */
+  public static withTotalReturn(totalReturnName: string, totalReturnHistoricalQuotes: HistoricalQuotes): DividendComputer {
+    return new ComputeDividendsWithTotalReturn(totalReturnName, totalReturnHistoricalQuotes);
+  }
+
+  /**
+   * Computes dividends based on the adjusted closing price.
+   * @return {DividendComputer} A dividend computer ready to use.
+   */
+  public static withAdjustedClose(): ComputeDividendsWithAdjustedClose {
+    return new ComputeDividendsWithAdjustedClose();
+  }
+}
+
+/**
+ * Computes dividends of specified historical quotes based
+ * on comparing the close price with adjusted close price.
+ * @class {ComputeDividendsWithAdjustedClose}
+ */
+export class ComputeDividendsWithAdjustedClose implements DividendComputer {
+
+  /**
+   * Class constructor.
+   */
+  constructor() {
+  }
+
+  of(name: string, historicalQuotes: HistoricalQuotes): void {
+    let lastClose: number;
+    let lastAdjustedClose: number;
+    historicalQuotes.forEachDate(instantQuotes => {
+      let quote: Quote = instantQuotes.quote(name);
+      if (quote) {
+        let close: number = quote.close;
+        let adjustedClose: number = quote.adjustedClose;
+        if (lastClose && lastAdjustedClose) {
+          let variationClose = lastClose - close
+          let variationAdjustedClose = lastAdjustedClose - adjustedClose;
+          let dividend = variationClose - variationAdjustedClose;
+          let rounding = Math.abs(Math.round(100000 * dividend / close));
+          if (rounding > 1) {
+            quote.dividend = dividend;
+          } else {
+            quote.dividend = 0;
+          }
+        }
+        lastClose = close;
+        lastAdjustedClose = adjustedClose;
+      }
+    });
+  }
+}
 
 /**
  * A utility class to enrich historical quotes with dividends.
  * @class{EnrichWithDividends}
  */
-export class EnrichWithDividends {
+export class ComputeDividendsWithDirectData implements DividendComputer {
   private dividendIndex: number;
 
   /**
@@ -15,13 +101,7 @@ export class EnrichWithDividends {
     this.dividendIndex = 0;
   }
 
-  /**
-   * Enrich the provided historical quotes with the dividends.
-   * @param {string} name The name of the instrument to enrich.
-   * @param {HistoricalQuotes} historicalQuotes The quotes containing
-   * the instrument to enrich.
-   */
-  public enrich(name:string, historicalQuotes: HistoricalQuotes): void {
+  public of(name:string, historicalQuotes: HistoricalQuotes): void {
     historicalQuotes.forEachDate(instantQuotes => {
       let dividendEntry: HistoricalValue = this.directDividends[this.dividendIndex];
       if (dividendEntry) {
@@ -36,11 +116,11 @@ export class EnrichWithDividends {
 }
 
 /**
- * An utility class to enrich historical quotes with dividends based
+ * A utility class to enrich historical quotes with dividends based
  * on comparing the price quotes with total return quotes.
- * @class {EnrichWithTotalReturn}
+ * @class {ComputeDividendsWithTotalReturn}
  */
-export class EnrichWithTotalReturn {
+export class ComputeDividendsWithTotalReturn implements DividendComputer{
   private totalReturn: HistoricalValue[];
   private initialPriceValue: number;
   private initialTotalReturnValue: number;
@@ -70,13 +150,7 @@ export class EnrichWithTotalReturn {
     });
   }
 
-  /**
-   * Enrich the provided historical quotes with the dividends.
-   * @param {string} name The name of the instrument to enrich.
-   * @param {HistoricalQuotes} priceHistoricalQuotes The quotes containing
-   * the instrument to enrich.
-   */
-  public enrich(name: string, priceHistoricalQuotes: HistoricalQuotes): void  {
+  of(name: string, priceHistoricalQuotes: HistoricalQuotes): void {
     priceHistoricalQuotes.forEachDate(priceInstantQuotes => {
       let instant:Date = priceInstantQuotes.instant;
 
