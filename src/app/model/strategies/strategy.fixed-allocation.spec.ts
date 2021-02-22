@@ -1,4 +1,4 @@
-import { Account } from '../core/account';
+import { Account, Position } from '../core/account';
 import { InstantQuotes, Quote } from '../core/quotes';
 import { FixedAllocationStrategy, FixedAllocationStrategyErrorDuplicatedAssetName, FixedAllocationStrategyErrorInvalidAllocation, FixedAllocationStrategyErrorInvalidAssetName, FixedAllocationStrategyErrorTotalAllocation } from './strategy.fixed-allocation';
 
@@ -82,4 +82,46 @@ describe('FixedAllocationStrategy', () => {
     expect(account.position("ASS2").parts).toBe(400);
     expect(account.nav()).toBe(100000);
   });
+
+  it('Can perform rebalancing', () => {
+    let fixedAllocationStrategy: FixedAllocationStrategy =
+      new FixedAllocationStrategy({fixedAllocations:[
+        {assetName: "ASS1", allocation: 20},
+        {assetName: "ASS2", allocation: 30},
+        {assetName: "ASS3", allocation: 20},
+      ]});
+
+    let account: Account = new Account({
+      strategy: fixedAllocationStrategy,
+      positions: [
+        new Position({name: "ASS1", parts: 20}),
+        new Position({name: "ASS2", parts: 30}),
+        new Position({name: "ASS3", parts: 20}),
+      ],
+      cash:3000
+    });
+
+    let instantQuotes = [
+      new Quote({name: "ASS1", close: 120}),
+      new Quote({name: "ASS2", close: 80}),
+      new Quote({name: "ASS3", close: 100}),
+    ];
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 10, 10),
+      quotes: instantQuotes
+    }));
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 10, 11),
+      quotes: instantQuotes
+    }));
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 10, 12),
+      quotes: instantQuotes
+    }));
+
+    expect(account.position("ASS1").parts).toBe(16);
+    expect(account.position("ASS2").parts).toBe(37);
+    expect(account.position("ASS3").parts).toBe(20);
+  });
+
 });
