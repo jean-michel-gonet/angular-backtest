@@ -181,16 +181,9 @@ describe('Account', () => {
       ]
     }));
 
+    // The order was not executed:
     let position: Position = account.position("XX");
-
-    // Bought parts only up to available cash:
-    // (The -1 is because of the costs)
-    let expectedParts = Math.floor(initialCash / partOpenValue) - 1;
-    expect(position.parts).toBe(8);
-
-    // Costs are based on the number of parts actually bought.
-    let costs = expectedParts * partOpenValue * spread / 2
-    expect(account.accumulatedCosts).toBe(costs);
+    expect(position).toBeFalsy();
   });
 
   it("Can sell an instrument using next day's open value, taking in count the costs", () => {
@@ -261,10 +254,10 @@ describe('Account', () => {
       ]
     }));
 
+    // The order was not executed:
     let position: Position = account.position("XX");
-    expect(position.parts).toBe(0);
-    let costs = 4 * partOpenValue * spread / 2;
-    expect(account.accumulatedCosts).toBe(costs);
+    expect(position.parts).toBe(4);
+    expect(account.accumulatedCosts).toBe(0);
   });
 
   it('Can obtain one single position identified by its ISIN', () => {

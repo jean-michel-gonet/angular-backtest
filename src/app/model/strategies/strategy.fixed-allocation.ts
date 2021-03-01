@@ -3,6 +3,7 @@ import { InstantQuotes, Quote } from '../core/quotes';
 import { Account, Position } from '../core/account';
 import { RegularTransfer } from '../core/transfer';
 import { Report } from '../core/reporting';
+import { Period, Periodicity } from '../core/period';
 
 /**
  * Describes the fixed allocation for one asset.
@@ -13,6 +14,11 @@ class IAllocation {
   allocation: number;
 }
 
+export enum RebalancingMode {
+  PERIODIC = 'PERIODIC',
+  THRESHOLD = 'THRESHOLD'
+}
+
 /**
  * Initialization interface for a fixed allocation strategy.
  * @class{IFixedAllocationStrategy}
@@ -20,6 +26,12 @@ class IAllocation {
 class IFixedAllocationStrategy {
   /** Lists all allocations.*/
   fixedAllocations: IAllocation[];
+
+  /** Rebalancing mode. */
+  rebalancingMode?: RebalancingMode;
+
+  /** If rebalancing mode is periodic, then this is the periodicity.*/
+  periodicity?: Periodicity;
 
   /** Optional transfer of funds.*/
   transfer?: RegularTransfer;
@@ -57,6 +69,11 @@ export class FixedAllocationStrategyErrorDuplicatedAssetName extends FixedAlloca
     super("Don't specify twice the allocations for the same asset name: " + assetName);
   }
 }
+export class FixedAllocationStrategyErrorMissingPeriodicity extends FixedAllocationStrategyError {
+  constructor(rebalancingMode: RebalancingMode) {
+    super("Rebalancing mode '" + rebalancingMode + "' requires to specify periodicity.");
+  }
+}
 
 /**
  * Implements the buy and hold strategy with specified ISIN over the
@@ -65,11 +82,15 @@ export class FixedAllocationStrategyErrorDuplicatedAssetName extends FixedAlloca
  */
 export class FixedAllocationStrategy implements Strategy {
   private fixedAllocations: IAllocation[];
+  private rebalancingMode: RebalancingMode;
+  private period: Period;
   private transfer: RegularTransfer;
 
   constructor(obj = {} as IFixedAllocationStrategy) {
     let {
       fixedAllocations = [],
+      rebalancingMode = RebalancingMode.THRESHOLD,
+      periodicity,
       transfer = new RegularTransfer()
     } = obj;
 
@@ -99,6 +120,15 @@ export class FixedAllocationStrategy implements Strategy {
           throw new FixedAllocationStrategyErrorDuplicatedAssetName(assetName1);
         }
       }
+    }
+
+    // If rebalancing mode is periodical, then periodicity is mandatory:
+    this.rebalancingMode = rebalancingMode;
+    if (rebalancingMode == RebalancingMode.PERIODIC) {
+      if (!periodicity) {
+        throw new FixedAllocationStrategyErrorMissingPeriodicity(rebalancingMode);
+      }
+      this.period = new Period(periodicity);
     }
 
     // All good:
