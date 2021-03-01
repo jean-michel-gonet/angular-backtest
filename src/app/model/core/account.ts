@@ -119,6 +119,7 @@ export class Order {
 
 class IAccount {
   id?: string;
+  settlementDays?: number;
   cash?: number;
   positions?: Position[];
   strategy?: Strategy;
@@ -126,11 +127,13 @@ class IAccount {
   constructor(obj = {} as IAccount) {
     let {
       id = "ACCOUNT",
+      settlementDays = 0,
       cash = 0,
       positions = [],
       strategy = new NullStrategy()
     } = obj;
     this.id = id;
+    this.settlementDays = settlementDays;
     this.cash = cash;
     this.positions = positions;
     this.strategy = strategy;
@@ -185,6 +188,9 @@ export class Account extends IAccount implements Reporter {
     // Update current time.
     this.instant = instantQuotes.instant;
 
+    // Perform settlement:
+    this.performSettlement();
+
     // Execute the standing orders:
     this.executeStandingOrders(instantQuotes);
 
@@ -195,6 +201,31 @@ export class Account extends IAccount implements Reporter {
     // The strategy may create additional standing orders, that will
     // be executed next day.
     this.strategy.applyStrategy(this, instantQuotes);
+  }
+
+  private performSettlement(): void {
+    // Cash settlements:
+    let remainingCashSettlements =
+      this.cashSettlements.filter(settlement => {
+        if (settlement.settlementDate.valueOf() <= this.instant.valueOf()) {
+          this.cash += settlement.amount;
+          return false;
+        }
+        return true;
+      });
+    this.cashSettlements = remainingCashSettlements;
+
+    // Part settlements:
+    this.positions.forEach(position => {
+      let remainingSettlements = position.settlements.filter(settlement => {
+        if (settlement.settlementDate.valueOf() <= this.instant.valueOf()) {
+          position.parts += settlement.amount;
+          return false;
+        }
+        return true;
+      });
+      position.settlements = remainingSettlements;
+    });
   }
 
   /**
@@ -218,6 +249,16 @@ export class Account extends IAccount implements Reporter {
         }
       }
     });
+  }
+
+  /**
+   * Adds a standing order.
+   * Standing orders will be executed at market value (open), next day.
+   * @param {String} name The name of the instrument.
+   * @param {number} parts The number of parts to buy (if positive) or sell (if negative).
+   */
+  order(name: String, parts: number) {
+    this.standingOrders.push({name: name, parts: parts});
   }
 
   /**
@@ -302,28 +343,37 @@ export class Account extends IAccount implements Reporter {
       this.positions.push(position);
     }
 
-    // Performs the transaction:
-    position.parts += parts;
+    // Exchanges the number of parts:
+    let settlementDate = new Date(
+      this.instant.getFullYear(),
+      this.instant.getMonth(),
+      this.instant.getDate() + this.settlementDays);
+
+    if (parts > 0 && this.settlementDays > 0) {
+      position.settlements.push({
+        settlementDate: settlementDate,
+        amount: parts});
+    } else {
+      position.parts += parts;
+    }
+
+    // Exchanges the cash:
     let costs: number = this.orderCost(quote, parts);
     this.accumulatedCosts += costs;
-    this.cash = this.cash -
-                parts * quote.open -
-                costs;
+    let cash = - parts * quote.open - costs;
+    if (cash > 0 && this.settlementDays > 0) {
+      this.cashSettlements.push({
+        settlementDate: settlementDate,
+        amount: cash
+      });
+    } else {
+      this.cash += cash;
+    }
 
     // A little log:
     console.info(StringUtils.formatAsDate(this.instant) +
       " - Account " + this.id +
       " aquired " + parts + " parts of " + quote.name + " at " + quote.open);
-  }
-
-  /**
-   * Adds a standing order.
-   * Standing orders will be executed at market value (open), next day.
-   * @param {String} name The name of the instrument.
-   * @param {number} parts The number of parts to buy (if positive) or sell (if negative).
-   */
-  order(name: String, parts: number) {
-    this.standingOrders.push({name: name, parts: parts});
   }
 
   /**

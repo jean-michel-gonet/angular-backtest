@@ -260,6 +260,105 @@ describe('Account', () => {
     expect(account.accumulatedCosts).toBe(0);
   });
 
+  it('Can execute orders immediately if settlement is 0 days', () => {
+    let account: Account = new Account({
+      cash: 0,
+      settlementDays: 0,
+      strategy: new MockStrategy(),
+      positions: [
+        new Position({name: "XX", partValue: 100, parts: 3}),
+        new Position({name: "YY", partValue:  10, parts: 4})
+      ]
+    });
+    account.order("XX", -3);
+    account.order("YY", 20);
+
+    // Execute at next opening day:
+    account.process(new InstantQuotes({
+      instant: new Date(2020, 1, 10),
+      quotes: [
+        new Quote({name: "XX", open: 100, close: 100}),
+        new Quote({name: "YY", open:  10, close:  10}),
+      ]
+    }));
+
+    // As there is no settlement time, orders can be executed directly:
+    expect(account.position("XX").parts).toBe(     0);
+    expect(account.position("YY").parts).toBe(4 + 20);
+  });
+
+  it('Can wait until cash is settled before executing standing orders', () => {
+    let account: Account = new Account({
+      cash: 0,
+      settlementDays: 2,
+      strategy: new MockStrategy(),
+      positions: [
+        new Position({name: "XX", partValue: 100, parts: 3}),
+        new Position({name: "YY", partValue:  10, parts: 4})
+      ]
+    });
+    account.order("XX", -3);
+    account.order("YY", 20);
+
+    // Next opening day, parts of XX are sold immediately...
+    // ... but there isn't enough settled cash to buy YY.
+    account.process(new InstantQuotes({
+      instant: new Date(2020, 1, 10),
+      quotes: [
+        new Quote({name: "XX", open: 100, close: 100}),
+        new Quote({name: "YY", open:  10, close:  10}),
+      ]
+    }));
+    expect(account.position("XX").parts).toBe(0);
+    expect(account.position("YY").parts).toBe(4);
+
+    // Next opening day:
+    account.process(new InstantQuotes({
+      instant: new Date(2020, 1, 11),
+      quotes: [
+        new Quote({name: "XX", open: 100, close: 100}),
+        new Quote({name: "YY", open:  10, close:  10}),
+      ]
+    }));
+    expect(account.position("XX").parts).toBe(0);
+    expect(account.position("YY").parts).toBe(4);
+
+    // Next opening day:
+    account.process(new InstantQuotes({
+      instant: new Date(2020, 1, 12),
+      quotes: [
+        new Quote({name: "XX", open: 100, close: 100}),
+        new Quote({name: "YY", open:  10, close:  10}),
+      ]
+    }));
+    expect(account.position("XX").parts).toBe(0);
+    expect(account.position("YY").nav()).toBe(24 * 10); // Parts are already bought
+    expect(account.position("YY").parts).toBe(4);     // But not yet available.
+
+    // Next opening day:
+    account.process(new InstantQuotes({
+      instant: new Date(2020, 1, 13),
+      quotes: [
+        new Quote({name: "XX", open: 100, close: 100}),
+        new Quote({name: "YY", open:  10, close:  10}),
+      ]
+    }));
+    expect(account.position("XX").parts).toBe(0);
+    expect(account.position("YY").nav()).toBe(24 * 10); // Parts are already bought
+    expect(account.position("YY").parts).toBe(4);       // But not yet available.
+
+    // Next opening day:
+    account.process(new InstantQuotes({
+      instant: new Date(2020, 1, 14),
+      quotes: [
+        new Quote({name: "XX", open: 100, close: 100}),
+        new Quote({name: "YY", open:  10, close:  10}),
+      ]
+    }));
+    expect(account.position("XX").parts).toBe(0);
+    expect(account.position("YY").parts).toBe(24);     // Parts are available at last.
+  });
+
   it('Can obtain one single position identified by its ISIN', () => {
     let account: Account = new Account({
       cash: 1000.0,
