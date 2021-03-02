@@ -1,4 +1,5 @@
 import { Account, Position } from '../core/account';
+import { Periodicity } from '../core/period';
 import { InstantQuotes, Quote } from '../core/quotes';
 import { FixedAllocationStrategy, FixedAllocationStrategyErrorDuplicatedAssetName, FixedAllocationStrategyErrorInvalidAllocation, FixedAllocationStrategyErrorInvalidAssetName, FixedAllocationStrategyErrorTotalAllocation } from './strategy.fixed-allocation';
 
@@ -85,11 +86,11 @@ describe('FixedAllocationStrategy', () => {
 
   it('Can perform rebalancing', () => {
     let fixedAllocationStrategy: FixedAllocationStrategy =
-      new FixedAllocationStrategy({fixedAllocations:[
-        {assetName: "ASS1", allocation: 20},
-        {assetName: "ASS2", allocation: 30},
-        {assetName: "ASS3", allocation: 20},
-      ]});
+      new FixedAllocationStrategy({
+        fixedAllocations:[
+          {assetName: "ASS1", allocation: 20},
+          {assetName: "ASS2", allocation: 30},
+          {assetName: "ASS3", allocation: 20}]});
 
     let account: Account = new Account({
       strategy: fixedAllocationStrategy,
@@ -122,6 +123,129 @@ describe('FixedAllocationStrategy', () => {
     expect(account.position("ASS1").parts).toBe(16);
     expect(account.position("ASS2").parts).toBe(37);
     expect(account.position("ASS3").parts).toBe(20);
+  });
+
+  it('Can perform rebalancing periodically', () => {
+    let fixedAllocationStrategy: FixedAllocationStrategy =
+      new FixedAllocationStrategy({
+        fixedAllocations:[
+          {assetName: "ASS1", allocation: 20},
+          {assetName: "ASS2", allocation: 30},
+          {assetName: "ASS3", allocation: 20}],
+        periodicity: Periodicity.MONTHLY});
+
+    let account: Account = new Account({
+      strategy: fixedAllocationStrategy,
+      cash:10000
+    });
+
+    // Immediately performs the first investment:
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 10, 1),
+      quotes: [
+        new Quote({name: "ASS1", close: 100}),
+        new Quote({name: "ASS2", close: 100}),
+        new Quote({name: "ASS3", close: 100})]
+    }));
+
+    // No rebalance before the next month:
+    let instantQuotes = [
+      new Quote({name: "ASS1", close: 120}),
+      new Quote({name: "ASS2", close: 80}),
+      new Quote({name: "ASS3", close: 100}),
+    ];
+    for (var n = 2; n <= 30; n++) {
+      account.process(new InstantQuotes({
+        instant: new Date(2010, 10, n),
+        quotes: instantQuotes
+      }));
+      expect(account.position("ASS1").parts).toBe(20);
+      expect(account.position("ASS2").parts).toBe(30);
+      expect(account.position("ASS3").parts).toBe(20);
+    }
+
+    // Rebalance the first day of the next month:
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 11, 1),
+      quotes: instantQuotes
+    }));
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 11, 2),
+      quotes: instantQuotes
+    }));
+    expect(account.position("ASS1").parts).toBe(17);
+    expect(account.position("ASS2").parts).toBe(38);
+    expect(account.position("ASS3").parts).toBe(20);
+  });
+
+  it('Can perform rebalancing only if drifting is above threshold', () => {
+    let fixedAllocationStrategy: FixedAllocationStrategy =
+      new FixedAllocationStrategy({
+        fixedAllocations:[
+          {assetName: "ASS1", allocation: 20},
+          {assetName: "ASS2", allocation: 30},
+          {assetName: "ASS3", allocation: 20}],
+        threshold: 20});
+
+    let account: Account = new Account({
+      strategy: fixedAllocationStrategy,
+      cash:10000
+    });
+
+    // Immediately performs the first investment:
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 10, 1),
+      quotes: [
+        new Quote({name: "ASS1", close: 100}),
+        new Quote({name: "ASS2", close: 100}),
+        new Quote({name: "ASS3", close: 100})]
+    }));
+
+    // No rebalance until drifting goes above threshold:
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 10, 2),
+      quotes: [
+        new Quote({name: "ASS1", close: 110}),
+        new Quote({name: "ASS2", close: 90}),
+        new Quote({name: "ASS3", close: 100})]
+    }));
+    expect(account.position("ASS1").parts).toBe(20);
+    expect(account.position("ASS2").parts).toBe(30);
+    expect(account.position("ASS3").parts).toBe(20);
+
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 10, 3),
+      quotes: [
+        new Quote({name: "ASS1", close: 118}),
+        new Quote({name: "ASS2", close: 81}),
+        new Quote({name: "ASS3", close: 100})]
+    }));
+    expect(account.position("ASS1").parts).toBe(20);
+    expect(account.position("ASS2").parts).toBe(30);
+    expect(account.position("ASS3").parts).toBe(20);
+
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 10, 4),
+      quotes: [
+        new Quote({name: "ASS1", close: 120}),
+        new Quote({name: "ASS2", close: 78}),
+        new Quote({name: "ASS3", close: 100})]
+    }));
+    expect(account.position("ASS1").parts).toBe(20);
+    expect(account.position("ASS2").parts).toBe(30);
+    expect(account.position("ASS3").parts).toBe(20);
+
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 10, 5),
+      quotes: [
+        new Quote({name: "ASS1", close: 120}),
+        new Quote({name: "ASS2", close: 78}),
+        new Quote({name: "ASS3", close: 100})]
+    }));
+    expect(account.position("ASS1").parts).toBe(16);
+    expect(account.position("ASS2").parts).toBe(38);
+    expect(account.position("ASS3").parts).toBe(20);
+
   });
 
 });

@@ -14,11 +14,6 @@ class IAllocation {
   allocation: number;
 }
 
-export enum RebalancingMode {
-  PERIODIC = 'PERIODIC',
-  THRESHOLD = 'THRESHOLD'
-}
-
 /**
  * Initialization interface for a fixed allocation strategy.
  * @class{IFixedAllocationStrategy}
@@ -27,11 +22,20 @@ class IFixedAllocationStrategy {
   /** Lists all allocations.*/
   fixedAllocations: IAllocation[];
 
-  /** Rebalancing mode. */
-  rebalancingMode?: RebalancingMode;
-
-  /** If rebalancing mode is periodic, then this is the periodicity.*/
+  /**
+   * Periodicity for rebalancing.
+   * Strategy only rebalances in the specified period. Default value is daily.
+   */
   periodicity?: Periodicity;
+
+  /**
+   * Strategy doesn't rebalance if dirft is below threshold.
+   * Value is expressed in percentage of allocation.
+   * For example, if target allocation is 20%, and threshold is 10%,
+   * then it will rebalance only if actual allocation goes
+   * over 22% or under 18% (because 10% of 20% is 2%)
+   */
+  threshold?: number;
 
   /** Optional transfer of funds.*/
   transfer?: RegularTransfer;
@@ -69,11 +73,6 @@ export class FixedAllocationStrategyErrorDuplicatedAssetName extends FixedAlloca
     super("Don't specify twice the allocations for the same asset name: " + assetName);
   }
 }
-export class FixedAllocationStrategyErrorMissingPeriodicity extends FixedAllocationStrategyError {
-  constructor(rebalancingMode: RebalancingMode) {
-    super("Rebalancing mode '" + rebalancingMode + "' requires to specify periodicity.");
-  }
-}
 
 /**
  * Implements the buy and hold strategy with specified ISIN over the
@@ -82,15 +81,15 @@ export class FixedAllocationStrategyErrorMissingPeriodicity extends FixedAllocat
  */
 export class FixedAllocationStrategy implements Strategy {
   private fixedAllocations: IAllocation[];
-  private rebalancingMode: RebalancingMode;
   private period: Period;
+  private threshold: number;
   private transfer: RegularTransfer;
 
   constructor(obj = {} as IFixedAllocationStrategy) {
     let {
       fixedAllocations = [],
-      rebalancingMode = RebalancingMode.THRESHOLD,
-      periodicity,
+      periodicity = Periodicity.DAILY,
+      threshold = 5,
       transfer = new RegularTransfer()
     } = obj;
 
@@ -122,17 +121,10 @@ export class FixedAllocationStrategy implements Strategy {
       }
     }
 
-    // If rebalancing mode is periodical, then periodicity is mandatory:
-    this.rebalancingMode = rebalancingMode;
-    if (rebalancingMode == RebalancingMode.PERIODIC) {
-      if (!periodicity) {
-        throw new FixedAllocationStrategyErrorMissingPeriodicity(rebalancingMode);
-      }
-      this.period = new Period(periodicity);
-    }
-
     // All good:
+    this.period = new Period(periodicity);
     this.fixedAllocations = fixedAllocations;
+    this.threshold = threshold;
     this.transfer = transfer;
   }
 
@@ -143,22 +135,21 @@ export class FixedAllocationStrategy implements Strategy {
    * If there are assets to buy, buys them.
    */
   applyStrategy(account: Account, instantQuotes: InstantQuotes): void {
-    let rebalancingOrders = this.calculateRebalancingOrders(account, instantQuotes);
+    if (this.period.changeOfPeriod(instantQuotes.instant)) {
+      let rebalancingOrders = this.calculateRebalancingOrders(account, instantQuotes);
 
-    // Executes all selling:
-    let waitForSelling: boolean = false;
-    rebalancingOrders.forEach(rebalancingOrder => {
-      if (rebalancingOrder.allocation < 0) {
-        account.order(rebalancingOrder.assetName, rebalancingOrder.allocation);
-        waitForSelling = true;
-      }
-    });
-
-    // Executes all buying:
-    if (!waitForSelling) {
+      // Executes all selling:
       rebalancingOrders.forEach(rebalancingOrder => {
-        account.order(rebalancingOrder.assetName, rebalancingOrder.allocation);
-        waitForSelling = true;
+        if (rebalancingOrder.allocation < 0) {
+          account.order(rebalancingOrder.assetName, rebalancingOrder.allocation);
+        }
+      });
+
+      // Executes all buying:
+      rebalancingOrders.forEach(rebalancingOrder => {
+        if (rebalancingOrder.allocation > 0) {
+          account.order(rebalancingOrder.assetName, rebalancingOrder.allocation);
+        }
       });
     }
   }
@@ -178,12 +169,15 @@ export class FixedAllocationStrategy implements Strategy {
       }
       let targetAllocation = fixedAllocation.allocation * nav / 100;
       let actualAllocation = position.nav();
+      let allowedDrift = targetAllocation * this.threshold / 100;
       let drift = targetAllocation - actualAllocation;
-      let driftInNumberOfParts = Math.round(drift / position.partValue);
-      if (driftInNumberOfParts) {
-        rebalancingOrders.push({
-          assetName: fixedAllocation.assetName,
-          allocation: driftInNumberOfParts});
+      if (Math.abs(drift) > allowedDrift) {
+        let driftInNumberOfParts = Math.round(drift / position.partValue);
+        if (driftInNumberOfParts) {
+          rebalancingOrders.push({
+            assetName: fixedAllocation.assetName,
+            allocation: driftInNumberOfParts});
+        }
       }
     });
     return rebalancingOrders;
