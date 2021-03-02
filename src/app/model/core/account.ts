@@ -173,6 +173,9 @@ export class Account extends IAccount implements Reporter {
    */
   nav(): number {
     let nav = this.cash;
+    this.cashSettlements.forEach(settlement => {
+      nav += settlement.amount;
+    });
     this.positions.forEach(position => {
       nav += position.nav();
     });

@@ -359,6 +359,41 @@ describe('Account', () => {
     expect(account.position("YY").parts).toBe(24);     // Parts are available at last.
   });
 
+  it('Can include settlements when calculating nav', () => {
+    let account: Account = new Account({
+      cash: 1000,
+      settlementDays: 2,
+      strategy: new MockStrategy(),
+      positions: [
+        new Position({name: "XX", partValue: 100, parts: 3}),
+        new Position({name: "YY", partValue:  10, parts: 4})
+      ]
+    });
+    let nav = 1000 + 3 * 100 + 4 * 10;
+    expect(account.nav()).toBe(nav);
+
+    // Pass some orders:
+    account.order("XX", -3);
+    account.order("YY", 20);
+
+    // Next opening day:
+    account.process(new InstantQuotes({
+      instant: new Date(2020, 1, 10),
+      quotes: [
+        new Quote({name: "XX", open: 100, close: 100}),
+        new Quote({name: "YY", open:  10, close:  10}),
+      ]
+    }));
+
+    // Sell order: Cash won't be available until settlement.
+    // Buy order: Parts won't be available until settlement.
+    expect(account.cash).toBe(1000 - 20*10);
+    expect(account.nav()).toBe(nav);
+    expect(account.position("XX").parts).toBe(0);
+    expect(account.position("YY").parts).toBe(4);
+  });
+
+
   it('Can obtain one single position identified by its ISIN', () => {
     let account: Account = new Account({
       cash: 1000.0,
