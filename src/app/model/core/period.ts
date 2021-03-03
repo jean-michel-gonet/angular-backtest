@@ -19,7 +19,7 @@ export class Period {
    * Class constructor.
    * @param {Periodicity} periodicity The length of the period.
    */
-  public constructor(private periodicity: Periodicity) {}
+  public constructor(public periodicity: Periodicity) {}
 
 
   /**

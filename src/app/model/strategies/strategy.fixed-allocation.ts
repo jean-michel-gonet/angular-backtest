@@ -9,7 +9,7 @@ import { Period, Periodicity } from '../core/period';
  * Describes the fixed allocation for one asset.
  * @class{IFixedAllocation}
  */
-class IAllocation {
+export class IAllocation {
   assetName: string;
   allocation: number;
 }
@@ -80,10 +80,10 @@ export class FixedAllocationStrategyErrorDuplicatedAssetName extends FixedAlloca
  * @class {BuyAndHoldStrategy}
  */
 export class FixedAllocationStrategy implements Strategy {
-  private fixedAllocations: IAllocation[];
-  private period: Period;
-  private threshold: number;
-  private transfer: RegularTransfer;
+  public fixedAllocations: IAllocation[];
+  public period: Period;
+  public threshold: number;
+  public transfer: RegularTransfer;
 
   constructor(obj = {} as IFixedAllocationStrategy) {
     let {

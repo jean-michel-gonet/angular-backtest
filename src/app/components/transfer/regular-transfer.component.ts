@@ -7,18 +7,38 @@ import { TransferToComponent } from '../accounts/transfer-to.component';
   template: '<ng-content></ng-content>'
 })
 export class RegularTransferComponent {
+  private _transfer: number;
   @Input()
-  private transfer: string;
+  set transfer(value: number) {
+    if (typeof value == 'string') {
+      this._transfer = parseFloat(value);
+    } else {
+      this._transfer = value;
+    }
+  }
+  get transfer() {
+    return this._transfer;
+  }
 
+  private _every: RegularPeriod;
   @Input()
-  private every: RegularPeriod;
+  set every(value: RegularPeriod) {
+    if (typeof value == 'string') {
+      this._every = RegularPeriod[value];
+    } else {
+      this._every = value;
+    }
+  }
+  get every() {
+    return this._every;
+  }
 
   @ContentChild(TransferToComponent, {static: true})
   private toAccountComponent: TransferToComponent
 
   public asRegularTransfer(): RegularTransfer {
     return new RegularTransfer({
-      transfer: parseFloat(this.transfer),
+      transfer: this.transfer,
       every: this.every,
       to: this.toAccountComponent.asAccount()
     })
