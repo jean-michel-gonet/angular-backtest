@@ -1,5 +1,5 @@
 import { Strategy } from '../core/strategy';
-import { InstantQuotes, Quote } from '../core/quotes';
+import { InstantQuotes } from '../core/quotes';
 import { Account, Position } from '../core/account';
 import { RegularTransfer } from '../core/transfer';
 import { Report } from '../core/reporting';
@@ -138,7 +138,7 @@ export class FixedAllocationStrategy implements Strategy {
     if (this.period.changeOfPeriod(instantQuotes.instant)) {
       let rebalancingOrders = this.calculateRebalancingOrders(account, instantQuotes);
 
-      // Executes all selling:
+      // Executes all selling (to have some cash):
       rebalancingOrders.forEach(rebalancingOrder => {
         if (rebalancingOrder.allocation < 0) {
           account.order(rebalancingOrder.assetName, rebalancingOrder.allocation);
