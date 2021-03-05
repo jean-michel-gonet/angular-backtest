@@ -12,6 +12,25 @@ class IPosition {
 }
 
 /**
+ * Describes a settlement.
+ * In the securities industry, the trade settlement period refers to the time
+ * between the trade date—month, day, and year that an order is executed in
+ * the market—and the settlement date—when a trade is considered final.
+ * When shares of stock, or other securities, are bought or sold, both buyer
+ * and seller must fulfill their obligations to complete the transaction.
+ * During the settlement period, the buyer must pay for the shares, and the
+ * seller must deliver the shares. On the last day of the settlement period,
+ * the buyer becomes the holder of record of the security.
+ * @class{Settlement}
+ */
+class Settlement {
+  /** Number of parts, or amount of cash. */
+  amount: number;
+  /** The date when the trade is made effective.*/
+  settlementDate: Date;
+}
+
+/**
  * A position is the amount of a security, commodity or currency which is
  * owned by an individual, dealer, institution, or other fiscal entity.
  * See https://www.investopedia.com/terms/p/position.asp
@@ -34,6 +53,9 @@ export class Position {
   /** The costs that would be involved in selling this position.*/
   sellingCosts?: number;
 
+  /** A list of settlements */
+  settlements: Settlement[];
+
   /** Class constructor.
    * @param {IPosition} obj The object properties.
    */
@@ -48,14 +70,20 @@ export class Position {
     this.parts = parts;
     this.partValue = partValue;
     this.aquisitionCosts = aquisitionCosts;
+    this.settlements = [];
   }
 
   /**
    * Returns the net quote value based on the closing price of part value and
    * the number of parts.
+   * The nav includes the parts that are still in settlement.
    */
   nav():number {
-    return this.partValue * this.parts;
+    let parts = this.parts;
+    this.settlements.forEach(settlement => {
+      parts += settlement.amount;
+    });
+    return this.partValue * parts;
   }
 
   /**
@@ -91,6 +119,7 @@ export class Order {
 
 class IAccount {
   id?: string;
+  settlementDays?: number;
   cash?: number;
   positions?: Position[];
   strategy?: Strategy;
@@ -98,11 +127,13 @@ class IAccount {
   constructor(obj = {} as IAccount) {
     let {
       id = "ACCOUNT",
+      settlementDays = 0,
       cash = 0,
       positions = [],
       strategy = new NullStrategy()
     } = obj;
     this.id = id;
+    this.settlementDays = settlementDays;
     this.cash = cash;
     this.positions = positions;
     this.strategy = strategy;
@@ -116,6 +147,7 @@ class IAccount {
  */
 export class Account extends IAccount implements Reporter {
   private standingOrders: Order[] = [];
+  private cashSettlements: Settlement[] = [];
   public accumulatedCosts: number = 0;
   private instant: Date;
 
@@ -141,6 +173,9 @@ export class Account extends IAccount implements Reporter {
    */
   nav(): number {
     let nav = this.cash;
+    this.cashSettlements.forEach(settlement => {
+      nav += settlement.amount;
+    });
     this.positions.forEach(position => {
       nav += position.nav();
     });
@@ -156,10 +191,52 @@ export class Account extends IAccount implements Reporter {
     // Update current time.
     this.instant = instantQuotes.instant;
 
+    // Perform settlement:
+    this.performSettlement();
+
     // Execute the standing orders:
     this.executeStandingOrders(instantQuotes);
 
     // Update the positions:
+    this.updatePositions(instantQuotes);
+
+    // Call the strategy:
+    // The strategy may create additional standing orders, that will
+    // be executed next day.
+    this.strategy.applyStrategy(this, instantQuotes);
+  }
+
+  private performSettlement(): void {
+    // Cash settlements:
+    let remainingCashSettlements =
+      this.cashSettlements.filter(settlement => {
+        if (settlement.settlementDate.valueOf() <= this.instant.valueOf()) {
+          this.cash += settlement.amount;
+          return false;
+        }
+        return true;
+      });
+    this.cashSettlements = remainingCashSettlements;
+
+    // Part settlements:
+    this.positions.forEach(position => {
+      let remainingSettlements = position.settlements.filter(settlement => {
+        if (settlement.settlementDate.valueOf() <= this.instant.valueOf()) {
+          position.parts += settlement.amount;
+          return false;
+        }
+        return true;
+      });
+      position.settlements = remainingSettlements;
+    });
+  }
+
+  /**
+   * Updates the positions with the provided instant quotes.
+   * Also applies dividends.
+   * @param{InstantQuotes} instantQuotes The instant quotes.
+   */
+  private updatePositions(instantQuotes: InstantQuotes): void {
     instantQuotes.quotes.forEach(quote => {
       let position: Position = this.positions.find(p => {
         return p.name == quote.name;
@@ -175,100 +252,6 @@ export class Account extends IAccount implements Reporter {
         }
       }
     });
-
-    // Call the strategy:
-    // The strategy may create additional standing orders, that will
-    // be executed next day.
-    this.strategy.applyStrategy(this, instantQuotes);
-  }
-
-  /**
-   * Exectues all standing orders if the instrument name is found
-   * in the quotes of the day.
-   * @param {InstantQuotes} instantQuotes The quotes of the day.
-   */
-  private executeStandingOrders(instantQuotes: InstantQuotes): void {
-    let remainingOrders: Order[] = this.standingOrders.filter(standingOrder => {
-      let quote: Quote = instantQuotes.quote(standingOrder.name);
-      if (quote) {
-        this.executeImmediately(quote, standingOrder.parts);
-        return false;
-      }
-      return true;
-    });
-    this.standingOrders = remainingOrders;
-  }
-
-  /**
-   * Immediately sell or buys the specified quote, using the open quotation,
-   * updating the concerned position and the cash.
-   * @param {Quote} quote The quote to buy.
-   * @param {number} parts When positive, the number of parts to buy. When
-   * negative, the number of parts to sell.
-   **/
-  private executeImmediately(quote: Quote, parts: number): void {
-    parts = Math.floor(parts);
-    if (parts == 0) {
-      return;
-    }
-
-    // Looks for the corresponding position:
-    let position: Position = this.positions.find(p => {
-      return p.name == quote.name;
-    });
-    if (!position) {
-      position = new Position({
-        name: quote.name,
-        parts: 0
-      });
-      this.positions.push(position);
-    }
-
-    // Checks for available cash:
-    parts = this.maximumPartsGivenAvailableCash(quote, parts);
-
-    // Checks for available parts:
-    if (parts <  -position.parts) {
-      parts = -position.parts;
-    }
-
-    // Performs the transaction:
-    position.parts += parts;
-    let costs: number = this.orderCost(quote, parts);
-    this.accumulatedCosts += costs;
-    this.cash = this.cash -
-                parts * quote.open -
-                costs;
-
-    // A little log:
-    console.info(StringUtils.formatAsDate(this.instant) +
-      " - Account " + this.id +
-      " ordered " + parts + " parts of " + quote.name + " at " + quote.open);
-  }
-
-  /**
-   * Verifies the there is enough available cash to buy the indended number of parts.
-   * When there is not enough cash, returns the maximum number of parts
-   * that can be bought.
-   * @param {Quote} quote The quote to buy.
-   * @param {number} intendedParts The intended number of parts to buy.
-   * @return {number} The maximum number of parts.
-   */
-  private maximumPartsGivenAvailableCash(quote: Quote, intendedParts: number): number {
-    let availableCash: number = this.cash;
-    let partValue: number = quote.partValue();
-
-    let maximumParts = Math.floor(availableCash / partValue);
-    if (intendedParts > maximumParts) {
-      intendedParts = maximumParts;
-    }
-
-    let requiredCash = intendedParts * partValue + this.orderCost(quote, intendedParts);
-    while (requiredCash > availableCash) {
-      intendedParts--;
-      requiredCash = intendedParts * partValue + this.orderCost(quote, intendedParts);
-    }
-    return intendedParts;
   }
 
   /**
@@ -279,6 +262,121 @@ export class Account extends IAccount implements Reporter {
    */
   order(name: String, parts: number) {
     this.standingOrders.push({name: name, parts: parts});
+  }
+
+  /**
+   * Exectues all standing orders if the instrument name is found
+   * in the quotes of the day.
+   * @param {InstantQuotes} instantQuotes The quotes of the day.
+   */
+  private executeStandingOrders(instantQuotes: InstantQuotes): void {
+    let remainingOrders: Order[] = this.standingOrders.filter(standingOrder => {
+      let quote: Quote = instantQuotes.quote(standingOrder.name);
+      if (this.isOrderExecutable(quote, standingOrder.parts)) {
+        this.executeImmediately(quote, standingOrder.parts);
+        return false;
+      } else {
+        return true;
+      }
+    });
+    this.standingOrders = remainingOrders;
+  }
+
+  /**
+   * Establishes if it is possible to sell or buy the specified qupote, using
+   * the open quotation.
+   * @param {Quote} quote The quote to buy.
+   * @param {number} parts When positive, the number of parts to buy. When
+   * negative, the number of parts to sell.
+   * @return {boolean} true if it is possible to execute the order.
+   */
+  private isOrderExecutable(quote: Quote, parts: number): boolean {
+    // The empty order is always executable.
+    if (parts == 0) {
+      return true;
+    }
+
+    // A selling order is executable if there are enough parts in the position.
+    if (parts < 0) {
+      let position: Position = this.positions.find(p => {
+        return p.name == quote.name;
+      });
+      if (position) {
+        return position.parts >= -parts;
+      }
+    }
+
+    // A buying order is executable if there enough cash to buy parts.
+    if (parts > 0) {
+      let availableCash: number = this.cash;
+      let partValue: number = quote.partValue();
+      let maximumParts = Math.floor(availableCash / partValue);
+      return parts <= maximumParts;
+    }
+
+    // This is not an executable order:
+    return false;
+  }
+
+  /**
+   * Immediately sell or buys the specified quote, using the open quotation,
+   * updating the concerned position and the cash.
+   * Assumes that the order is executable, so there are no further verifications.
+   * @param {Quote} quote The quote to buy.
+   * @param {number} parts When positive, the number of parts to buy. When
+   * negative, the number of parts to sell.
+   **/
+  private executeImmediately(quote: Quote, parts: number): boolean {
+    parts = Math.floor(parts);
+    if (parts == 0) {
+      return;
+    }
+
+    // Looks for the corresponding position:
+    let position: Position = this.positions.find(p => {
+      return p.name == quote.name;
+    });
+
+    // If necessary, opens a new position:
+    if (!position) {
+      position = new Position({
+        name: quote.name,
+        parts: 0
+      });
+      this.positions.push(position);
+    }
+
+    // Exchanges the number of parts:
+    let settlementDate = new Date(
+      this.instant.getFullYear(),
+      this.instant.getMonth(),
+      this.instant.getDate() + this.settlementDays);
+
+    if (parts > 0 && this.settlementDays > 0) {
+      position.settlements.push({
+        settlementDate: settlementDate,
+        amount: parts});
+    } else {
+      position.parts += parts;
+    }
+
+    // Exchanges the cash:
+    let costs: number = this.orderCost(quote, parts);
+    this.accumulatedCosts += costs;
+    let cash = - parts * quote.open - costs;
+    if (cash > 0 && this.settlementDays > 0) {
+      this.cashSettlements.push({
+        settlementDate: settlementDate,
+        amount: cash
+      });
+    } else {
+      this.cash += cash;
+    }
+
+    // A little log:
+    console.info(StringUtils.formatAsDate(this.instant) +
+      " - Account " + this.id +
+      " aquired " + parts + " parts of " + quote.name + " at " + quote.open);
   }
 
   /**
