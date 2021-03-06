@@ -5,6 +5,76 @@ import {
 
 export const QUOTE_SOURCES: NamedQuoteSource[] = [
   {
+    name: "GLD",
+    longName: "SPDR Gold Shares (GLD)",
+    quote: {
+      local: {
+        format: QuoteProvider.YAHOO,
+        fileName: "instruments/gld-yahoo.csv"
+      },
+      remote: {
+        provider: QuoteProvider.YAHOO,
+        ticker: "GLD"
+      }
+    }
+  },
+  {
+    name: "GSG",
+    longName: "iShares S&P GSCI Commodity-Indexed Trust (GSG)",
+    quote: {
+      local: {
+        format: QuoteProvider.YAHOO,
+        fileName: "instruments/gsg-yahoo.csv"
+      },
+      remote: {
+        provider: QuoteProvider.YAHOO,
+        ticker: "GSG"
+      }
+    }
+  },
+  {
+    name: "IEI",
+    longName: "iShares 3-7 Year Treasury Bond ETF (IEI)",
+    quote: {
+      local: {
+        format: QuoteProvider.YAHOO,
+        fileName: "instruments/iei-yahoo.csv"
+      },
+      remote: {
+        provider: QuoteProvider.YAHOO,
+        ticker: "IEI"
+      }
+    }
+  },
+  {
+    name: "TLT",
+    longName: "iShares 20+ Year Treasury Bond ETF (TLT)",
+    quote: {
+      local: {
+        format: QuoteProvider.YAHOO,
+        fileName: "instruments/tlt-yahoo.csv"
+      },
+      remote: {
+        provider: QuoteProvider.YAHOO,
+        ticker: "TLT"
+      }
+    }
+  },
+  {
+    name: "VTI",
+    longName: "Vanguard Total Stock Market Index Fund ETF Shares (VTI)",
+    quote: {
+      local: {
+        format: QuoteProvider.YAHOO,
+        fileName: "instruments/vti-yahoo.csv"
+      },
+      remote: {
+        provider: QuoteProvider.YAHOO,
+        ticker: "VTI"
+      }
+    }
+  },
+  {
     name: "SMI",
     quote: {
       local: {
