@@ -72,8 +72,8 @@ export class ComputeDividendsWithAdjustedClose implements DividendComputer {
           let variationClose = lastClose - close
           let variationAdjustedClose = lastAdjustedClose - adjustedClose;
           let dividend = variationClose - variationAdjustedClose;
-          let rounding = Math.abs(Math.round(100000 * dividend / close));
-          if (rounding > 1) {
+          let rounding = Math.round(1000 * dividend / close);
+          if (rounding > 2) {
             quote.dividend = dividend;
           } else {
             quote.dividend = 0;

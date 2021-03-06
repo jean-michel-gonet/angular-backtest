@@ -108,6 +108,42 @@ describe('EnrichWithDividends', () => {
 });
 
 describe('ComputeDividendsWithAdjustedClose', () => {
+  it('Can calculate dividends of VTI in Dec 2020, without false dividends due to rounding errors', () => {
+    // Price of VTI, with adjusted close: https://finance.yahoo.com/quote/VTI/history?p=VTI
+    let quotesWithAdjustedClose: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: new Date(2020, 12 - 1,  7), quotes: [new Quote({name:"VTI", close: 191.300003, adjustedClose: 190.526016})]}),
+      new InstantQuotes({instant: new Date(2020, 12 - 1,  8), quotes: [new Quote({name:"VTI", close: 192.130005, adjustedClose: 191.352661})]}),
+      new InstantQuotes({instant: new Date(2020, 12 - 1,  9), quotes: [new Quote({name:"VTI", close: 190.240005, adjustedClose: 189.470306})]}),
+      new InstantQuotes({instant: new Date(2020, 12 - 1, 10), quotes: [new Quote({name:"VTI", close: 190.520004, adjustedClose: 189.749161})]}),
+      new InstantQuotes({instant: new Date(2020, 12 - 1, 11), quotes: [new Quote({name:"VTI", close: 190.179993, adjustedClose: 189.410538})]}),
+      new InstantQuotes({instant: new Date(2020, 12 - 1, 14), quotes: [new Quote({name:"VTI", close: 189.639999, adjustedClose: 188.872726})]}),
+      new InstantQuotes({instant: new Date(2020, 12 - 1, 15), quotes: [new Quote({name:"VTI", close: 192.240005, adjustedClose: 191.462204})]}),
+      new InstantQuotes({instant: new Date(2020, 12 - 1, 16), quotes: [new Quote({name:"VTI", close: 192.509995, adjustedClose: 191.731110})]}),
+      new InstantQuotes({instant: new Date(2020, 12 - 1, 17), quotes: [new Quote({name:"VTI", close: 194.020004, adjustedClose: 193.235001})]}),
+      new InstantQuotes({instant: new Date(2020, 12 - 1, 18), quotes: [new Quote({name:"VTI", close: 193.470001, adjustedClose: 192.687225})]}),
+      new InstantQuotes({instant: new Date(2020, 12 - 1, 21), quotes: [new Quote({name:"VTI", close: 192.910004, adjustedClose: 192.129501})]}),
+      new InstantQuotes({instant: new Date(2020, 12 - 1, 22), quotes: [new Quote({name:"VTI", close: 192.949997, adjustedClose: 192.169327})]}),
+      new InstantQuotes({instant: new Date(2020, 12 - 1, 23), quotes: [new Quote({name:"VTI", close: 193.279999, adjustedClose: 192.498001})]}),
+      new InstantQuotes({instant: new Date(2020, 12 - 1, 24), quotes: [new Quote({name:"VTI", close: 192.820007, adjustedClose: 192.820007})]}),
+    ]);
+
+    ComputeDividends.withAdjustedClose().of("VTI", quotesWithAdjustedClose);
+
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1,  8)).quote("VTI").dividend).toBe(0);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1,  9)).quote("VTI").dividend).toBe(0);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 10)).quote("VTI").dividend).toBe(0);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 11)).quote("VTI").dividend).toBe(0);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 14)).quote("VTI").dividend).toBe(0);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 15)).quote("VTI").dividend).toBe(0);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 16)).quote("VTI").dividend).toBe(0);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 17)).quote("VTI").dividend).toBe(0);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 18)).quote("VTI").dividend).toBe(0);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 21)).quote("VTI").dividend).toBe(0);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 22)).quote("VTI").dividend).toBe(0);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 23)).quote("VTI").dividend).toBe(0);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 24)).quote("VTI").dividend).toBeCloseTo(0.782, 3);
+  });
+
   it('Can calculate dividends of AGG in 2021', () => {
     // Price of AGG, with adjusted close: https://finance.yahoo.com/quote/AGG/history?p=AGG
     let quotesWithAdjustedClose: HistoricalQuotes = new HistoricalQuotes([
