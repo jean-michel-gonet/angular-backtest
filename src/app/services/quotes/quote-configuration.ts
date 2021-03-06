@@ -135,6 +135,14 @@ export class NamedQuoteSource {
    * The ticker or any string that uniquely identifies the instrument.
    */
   name: string;
+
+  /**
+   * The title of the instrument.
+   * Like: "SPDR Gold Shares (GLD)".
+   * This is only used to make the configuration files easier to read.
+   */
+  longName?: string;
+
   /**
    * The source of the data.
    */
