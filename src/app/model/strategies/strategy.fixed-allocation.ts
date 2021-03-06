@@ -183,15 +183,25 @@ export class FixedAllocationStrategy implements Strategy {
     return rebalancingOrders;
   }
 
+  // ********************************************************************
+  // **                        Report interface.                       **
+  // ********************************************************************
+  /**
+   * This strategy has nothing to report, but maybe some of the dependencies
+   * have?
+   * @param {Report} report The data processor.
+   */
   doRegister(report: Report): void {
-    throw new Error('Method not implemented.');
+    if (this.transfer.to) {
+      this.transfer.to.doRegister(report);
+    }
   }
 
   startReportingCycle(instant: Date): void {
-    throw new Error('Method not implemented.');
+    // Don't care.
   }
 
   reportTo(report: Report): void {
-    throw new Error('Method not implemented.');
+    // Nothing to report.
   }
 }

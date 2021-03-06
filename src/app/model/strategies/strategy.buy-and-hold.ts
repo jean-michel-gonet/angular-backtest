@@ -103,11 +103,11 @@ export class BuyAndHoldStrategy implements Strategy {
   }
 
   // ********************************************************************
-  // **                  DataProvider interface.                       **
+  // **                        Report interface.                       **
   // ********************************************************************
-
   /**
-   * Turns the transfer account in as a data provider.
+   * This strategy has nothing to report, but maybe some of the dependencies
+   * have?
    * @param {Report} report The data processor.
    */
   doRegister(report: Report): void {

@@ -6,6 +6,7 @@ import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear
 import { OptimizationEmaPage } from './pages/optimization/optimization-ema.page';
 import { OptimizationSuperthonPage } from './pages/optimization/optimization-superthon.page';
 import { HighchartsPage } from './pages/highcharts/highcharts.page';
+import { AllocationsAllWeatherPage } from './pages/allocations/all-weather.page';
 
 
 const routes: Routes = [
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'investing-in-bear', component: InvestingInBearPage},
   { path: 'optimization-ema', component: OptimizationEmaPage},
   { path: 'optimization-superthon', component: OptimizationSuperthonPage},
+  { path: 'allocations-all-weather', component: AllocationsAllWeatherPage},
 ];
 
 @NgModule({

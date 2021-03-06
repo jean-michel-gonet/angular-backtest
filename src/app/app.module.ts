@@ -46,6 +46,8 @@ import { MarketTimingPage } from './pages/market-timing/market-timing.page';
 import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear.page';
 import { OptimizationEmaPage } from './pages/optimization/optimization-ema.page';
 import { OptimizationSuperthonPage } from './pages/optimization/optimization-superthon.page';
+import { AllocationsAllWeatherPage } from './pages/allocations/all-weather.page';
+import { AllocationComponent, FixedAllocationsStrategyComponent } from './components/strategies/fixed-allocation.strategy.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +85,8 @@ import { OptimizationSuperthonPage } from './pages/optimization/optimization-sup
     RegularTransferComponent,
 
     BuyAndHoldStrategyComponent,
+    FixedAllocationsStrategyComponent,
+    AllocationComponent,
     StrategyComponent,
 
     SimulationComponent,
@@ -92,7 +96,8 @@ import { OptimizationSuperthonPage } from './pages/optimization/optimization-sup
     MarketTimingPage,
     InvestingInBearPage,
     OptimizationEmaPage,
-    OptimizationSuperthonPage
+    OptimizationSuperthonPage,
+    AllocationsAllWeatherPage
   ],
   imports: [
     BrowserModule,
