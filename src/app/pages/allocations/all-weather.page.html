@@ -14,7 +14,7 @@ replicated with 5 ETFs. See more
 <a href="http://www.lazyportfolioetf.com/allocation/ray-dalio-all-weather/">here</a>
 </p>
 
-<simulation start="2011-03-01" end="2021-02-28" quotes="VTI, TLT, IEI, GLD, GSG">
+<simulation start="2011-03-01" end="2021-03-01" quotes="VTI, TLT, IEI, GLD, GSG">
   <reports>
     <highcharts-report>
       <chart-report-configuration show="ACC.NAV" showDataAs="LINE" showDataOn="LEFT"></chart-report-configuration>
@@ -23,7 +23,7 @@ replicated with 5 ETFs. See more
   <accounts>
     <swiss-quote id="ACC" cash="100000">
       <strategy>
-        <fixed-allocations periodicity="YEARLY" threshold="5">
+        <fixed-allocations periodicity="YEARLY" threshold="1">
           <allocation assetName="VTI" allocation="30"></allocation>
           <allocation assetName="TLT" allocation="40"></allocation>
           <allocation assetName="IEI" allocation="15"></allocation>
