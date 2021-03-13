@@ -272,38 +272,59 @@ export class Account extends IAccount implements Reporter {
   private executeStandingOrders(instantQuotes: InstantQuotes): void {
     let remainingOrders: Order[] = this.standingOrders.filter(standingOrder => {
       let quote: Quote = instantQuotes.quote(standingOrder.name);
-      if (this.isOrderExecutable(quote, standingOrder.parts)) {
-        this.executeImmediately(quote, standingOrder.parts);
-        return false;
-      } else {
-        return true;
+      if (quote) {
+        let actualOrderSize = this.maximumOrderSize(quote, standingOrder.parts);
+        if (actualOrderSize == standingOrder.parts || !this.settlementsExpected()) {
+          this.executeImmediately(quote, actualOrderSize);
+          return false;
+        }
       }
+      return true;
     });
     this.standingOrders = remainingOrders;
   }
 
   /**
-   * Establishes if it is possible to sell or buy the specified qupote, using
-   * the open quotation.
+   * Counts the number of expected settlements.
+   * @return {number} The number of expected settlements.
+   */
+  private settlementsExpected(): number {
+    let settlementsExpected: number = this.cashSettlements.length;
+    this.positions.forEach(position => {
+      settlementsExpected += position.settlements.length
+    });
+    return settlementsExpected;
+  }
+
+  /**
+   * Establishes what is the maximum number of parts to sell or buy of the
+   * specified open quotation.
+   * This depends on the number of parts (if selling) or the amount of
+   * cash (if buying) available in the account.
    * @param {Quote} quote The quote to buy.
    * @param {number} parts When positive, the number of parts to buy. When
    * negative, the number of parts to sell.
-   * @return {boolean} true if it is possible to execute the order.
+   * @return {number} The maximum number of parts to sell or buy
    */
-  private isOrderExecutable(quote: Quote, parts: number): boolean {
+  private maximumOrderSize(quote: Quote, parts: number): number {
     // The empty order is always executable.
     if (parts == 0) {
-      return true;
+      return 0;
     }
 
-    // A selling order is executable if there are enough parts in the position.
+    // A selling order is executable if there are enough available parts
+    // in the position:
     if (parts < 0) {
       let position: Position = this.positions.find(p => {
         return p.name == quote.name;
       });
+      let availableParts: number;
       if (position) {
-        return position.parts >= -parts;
+        availableParts = -position.parts;
+      } else {
+        availableParts = 0;
       }
+      return Math.max(availableParts, parts);
     }
 
     // A buying order is executable if there enough cash to buy parts.
@@ -311,11 +332,8 @@ export class Account extends IAccount implements Reporter {
       let availableCash: number = this.cash;
       let partValue: number = quote.partValue();
       let maximumParts = Math.floor(availableCash / partValue);
-      return parts <= maximumParts;
+      return Math.min(parts, maximumParts);
     }
-
-    // This is not an executable order:
-    return false;
   }
 
   /**

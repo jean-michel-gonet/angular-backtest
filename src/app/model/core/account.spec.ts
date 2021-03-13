@@ -155,7 +155,7 @@ describe('Account', () => {
     expect(nav).toBe(3 * partCloseValue + cash);
   });
 
-  it("Can prevent buying more parts of an instrument when there is not enough cash", () => {
+  it("Can buy partial orders when there are no expected settlements", () => {
     let partOpenValue: number = 110;
     let partCloseValue: number = 55;
     let spread: number = 0.1;
@@ -183,7 +183,7 @@ describe('Account', () => {
 
     // The order was not executed:
     let position: Position = account.position("XX");
-    expect(position).toBeFalsy();
+    expect(position.parts).toBe(9);
   });
 
   it("Can sell an instrument using next day's open value, taking in count the costs", () => {
@@ -225,7 +225,7 @@ describe('Account', () => {
     expect(nav).toBe(1 * partCloseValue + cash);
   });
 
-  it("Can prevent selling more parts of an instrument that available", () => {
+  it("Can sell partial orders when there is no expected settlements", () => {
     let partOpenValue: number = 110;
     let partCloseValue: number = 55;
     let spread: number = 0.1;
@@ -256,8 +256,8 @@ describe('Account', () => {
 
     // The order was not executed:
     let position: Position = account.position("XX");
-    expect(position.parts).toBe(4);
-    expect(account.accumulatedCosts).toBe(0);
+    expect(position.parts).toBe(0);
+    expect(account.accumulatedCosts).toBe(22);
   });
 
   it('Can execute orders immediately if settlement is 0 days', () => {
