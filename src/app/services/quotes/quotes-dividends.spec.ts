@@ -141,7 +141,7 @@ describe('ComputeDividendsWithAdjustedClose', () => {
     expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 21)).quote("VTI").dividend).toBe(0);
     expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 22)).quote("VTI").dividend).toBe(0);
     expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 23)).quote("VTI").dividend).toBe(0);
-    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 24)).quote("VTI").dividend).toBeCloseTo(0.782, 3);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 24)).quote("VTI").dividend).toBeCloseTo(0.783, 3);
   });
 
   it('Can calculate dividends of AGG in 2021', () => {
@@ -203,9 +203,9 @@ describe('ComputeDividendsWithAdjustedClose', () => {
     // | Feb 02, 2021 | Feb 01, 2021 | Feb 05, 2021 | $0.191959          |
     ComputeDividends.withAdjustedClose().of("AGG", quotesWithAdjustedClose);
 
-    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1,  1)).quote("AGG").dividend).toBeCloseTo(0.207009, 3);
-    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 17)).quote("AGG").dividend).toBeCloseTo(0.125266, 3);
-    expect(quotesWithAdjustedClose.get(new Date(2021,  2 - 1,  1)).quote("AGG").dividend).toBeCloseTo(0.191959, 3);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1,  1)).quote("AGG").dividend).toBeCloseTo(0.205, 3);
+    expect(quotesWithAdjustedClose.get(new Date(2020, 12 - 1, 17)).quote("AGG").dividend).toBeCloseTo(0.125, 3);
+    expect(quotesWithAdjustedClose.get(new Date(2021,  2 - 1,  1)).quote("AGG").dividend).toBeCloseTo(0.192, 3);
   });
 });
 

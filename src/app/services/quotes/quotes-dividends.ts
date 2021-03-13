@@ -63,20 +63,21 @@ export class ComputeDividendsWithAdjustedClose implements DividendComputer {
   of(name: string, historicalQuotes: HistoricalQuotes): void {
     let lastClose: number;
     let lastAdjustedClose: number;
+    let dueDividends: number = 0;
     historicalQuotes.forEachDate(instantQuotes => {
       let quote: Quote = instantQuotes.quote(name);
       if (quote) {
         let close: number = quote.close;
         let adjustedClose: number = quote.adjustedClose;
         if (lastClose && lastAdjustedClose) {
-          let variationClose = lastClose - close
-          let variationAdjustedClose = lastAdjustedClose - adjustedClose;
-          let dividend = variationClose - variationAdjustedClose;
-          let rounding = Math.round(1000 * dividend / close);
-          if (rounding > 2) {
-            quote.dividend = dividend;
-          } else {
-            quote.dividend = 0;
+          let k = close / lastClose;
+          let adjustedCloseWithoutDividends = lastAdjustedClose * k;
+          let kDividends = adjustedClose - adjustedCloseWithoutDividends;
+          let dividends = kDividends / lastAdjustedClose * lastClose;
+          dueDividends += dividends;
+          if (dueDividends > 0.01) {
+            quote.dividend = dueDividends;
+            dueDividends = 0;
           }
         }
         lastClose = close;

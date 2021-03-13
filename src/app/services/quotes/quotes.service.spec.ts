@@ -240,10 +240,10 @@ describe('QuotesService', () => {
       expect(data.get(threeDaysAgo).quote("ISIN3").dividend).toBe(0);
 
       expect(data.get(beforeYesterday).quote("ISIN3").close).toBe(1.4);
-      expect(data.get(beforeYesterday).quote("ISIN3").dividend).toBeCloseTo(0.2, 3);
+      expect(data.get(beforeYesterday).quote("ISIN3").dividend).toBeCloseTo(0.290, 3);
 
       expect(data.get(yesterday).quote("ISIN3").close).toBe(1.5);
-      expect(data.get(yesterday).quote("ISIN3").dividend).toBeCloseTo(0.1, 3);
+      expect(data.get(yesterday).quote("ISIN3").dividend).toBeCloseTo(0.115, 3);
 
       done();
     });
