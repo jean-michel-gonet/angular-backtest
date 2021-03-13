@@ -1,0 +1,36 @@
+<h1>Allocations Strategies</h1>
+
+<h2>What is an allocation strategy</h2>
+
+<p>This strategy consists in keeping a diversified portfollio keeping
+constant asset allocations. A regular rebalancing prevents allocations from drifting
+away with asset price variation.</p>
+
+<h2>Ray Dalio's All Weather portfolio</h2>
+
+<p>The Ray Dalio All Weather Portfolio is exposed for 30% on the Stock
+Market and for 15% on Commodities. It's a Medium Risk portfolio and it can be
+replicated with 5 ETFs. See more
+<a href="http://www.lazyportfolioetf.com/allocation/ray-dalio-all-weather/">here</a>
+</p>
+
+<simulation start="2011-03-01" end="2021-03-01" quotes="VTI, TLT, IEI, GLD, GSG">
+  <reports>
+    <highcharts-report>
+      <chart-report-configuration show="ACC.NAV" showDataAs="LINE" showDataOn="LEFT"></chart-report-configuration>
+    </highcharts-report>
+  </reports>
+  <accounts>
+    <swiss-quote id="ACC" cash="100000">
+      <strategy>
+        <fixed-allocations periodicity="YEARLY" threshold="1">
+          <allocation assetName="VTI" allocation="30"></allocation>
+          <allocation assetName="TLT" allocation="40"></allocation>
+          <allocation assetName="IEI" allocation="15"></allocation>
+          <allocation assetName="GLD" allocation="7.5"></allocation>
+          <allocation assetName="GSG" allocation="7.5"></allocation>
+        </fixed-allocations>
+      </strategy>
+    </swiss-quote>
+  </accounts>
+</simulation>
