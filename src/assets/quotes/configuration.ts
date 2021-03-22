@@ -5,6 +5,103 @@ import {
 
 export const QUOTE_SOURCES: NamedQuoteSource[] = [
   {
+    name: "SPITR",
+    longName: "Swiss Performance Index (SPI)",
+    quote: {
+      local: {
+        format: QuoteProvider.SIX,
+        fileName: "indexes/spi-tr-chf-six.json"
+      }
+    }
+  },
+  {
+    name: "XAUCHF",
+    longName: "Gold Spot CHF",
+    quote: {
+      local: {
+        format: QuoteProvider.INVESTING,
+        fileName: "forex/xau-usd-investing.csv"
+      }
+    },
+    exchangeRate: {
+      quote: {
+        local: {
+          format: QuoteProvider.INVESTING,
+          fileName: "forex/usd-chf-investing.csv"
+        }
+      },
+      operation: ExchangeRateOperation.MULTIPLY
+    },
+  },
+  {
+    name: "BCOMCHF",
+    longName: "Bloomberg Commodity (CHF)",
+    quote: {
+      local: {
+        format: QuoteProvider.INVESTING,
+        fileName: "indexes/bcom-usd-investing.csv"
+      }
+    },
+    exchangeRate: {
+      quote: {
+        local: {
+          format: QuoteProvider.INVESTING,
+          fileName: "forex/usd-chf-investing.csv"
+        }
+      },
+      operation: ExchangeRateOperation.MULTIPLY
+    },
+  },
+  {
+    name: "SPICHA",
+    longName: "UBS ETF (CH) SPI (CHF) A-dis",
+    quote: {
+      local: {
+        format: QuoteProvider.YAHOO,
+        fileName: "instruments/spicha-yahoo.csv"
+      },
+      remote: {
+        provider: QuoteProvider.YAHOO,
+        ticker: "SPICHA.SW"
+      }
+    },
+    dividends: {
+      level1TaxWitholding: 0,
+      directDividends: {
+        format: "date.value.csv",
+        uri: "instruments/spicha-dividends.csv"
+      }
+    }
+  },
+  {
+    name: "DCCHAS",
+    longName: "UBS ETF (IE) Bloomberg Commodity Index SF UCITS ETF (CHF) A-acc",
+    quote: {
+      local: {
+        format: QuoteProvider.YAHOO,
+        fileName: "instruments/dcchas-yahoo.csv"
+      },
+      remote: {
+        provider: QuoteProvider.YAHOO,
+        ticker: "DCCHAS.SW"
+      }
+    }
+  },
+  {
+    name: "ZGLD",
+    longName: "ZKB Gold ETF A (CHF)",
+    quote: {
+      local: {
+        format: QuoteProvider.YAHOO,
+        fileName: "instruments/zgld-yahoo.csv"
+      },
+      remote: {
+        provider: QuoteProvider.YAHOO,
+        ticker: "ZGLD.SW"
+      }
+    },
+  },
+  {
     name: "GLD",
     longName: "SPDR Gold Shares (GLD)",
     quote: {

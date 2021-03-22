@@ -18,17 +18,47 @@ replicated with 5 ETFs. See more
   <reports>
     <highcharts-report>
       <chart-report-configuration show="ACC.NAV" showDataAs="LINE" showDataOn="LEFT"></chart-report-configuration>
+      <chart-report-configuration show="VTI.CLOSE" showDataAs="LINE" showDataOn="LEFT"></chart-report-configuration>
+      <chart-report-configuration show="GLD.CLOSE" showDataAs="LINE" showDataOn="LEFT"></chart-report-configuration>
     </highcharts-report>
   </reports>
   <accounts>
     <swiss-quote id="ACC" cash="100000">
       <strategy>
-        <fixed-allocations periodicity="YEARLY" threshold="1">
+        <fixed-allocations periodicity="MONTHLY" threshold="10">
           <allocation assetName="VTI" allocation="30"></allocation>
           <allocation assetName="TLT" allocation="40"></allocation>
           <allocation assetName="IEI" allocation="15"></allocation>
           <allocation assetName="GLD" allocation="7.5"></allocation>
           <allocation assetName="GSG" allocation="7.5"></allocation>
+        </fixed-allocations>
+      </strategy>
+    </swiss-quote>
+  </accounts>
+</simulation>
+
+<h2>Swiss CHF All Weather Portfolio</h2>
+
+<p>Following the same idea as Ray Dalio's All Weather Portfolio, but using
+CHF based ETF. Also, as Switzerland has negative bond interests, we've replaced
+bonds with cash.</p>
+
+<simulation start="2000-01-03" end="2021-03-01" quotes="SPITR, XAUCHF, BCOMCHF">
+  <reports>
+    <highcharts-report>
+      <chart-report-configuration show="ACC.NAV" showDataAs="LINE" showDataOn="LEFT"></chart-report-configuration>
+      <chart-report-configuration show="SPITR.CLOSE" showDataAs="LINE" showDataOn="LEFT"></chart-report-configuration>
+      <chart-report-configuration show="XAUCHF.CLOSE" showDataAs="LINE" showDataOn="LEFT"></chart-report-configuration>
+      <chart-report-configuration show="BCOMCHF.CLOSE" showDataAs="LINE" showDataOn="LEFT"></chart-report-configuration>
+    </highcharts-report>
+  </reports>
+  <accounts>
+    <swiss-quote id="ACC" cash="1000000">
+      <strategy>
+        <fixed-allocations periodicity="MONTHLY" threshold="10">
+          <allocation assetName="SPITR"   allocation="50"></allocation>
+          <allocation assetName="XAUCHF"  allocation="20"></allocation>
+          <allocation assetName="BCOMCHF" allocation="1"></allocation>
         </fixed-allocations>
       </strategy>
     </swiss-quote>
