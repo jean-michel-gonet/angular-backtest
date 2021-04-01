@@ -178,6 +178,56 @@ describe('FixedAllocationStrategy', () => {
     expect(account.position("ASS3").parts).toBe(20);
   });
 
+  it('Can differ due rebalancing when quotes are not available', () => {
+    let fixedAllocationStrategy: FixedAllocationStrategy =
+      new FixedAllocationStrategy({
+        fixedAllocations:[
+          {assetName: "ASS1", allocation: 20},
+          {assetName: "ASS2", allocation: 30},
+          {assetName: "ASS3", allocation: 20}],
+        periodicity: Periodicity.MONTHLY});
+
+    let account: Account = new Account({
+      strategy: fixedAllocationStrategy,
+      cash:10000
+    });
+
+    // Immediately performs the first investment of ASS1 and ASS3:
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 10, 1),
+      quotes: [
+        new Quote({name: "ASS1", close: 100}),
+        new Quote({name: "ASS3", close: 100})]
+    }));
+
+    // Next day, performs the initial investment of ASS2:
+    account.process(new InstantQuotes({
+      instant: new Date(2010, 10, 2),
+      quotes: [
+        new Quote({name: "ASS1", close: 120}),
+        new Quote({name: "ASS2", close: 100}),
+        new Quote({name: "ASS3", close: 100})]
+    }));
+
+    expect(account.position("ASS1").parts).toBe(20);
+    expect(account.position("ASS2")).toBeFalsy();
+    expect(account.position("ASS3").parts).toBe(20);
+
+    // No rebalance before the next month:
+    for (var n = 3; n <= 30; n++) {
+      account.process(new InstantQuotes({
+        instant: new Date(2010, 10, n),
+        quotes: [
+          new Quote({name: "ASS1", close: 120}),
+          new Quote({name: "ASS2", close: 80}),
+          new Quote({name: "ASS3", close: 100})]
+      }));
+      expect(account.position("ASS1").parts).toBe(20);
+      expect(account.position("ASS2").parts).toBe(30);
+      expect(account.position("ASS3").parts).toBe(20);
+    }
+  });
+
   it('Can perform rebalancing only if drifting is above threshold', () => {
     let fixedAllocationStrategy: FixedAllocationStrategy =
       new FixedAllocationStrategy({
