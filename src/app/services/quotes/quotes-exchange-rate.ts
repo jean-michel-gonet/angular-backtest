@@ -1,5 +1,5 @@
-import { HistoricalQuotes, Quote, HistoricalValue } from '../core/quotes';
-import { ExchangeRateOperation } from 'src/app/services/quotes/quote-configuration';
+import { HistoricalQuotes, Quote, HistoricalValue } from '../../model/core/quotes';
+import { ExchangeRateOperation } from './quote-configuration';
 
 /**
  * An utility class to enrich historical quotes with dividends based
@@ -36,11 +36,19 @@ export class ApplyExchangeRate {
     switch(operation) {
       case ExchangeRateOperation.DIVIDE:
         return ((x: number, y: number) => {
-          return x / y;
+          if (x) {
+            return x / y;
+          } else {
+            return x;
+          }
         });
       case ExchangeRateOperation.MULTIPLY:
         return ((x: number, y: number) => {
-          return x * y;
+          if (x) {
+            return x * y;
+          } else {
+            return x;
+          }
         });
       default:
         throw new Error("ApplyExchangeRate: Operation " + operation + " is not supported.");
@@ -87,8 +95,6 @@ export class ApplyExchangeRate {
     priceQuote.open = this.operate(priceQuote.open, exchangeRate.value);
     priceQuote.high = this.operate(priceQuote.high, exchangeRate.value);
     priceQuote.low = this.operate(priceQuote.low, exchangeRate.value);
-    if (priceQuote.dividend) {
-      priceQuote.dividend = this.operate(priceQuote.dividend, exchangeRate.value);
-    }
+    priceQuote.dividend = this.operate(priceQuote.dividend, exchangeRate.value);
   }
 }

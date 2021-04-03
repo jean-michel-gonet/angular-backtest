@@ -7,7 +7,7 @@ import { HistoricalQuotes } from 'src/app/model/core/quotes';
 import { QuotesConfigurationService } from './quotes-configuration.service';
 import { PlainDataService } from './plain-data.service';
 import { QuotesFromInvestingService } from './quotes-from-investing.service';
-import { ApplyExchangeRate } from 'src/app/model/utils/quotes-exchange-rate';
+import { ApplyExchangeRate } from './quotes-exchange-rate';
 import { NamedQuoteSource, QuoteProvider, DividendSource, DataSource, QuoteSource, ExchangeRateSource } from './quote-configuration';
 import { ComputeDividends } from './quotes-dividends';
 

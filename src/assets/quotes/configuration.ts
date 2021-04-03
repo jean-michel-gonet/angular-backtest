@@ -257,11 +257,11 @@ export const QUOTE_SOURCES: NamedQuoteSource[] = [
     name: "SPY",
     quote: {
       local: {
-        format: QuoteProvider.INVESTING,
-        fileName: "instruments/spy-investing.csv"
+        format: QuoteProvider.YAHOO,
+        fileName: "instruments/spy-yahoo.csv"
       },
       remote: {
-        provider: QuoteProvider.MARKETSTACK,
+        provider: QuoteProvider.YAHOO,
         ticker: "SPY"
       }
     }
@@ -270,9 +270,9 @@ export const QUOTE_SOURCES: NamedQuoteSource[] = [
     name: "SPYCHF",
     quote: {
       local: {
-        format: QuoteProvider.INVESTING,
-        fileName: "instruments/spy-investing.csv"
-      }
+        format: QuoteProvider.YAHOO,
+        fileName: "instruments/spy-yahoo.csv"
+      },
     },
     exchangeRate: {
       quote: {
@@ -295,13 +295,24 @@ export const QUOTE_SOURCES: NamedQuoteSource[] = [
         provider: QuoteProvider.YAHOO,
         ticker: "AGG"
       }
-    },
-    dividends: {
-      level1TaxWitholding: 0,
-      directDividends: {
-        format: "date.value.csv",
-        uri: "instruments/agg-dividends.csv"
+    }
+  },
+  {
+    name: "AGGCHF",
+    quote: {
+      local: {
+        format: QuoteProvider.YAHOO,
+        fileName: "instruments/agg-yahoo.csv"
       }
+    },
+    exchangeRate: {
+      quote: {
+        local: {
+          format: QuoteProvider.INVESTING,
+          fileName: "forex/usd-chf-investing.csv"
+        }
+      },
+      operation: ExchangeRateOperation.MULTIPLY
     }
   }
 ];
