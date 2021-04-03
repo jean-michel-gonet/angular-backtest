@@ -43,6 +43,7 @@ import { HighlightMaxComponent,
 import { HomePage } from './pages/home/home.page';
 import { HighchartsPage } from './pages/highcharts/highcharts.page';
 import { MarketTimingPage } from './pages/market-timing/market-timing.page';
+import { SuperthonPage } from './pages/market-timing/superthon.page';
 import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear.page';
 import { OptimizationEmaPage } from './pages/optimization/optimization-ema.page';
 import { OptimizationSuperthonPage } from './pages/optimization/optimization-superthon.page';
@@ -94,6 +95,7 @@ import { AllocationComponent, FixedAllocationsStrategyComponent } from './compon
     HomePage,
     HighchartsPage,
     MarketTimingPage,
+    SuperthonPage,
     InvestingInBearPage,
     OptimizationEmaPage,
     OptimizationSuperthonPage,
