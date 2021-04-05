@@ -82,6 +82,7 @@ export class FixedAllocationStrategyErrorDuplicatedAssetName extends FixedAlloca
 export class FixedAllocationStrategy implements Strategy {
   public fixedAllocations: IAllocation[];
   public period: Period;
+  public pendingReallocation: IAllocation[];
   public threshold: number;
   public transfer: RegularTransfer;
 
@@ -124,6 +125,7 @@ export class FixedAllocationStrategy implements Strategy {
     // All good:
     this.period = new Period(periodicity);
     this.fixedAllocations = fixedAllocations;
+    this.pendingReallocation = [];
     this.threshold = threshold;
     this.transfer = transfer;
   }
@@ -135,52 +137,57 @@ export class FixedAllocationStrategy implements Strategy {
    * If there are assets to buy, buys them.
    */
   applyStrategy(account: Account, instantQuotes: InstantQuotes): void {
+    // At each change or period, mark all fixed allocations as pending:
     if (this.period.changeOfPeriod(instantQuotes.instant)) {
-      let rebalancingOrders = this.calculateRebalancingOrders(account, instantQuotes);
-
-      // Executes all selling (to have some cash):
-      rebalancingOrders.forEach(rebalancingOrder => {
-        if (rebalancingOrder.allocation < 0) {
-          account.order(rebalancingOrder.assetName, rebalancingOrder.allocation);
-        }
-      });
-
-      // Executes all buying:
-      rebalancingOrders.forEach(rebalancingOrder => {
-        if (rebalancingOrder.allocation > 0) {
-          account.order(rebalancingOrder.assetName, rebalancingOrder.allocation);
-        }
+      this.pendingReallocation = [];
+      this.fixedAllocations.forEach(allocation => {
+        this.pendingReallocation.push(allocation);
       });
     }
+
+    // Try to rebalance each pending reallocations:
+    let rebalancingOrders: IAllocation[] = [];
+    this.pendingReallocation = this.pendingReallocation.filter(reallocation => {
+      let rebalancingOrder =
+          this.calculateRebalancingOrder(reallocation, account, instantQuotes);
+      if (rebalancingOrder) {
+        rebalancingOrders.push(rebalancingOrder);
+        return false;
+      }
+      return true;
+    });
+
+    // Execute all rebalancing:
+    rebalancingOrders.forEach(rebalancingOrder => {
+        account.order(rebalancingOrder.assetName, rebalancingOrder.allocation);
+    });
   }
 
-  private calculateRebalancingOrders(account: Account, instantQuotes: InstantQuotes): IAllocation[] {
-    let nav = account.nav();
-    let rebalancingOrders: IAllocation[] = [];
-
-    this.fixedAllocations.forEach(fixedAllocation => {
+  private calculateRebalancingOrder(fixedAllocation: IAllocation, account: Account, instantQuotes: InstantQuotes): IAllocation {
+    let quote = instantQuotes.quote(fixedAllocation.assetName);
+    if (quote) {
       let position = account.position(fixedAllocation.assetName);
       if (!position) {
         position = new Position({
           name: fixedAllocation.assetName,
           parts: 0,
-          partValue: instantQuotes.quote(fixedAllocation.assetName).close
+          partValue: quote.close
         });
       }
-      let targetAllocation = fixedAllocation.allocation * nav / 100;
+      let targetAllocation = fixedAllocation.allocation * account.nav() / 100;
       let actualAllocation = position.nav();
       let allowedDrift = targetAllocation * this.threshold / 100;
       let drift = targetAllocation - actualAllocation;
       if (Math.abs(drift) > allowedDrift) {
         let driftInNumberOfParts = Math.round(drift / position.partValue);
         if (driftInNumberOfParts) {
-          rebalancingOrders.push({
+          return {
             assetName: fixedAllocation.assetName,
-            allocation: driftInNumberOfParts});
+            allocation: driftInNumberOfParts};
         }
       }
-    });
-    return rebalancingOrders;
+    }
+    return null;
   }
 
   // ********************************************************************
