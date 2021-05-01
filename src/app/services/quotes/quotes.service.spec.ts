@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { QuotesFromSixService } from './quotes-from-six.service';
 import { QuotesFromYahooService } from './quotes-from-yahoo.service';
+import { QuotesFromAlphaVantageService } from './quotes-from-alphavantage.service';
 import { QuotesService } from './quotes.service';
 import { IQuotesService } from './quotes.service.interface';
 import { Observable } from 'rxjs';
@@ -65,7 +66,8 @@ describe('QuotesService', () => {
   let six: ConnectionServiceMock;
   let yahoo: ConnectionServiceMock;
   let investing: ConnectionServiceMock;
-  let painData: PlainDataServiceMock;
+  let alphaVantage: ConnectionServiceMock;
+  let plainData: PlainDataServiceMock;
   let configurationService: QuotesConfigurationServiceMock;
   let quotesService: QuotesService;
 
@@ -83,15 +85,17 @@ describe('QuotesService', () => {
         {provide: QuotesFromSixService, useClass: ConnectionServiceMock},
         {provide: QuotesFromYahooService, useClass: ConnectionServiceMock},
         {provide: QuotesFromInvestingService, useClass: ConnectionServiceMock},
+        {provide: QuotesFromAlphaVantageService, useClass: ConnectionServiceMock},
         {provide: PlainDataService, useClass: PlainDataServiceMock},
         {provide: QuotesConfigurationService, useClass: QuotesConfigurationServiceMock }
       ]
     });
-    six = TestBed.get(QuotesFromSixService);
-    yahoo = TestBed.get(QuotesFromYahooService);
-    investing = TestBed.get(QuotesFromInvestingService);
-    painData = TestBed.get(PlainDataService);
-    configurationService = TestBed.get(QuotesConfigurationService);
+    six = TestBed.inject(QuotesFromSixService) as unknown as ConnectionServiceMock;
+    yahoo = TestBed.inject(QuotesFromYahooService) as unknown as ConnectionServiceMock;
+    investing = TestBed.inject(QuotesFromInvestingService) as unknown as ConnectionServiceMock;
+    alphaVantage = TestBed.inject(QuotesFromAlphaVantageService) as unknown as ConnectionServiceMock;
+    plainData = TestBed.inject(PlainDataService) as unknown as PlainDataServiceMock;
+    configurationService = TestBed.inject(QuotesConfigurationService) as unknown as QuotesConfigurationServiceMock;
 
     quotesService = TestBed.get(QuotesService);
   });
@@ -148,7 +152,7 @@ describe('QuotesService', () => {
     let dividends: HistoricalValue[] = [{value: 1.5, instant: beforeYesterday}];
 
     yahoo.whenQuotes(quotesService.makeRelativePath("xx"), historicalQuotes);
-    painData.whenDividends(quotesService.makeRelativePath("yy"), dividends);
+    plainData.whenDividends(quotesService.makeRelativePath("yy"), dividends);
 
     quotesService.getQuotes(["ISIN3"]).subscribe(data => {
       expect(data.get(beforeYesterday).quote("ISIN3").close).toBe(1.3);
@@ -156,6 +160,29 @@ describe('QuotesService', () => {
       done();
     });
   });
+  it('Can retrieve from Alpha Vantage data', (done: DoneFn) => {
+    configurationService.when("ISIN3", {
+      name: "ISIN3",
+      quote: {
+        local: {
+          format: QuoteProvider.ALPHA_VANTAGE,
+          fileName: "xx",
+        }
+      }
+    });
+    let historicalQuotes: HistoricalQuotes = new HistoricalQuotes([
+      new InstantQuotes({instant: beforeYesterday, quotes: [
+        new Quote({name: "ISIN3", close: 1.3})
+      ]})]);
+
+    alphaVantage.whenQuotes(quotesService.makeRelativePath("xx"), historicalQuotes);
+
+    quotesService.getQuotes(["ISIN3"]).subscribe(data => {
+      expect(data.get(beforeYesterday).quote("ISIN3").close).toBe(1.3);
+      done();
+    });
+  });
+
   it('Can retrieve quotes from Six data and total return from Yahoo', (done: DoneFn) => {
     configurationService.when("ISIN3", {
       name: "ISIN3",

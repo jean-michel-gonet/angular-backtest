@@ -10,6 +10,7 @@ import { QuotesFromInvestingService } from './quotes-from-investing.service';
 import { ApplyExchangeRate } from './quotes-exchange-rate';
 import { NamedQuoteSource, QuoteProvider, DividendSource, DataSource, QuoteSource, ExchangeRateSource } from './quote-configuration';
 import { ComputeDividends } from './quotes-dividends';
+import { QuotesFromAlphaVantageService } from './quotes-from-alphavantage.service';
 
 /**
  * Retrieves instantQuotes data from a provider, and then broadcasts the
@@ -23,6 +24,7 @@ export class QuotesService {
   constructor(private quotesFromSixService: QuotesFromSixService,
               private quotesFromYahooService: QuotesFromYahooService,
               private quotesFromInvestingService: QuotesFromInvestingService,
+              private quotesFromAlphaVantageService: QuotesFromAlphaVantageService,
               private plainDataService: PlainDataService,
               private quotesConfigurationService: QuotesConfigurationService) {
   }
@@ -72,6 +74,8 @@ export class QuotesService {
         return this.quotesFromYahooService.getHistoricalQuotes(fileName, name);
       case QuoteProvider.INVESTING:
         return this.quotesFromInvestingService.getHistoricalQuotes(fileName, name);
+      case QuoteProvider.ALPHA_VANTAGE:
+        return this.quotesFromAlphaVantageService.getHistoricalQuotes(fileName, name);
       default:
         console.warn(format + " - Unsupported provider");
         return null;
