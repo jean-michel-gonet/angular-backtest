@@ -23,7 +23,7 @@
     "@fortawesome/fontawesome-free": "^5.15.1",
     "chokidar": "^3.4.3",
     "core-js": "^3.6.5",
-    "highcharts": "^8.2.2",
+    "highcharts": "^9.0.0",
     "jquery": "^3.5.1",
     "popper.js": "^1.16.1",
     "rxjs": "^6.6.3",
