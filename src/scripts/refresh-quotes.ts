@@ -1,20 +1,21 @@
 import { readFile, writeFile} from 'fs';
 import { join } from 'path';
-import * as https from 'https';
-import * as http  from 'http';
-import { Observable, Observer } from 'rxjs';
+import { Observable } from 'rxjs';
 
-import { QUOTE_SOURCES } from '../assets/quotes/configuration';
-import { MARKET_STACK_ACCESS_KEY } from './market-stack.access-key';
+import { SP500_SOURCES } from '../assets/quotes/configuration-sp500';
 
 import { NamedQuoteSource, QuoteProvider } from '../app/services/quotes/quote-configuration';
 import { HistoricalQuotes } from '../app/model/core/quotes';
 import { YahooReader, YahooWriter } from '../app/services/quotes/quotes-from-yahoo.service';
-import { MarketStackReader } from '../app/services/quotes/quotes-from-marketstack.service';
 import { InvestingReader, InvestingWriter } from '../app/services/quotes/quotes-from-investing.service';
-import { StringUtils } from '../app/model/utils/string-utils';
+import { DownloadFromYahoo } from './download-from-yahoo';
+import { DownloadFromMarketStack } from './download-from-marketstack';
+import { DownloadFromAlphaVantage } from './download-from-alpha-vantage';
 
 export class RefreshQuotes {
+  private downloadFromYahoo = new DownloadFromYahoo();
+  private downloadFromMarketStack = new DownloadFromMarketStack();
+  private downloadFromAlphaVantage = new DownloadFromAlphaVantage();
 
   public refreshAll():void {
     // Make the list of all elligible files to refresh:
@@ -24,10 +25,14 @@ export class RefreshQuotes {
     quotesToRefresh.forEach(namedQuoteSource => {
       let fileName = this.makeRelativePath(namedQuoteSource.quote.local.fileName);
       readFile(fileName, {encoding: 'utf-8'}, (err, localData) => {
-        if (err != null) {
+        if (err != null && err.code !== 'ENOENT') {
           console.info(`Dropping ${namedQuoteSource.name} - ${fileName}: ${err}`);
         } else {
-          console.info(`Processing ${namedQuoteSource.name} - ${fileName}: ${localData.length} bytes long.`);
+          if (localData) {
+            console.info(`Local data found for ${namedQuoteSource.name} - ${fileName}: ${localData.length} bytes long - Appending from remote.`);
+          } else {
+            console.info(`No local data found for ${namedQuoteSource.name} - ${fileName}: ${err} - Loading full from remote.`);
+          }
           this.refresh(namedQuoteSource, localData).subscribe(
             updatedData => {
               writeFile(fileName + "1", updatedData, {encoding: 'utf-8'}, () => {
@@ -61,10 +66,18 @@ export class RefreshQuotes {
 
   private refreshYahoo(namedQuoteSource: NamedQuoteSource, localData: string): Observable<string> {
     return new Observable<string>(observer => {
-      let reader = new YahooReader(namedQuoteSource.name, localData);
-      let localHistoricalQuotes = reader.asHistoricalQuotes();
-      let dateFrom = localHistoricalQuotes.maxDate(namedQuoteSource.name);
-      console.info(`Local quotes ${namedQuoteSource.name} available in Yahoo format up to ${dateFrom}`);
+      let dateFrom: Date;
+      let localHistoricalQuotes: HistoricalQuotes;
+      if (localData) {
+        let reader = new YahooReader(namedQuoteSource.name, localData);
+        localHistoricalQuotes = reader.asHistoricalQuotes();
+        dateFrom = localHistoricalQuotes.maxDate(namedQuoteSource.name);
+        console.info(`Local quotes ${namedQuoteSource.name} available in Yahoo format up to ${dateFrom}`);
+      } else {
+        dateFrom = undefined;
+        localHistoricalQuotes = new HistoricalQuotes([]);
+        console.info(`No local quotes ${namedQuoteSource.name} available.`);
+      }
       this.downloadMoreFrom(namedQuoteSource, dateFrom).subscribe(
         historicalQuotes => {
           localHistoricalQuotes.append(namedQuoteSource.name, historicalQuotes);
@@ -83,10 +96,19 @@ export class RefreshQuotes {
 
   private refreshInvesting(namedQuoteSource: NamedQuoteSource, localData: string): Observable<string> {
     return new Observable<string>(observer => {
-      let reader = new InvestingReader(namedQuoteSource.name, localData);
-      let localHistoricalQuotes = reader.asHistoricalQuotes();
-      let dateFrom = localHistoricalQuotes.maxDate(namedQuoteSource.name);
-      console.info(`Local quotes ${namedQuoteSource.name} available in Investing format up to ${dateFrom}`);
+
+      let dateFrom: Date;
+      let localHistoricalQuotes: HistoricalQuotes;
+      if (localData) {
+        let reader = new InvestingReader(namedQuoteSource.name, localData);
+        localHistoricalQuotes = reader.asHistoricalQuotes();
+        dateFrom = localHistoricalQuotes.maxDate(namedQuoteSource.name);
+        console.info(`Local quotes ${namedQuoteSource.name} available in Investing format up to ${dateFrom}`);
+      } else {
+        dateFrom = undefined;
+        localHistoricalQuotes = new HistoricalQuotes([]);
+        console.info(`No local quotes ${namedQuoteSource.name} available.`);
+      }
       this.downloadMoreFrom(namedQuoteSource, dateFrom).subscribe(
         historicalQuotes => {
           localHistoricalQuotes.append(namedQuoteSource.name, historicalQuotes);
@@ -107,107 +129,15 @@ export class RefreshQuotes {
     let provider = namedQuoteSource.quote.remote.provider;
     switch(provider) {
       case QuoteProvider.YAHOO:
-        return this.downloadMoreFromYahoo(namedQuoteSource, dateFrom);
+        return this.downloadFromYahoo.downloadMoreFromYahoo(namedQuoteSource, dateFrom);
       case QuoteProvider.MARKETSTACK:
-        return this.downloadMoreFromMarketStack(namedQuoteSource, dateFrom);
+        return this.downloadFromMarketStack.downloadMoreFromMarketStack(namedQuoteSource, dateFrom);
+      case QuoteProvider.ALPHA_VANTAGE:
+        return this.downloadFromAlphaVantage.downloadMoreFromAlphaVantage(namedQuoteSource, dateFrom);
       default:
         return new Observable<HistoricalQuotes>(observer => {
           observer.error(new Error("Remote provider not supported - " + provider));
         });
-    }
-  }
-  // 1607367683677
-  // 1607365153
-  private downloadMoreFromYahoo(namedQuoteSource: NamedQuoteSource, dateFrom: Date): Observable<HistoricalQuotes> {
-    let ticker = namedQuoteSource.quote.remote.ticker;
-    let period1 = Math.floor(new Date(dateFrom.getFullYear(), dateFrom.getMonth(), dateFrom.getDate()).valueOf() / 1000);
-    let today = new Date();
-    let period2 = Math.floor(new Date(today.getFullYear(), today.getMonth(), today.getDate()).valueOf() / 1000);
-    let url: string = "https://query1.finance.yahoo.com/v7/finance/download/" + ticker + "?"
-        + "period1=" + period1.toString()
-        + "&period2=" + period2.toString()
-        + "&interval=1d&events=history&includeAdjustedClose=true";
-
-    return new Observable<HistoricalQuotes>(observer => {
-      this.downloadFromUrl(url).subscribe(
-        remoteData => {
-          console.info(`Retrieved ${namedQuoteSource.name} as ${ticker} from Yahoo - ${remoteData.length} bytes of data`);
-          let reader = new YahooReader(namedQuoteSource.name, remoteData);
-          let remoteHistoricalQuotes = reader.asHistoricalQuotes();
-          observer.next(remoteHistoricalQuotes);
-        },
-        (error: any) => {
-          observer.error(new Error(`downloading from ${url}: ${error.message}`));
-        });
-    });
-  }
-
-  private downloadMoreFromMarketStack(namedQuoteSource: NamedQuoteSource, dateFrom: Date): Observable<HistoricalQuotes> {
-    let ticker = namedQuoteSource.quote.remote.ticker;
-    let url: string = "http://api.marketstack.com/v1/eod?access_key=" + MARKET_STACK_ACCESS_KEY
-        + "&symbols=" + ticker
-        + "&date_from=" + StringUtils.formatAsDate(dateFrom, "-");
-
-    return new Observable<HistoricalQuotes>(observer => {
-      this.downloadFromUrl(url).subscribe(
-        remoteData => {
-          console.info(`Retrieved ${namedQuoteSource.name} as ${ticker} from MarketStack - ${remoteData.length} bytes of data`);
-          let json = JSON.parse(remoteData);
-          let reader = new MarketStackReader(namedQuoteSource.name, json);
-          let remoteHistoricalQuotes = reader.asHistoricalQuotes();
-          observer.next(remoteHistoricalQuotes);
-        },
-        (error: any) => {
-          observer.error(new Error(`downloading from ${url}: ${error.message}`));
-        });
-    });
-  }
-
-  private downloadFromUrl(url: string): Observable<string> {
-    if (url.startsWith("https")) {
-      console.info("Retrieving HTTPS from " + url);
-      return new Observable<string>(observer => {
-        https.get(url, incomingMessage => {
-          this.incomingMessage(incomingMessage, observer);
-        }).on("error", (e) => {
-          observer.error(e);
-        });
-      });
-    } else {
-      console.info("Retrieving HTTP from " + url);
-      return new Observable<string>(observer => {
-        http.get(url, incomingMessage => {
-          this.incomingMessage(incomingMessage, observer);
-        }).on("error", (e) => {
-          observer.error(e);
-        });
-      });
-    }
-  }
-
-  private incomingMessage(incomingMessage: http.IncomingMessage, observer: Observer<string>): void {
-    // Check that there are no errors in the incoming message:
-    let statusCode: number = incomingMessage.statusCode;
-    if (statusCode != 200) {
-      observer.error(new Error("Status code: " + statusCode));
-      incomingMessage.resume();
-      return;
-    }
-    else {
-      // Set the encoding
-      incomingMessage.setEncoding('utf-8');
-
-      // Donwload the message:
-      let rawData = "";
-      incomingMessage.on('data', chunk => {
-        rawData += chunk;
-      });
-
-      // Send the message to the observer:
-      incomingMessage.on('end', () => {
-        observer.next(rawData);
-        observer.complete();
-      });
     }
   }
 
@@ -225,7 +155,7 @@ export class RefreshQuotes {
   private quotesToRefresh(): NamedQuoteSource[] {
     let fileNames: Map<string, NamedQuoteSource> = new Map();
 
-    QUOTE_SOURCES.forEach(namedQuoteSource => {
+    SP500_SOURCES.forEach(namedQuoteSource => {
       let skipIt: boolean = false;
 
       let remote = namedQuoteSource.quote.remote;
@@ -245,6 +175,7 @@ export class RefreshQuotes {
           switch(provider) {
             case QuoteProvider.YAHOO:
             case QuoteProvider.MARKETSTACK:
+            case QuoteProvider.ALPHA_VANTAGE:
               break;
             default:
               console.info(`Skipping ${fileName} - Remote provider ${provider} is not supported`);
