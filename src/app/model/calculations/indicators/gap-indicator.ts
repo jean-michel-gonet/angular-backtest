@@ -57,6 +57,7 @@ export class GapIndicator extends ConfigurableSourceIndicator {
 
     if (this.gaps.length > this.numberOfPeriods) {
       let outgoingGap = this.gaps.shift();
+      outgoingGap.gapWith = null;
       if (outgoingGap == this.maximumGap) {
         this.maximumGap == null;
         this.gaps.forEach(gap => {
@@ -81,7 +82,7 @@ export class GapIndicator extends ConfigurableSourceIndicator {
     let to = this.gaps.length - 1;
     for(var i = from; i <= to; i++) {
       let previousValue:number = this.gaps[i].value;
-      let gap = 100 * (value - previousValue) / previousValue;
+      let gap = 100 * Math.abs(value - previousValue) / previousValue;
       if (gap > incomingGap.gap) {
         incomingGap.gap = gap;
         incomingGap.gapWith = this.gaps[i];
