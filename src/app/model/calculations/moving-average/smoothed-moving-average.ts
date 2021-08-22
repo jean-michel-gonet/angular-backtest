@@ -2,7 +2,7 @@ import { OnlineMovingAverage } from './online-moving-average';
 
 /**
  * A modified moving average (MMA), running moving average (RMA), or
- * smoothed moving average (SMMA) is is an exponential moving average,
+ * smoothed moving average (SMMA) is an exponential moving average,
  * with α = 1 / numberOfPeriods.
  * <a href="https://en.wikipedia.org/wiki/Moving_average#Modified_moving_average">More info</a>
  * Online algorithms can process its input piece-by-piece in a serial fashion,
