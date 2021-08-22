@@ -113,7 +113,7 @@ export class MomentumQuoteAssessor implements QuoteAssessor {
     }
 
     // If quote is below its moving average, then it is not eligible:.
-    if (this.movingAverage < this.quote.close) {
+    if (this.quote.close < this.movingAverage) {
       return false;
     }
 

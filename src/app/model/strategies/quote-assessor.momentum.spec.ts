@@ -4,7 +4,7 @@ import { MomentumQuoteAssessor } from './quote-assessor.momentum';
 describe("MomentumQuoteAssessor", () => {
 
   it("Can assess atr indicator", () => {
-    let assessor = new MomentumQuoteAssessor({name: "A", gapDistance: 10});
+    let assessor = new MomentumQuoteAssessor({name: "A", gapDistance: 10, maximumAtrPerPosition: 0.04});
     assessor.assess(new InstantQuotes({instant: new Date(2001, 1,  1), quotes: [new Quote({name: "A", open: 10, close: 11})]}));
     assessor.assess(new InstantQuotes({instant: new Date(2001, 1,  2), quotes: [new Quote({name: "A", open: 11, close: 12})]}));
     assessor.assess(new InstantQuotes({instant: new Date(2001, 1,  3), quotes: [new Quote({name: "A", open: 12, close: 13})]}));
@@ -17,6 +17,8 @@ describe("MomentumQuoteAssessor", () => {
     assessor.assess(new InstantQuotes({instant: new Date(2001, 1, 10), quotes: [new Quote({name: "A", open: 19, close: 20})]}));
 
     expect(assessor.atr).toBeCloseTo(1, 2);
+
+    expect(assessor.partsToBuy(100)).toBe(4);
   });
 
   it("Can assess momentum indicator", () => {
@@ -37,23 +39,32 @@ describe("MomentumQuoteAssessor", () => {
 
     expect(assessor1.momentum).toBeCloseTo(r, 2);
     expect(assessor2.momentum).toBeLessThan(r);
+
+    expect(assessor2.compare(assessor1)).toBeLessThan(0);
   });
 
   it("Can assess moving average", () => {
     let assessor1 = new MomentumQuoteAssessor({name: "A", movingAverageDistance: 10});
     let assessor2 = new MomentumQuoteAssessor({name: "B", movingAverageDistance: 10});
 
-    for(var day = 0; day < 10; day++) {
+    let day: number;
+    for(day = 0; day < 10; day++) {
       assessor1.assess(new InstantQuotes({instant: new Date(2001, 1,  1 + day), quotes: [new Quote({name: "A", close: 10})]}));
       assessor2.assess(new InstantQuotes({instant: new Date(2001, 1,  1 + day), quotes: [new Quote({name: "B", close: 100 + day})]}));
     }
 
     expect(assessor1.movingAverage).toBeCloseTo(10, 2);
     expect(assessor2.movingAverage).toBeCloseTo(104.5, 2);
+
+    assessor1.assess(new InstantQuotes({instant: new Date(2001, 1,  1 + day), quotes: [new Quote({name: "A", close: 10})]}));
+    assessor2.assess(new InstantQuotes({instant: new Date(2001, 1,  1 + day), quotes: [new Quote({name: "B", close: 104})]}));
+
+    expect(assessor1.isEligible()).toBeTrue();
+    expect(assessor2.isEligible()).toBeFalse();
   });
 
   it("Can assess the presence of gaps", () => {
-    let assessor = new MomentumQuoteAssessor({name: "A", gapDistance: 10});
+    let assessor = new MomentumQuoteAssessor({name: "A", movingAverageDistance: 10, gapDistance: 10, maximumAcceptableGap: 0.51});
     assessor.assess(new InstantQuotes({instant: new Date(2001, 1,  1), quotes: [new Quote({name: "A", close: 90})]}));
     assessor.assess(new InstantQuotes({instant: new Date(2001, 1,  2), quotes: [new Quote({name: "A", close: 95})]}));
     assessor.assess(new InstantQuotes({instant: new Date(2001, 1,  3), quotes: [new Quote({name: "A", close: 100})]}));
@@ -65,7 +76,8 @@ describe("MomentumQuoteAssessor", () => {
     assessor.assess(new InstantQuotes({instant: new Date(2001, 1,  9), quotes: [new Quote({name: "A", close: 175})]}));
     assessor.assess(new InstantQuotes({instant: new Date(2001, 1, 10), quotes: [new Quote({name: "A", close: 180})]}));
 
-    expect(assessor.gap).toBeCloseTo(50, 2);
+    expect(assessor.gap).toBeCloseTo(0.5, 4);
+    expect(assessor.isEligible()).toBeTrue();
   });
 
 });
