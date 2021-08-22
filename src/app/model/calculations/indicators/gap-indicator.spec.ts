@@ -38,7 +38,7 @@ describe('GapIndicator', () => {
     gap.calculate(new Date(2019, 7 - 1,  12), new Candlestick({close: 49.00}));
 
     let maximumGap = gap.calculate(new Date(2019, 7 - 1,  13), new Candlestick({close: 50.00}));
-    expect(maximumGap).toBeCloseTo(8.7, 2);
+    expect(maximumGap).toBeCloseTo(0.087, 4);
   });
 
   it('Can calculate gap as always a positive value', () => {
@@ -49,7 +49,7 @@ describe('GapIndicator', () => {
     gap.calculate(new Date(2019, 7 - 1,  12), new Candlestick({close: 47.00}));
 
     let maximumGap = gap.calculate(new Date(2019, 7 - 1,  13), new Candlestick({close: 46.00}));
-    expect(maximumGap).toBeCloseTo(8, 2);
+    expect(maximumGap).toBeCloseTo(0.08, 4);
   });
 
   it('Can calculate gap over 10 days', () => {
@@ -66,6 +66,6 @@ describe('GapIndicator', () => {
     gap.calculate(new Date(2019, 7 - 1,  12), new Candlestick({close: 49.00}));
 
     let maximumGap = gap.calculate(new Date(2019, 7 - 1,  13), new Candlestick({close: 50.00}));
-    expect(maximumGap).toBeCloseTo(25, 2);
+    expect(maximumGap).toBeCloseTo(0.25, 4);
   });
 });

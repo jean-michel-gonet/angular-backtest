@@ -82,7 +82,7 @@ export class GapIndicator extends ConfigurableSourceIndicator {
     let to = this.gaps.length - 1;
     for(var i = from; i <= to; i++) {
       let previousValue:number = this.gaps[i].value;
-      let gap = 100 * Math.abs(value - previousValue) / previousValue;
+      let gap = Math.abs(value - previousValue) / previousValue;
       if (gap > incomingGap.gap) {
         incomingGap.gap = gap;
         incomingGap.gapWith = this.gaps[i];
