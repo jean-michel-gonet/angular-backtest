@@ -60,11 +60,9 @@ export class TopOfUniverseQuotesAssessor implements QuotesAssessor {
     let rankedQuoteAssessments = this.rankQuoteAssessments();
 
     // Only consider the top ranking assets in the universe:
-    let to = Math.ceil(rankedQuoteAssessments.length * this.topOfIndex);
-
     let targetPositions = new TargetPositions();
-    let rank: number = 1;
-    for (var i = 0; i < to; i++) {
+    let rank = 0;
+    for (var i = 0; i < this.topOfIndex; i++) {
       let rankedQuoteAssessment = rankedQuoteAssessments[i];
 
       // If the quote is not eligible, then skip it:
