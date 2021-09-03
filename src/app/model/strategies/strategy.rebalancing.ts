@@ -1,5 +1,5 @@
 import { Account } from '../core/account';
-import { MarketTiming } from '../core/market-timing';
+import { BearBull, MarketTiming } from '../core/market-timing';
 import { Period } from '../core/period';
 import { InstantQuotes } from '../core/quotes';
 import { Report } from '../core/reporting';
@@ -9,7 +9,7 @@ import { QuotesAssessor, TargetPositions } from './quotes-assessor';
 /**
  * Configuration for {@link RebalancingStrategy}
  */
-export interface IRebalancingStrategy {
+export interface RebalancingStrategyConfig {
   /** The quotes assessor to use for calculating target positions. */
   quotesAssessor: QuotesAssessor;
 
@@ -18,13 +18,17 @@ export interface IRebalancingStrategy {
 
   /**
    * Period to perform position rebalancing.
+   * Position rebalance consist in selling all positions above target or not
+   * in target, and buy positions in target with the freed cash.
    * Position rebalance takes precedence over portfolio rebalance.
    */
   positionRebalancePeriod: Period;
 
   /**
    * Period to perform portfolio rebalancing.
-   * Position rebalance takes precedence over portfolio rebalance.
+   * Portfolio rebalance consist in selling all positions not
+   * in target (but keeping positions above target), and buy positions in
+   * target with the freed cash.
    */
   portfolioRebalancePeriod?: Period;
 
@@ -60,7 +64,7 @@ export class RebalancingStrategy implements Strategy {
    * Class constructor.
    * {@param obj} Configuration values.
    */
-  constructor(obj = {} as IRebalancingStrategy) {
+  constructor(obj = {} as RebalancingStrategyConfig) {
     let {
       quotesAssessor,
       marketTiming,
@@ -73,7 +77,7 @@ export class RebalancingStrategy implements Strategy {
     this.quotesAssessor = quotesAssessor;
     this.marketTiming = marketTiming;
     this.positionRebalancePeriod = positionRebalancePeriod;
-    this.portfolioRebalancePeriod = portfolioRebalancePeriod;
+    this.portfolioRebalancePeriod = portfolioRebalancePeriod ? portfolioRebalancePeriod : positionRebalancePeriod;
     this.minimumCash = minimumCash;
     this.smallestOperation = smallestOperation;
   }
@@ -90,29 +94,8 @@ export class RebalancingStrategy implements Strategy {
       this.rebalancePositions(account, targetPositions);
     } else if (portfolioRebalancePeriod) {
       let targetPositions = this.quotesAssessor.listTargetPositions(account.nav());
-      this.rebalancePositions(account, targetPositions);
+      this.rebalancePortfolio(account, targetPositions);
     }
-  }
-
-  /**
-   * Sells positions not in target.
-   * With obtained cash, buys more of the target positions.
-   * {@param account} The account to rebalance.
-   * {@param targetPositions} The target positions.
-   */
-  protected rebalancePortfolio(account: Account, targetPositions: TargetPositions) {
-    // Sell positions not in target:
-    let freedCash = 0;
-    account.positions.forEach(position => {
-      if (!targetPositions.name(position.name)) {
-        account.order(position.name, -position.parts);
-        freedCash += position.nav();
-      }
-    });
-
-    // With freed cash, buy more target positions:
-    let availableCash = freedCash + account.cash - this.minimumCash;
-    this.buyTargetPositions(availableCash, account, targetPositions);
   }
 
   /**
@@ -121,14 +104,14 @@ export class RebalancingStrategy implements Strategy {
    * {@param account} The account to rebalance.
    * {@param targetPositions} The target positions.
    */
-  protected rebalancePositions(account: Account, targetPositions: TargetPositions) {
+  private rebalancePositions(account: Account, targetPositions: TargetPositions) {
     // Sell positions not in target:
     let freedCash = 0;
     account.positions.forEach(position => {
       let targetPosition = targetPositions.name(position.name);
 
       if (!targetPosition) {
-        account.order(position.name, position.parts);
+        account.order(position.name, -position.parts);
         freedCash += position.nav();
       } else {
         let partsToSell = position.parts - targetPosition.parts;
@@ -146,6 +129,27 @@ export class RebalancingStrategy implements Strategy {
   }
 
   /**
+   * Sells positions not in target.
+   * With obtained cash, buys more of the target positions.
+   * {@param account} The account to rebalance.
+   * {@param targetPositions} The target positions.
+   */
+  private rebalancePortfolio(account: Account, targetPositions: TargetPositions) {
+    // Sell positions not in target:
+    let freedCash = 0;
+    account.positions.forEach(position => {
+      if (!targetPositions.name(position.name)) {
+        account.order(position.name, -position.parts);
+        freedCash += position.nav();
+      }
+    });
+
+    // With freed cash, buy more target positions:
+    let availableCash = freedCash + account.cash - this.minimumCash;
+    this.buyTargetPositions(availableCash, account, targetPositions);
+  }
+
+  /**
    * Uses the available cash to buy target positions.
    * It will buy positions specified in the target until it has used up
    * all the available cash.
@@ -154,24 +158,26 @@ export class RebalancingStrategy implements Strategy {
    * {@param targetPositions} A list of target positions, sorted by desirability.
    */
   private buyTargetPositions(availableCash: number, account: Account, targetPositions: TargetPositions) {
-    targetPositions.positions.forEach(targetPosition => {
-      let position = account.position(targetPosition.name);
-      let partsToBuy: number;
-      if (position) {
-        partsToBuy = targetPosition.parts - position.parts;
-      } else {
-        partsToBuy = targetPosition.parts;
-      }
-      if (partsToBuy > 0) {
-        let canBuy = availableCash / targetPosition.partValue;
-        let willBuy = Math.min(partsToBuy, canBuy);
-        let willCost = targetPosition.partValue * willBuy;
-        if (willCost > this.smallestOperation) {
-          account.order(targetPosition.name, willBuy);
-          availableCash -= targetPosition.partValue * willBuy;
+    if (this.marketTiming.bearBull() == BearBull.BULL) {
+      targetPositions.positions.forEach(targetPosition => {
+        let position = account.position(targetPosition.name);
+        let partsToBuy: number;
+        if (position) {
+          partsToBuy = targetPosition.parts - position.parts;
+        } else {
+          partsToBuy = targetPosition.parts;
         }
-      }
-    });
+        if (partsToBuy > 0) {
+          let canBuy = Math.floor(availableCash / targetPosition.partValue);
+          let willBuy = Math.min(partsToBuy, canBuy);
+          let willCost = targetPosition.partValue * willBuy;
+          if (willCost > this.smallestOperation) {
+            account.order(targetPosition.name, willBuy);
+            availableCash -= targetPosition.partValue * willBuy;
+          }
+        }
+      });
+    }
   }
 
   doRegister(report: Report): void {
