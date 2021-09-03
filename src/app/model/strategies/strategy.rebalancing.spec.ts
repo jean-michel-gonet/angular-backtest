@@ -58,6 +58,7 @@ describe("RebalancingStrategy", () => {
   let TUE1 = new Date(2021, 8 - 1, 10);
   let WED1 = new Date(2021, 8 - 1, 11);  // Position Balance
   let THU1 = new Date(2021, 8 - 1, 12);
+  let FRI1 = new Date(2021, 8 - 1, 13);
 
   let MON2 = new Date(2021, 8 - 1, 16);
   let TUE2 = new Date(2021, 8 - 1, 17);
@@ -199,14 +200,12 @@ describe("RebalancingStrategy", () => {
       new Quote({name: "B", close: 100}),
       new Quote({name: "C", close: 100}),
       new Quote({name: "D", close: 100}),
-      new Quote({name: "E", close: 100}),
     ]}));
     account.process(new InstantQuotes({instant: THU1, quotes: [
       new Quote({name: "A", open: 100, close: 100}),
       new Quote({name: "B", open: 100, close: 100}),
       new Quote({name: "C", open: 100, close: 100}),
       new Quote({name: "D", open: 100, close: 100}),
-      new Quote({name: "E", open: 100, close: 100}),
     ]}));
 
     expect(account.position("A").parts).withContext("Sells excess of A").toBe(10);
@@ -214,4 +213,66 @@ describe("RebalancingStrategy", () => {
     expect(account.position("C").parts).withContext("Does not buy more of C").toBe(30);
     expect(account.position("D").parts).withContext("Sells all of D").toBe(0);
   });
+
+  it("Can create buy orders through the settlement days", () => {
+    let targetPositions = new TargetPositions();
+    targetPositions.addTargetPosition(0, new Position({name: "C", parts: 50}));
+    targetPositions.addTargetPosition(1, new Position({name: "D", parts: 50}));
+
+    let strategy = new RebalancingStrategy({
+      quotesAssessor: new MockQuotesAssessor(targetPositions),
+      marketTiming: new MockMarketTiming(BearBull.BULL),
+      minimumCash: 1000,
+      smallestOperation: 100,
+      positionRebalancePeriod: new Period(Periodicity.WEEKLY, 3)
+    });
+
+    let account = new Account({id:"ACC", settlementDays: 1, cash: 0, strategy: strategy, positions: [
+      new Position({name: "A", parts: 50}),
+      new Position({name: "B", parts: 50})
+    ]});
+
+    // Position rebalance:
+    account.process(new InstantQuotes({instant: WED1, quotes: [
+      new Quote({name: "A", close: 100}),
+      new Quote({name: "B", close: 100}),
+      new Quote({name: "C", close: 100}),
+      new Quote({name: "D", close: 100}),
+    ]}));
+    account.process(new InstantQuotes({instant: THU1, quotes: [
+      new Quote({name: "A", open: 100, close: 100}),
+      new Quote({name: "B", open: 100, close: 100}),
+      new Quote({name: "C", open: 100, close: 100}),
+      new Quote({name: "D", open: 100, close: 100}),
+    ]}));
+    expect(account.position("A").parts).withContext("Sells all of A").toBe(0);
+    expect(account.position("B").parts).withContext("Sells all of B").toBe(0);
+    expect(account.position("C")      ).withContext("No C because of settlement time").toBeUndefined();
+    expect(account.position("D")      ).withContext("No D because of settlement time").toBeUndefined();
+    expect(account.cash).withContext("Cash not yet available because of settlement").toBe(0)
+
+    account.process(new InstantQuotes({instant: FRI1, quotes: [
+      new Quote({name: "A", open: 100, close: 100}),
+      new Quote({name: "B", open: 100, close: 100}),
+      new Quote({name: "C", open: 100, close: 100}),
+      new Quote({name: "D", open: 100, close: 100}),
+    ]}));
+    expect(account.position("A").parts).withContext("No A").toBe(0);
+    expect(account.position("B").parts).withContext("No B").toBe(0);
+    expect(account.position("C").parts).withContext("Still no C because of settlement time").toBe(0);
+    expect(account.position("D").parts).withContext("Still no D because of settlement time").toBe(0);
+    expect(account.cash).withContext("Cash has arrived").toBe(1000)
+
+    account.process(new InstantQuotes({instant: MON2, quotes: [
+      new Quote({name: "A", open: 100, close: 100}),
+      new Quote({name: "B", open: 100, close: 100}),
+      new Quote({name: "C", open: 100, close: 100}),
+      new Quote({name: "D", open: 100, close: 100}),
+    ]}));
+    expect(account.position("A").parts).withContext("No A").toBe(0);
+    expect(account.position("B").parts).withContext("No B").toBe(0);
+    expect(account.position("C").parts).withContext("Bought all of C").toBe(50);
+    expect(account.position("D").parts).withContext("Some of D").toBe(40);
+    expect(account.cash).withContext("Keep the minimum cash").toBe(1000)
+  })
 });
