@@ -11,6 +11,14 @@ export interface QuoteAssessor {
   quote: Quote;
 
   /**
+   * Number of days a quote has to be assessed before assessment can be meaningful.
+   * Implementing classes are probably using a mix of moving averages and the like.
+   * They use this property to ensure that a quote is fully assessed before it enters
+   * in the investment universe.
+   */
+  minimumAssessmentDuration: number;
+
+  /**
    * Provides data to assess the instrument.
    * @param instantQuotes All available quotes at a particular instant. The
    * quote of the instrument to assess should be among them.
