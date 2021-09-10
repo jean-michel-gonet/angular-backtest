@@ -49,6 +49,7 @@ interface MomentumQuoteAssessorConfig {
 export class MomentumQuoteAssessor implements QuoteAssessor {
   public name: string;
   public quote: Quote;
+  public minimumAssessmentDuration: number;
   public atr: number;
   public gap: number
   public movingAverage: number;
@@ -77,6 +78,8 @@ export class MomentumQuoteAssessor implements QuoteAssessor {
       movingAverageDistance = 100
     } = obj;
     this.name = name;
+    this.minimumAssessmentDuration = Math.max(
+      momentumDistance, gapDistance, averageTrueRangeDistance, movingAverageDistance);
 
     this.momentumIndicator = new MomentumIndicator({
       numberOfPeriods: momentumDistance,

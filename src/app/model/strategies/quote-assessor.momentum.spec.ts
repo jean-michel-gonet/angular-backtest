@@ -2,6 +2,43 @@ import { InstantQuotes, Quote} from '../core/quotes';
 import { MomentumQuoteAssessor } from './quote-assessor.momentum';
 
 describe("MomentumQuoteAssessor", () => {
+  it("Can indicate the minimum assessment duration", () => {
+    let assessor1 = new MomentumQuoteAssessor({
+      name: "A",
+      gapDistance: 10,
+      averageTrueRangeDistance: 10,
+      momentumDistance: 10,
+      movingAverageDistance: 20
+    });
+    expect(assessor1.minimumAssessmentDuration).toBe(20);
+
+    let assessor2 = new MomentumQuoteAssessor({
+      name: "A",
+      gapDistance: 10,
+      averageTrueRangeDistance: 10,
+      momentumDistance: 21,
+      movingAverageDistance: 20
+    });
+    expect(assessor2.minimumAssessmentDuration).toBe(21);
+
+    let assessor3 = new MomentumQuoteAssessor({
+      name: "A",
+      gapDistance: 10,
+      averageTrueRangeDistance: 22,
+      momentumDistance: 21,
+      movingAverageDistance: 20
+    });
+    expect(assessor3.minimumAssessmentDuration).toBe(22);
+
+    let assessor4 = new MomentumQuoteAssessor({
+      name: "A",
+      gapDistance: 23,
+      averageTrueRangeDistance: 22,
+      momentumDistance: 21,
+      movingAverageDistance: 20
+    });
+    expect(assessor4.minimumAssessmentDuration).toBe(23);
+  });
 
   it("Can assess atr indicator", () => {
     let assessor = new MomentumQuoteAssessor({name: "A", gapDistance: 10, maximumAtrPerPosition: 0.04});
