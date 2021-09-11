@@ -43,10 +43,10 @@ export class ConfigurableUniverseEntryPeriod {
  * Implenentation of a universe based on a named universe configuration.
  * @class{ConfigurableUniverseEntry}
  */
-class ConfigurableUniverseEntry {
+export class ConfigurableUniverseEntry {
   public name: string;
 
-  public periods: ConfigurableUniverseEntryPeriod[];
+  public periods: ConfigurableUniverseEntryPeriod[] = [];
 
   /**
    * Class constructor.
@@ -65,6 +65,7 @@ class ConfigurableUniverseEntry {
         return true;
       }
     }
+    return false;
   }
 
   worthAssessing(instant: number, assessmentDays: number): boolean {
@@ -74,6 +75,7 @@ class ConfigurableUniverseEntry {
         return true;
       }
     }
+    return false;
   }
 }
 
@@ -120,8 +122,8 @@ export class ConfigurableUniverse implements Universe {
 
   allQuotes(instant?: Date): string[] {
     let q: string[] = [];
-    let time = instant.getTime();
     if (instant) {
+      let time = instant.getTime();
       this.entries.forEach(entry => {
         if (entry.belongsToUniverse(time)) {
           q.push(entry.name)
