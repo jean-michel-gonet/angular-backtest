@@ -5,19 +5,21 @@ import { UniverseConfigurationService } from './universe-configuration.service';
 
 const MILISECONDS_IN_A_DAY = 86400000;
 
-class ConfigurableUniverseEntryPeriod {
+export class ConfigurableUniverseEntryPeriod {
   public from: number;
   public to: number;
 
   constructor(period: NamedUniverseEntryPeriod) {
-    this.from = Math.floor(period.from.getTime() / MILISECONDS_IN_A_DAY);
+    if (period.from) {
+      this.from = MILISECONDS_IN_A_DAY * Math.floor(period.from.getTime() / MILISECONDS_IN_A_DAY);
+    }
     if(period.to) {
-      this.to = Math.floor(period.to.getTime() / MILISECONDS_IN_A_DAY);
+      this.to = MILISECONDS_IN_A_DAY * (1 + Math.floor(period.to.getTime() / MILISECONDS_IN_A_DAY));
     }
   }
 
   public contains(instant: number): boolean {
-    if (this.from > instant) {
+    if (this.from && this.from > instant) {
       return false;
     }
     if (this.to && this.to < instant) {
@@ -27,13 +29,13 @@ class ConfigurableUniverseEntryPeriod {
   }
 
   public intersects(from: number, to: number): boolean {
-    if (to >= this.from) {
-      if (this.to) {
-        return from <= this.to;
-      } else {
-        return true;
-      }
+    if (this.from && to < this.from) {
+      return false;
     }
+    if (this.to && from > this.to) {
+      return false;
+    }
+    return true;
   }
 }
 
