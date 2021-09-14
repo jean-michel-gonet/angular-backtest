@@ -1,14 +1,18 @@
 import { Position } from '../core/account';
-import { InstantQuotes, Quote } from '../core/quotes';
+import { InstantQuotes } from '../core/quotes';
+import { Universe } from '../core/universe';
 import { QuoteAssessor, QuoteAssessorFactory } from './quote-assessor';
 import { QuotesAssessor, TargetPositions } from './quotes-assessor';
 
 /**
- * Configuration for {@link MomentumQuotesAssessor}
+ * Configuration for {@link TopOfUniverseQuotesAssessor}
  */
-export interface ITopOfUniverseQuotesAssessor {
+export interface TopOfUniverseQuotesAssessorConfig {
   /** A factory of {@link QuoteAssessor}, to build new instances.*/
   quoteAssessorFactory: QuoteAssessorFactory;
+
+  /** The investment universe.*/
+  universe: Universe;
 
   /* After ranking all assets in the index, picks only this number from the top.*/
   topOfIndex: number;
@@ -20,8 +24,9 @@ export interface ITopOfUniverseQuotesAssessor {
 export class TopOfUniverseQuotesAssessor implements QuotesAssessor {
   public quoteAssessorFactory: QuoteAssessorFactory;
   public topOfIndex: number;
-
+  public universe: Universe;
   private quoteAssessors = new Map<String, QuoteAssessor>();
+  private instant: Date;
 
   /**
    * Class constructor
@@ -30,29 +35,36 @@ export class TopOfUniverseQuotesAssessor implements QuotesAssessor {
    * in fractions of asset value (0.01 is 1%)
    * @param topOfIndex After ranking all assets in the index, picks only this number from the top.
   */
-  constructor(obj = {} as ITopOfUniverseQuotesAssessor) {
+  constructor(obj = {} as TopOfUniverseQuotesAssessorConfig) {
     let {
       quoteAssessorFactory,
+      universe,
       topOfIndex
     } = obj;
 
     this.quoteAssessorFactory = quoteAssessorFactory;
+    this.universe = universe;
     this.topOfIndex = topOfIndex;
   }
 
   public assessQuotes(instantQuotes: InstantQuotes) {
+    this.instant = instantQuotes.instant;
     instantQuotes.quotes.forEach(quote => {
-      this.assessQuote(quote.name, instantQuotes);
+      if (this.universe.isRelatedToUniverse(quote.name)) {
+        let quoteAssessor:QuoteAssessor = this.obtainQuoteAssessor(quote.name);
+        if (this.universe.worthAssessing(quote.name, instantQuotes.instant, quoteAssessor.minimumAssessmentDuration)) {
+          quoteAssessor.assess(instantQuotes);
+        }
+      }
     });
   }
 
-  private assessQuote(name: string, instantQuotes: InstantQuotes): QuoteAssessor {
+  private obtainQuoteAssessor(name: string): QuoteAssessor {
     let quoteAssessor:QuoteAssessor = this.quoteAssessors.get(name);
     if (!quoteAssessor) {
       quoteAssessor = this.quoteAssessorFactory(name);
       this.quoteAssessors.set(name, quoteAssessor);
     }
-    quoteAssessor.assess(instantQuotes);
     return quoteAssessor;
   }
 
@@ -98,7 +110,7 @@ export class TopOfUniverseQuotesAssessor implements QuotesAssessor {
   private rankQuoteAssessments(): QuoteAssessor[] {
     let rankedQuoteAssessments: QuoteAssessor[] = [];
     this.quoteAssessors.forEach(quoteAssessor => {
-      if (this.belongsToUniverse(quoteAssessor.quote)) {
+      if (this.universe.belongsToUniverse(quoteAssessor.quote.name, this.instant)) {
         rankedQuoteAssessments.push(quoteAssessor);
       }
     });
@@ -106,15 +118,6 @@ export class TopOfUniverseQuotesAssessor implements QuotesAssessor {
       return a.compare(b);
     });
     return rankedQuoteAssessments;
-  }
-
-  /**
-   * Verifies if the specified quote belongs to the investment universe.
-   * @param quote The quote.
-   * @return {@code true} If the quote belongs to the universe.
-   */
-  private belongsToUniverse(quote: Quote): boolean {
-    return true;
   }
 
 }

@@ -1,4 +1,8 @@
-import { ConfigurableUniverse, ConfigurableUniverseEntry, ConfigurableUniverseEntryPeriod } from "./universe.service";
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { NamedUniverse } from './universe-configuration';
+import { IUniverseConfigurationService, UniverseConfigurationService } from './universe-configuration.service';
+import { ConfigurableUniverse, ConfigurableUniverseEntry, ConfigurableUniverseEntryPeriod, UniverseService } from "./universe.service";
 
 describe("ConfigurableUniverseEntryPeriod", () =>{
   let DAY_00 = new Date(2021, 7 - 1,  1);
@@ -183,5 +187,56 @@ describe("ConfigurableUniverse", () => {
     expect(universe.worthAssessing("B", DAYS_AFTER_1, 20))  .withContext("B is worth assessing DAYS_AFTER_1").toBeFalse();
 
     expect(universe.worthAssessing("D", DAYS_BEFORE_20, 20)).withContext("D is worth assessing DAYS_BEFORE_40").toBeFalse();
+  });
+});
+
+class UniverseConfigurationServiceMock implements IUniverseConfigurationService {
+  private namedUniverses = new Map<string, NamedUniverse>();
+
+  public add(namedUniverse: NamedUniverse): void {
+    this.namedUniverses.set(namedUniverse.name, namedUniverse);
+  }
+
+  obtainNamedUniverse(name: string): NamedUniverse {
+    return this.namedUniverses.get(name);
+  }
+};
+
+describe('UniverseService', () => {
+  let configurationService: UniverseConfigurationServiceMock;
+
+  let universeService: UniverseService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports:[HttpClientTestingModule],
+      providers: [
+        {provide: UniverseConfigurationService, useClass: UniverseConfigurationServiceMock}
+      ]
+    });
+    configurationService = TestBed.inject(UniverseConfigurationService) as unknown as UniverseConfigurationServiceMock;
+
+    universeService = TestBed.inject(UniverseService);
+  });
+
+  it('Can retrieve an universe', () => {
+    configurationService.add({
+      name: "X1",
+      entries: [
+        {
+          name: "A",
+          longName: "Agilent Technologies",
+          gicsSector: "Health Care",
+          gicsSubIndustry: "Health Care Equipment",
+          founded: 1999,
+          periods: [{from: new Date(2000, 6 - 1, 5)}]
+        }
+      ]
+    });
+
+    let universe = universeService.getUniverse("X1");
+    expect(universe).toBeTruthy();
+    expect(universe.belongsToUniverse("A", new Date(2000, 6 - 1, 4))).toBeFalse();
+    expect(universe.belongsToUniverse("A", new Date(2000, 6 - 1, 5))).toBeTrue();
   });
 });

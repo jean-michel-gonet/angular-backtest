@@ -1,4 +1,5 @@
 import { Quote, InstantQuotes } from '../core/quotes';
+import { Universe } from '../core/universe';
 import { QuoteAssessor } from './quote-assessor';
 import { TopOfUniverseQuotesAssessor } from "./quotes-assessor.top-of-universe";
 
@@ -6,7 +7,7 @@ describe("TopOfUniverseQuotesAssessor", () => {
   class MockQuoteAssessor implements QuoteAssessor {
     quote: Quote;
 
-    constructor(public name: string, public position: number, public eligible: boolean) {
+    constructor(public name: string, public position: number, public eligible: boolean, public minimumAssessmentDuration:number) {
     }
 
     assess(instantQuotes: InstantQuotes): void {
@@ -25,16 +26,34 @@ describe("TopOfUniverseQuotesAssessor", () => {
       return Math.round(nav / 100);
     }
   }
+  class MockUniverse implements Universe {
+    constructor(){}
+
+    isRelatedToUniverse(name: string): boolean {
+      return true;
+    }
+
+    belongsToUniverse(name: string, instant: Date): boolean {
+      return true;
+    }
+    worthAssessing(name: string, instant: Date, assessmentDays: number): boolean {
+      return true;
+    }
+    allQuotes(instant?: Date): string[] {
+      throw new Error('Method not implemented.');
+    }
+  }
 
   it("Can create quote assessors as needed", () => {
     let c = new Map<string, QuoteAssessor>();
 
     let quotesAssessor = new TopOfUniverseQuotesAssessor({
       quoteAssessorFactory: (name: string) => {
-        let quoteAssessor = new MockQuoteAssessor(name, 1, true);
+        let quoteAssessor = new MockQuoteAssessor(name, 1, true, 10);
         c.set(name, quoteAssessor);
         return quoteAssessor;
       },
+      universe: new MockUniverse(),
       topOfIndex: 4
     });
 
@@ -70,8 +89,9 @@ describe("TopOfUniverseQuotesAssessor", () => {
     let position = 100;
     let quotesAssessor = new TopOfUniverseQuotesAssessor({
       quoteAssessorFactory: (name: string) => {
-        return new MockQuoteAssessor(name, position--, true);
+        return new MockQuoteAssessor(name, position--, true, 10);
       },
+      universe: new MockUniverse(),
       topOfIndex: 4
     });
     quotesAssessor.assessQuotes(new InstantQuotes({instant: new Date(), quotes:[
@@ -103,8 +123,9 @@ describe("TopOfUniverseQuotesAssessor", () => {
     let position = 0;
     let quotesAssessor = new TopOfUniverseQuotesAssessor({
       quoteAssessorFactory: (name: string) => {
-        return new MockQuoteAssessor(name, position, position++ % 2 == 0);
+        return new MockQuoteAssessor(name, position, position++ % 2 == 0, 10);
       },
+      universe: new MockUniverse(),
       topOfIndex: 4
     });
     quotesAssessor.assessQuotes(new InstantQuotes({instant: new Date(), quotes:[
