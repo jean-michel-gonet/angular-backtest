@@ -14,6 +14,15 @@ export class MultipleMarketTiming implements MarketTiming {
 
   constructor(public marketTimings: MarketTiming[]) {}
 
+  listQuotesOfInterest(): string[] {
+    let quotesOfInterest: string[] = [];
+    this.marketTimings.forEach(mt => {
+      let q = mt.listQuotesOfInterest();
+      quotesOfInterest = quotesOfInterest.concat(q);
+    });
+    return quotesOfInterest;
+  }
+
   record(instantQuotes: InstantQuotes): void {
     this.marketTimings.forEach(m => {
       m.record(instantQuotes);

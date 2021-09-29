@@ -47,6 +47,13 @@ export class TopOfUniverseQuotesAssessor implements QuotesAssessor {
     this.topOfIndex = topOfIndex;
   }
 
+  /**
+   * Quotes of interest are all those of the universe.
+   */
+  listQuotesOfInterest(): string[] {
+    return this.universe.allQuotes();
+  }
+
   public assessQuotes(instantQuotes: InstantQuotes) {
     this.instant = instantQuotes.instant;
     instantQuotes.quotes.forEach(quote => {
@@ -74,7 +81,8 @@ export class TopOfUniverseQuotesAssessor implements QuotesAssessor {
     // Only consider the top ranking assets in the universe:
     let targetPositions = new TargetPositions();
     let rank = 0;
-    for (var i = 0; i < this.topOfIndex; i++) {
+    let to = Math.min(this.topOfIndex, rankedQuoteAssessments.length);
+    for (var i = 0; i < to; i++) {
       let rankedQuoteAssessment = rankedQuoteAssessments[i];
 
       // If the quote is not eligible, then skip it:

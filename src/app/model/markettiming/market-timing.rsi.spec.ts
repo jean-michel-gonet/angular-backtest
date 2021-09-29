@@ -21,7 +21,9 @@ describe("RsiMarketTiming", () => {
       lowerThreshold: 30
     });
     expect(marketTiming).toBeTruthy();
+    expect(marketTiming.listQuotesOfInterest()).toEqual(["ASS"]);
   });
+
   it("Can configure appropriately the inner RSI indicator", () => {
     let source = ConfigurableSource.CLOSE;
     let status = BearBull.BEAR;

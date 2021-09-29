@@ -3,7 +3,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { QuotesFromSixService } from './quotes-from-six.service';
 import { QuotesFromYahooService } from './quotes-from-yahoo.service';
 import { QuotesFromAlphaVantageService } from './quotes-from-alphavantage.service';
-import { QuotesService } from './quotes.service';
+import { makePathRelativeToQuotes, QuotesService, QuotesServiceImpl } from './quotes.service';
 import { IQuotesService } from './quotes.service.interface';
 import { Observable } from 'rxjs';
 import { HistoricalQuotes, InstantQuotes, Quote, HistoricalValue } from 'src/app/model/core/quotes';
@@ -97,7 +97,7 @@ describe('QuotesService', () => {
     plainData = TestBed.inject(PlainDataService) as unknown as PlainDataServiceMock;
     configurationService = TestBed.inject(QuotesConfigurationService) as unknown as QuotesConfigurationServiceMock;
 
-    quotesService = TestBed.get(QuotesService);
+    quotesService = TestBed.get(QuotesServiceImpl);
   });
 
   it('Can create a new instance', () => {
@@ -119,7 +119,7 @@ describe('QuotesService', () => {
         new Quote({name: "ISIN3", close: 1.3})
       ]})]);
 
-    investing.whenQuotes(quotesService.makeRelativePath("xx"), historicalQuotes);
+    investing.whenQuotes(makePathRelativeToQuotes("xx"), historicalQuotes);
 
     quotesService.getQuotes(["ISIN3"]).subscribe(data => {
       expect(data.get(beforeYesterday).quote("ISIN3").close).toBe(1.3);
@@ -151,8 +151,8 @@ describe('QuotesService', () => {
       ]})]);
     let dividends: HistoricalValue[] = [{value: 1.5, instant: beforeYesterday}];
 
-    yahoo.whenQuotes(quotesService.makeRelativePath("xx"), historicalQuotes);
-    plainData.whenDividends(quotesService.makeRelativePath("yy"), dividends);
+    yahoo.whenQuotes(makePathRelativeToQuotes("xx"), historicalQuotes);
+    plainData.whenDividends(makePathRelativeToQuotes("yy"), dividends);
 
     quotesService.getQuotes(["ISIN3"]).subscribe(data => {
       expect(data.get(beforeYesterday).quote("ISIN3").close).toBe(1.3);
@@ -175,7 +175,7 @@ describe('QuotesService', () => {
         new Quote({name: "ISIN3", close: 1.3})
       ]})]);
 
-    alphaVantage.whenQuotes(quotesService.makeRelativePath("xx"), historicalQuotes);
+    alphaVantage.whenQuotes(makePathRelativeToQuotes("xx"), historicalQuotes);
 
     quotesService.getQuotes(["ISIN3"]).subscribe(data => {
       expect(data.get(beforeYesterday).quote("ISIN3").close).toBe(1.3);
@@ -227,8 +227,8 @@ describe('QuotesService', () => {
       ]}),
     ]);
 
-    six.whenQuotes(quotesService.makeRelativePath("xx"), historicalQuotes);
-    yahoo.whenQuotes(quotesService.makeRelativePath("yy"), totalReturnQuotes);
+    six.whenQuotes(makePathRelativeToQuotes("xx"), historicalQuotes);
+    yahoo.whenQuotes(makePathRelativeToQuotes("yy"), totalReturnQuotes);
 
     quotesService.getQuotes(["ISIN3"]).subscribe(data => {
       expect(data.get(threeDaysAgo).quote("ISIN3").close).toBe(1.3);
@@ -260,7 +260,7 @@ describe('QuotesService', () => {
       ]}),
     ]);
 
-    six.whenQuotes(quotesService.makeRelativePath("xx"), historicalQuotes);
+    six.whenQuotes(makePathRelativeToQuotes("xx"), historicalQuotes);
 
     quotesService.getQuotes(["ISIN3"]).subscribe(data => {
       expect(data.get(threeDaysAgo).quote("ISIN3").close).toBe(1.3);

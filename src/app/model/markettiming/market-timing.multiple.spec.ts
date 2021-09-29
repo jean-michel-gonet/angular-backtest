@@ -13,6 +13,10 @@ class MockMarketTiming implements MarketTiming {
 
   constructor(private assetName: string, private response: BearBull) {}
 
+  listQuotesOfInterest(): string[] {
+    return [this.assetName];
+  }
+
   record(instantQuotes: InstantQuotes): void {
     this.instant = instantQuotes.instant;
     this.candlestick = instantQuotes.quote(this.assetName);
@@ -39,6 +43,7 @@ describe("MultipleMarketTiming", () => {
       new MockMarketTiming("TWO", BearBull.BULL)
     ]);
     expect(multipleMarketTiming).toBeTruthy();
+    expect(multipleMarketTiming.listQuotesOfInterest()).toEqual(["ONE", "TWO"]);
   });
 
   it("Can implement AND / BULL scheme", () => {

@@ -82,6 +82,20 @@ export class RebalancingStrategy implements Strategy {
     this.smallestOperation = smallestOperation;
   }
 
+  /**
+   * Quotes of interest are all those from the assessor, plus the market timing.
+   */
+  listQuotesOfInterest(): string[] {
+    let quotesOfInterest: string[] = [];
+
+    quotesOfInterest = quotesOfInterest.concat(this.quotesAssessor.listQuotesOfInterest());
+    if (this.marketTiming) {
+      quotesOfInterest = quotesOfInterest.concat(this.marketTiming.listQuotesOfInterest());
+    }
+
+    return quotesOfInterest;
+  }
+
   applyStrategy(account: Account, instantQuotes: InstantQuotes): void {
     this.quotesAssessor.assessQuotes(instantQuotes);
     this.marketTiming.record(instantQuotes);

@@ -71,6 +71,10 @@ export class RsiMarketTiming implements MarketTiming {
     console.log("RSI Market Timing", this);
   }
 
+  listQuotesOfInterest(): string[] {
+    return [this.assetName];
+  }
+
   record(instantQuotes: InstantQuotes): void {
     let instant: Date = instantQuotes.instant;
     let quote: Quote = instantQuotes.quote(this.assetName);

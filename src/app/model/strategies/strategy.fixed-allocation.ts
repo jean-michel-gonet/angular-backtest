@@ -129,6 +129,16 @@ export class FixedAllocationStrategy implements Strategy {
     this.threshold = threshold;
     this.transfer = transfer;
   }
+  /**
+   * Liats all fixed allocations as quotes of interest.
+   */
+  listQuotesOfInterest(): string[] {
+    let quotesOfInterest: string[] = [];
+    this.fixedAllocations.forEach(f => {
+      quotesOfInterest.push(f.assetName);
+    });
+    return quotesOfInterest;
+  }
 
   /**
    * Applies the strategy.

@@ -1,4 +1,4 @@
-import { InstantQuotes } from './quotes';
+import { InstantQuotes, QuotesOfInterest } from './quotes';
 import { Account } from './account';
 import { Reporter, Report } from './reporting';
 
@@ -6,7 +6,7 @@ import { Reporter, Report } from './reporting';
  * Extend this class to implement a trading strategy.
  * @class Strategy.
  */
-export interface Strategy extends Reporter {
+export interface Strategy extends Reporter, QuotesOfInterest {
   /**
    * Receives regular quote updates, and executes trading operations
    * against an existing account.
@@ -24,6 +24,9 @@ export interface Strategy extends Reporter {
 export class NullStrategy implements Strategy {
   applyStrategy(account: Account, instantQuotes: InstantQuotes): void {
     // Let's do nothing.
+  }
+  listQuotesOfInterest(): string[] {
+    return [];
   }
   doRegister(report: Report): void {
     // Let's do nothing.

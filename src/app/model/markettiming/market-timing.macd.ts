@@ -77,6 +77,10 @@ export class MACDMarketTiming implements MarketTiming {
     this.signalEma = new ExponentialMovingAverage(signalPeriod);
   }
 
+  listQuotesOfInterest(): string[] {
+    return [this.assetName];
+  }
+
   record(instantQuotes: InstantQuotes): void {
     let instant: Date = instantQuotes.instant;
     let quote: Quote = instantQuotes.quote(this.assetName);

@@ -11,7 +11,11 @@ describe("RebalancingStrategy", () => {
 
     public id: string = "id";
 
-    constructor(public _bearBull: BearBull) {}
+    constructor(public _bearBull: BearBull, public quotesOfInterest: string[] = []) {}
+
+    listQuotesOfInterest(): string[] {
+      return this.quotesOfInterest;
+    }
 
     public set(bearBull: BearBull) {
       this._bearBull = bearBull;
@@ -36,6 +40,15 @@ describe("RebalancingStrategy", () => {
     constructor(targetPositions: TargetPositions = new TargetPositions()) {
       this.targetPositions = targetPositions;
     }
+
+    listQuotesOfInterest(): string[] {
+      let quotesOfInterest: string[] = [];
+      this.targetPositions.positions.forEach(p => {
+        quotesOfInterest.push(p.name);
+      });
+      return quotesOfInterest;
+    }
+
     assessQuotes(instantQuotes: InstantQuotes): void {
       instantQuotes.quotes.forEach(q => {
         let position = this.targetPositions.name(q.name);
@@ -69,8 +82,21 @@ describe("RebalancingStrategy", () => {
   let TUE3 = new Date(2021, 8 - 1, 24);
   let WED3 = new Date(2021, 8 - 1, 25);  // Position rebalance
 
-  it("Can send quotes to quotes assessor", () => {
+  it("Can list all quotes of interest", () => {
+    let targetPositions = new TargetPositions();
+    targetPositions.addTargetPosition(0, new Position({name: "A", parts: 10}));
+    targetPositions.addTargetPosition(1, new Position({name: "B", parts: 20}));
+    targetPositions.addTargetPosition(2, new Position({name: "C", parts: 50}));
 
+    let strategy = new RebalancingStrategy({
+      quotesAssessor: new MockQuotesAssessor(targetPositions),
+      marketTiming: new MockMarketTiming(BearBull.BEAR, ["D"]),
+      minimumCash: 1000,
+      smallestOperation: 100,
+      positionRebalancePeriod: new Period(Periodicity.WEEKLY, 3)
+    });
+
+    expect(strategy.listQuotesOfInterest()).toEqual(["A", "B", "C", "D"]);
   });
 
   it("Can buy initial investment, and then alternate rebalancing portfolio and positions", () => {

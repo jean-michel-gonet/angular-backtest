@@ -1,4 +1,4 @@
-import { InstantQuotes, Quote } from './quotes';
+import { InstantQuotes, Quote, QuotesOfInterest } from './quotes';
 import { Strategy, NullStrategy } from './strategy';
 import { Reporter, Report, ReportedData } from './reporting';
 import { StringUtils } from '../utils/string-utils';
@@ -145,7 +145,7 @@ class IAccount {
  * It also handles the buy and sell operations.
  * @class{Account}
  */
-export class Account extends IAccount implements Reporter {
+export class Account extends IAccount implements Reporter, QuotesOfInterest {
   private standingOrders: Order[] = [];
   private cashSettlements: Settlement[] = [];
   public accumulatedCosts: number = 0;
@@ -153,6 +153,18 @@ export class Account extends IAccount implements Reporter {
 
   constructor(obj = {} as IAccount) {
     super(obj);
+  }
+
+  /**
+   * Quotes of interest are all initial positions, plus quotes of interest
+   * of the strategy.
+   */
+  listQuotesOfInterest(): string[] {
+    let quotestOfInterest: string[] = this.strategy.listQuotesOfInterest();
+    this.positions.forEach(p => {
+      quotestOfInterest.push(p.name);
+    });
+    return quotestOfInterest;
   }
 
   /**

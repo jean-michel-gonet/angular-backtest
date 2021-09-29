@@ -1,5 +1,5 @@
 import { Position } from '../core/account';
-import { InstantQuotes } from '../core/quotes';
+import { InstantQuotes, QuotesOfInterest } from '../core/quotes';
 
 /**
  * Holds a list of target positions both by rank and by name.
@@ -34,7 +34,7 @@ export class TargetPositions {
  * Receives instant quotes to assess, and can build a list of
  * target positions useful to rebalance a portfolio.
  */
-export interface QuotesAssessor {
+export interface QuotesAssessor extends QuotesOfInterest {
   /**
    * Assess all provided quotes.
    * @param instantQuotes The quotes to assess.

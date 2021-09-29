@@ -3,6 +3,8 @@ import { Account } from './account';
 import { HistoricalQuotes, InstantQuotes } from './quotes';
 import { NullStrategy } from './strategy';
 import { Quote } from './quotes';
+import { QuotesService } from 'src/app/services/quotes/quotes.service';
+import { Observable } from 'rxjs';
 
 /**
  * A fake strategy, just to verify that it has been called.
@@ -22,11 +24,24 @@ class TestStrategy extends NullStrategy {
   }
 }
 
+/**
+ * A fake quotes service.
+ */
+class TestQuotesService implements QuotesService {
+  constructor(private historicalQuotes: HistoricalQuotes) {}
+  public getQuotes(names: string[]): Observable<HistoricalQuotes> {
+    return new Observable<HistoricalQuotes>(observer => {
+      observer.next(this.historicalQuotes);
+      observer.complete();
+    });
+  }
+}
+
 describe('Simulation', () => {
   it('Can create a new instance', () => {
     expect(new Simulation({
       accounts: [new Account({})],
-      historicalQuotes: new HistoricalQuotes([])
+      quoteService: new TestQuotesService(new HistoricalQuotes([]))
     })).toBeTruthy();
   });
 
@@ -38,7 +53,7 @@ describe('Simulation', () => {
 
   var simulation: Simulation = new Simulation({
     accounts: [new Account({strategy: strategy})],
-    historicalQuotes: new HistoricalQuotes([
+    quoteService: new TestQuotesService(new HistoricalQuotes([
       new InstantQuotes({
         instant: tomorrow,
         quotes:[
@@ -57,7 +72,7 @@ describe('Simulation', () => {
           new Quote({name: "ISIN1", close: 3})
         ]
       })
-    ])
+    ]))
   });
 
   it('Can run a simulation over the provided instantQuotes data', () => {
@@ -73,6 +88,7 @@ describe('Simulation', () => {
       tomorrow.valueOf(),
       afterTomorrow.valueOf()]);
   });
+
   it('Can run a simulation over the specified range of dates', () => {
     strategy.clear();
     simulation.run(today, afterTomorrow);

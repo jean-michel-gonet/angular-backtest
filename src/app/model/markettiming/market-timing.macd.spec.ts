@@ -6,7 +6,9 @@ import { ConfigurableSource, ConfigurablePreprocessing } from '../calculations/i
 
 describe('MACDMarketTiming', () => {
   it('Can create a new instance', () => {
-    expect(new MACDMarketTiming({assetName: "ANY"})).toBeTruthy();
+    let macdFilter = new MACDMarketTiming({assetName: "ANY"});
+    expect(macdFilter).toBeTruthy();
+    expect(macdFilter.listQuotesOfInterest()).toEqual(["ANY"]);
   });
 
   /**

@@ -12,6 +12,23 @@ import { NamedQuoteSource, QuoteProvider, DividendSource, DataSource, QuoteSourc
 import { ComputeDividends } from './quotes-dividends';
 import { QuotesFromAlphaVantageService } from './quotes-from-alphavantage.service';
 
+export interface QuotesService {
+  getQuotes(names: string[]): Observable<HistoricalQuotes>;
+}
+
+/**
+ * Forces relative path to quotes.
+ * @param uri A path or URI, absolute or relative.
+ * @returns Same if uri was absolute, or quotes folder if it was relative.
+ */
+export function makePathRelativeToQuotes(uri: string): string {
+  if (uri.startsWith('/')) {
+    return uri;
+  } else {
+    return "assets/quotes/" + uri;
+  }
+}
+
 /**
  * Retrieves instantQuotes data from a provider, and then broadcasts the
  * instantQuotes updates to all subscribers.
@@ -20,7 +37,7 @@ import { QuotesFromAlphaVantageService } from './quotes-from-alphavantage.servic
  @Injectable({
    providedIn: 'root'
  })
-export class QuotesService {
+export class QuotesServiceImpl implements QuotesService {
   constructor(private quotesFromSixService: QuotesFromSixService,
               private quotesFromYahooService: QuotesFromYahooService,
               private quotesFromInvestingService: QuotesFromInvestingService,
@@ -64,7 +81,7 @@ export class QuotesService {
   }
 
   private retrieveQuote(name: string, quoteSource: QuoteSource): Observable<HistoricalQuotes> {
-    let fileName = this.makeRelativePath(quoteSource.local.fileName);
+    let fileName = makePathRelativeToQuotes(quoteSource.local.fileName);
     let format = quoteSource.local.format;
 
     switch(format) {
@@ -87,7 +104,7 @@ export class QuotesService {
     if (dividendsSource) {
       let directDividendsSource: DataSource = dividendsSource.directDividends;
       if (directDividendsSource) {
-        let uri = this.makeRelativePath(directDividendsSource.uri);
+        let uri = makePathRelativeToQuotes(directDividendsSource.uri);
         return new Observable<HistoricalQuotes>(observer => {
           this.plainDataService.getHistoricalValues(uri).subscribe(directDividends => {
             ComputeDividends
@@ -133,14 +150,6 @@ export class QuotesService {
       });
     } else {
       return of(historicalQuotes);
-    }
-  }
-
-  public makeRelativePath(uri: string): string {
-    if (uri.startsWith('/')) {
-      return uri;
-    } else {
-      return "assets/quotes/" + uri;
     }
   }
 }

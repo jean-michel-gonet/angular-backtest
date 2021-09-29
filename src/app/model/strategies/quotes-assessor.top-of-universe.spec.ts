@@ -7,6 +7,15 @@ describe("TopOfUniverseQuotesAssessor", () => {
   class MockQuoteAssessor implements QuoteAssessor {
     quote: Quote;
 
+    /**
+     * Class constructor.
+     * Directly sets the assessment results.
+     * @param name The name / ticker of the asset.
+     * @param position The position of the asset in the universe.
+     * @param eligible Is this asset eligible.
+     * @param minimumAssessmentDuration Number of days a quote has to be
+     * assessed before assessment can be meaningful.
+     */
     constructor(public name: string, public position: number, public eligible: boolean, public minimumAssessmentDuration:number) {
     }
 
@@ -27,20 +36,26 @@ describe("TopOfUniverseQuotesAssessor", () => {
     }
   }
   class MockUniverse implements Universe {
-    constructor(){}
+    constructor(public names: string[] = []){}
 
     isRelatedToUniverse(name: string): boolean {
-      return true;
+      if (this.names.length > 0) {
+        return this.names.includes(name);
+      } else {
+        return true;
+      }
     }
 
     belongsToUniverse(name: string, instant: Date): boolean {
-      return true;
+      return this.isRelatedToUniverse(name);
     }
+
     worthAssessing(name: string, instant: Date, assessmentDays: number): boolean {
-      return true;
+      return this.isRelatedToUniverse(name);
     }
+
     allQuotes(instant?: Date): string[] {
-      throw new Error('Method not implemented.');
+      return this.names;
     }
   }
 
@@ -145,4 +160,39 @@ describe("TopOfUniverseQuotesAssessor", () => {
     expect(targetPositions.positions[0].name).withContext("First position").toBe("A");
     expect(targetPositions.positions[1].name).withContext("Second position").toBe("C");
   });
+
+  it("Can remove instruments not in the universe", () => {
+    let position = 0;
+    let quotesAssessor = new TopOfUniverseQuotesAssessor({
+      quoteAssessorFactory: (name: string) => {
+        return new MockQuoteAssessor(name, position, true, 10);
+      },
+      universe: new MockUniverse(["A", "B", "C", "G"]),
+      topOfIndex: 10
+    });
+
+    expect(quotesAssessor.listQuotesOfInterest())
+      .withContext("Before any assessment").toEqual(["A", "B", "C", "G"]);
+
+    quotesAssessor.assessQuotes(new InstantQuotes({instant: new Date(), quotes:[
+      new Quote({name: "A", close: 10}),
+      new Quote({name: "B", close: 10}),
+      new Quote({name: "C", close: 10}),
+      new Quote({name: "D", close: 10}),
+      new Quote({name: "E", close: 10}),
+      new Quote({name: "F", close: 10}),
+      new Quote({name: "G", close: 10})
+    ]}));
+
+    expect(quotesAssessor.listQuotesOfInterest())
+      .withContext("After doing assessment").toEqual(["A", "B", "C", "G"]);
+
+    let targetPositions = quotesAssessor.listTargetPositions(10000);
+    expect(targetPositions.positions.length).withContext("Number of target positions").toBe(4);
+    expect(targetPositions.positions[0].name).withContext("First position") .toBe("A");
+    expect(targetPositions.positions[1].name).withContext("Second position").toBe("B");
+    expect(targetPositions.positions[2].name).withContext("Third position") .toBe("C");
+    expect(targetPositions.positions[3].name).withContext("Fourth position").toBe("G");
+  });
+
 });

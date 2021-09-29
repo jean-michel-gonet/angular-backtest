@@ -203,6 +203,17 @@ export class Quote extends Candlestick {
   }
 }
 
+/**
+ * Interface impemented by any component needing to be provided with specific quotes.
+ * Typically, strategies require quotes.
+ */
+export interface QuotesOfInterest {
+  /**
+   * Return a list of quote names.
+   */
+  listQuotesOfInterest(): string[];
+}
+
 export class IInstantQuotes {
   instant: Date;
   quotes?: Quote[];

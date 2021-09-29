@@ -48,6 +48,10 @@ export class StopLossMarketTiming implements MarketTiming {
     this.atrIndicator = new AtrIndicator(numberOfPeriods, threshold);
   }
 
+  listQuotesOfInterest(): string[] {
+    return [this.assetName];
+  }
+
   record(instantQuotes: InstantQuotes): void {
     let instant: Date = instantQuotes.instant;
     let quote: Candlestick = instantQuotes.quote(this.assetName);

@@ -76,6 +76,10 @@ export class EMAMarketTiming implements MarketTiming {
     console.log("EMA Market Timing", this);
   }
 
+  listQuotesOfInterest(): string[] {
+    return [this.assetName];
+  }
+
   record(instantQuotes: InstantQuotes): void {
     let instant: Date = instantQuotes.instant;
     let quote: Quote = instantQuotes.quote(this.assetName);

@@ -49,6 +49,22 @@ export class BuyAndHoldStrategy implements Strategy {
   }
 
   /**
+   * Quotes of interest are the asset name, the asset name during bear, and
+   * the quotes of interest for market timing.
+   */
+  listQuotesOfInterest(): string[] {
+    let quotestOfInterest: string[] = [];
+    quotestOfInterest.push(this.assetName);
+    if (this.assetNameDuringBear) {
+      quotestOfInterest.push(this.assetNameDuringBear);
+    }
+    if (this.marketTiming) {
+      quotestOfInterest = quotestOfInterest.concat(this.marketTiming.listQuotesOfInterest());
+    }
+    return quotestOfInterest;
+  }
+
+  /**
    * Applies the Buy And Hold strategy when market timing is good,
    * and sells everything when market is bad.
    */

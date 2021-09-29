@@ -6,11 +6,12 @@ import { FixedAllocationStrategy, FixedAllocationStrategyErrorDuplicatedAssetNam
 
 describe('FixedAllocationStrategy', () => {
   it('Can create a new instance', () => {
-    expect(
-      new FixedAllocationStrategy({fixedAllocations:[
-        {assetName: "ASS1", allocation: 20},
-        {assetName: "ASS2", allocation: 10}]}))
-    .toBeTruthy();
+    let strategy = new FixedAllocationStrategy({fixedAllocations:[
+      {assetName: "ASS1", allocation: 20},
+      {assetName: "ASS2", allocation: 10}]});
+
+    expect(strategy).toBeTruthy();
+    expect(strategy.listQuotesOfInterest()).toEqual(["ASS1", "ASS2"]);
   });
 
   it('Does not accept null allocations', () => {
