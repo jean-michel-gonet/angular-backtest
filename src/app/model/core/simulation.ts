@@ -1,6 +1,7 @@
 import { Account } from './account';
 import { Report, NullReport } from './reporting';
 import { QuotesService } from 'src/app/services/quotes/quotes.service';
+import { Observable, Observer } from 'rxjs';
 
 interface SimulationConfig {
   quoteService: QuotesService;
@@ -32,35 +33,41 @@ export class Simulation {
    * Runs the simulation.
    * @param {Date} start Starts the simulation at this date.
    * @param {Date} end Ends the simulation at this date.
+   * @return Subscribe to the returned observable to launch simulation.
    */
-  run(start?:Date, end?:Date) {
+  run(start?:Date, end?:Date): Observable<void> {
     // Lists all quotes of interest:
     let quotesOfInterest: string[] = [];
     this.accounts.forEach(a => {
       quotesOfInterest.concat(a.listQuotesOfInterest());
     });
 
-    // Retrieves quotes of interest:
-    this.quoteService
-      .getQuotes(quotesOfInterest)
-      .subscribe(historicalQuotes => {
+    // As soon as an observer subscribes:
+    return new Observable(o => {
+      // Retrieves quotes of interest:
+      this.quoteService
+        .getQuotes(quotesOfInterest)
+        .subscribe(historicalQuotes => {
 
-        // Register all reporting sources:
-        historicalQuotes.doRegister(this.report);
-        this.accounts.forEach(account => {
-          account.doRegister(this.report);
-        });
-
-        // Run the simulation:
-        historicalQuotes.forEachDate(instantQuotes => {
-          this.report.startReportingCycle(instantQuotes.instant);
+          // Register all reporting sources:
+          historicalQuotes.doRegister(this.report);
           this.accounts.forEach(account => {
-            account.process(instantQuotes);
+            account.doRegister(this.report);
           });
-          this.report.collectReports();
-        }, start, end);
 
-        this.report.completeReport();
-      });
+          // Run the simulation:
+          historicalQuotes.forEachDate(instantQuotes => {
+            this.report.startReportingCycle(instantQuotes.instant);
+            this.accounts.forEach(account => {
+              account.process(instantQuotes);
+            });
+            this.report.collectReports();
+          }, start, end);
+
+          this.report.completeReport();
+          o.next();
+          o.complete();
+        });
+    });
   }
 }

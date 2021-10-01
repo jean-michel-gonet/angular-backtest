@@ -69,25 +69,23 @@ export class SimulationComponent {
 
   run(): void {
     console.log("Simulation starting at '" + this.start +
-                "', ending at '" + this.end +
-                "' based on [" + this.quotes + "]");
+                "', ending at '" + this.end + "'");
 
-    // Fetch the data:
-    this.quotesService.getQuotes(this.quotes)
-      .subscribe(historicalQuotes => {
-        // Set up the simulation:
-        let simulation: Simulation = new Simulation({
-          accounts: this.accountsComponent.asAccounts(),
-          historicalQuotes: historicalQuotes,
-          report: this.reportComponent.asReports()
-        });
-
-        // Run the simulation:
-        simulation
-          .run(this.start, this.end);
-
-        this.status = SimulationStatus.COMPLETED;
+    // Set up the simulation:
+    let simulation: Simulation = new Simulation({
+      accounts: this.accountsComponent.asAccounts(),
+      quoteService: this.quotesService,
+      report: this.reportComponent.asReports()
     });
+
+    // Run the simulation:
+    simulation
+      .run(this.start, this.end)
+      .subscribe(() => {
+        this.status = SimulationStatus.COMPLETED;
+      });
+
+    // Simulation is running until further notification:
     this.status = SimulationStatus.RUNNING;
   }
 

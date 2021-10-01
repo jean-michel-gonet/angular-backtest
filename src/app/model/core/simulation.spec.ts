@@ -75,9 +75,13 @@ describe('Simulation', () => {
     ]))
   });
 
-  it('Can run a simulation over the provided instantQuotes data', () => {
+  it('Can run a simulation over the provided instantQuotes data', (done: DoneFn) => {
     strategy.clear();
-    simulation.run();
+    let simulationFinished: boolean;
+    simulation.run().subscribe(() => {
+      simulationFinished = true;
+      done();
+    });
 
     // Expect the strategy to have been called the correct number of times:
     expect(strategy.numberOfCalls).toBe(3);
@@ -87,23 +91,39 @@ describe('Simulation', () => {
       today.valueOf(),
       tomorrow.valueOf(),
       afterTomorrow.valueOf()]);
+
+    expect(simulationFinished).toBeTrue();
   });
 
-  it('Can run a simulation over the specified range of dates', () => {
+  it('Can run a simulation over the specified range of dates 1', (done: DoneFn) => {
     strategy.clear();
-    simulation.run(today, afterTomorrow);
+    simulation.run(today, afterTomorrow).subscribe( () => {
+      done()
+    });
+
     expect(strategy.numberOfCalls).toBe(3);
-
+  });
+  it('Can run a simulation over the specified range of dates 2', (done: DoneFn) => {
     strategy.clear();
-    simulation.run(today, tomorrow);
+    simulation.run(today, tomorrow).subscribe( () => {
+      done();
+    });
     expect(strategy.numberOfCalls).toBe(2);
 
+  });
+  it('Can run a simulation over the specified range of dates 3', (done: DoneFn) => {
     strategy.clear();
-    simulation.run(tomorrow, afterTomorrow);
+    simulation.run(tomorrow, afterTomorrow).subscribe( () => {
+      done();
+    });
     expect(strategy.numberOfCalls).toBe(2);
 
+  });
+  it('Can run a simulation over the specified range of dates 4', (done: DoneFn) => {
     strategy.clear();
-    simulation.run(afterTomorrow, afterTomorrow);
+    simulation.run(afterTomorrow, afterTomorrow).subscribe( () => {
+      done();
+    });
     expect(strategy.numberOfCalls).toBe(1);
   });
 
