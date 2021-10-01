@@ -41,19 +41,6 @@ export class SimulationComponent {
     return this._end;
   }
 
-  @Input()
-  set quotes(value: string[]) {
-    if (typeof value == 'string') {
-      this._quotes = this.convertToArray(value);
-    } else {
-      this._quotes = value;
-    }
-  }
-  get quotes() {
-    return this._quotes;
-  }
-
-
   @ContentChild(ReportsComponent, {static: true})
   public reportComponent: ReportsComponent;
 
@@ -87,17 +74,6 @@ export class SimulationComponent {
 
     // Simulation is running until further notification:
     this.status = SimulationStatus.RUNNING;
-  }
-
-  private convertToArray(s: string): string[] {
-    let array: string[] = [];
-    if (s) {
-      let tokens = s.split(/[,.]/);
-      tokens.forEach(element => {
-        array.push(element.trim());
-      });
-    }
-    return array;
   }
 
   private convertToDate(s: string) {
