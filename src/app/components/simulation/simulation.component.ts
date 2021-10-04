@@ -19,7 +19,6 @@ export class SimulationComponent {
 
   private _start: Date;
   private _end: Date;
-  private _quotes: string[];
 
   @Input()
   set start(value: Date) {
