@@ -3,12 +3,14 @@ import { Observable } from 'rxjs';
 import { NamedQuoteSource } from '../app/services/quotes/quote-configuration';
 import { HistoricalQuotes } from '../app/model/core/quotes';
 import { YahooReader } from '../app/services/quotes/quotes-from-yahoo.service';
+import { YAHOO_CALLS_PER_MINUTE } from './market-stack.access-key';
 
 import { DownloadFrom } from './download-from';
+import { ThrottleLimit } from '../app/model/utils/throttle-limit';
 
 export class DownloadFromYahoo extends DownloadFrom {
-  // 1607367683677
-  // 1607365153
+  private throttle: ThrottleLimit = new ThrottleLimit(60000 / YAHOO_CALLS_PER_MINUTE);
+
   public downloadMoreFromYahoo(namedQuoteSource: NamedQuoteSource, dateFrom: Date): Observable<HistoricalQuotes> {
     let ticker = namedQuoteSource.quote.remote.ticker;
     let period1 = this.computePeriod(dateFrom);
@@ -20,15 +22,17 @@ export class DownloadFromYahoo extends DownloadFrom {
         + "&interval=1d&events=history&includeAdjustedClose=true";
 
     return new Observable<HistoricalQuotes>(observer => {
-      this.downloadFromUrl(url).subscribe(
-        remoteData => {
-          console.info(`Retrieved ${namedQuoteSource.name} as ${ticker} from Yahoo - ${remoteData.length} bytes of data`);
-          let reader = new YahooReader(namedQuoteSource.name, remoteData);
-          let remoteHistoricalQuotes = reader.asHistoricalQuotes();
-          observer.next(remoteHistoricalQuotes);
-        },
-        (error: any) => {
-          observer.error(new Error(`downloading from ${url}: ${error.message}`));
+      this.throttle.executeInDueTime(() => {
+        this.downloadFromUrl(url).subscribe(
+          remoteData => {
+            console.info(`Retrieved ${namedQuoteSource.name} as ${ticker} from Yahoo - ${remoteData.length} bytes of data`);
+            let reader = new YahooReader(namedQuoteSource.name, remoteData);
+            let remoteHistoricalQuotes = reader.asHistoricalQuotes();
+            observer.next(remoteHistoricalQuotes);
+          },
+          (error: any) => {
+            observer.error(new Error(`downloading from ${url}: ${error.message}`));
+          });
         });
     });
   }
