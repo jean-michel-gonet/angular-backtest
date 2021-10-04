@@ -2,7 +2,7 @@ import { readFile, writeFile} from 'fs';
 import { join } from 'path';
 import { Observable } from 'rxjs';
 
-import { SP500_SOURCES } from '../assets/quotes/configuration-sp500';
+import { QUOTE_SOURCES } from '../assets/quotes/configuration';
 
 import { NamedQuoteSource, QuoteProvider } from '../app/services/quotes/quote-configuration';
 import { HistoricalQuotes } from '../app/model/core/quotes';
@@ -12,14 +12,23 @@ import { DownloadFromYahoo } from './download-from-yahoo';
 import { DownloadFromMarketStack } from './download-from-marketstack';
 import { DownloadFromAlphaVantage } from './download-from-alpha-vantage';
 
+/**
+ * Refreshes all configured quotes from the remote locations.
+ * To execupte this script:
+ */
 export class RefreshQuotes {
   private downloadFromYahoo = new DownloadFromYahoo();
   private downloadFromMarketStack = new DownloadFromMarketStack();
   private downloadFromAlphaVantage = new DownloadFromAlphaVantage();
 
-  public refreshAll():void {
+  /**
+   * Refresh all specified quotes, or all available quotes.
+   * @param names If not empty, then refresh only those. When left empty,
+   * then refreshes all configured quotes.
+   */
+  public refreshQuotes(names: string[]):void {
     // Make the list of all elligible files to refresh:
-    let quotesToRefresh = this.quotesToRefresh();
+    let quotesToRefresh = this.quotesToRefresh(names);
 
     // Refresh each file.
     quotesToRefresh.forEach(namedQuoteSource => {
@@ -35,7 +44,7 @@ export class RefreshQuotes {
           }
           this.refresh(namedQuoteSource, localData).subscribe(
             updatedData => {
-              writeFile(fileName + "1", updatedData, {encoding: 'utf-8'}, () => {
+              writeFile(fileName, updatedData, {encoding: 'utf-8'}, () => {
                 console.info(`Finished processing ${namedQuoteSource.name} - ${fileName}`);
               }),
               (error: any) => {
@@ -89,7 +98,7 @@ export class RefreshQuotes {
         (error: any) => {
           observer.error(new Error(
             "retrieving " + namedQuoteSource.name +
-            " from YAHOO: " +error.message));
+            " in YAHOO format: " +error.message));
         });
     });
   }
@@ -120,7 +129,7 @@ export class RefreshQuotes {
         (error: any) => {
           observer.error(new Error(
             "retrieving " + namedQuoteSource.name +
-            " from MARKETSTACK: " +error.message));
+            " in INVESTING format: " +error.message));
         });
     });
   }
@@ -151,47 +160,57 @@ export class RefreshQuotes {
 
   /**
    * Establishes the list of all files to refresh.
+   * @param restrictTo If not empty, then refresh only sources corresponding to
+   * those names.
+   * @return All sources to refresh.
    */
-  private quotesToRefresh(): NamedQuoteSource[] {
+  private quotesToRefresh(restrictTo: string[]): NamedQuoteSource[] {
     let fileNames: Map<string, NamedQuoteSource> = new Map();
 
-    SP500_SOURCES.forEach(namedQuoteSource => {
+    QUOTE_SOURCES.forEach(namedQuoteSource => {
       let skipIt: boolean = false;
 
       let remote = namedQuoteSource.quote.remote;
       let local = namedQuoteSource.quote.local;
-      let format = local.format;
       let fileName = local.fileName;
 
       // If the local file is already in the list, then avoid repetition:
       if (fileNames.has(fileName)) {
         skipIt = true;
-      } else {
-        // If the remote location is not defined, then skip it.
-        if (remote) {
+      }
 
-          // If remote provider is not supported, then skip it.
-          let provider = remote.provider;
-          switch(provider) {
-            case QuoteProvider.YAHOO:
-            case QuoteProvider.MARKETSTACK:
-            case QuoteProvider.ALPHA_VANTAGE:
-              break;
-            default:
-              console.info(`Skipping ${fileName} - Remote provider ${provider} is not supported`);
-              skipIt = true;
-          }
-        } else {
-          console.info(`Skipping ${fileName} - Remote provider not specified`);
-          skipIt = true;
+      // If restriction list is set, but quote name is not in it, then skip it:
+      else if (restrictTo && restrictTo.length && !restrictTo.includes(namedQuoteSource.name)) {
+        console.info(`Skipping ${fileName} - Not in restriction list`);
+        skipIt = true;
+      }
+
+      // If the remote location is not defined, then skip it.
+      else if (!remote) {
+        console.info(`Skipping ${fileName} - Remote provider not specified`);
+        skipIt = true;
+      }
+
+      // Add the quote to the list, if possible:
+      else {
+        let provider = remote.provider;
+        switch(provider) {
+          case QuoteProvider.YAHOO:
+          case QuoteProvider.MARKETSTACK:
+          case QuoteProvider.ALPHA_VANTAGE:
+            break;
+          default:
+            // If remote provider is not supported, then skip it.
+            console.info(`Skipping ${fileName} - Remote provider ${provider} is not supported`);
+            skipIt = true;
         }
-
-        // If the local format is not supported, then skip it:
+        let format = local.format;
         switch(format) {
           case QuoteProvider.YAHOO:
           case QuoteProvider.INVESTING:
             break;
           default:
+            // If the local format is not supported, then skip it:
             console.info(`Skipping ${fileName} - Local format ${format} is not supported`);
             skipIt = true;
         }
@@ -208,5 +227,19 @@ export class RefreshQuotes {
   }
 }
 
-let refreshQuots: RefreshQuotes = new RefreshQuotes();
-refreshQuots.refreshAll();
+// To specify a list of named quotes:
+// npm run refresh-quotes SPY AGG AUG
+let namedQuotes: string[];
+let numberOfArguments = process.argv.length;
+if (numberOfArguments > 2) {
+  namedQuotes = [];
+  for(var n = 2; n < numberOfArguments; n++) {
+    namedQuotes.push(process.argv[n]);
+  }
+  console.log("Refreshing the following quotes: " + namedQuotes);
+} else {
+  console.log("Refreshing all configured quotes");
+}
+
+let refreshQuotes: RefreshQuotes = new RefreshQuotes();
+refreshQuotes.refreshQuotes(namedQuotes);
