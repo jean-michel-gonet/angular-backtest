@@ -181,7 +181,6 @@ export class RefreshQuotes {
 
       // If restriction list is set, but quote name is not in it, then skip it:
       else if (restrictTo && restrictTo.length && !restrictTo.includes(namedQuoteSource.name)) {
-        console.info(`Skipping ${fileName} - Not in restriction list`);
         skipIt = true;
       }
 
