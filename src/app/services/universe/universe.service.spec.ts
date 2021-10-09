@@ -2,7 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { NamedUniverse } from './universe-configuration';
 import { IUniverseConfigurationService, UniverseConfigurationService } from './universe-configuration.service';
-import { ConfigurableUniverse, ConfigurableUniverseEntry, ConfigurableUniverseEntryPeriod, UniverseService } from "./universe.service";
+import { ConfigurableUniverse, ConfigurableUniverseEntry, ConfigurableUniverseEntryPeriod, UniverseService, UniverseServiceErrorNoUniverseFound } from "./universe.service";
 
 describe("ConfigurableUniverseEntryPeriod", () =>{
   let DAY_00 = new Date(2021, 7 - 1,  1);
@@ -238,5 +238,11 @@ describe('UniverseService', () => {
     expect(universe).toBeTruthy();
     expect(universe.belongsToUniverse("A", new Date(2000, 6 - 1, 4))).toBeFalse();
     expect(universe.belongsToUniverse("A", new Date(2000, 6 - 1, 5))).toBeTrue();
+  });
+
+  it("Can throw an error when the requested universe is not configured", () => {
+    expect(() => {
+      universeService.getUniverse("XXX")
+    }).toThrow(new UniverseServiceErrorNoUniverseFound("XXX"));
   });
 });

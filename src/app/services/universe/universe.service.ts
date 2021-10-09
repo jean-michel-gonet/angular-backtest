@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Universe } from 'src/app/model/core/universe';
+import { BackTestingError } from 'src/app/model/utils/back-testing-error';
 import { NamedUniverse, NamedUniverseEntry, NamedUniverseEntryPeriod } from './universe-configuration';
 import { UniverseConfigurationService } from './universe-configuration.service';
 
@@ -138,6 +139,19 @@ export class ConfigurableUniverse implements Universe {
   }
 }
 
+
+export class UniverseServiceError extends BackTestingError  {
+  constructor(message: string) {
+    super(message);
+  }
+}
+
+export class UniverseServiceErrorNoUniverseFound extends UniverseServiceError {
+  constructor(name: string) {
+    super("No universe configured with name " + name);
+  }
+}
+
 /**
  * Retrieves the requested universe.
  * @class{UniverseService}
@@ -151,6 +165,10 @@ export class UniverseService {
 
   public getUniverse(name: string): Universe {
     let namedUniverse = this.universeConfigurationService.obtainNamedUniverse(name);
-    return new ConfigurableUniverse(namedUniverse);
+    if (namedUniverse) {
+      return new ConfigurableUniverse(namedUniverse);
+    } else {
+      throw new UniverseServiceErrorNoUniverseFound(name);
+    }
   }
 }
