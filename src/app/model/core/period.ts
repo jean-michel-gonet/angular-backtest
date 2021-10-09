@@ -19,7 +19,7 @@ export class Period {
    * Class constructor.
    * @param periodicity The length of the period.
    * @param day What day in the specified period. Default value is 1.
-   * @param skip
+   * @param skip Skip periods.
    */
   public constructor(public periodicity: Periodicity, public day: number = 1, public skip: number = 1) {}
 
