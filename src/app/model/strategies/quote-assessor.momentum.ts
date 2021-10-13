@@ -107,9 +107,15 @@ export class MomentumQuoteAssessor implements QuoteAssessor {
       this.movingAverage = this.exponentialMovingAverage.movingAverageOf(quote.close);
       this.quote = quote;
     }
+    this.minimumAssessmentDuration--;
   }
 
   isEligible(): boolean {
+    // If the assessment has not had a minimum duration, then it is not eligible.
+    if (this.minimumAssessmentDuration > 0) {
+      return false;
+    }
+
     // If there is a recent gap, then it is not eligible:
     if (this.gap > this.maximumAcceptableGap) {
       return false;
