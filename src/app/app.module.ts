@@ -23,6 +23,7 @@ import { RegularTransferComponent } from './components/transfer/regular-transfer
 
 import { StrategyComponent } from './components/strategies/strategy.component';
 import { BuyAndHoldStrategyComponent } from './components/strategies/b-a-h.strategy.component';
+import { MomentumStrategyComponent } from './components/strategies/momentum.strategy.component';
 import { EMAMarketTimingComponent } from './components/markettiming/market-timing.ema.component';
 import { SuperthonMarketTimingComponent } from './components/markettiming/market-timing.superthon.component';
 import { MACDMarketTimingComponent } from './components/markettiming/market-timing.macd.component';
@@ -87,6 +88,7 @@ import { AllocationComponent, FixedAllocationsStrategyComponent } from './compon
 
     BuyAndHoldStrategyComponent,
     FixedAllocationsStrategyComponent,
+    MomentumStrategyComponent,
     AllocationComponent,
     StrategyComponent,
 

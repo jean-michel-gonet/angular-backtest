@@ -1,6 +1,5 @@
 import { Component, ContentChild, Input } from '@angular/core';
 import { Period, Periodicity } from 'src/app/model/core/period';
-import { Strategy } from 'src/app/model/core/strategy';
 import { MomentumQuoteAssessor } from 'src/app/model/strategies/quote-assessor.momentum';
 import { TopOfUniverseQuotesAssessor } from 'src/app/model/strategies/quotes-assessor.top-of-universe';
 import { RebalancingStrategy } from 'src/app/model/strategies/strategy.rebalancing';
@@ -142,7 +141,7 @@ export class MomentumStrategyComponent {
   @ContentChild(MarketTimingComponent, {static: true})
   private marketTiming: MarketTimingComponent;
 
-  public asStrategy(): Strategy {
+  public asStrategy(): RebalancingStrategy {
     let quotesAssessor = new TopOfUniverseQuotesAssessor({
       quoteAssessorFactory: (name: string) => {
         return new MomentumQuoteAssessor({

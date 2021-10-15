@@ -103,7 +103,7 @@ export class OptimizationSuperthonPage implements OnInit {
 
     // Prepare the simulation:
     let simulation: Simulation = new Simulation({
-      historicalQuotes: this.historicalQuotes,
+      quoteService: this.quotesService,
       accounts: [new SwissQuoteAccount({
         id: "ACC",
         cash: 100000,

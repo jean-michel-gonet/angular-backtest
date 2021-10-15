@@ -1,6 +1,6 @@
 import { Component, Input, ContentChild } from '@angular/core';
 import { AccountsComponent } from '../accounts/accounts.component';
-import { QuotesService } from 'src/app/services/quotes/quotes.service';
+import { QuotesServiceImpl } from 'src/app/services/quotes/quotes.service';
 import { Simulation } from 'src/app/model/core/simulation';
 import { ReportsComponent } from '../reports/reports.component';
 
@@ -46,7 +46,7 @@ export class SimulationComponent {
   @ContentChild(AccountsComponent, {static: true})
   public accountsComponent: AccountsComponent;
 
-  constructor(private quotesService:QuotesService) {
+  constructor(private quotesService:QuotesServiceImpl) {
   }
 
   displayRunButton(): boolean  {
