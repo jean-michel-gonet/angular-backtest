@@ -39,7 +39,7 @@ export class Simulation {
     // Lists all quotes of interest:
     let quotesOfInterest: string[] = [];
     this.accounts.forEach(a => {
-      quotesOfInterest.concat(a.listQuotesOfInterest());
+      quotesOfInterest = quotesOfInterest.concat(a.listQuotesOfInterest());
     });
 
     // As soon as an observer subscribes:

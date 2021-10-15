@@ -1,5 +1,5 @@
 import { Simulation } from "./simulation";
-import { Account } from './account';
+import { Account, Position } from './account';
 import { HistoricalQuotes, InstantQuotes } from './quotes';
 import { NullStrategy } from './strategy';
 import { Quote } from './quotes';
@@ -13,6 +13,10 @@ class TestStrategy extends NullStrategy {
   numberOfCalls: number = 0;
   instants: number[] = [];
 
+  constructor(public quotesOfInterest: string[] = []) {
+    super();
+  }
+
   clear():void  {
     this.numberOfCalls = 0;
     this.instants = [];
@@ -22,14 +26,21 @@ class TestStrategy extends NullStrategy {
     this.numberOfCalls++;
     this.instants.push(instantQuotes.instant.valueOf());
   }
+
+  listQuotesOfInterest(): string[] {
+    return this.quotesOfInterest;
+  }
+
 }
 
 /**
  * A fake quotes service.
  */
 class TestQuotesService implements QuotesService {
+  public requestedQuoteNames: string[];
   constructor(private historicalQuotes: HistoricalQuotes) {}
   public getQuotes(names: string[]): Observable<HistoricalQuotes> {
+    this.requestedQuoteNames = names;
     return new Observable<HistoricalQuotes>(observer => {
       observer.next(this.historicalQuotes);
       observer.complete();
@@ -38,11 +49,25 @@ class TestQuotesService implements QuotesService {
 }
 
 describe('Simulation', () => {
-  it('Can create a new instance', () => {
-    expect(new Simulation({
-      accounts: [new Account({})],
-      quoteService: new TestQuotesService(new HistoricalQuotes([]))
-    })).toBeTruthy();
+  it('Can create a new instance', (done: DoneFn) => {
+    let quotesService = new TestQuotesService(new HistoricalQuotes([]));
+    let simulation = new Simulation({
+      accounts: [new Account({
+        positions: [
+          new Position({
+            name: "P1"
+          }),
+          new Position({
+            name: "P2"
+          })],
+        strategy: new TestStrategy(["X1", "X2"])})],
+      quoteService: quotesService
+    });
+    expect(simulation).toBeTruthy();
+    simulation.run().subscribe(() => {
+      done();
+    })
+    expect(quotesService.requestedQuoteNames).toEqual(["X1", "X2", "P1", "P2"]);
   });
 
   let now: Date = new Date();
