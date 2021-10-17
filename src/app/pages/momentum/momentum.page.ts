@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './momentum.page.html',
   styleUrls: ['./momentum.page.css']
 })
-export class AllocationsAllWeatherPage implements OnInit {
+export class MomentumPage implements OnInit {
 
   constructor() { }
 

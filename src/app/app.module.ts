@@ -49,6 +49,7 @@ import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear
 import { OptimizationEmaPage } from './pages/optimization/optimization-ema.page';
 import { OptimizationSuperthonPage } from './pages/optimization/optimization-superthon.page';
 import { AllocationsAllWeatherPage } from './pages/allocations/all-weather.page';
+import { MomentumPage } from './pages/momentum/momentum.page';
 import { AllocationComponent, FixedAllocationsStrategyComponent } from './components/strategies/fixed-allocation.strategy.component';
 
 @NgModule({
@@ -101,7 +102,8 @@ import { AllocationComponent, FixedAllocationsStrategyComponent } from './compon
     InvestingInBearPage,
     OptimizationEmaPage,
     OptimizationSuperthonPage,
-    AllocationsAllWeatherPage
+    AllocationsAllWeatherPage,
+    MomentumPage
   ],
   imports: [
     BrowserModule,
