@@ -1,71 +1,56 @@
 import { Periodicity } from '../../core/period';
 import { Candlestick } from '../../core/quotes';
 import { ConfigurableSource, ConfigurablePreprocessing } from './configurable-source';
-import { GapIndicator, GapIndicatorConfigurationGapWidthError } from "./gap-indicator";
+import { GapIndicator } from "./gap-indicator";
 
 describe('GapIndicator', () => {
   it('Can create a new instance', () => {
     expect(new GapIndicator({
-      numberOfPeriods: 20,
+      gapDistance: 20,
+      numberOfPeriods: 2,
       periodicity: Periodicity.MONTHLY,
       source: ConfigurableSource.HIGH,
-      preprocessing: ConfigurablePreprocessing.TYPICAL,
-      gapWidth: 2
+      preprocessing: ConfigurablePreprocessing.TYPICAL
     }))
     .toBeTruthy();
   });
 
-  it('Can raise an exception if gapWidth is larger than numberOfPeriods', () => {
-    expect(() => {
-      new GapIndicator({
-        numberOfPeriods: 2,
-        periodicity: Periodicity.MONTHLY,
-        gapWidth: 20
-      });
-    }).toThrow(new GapIndicatorConfigurationGapWidthError(2, 20))
-  });
-
   it('Can calculate gap of only one value, and is always zero', () => {
-    let gap = new GapIndicator({numberOfPeriods: 13, periodicity: Periodicity.DAILY});
+    let gap = new GapIndicator({gapDistance: 13, periodicity: Periodicity.DAILY});
     expect(gap.calculate(new Date(2019, 7 - 1, 19), new Candlestick({close: 30.00}))).toBeCloseTo(0, 2);
   });
 
-  it('Can calculate gap over 5 days', () => {
-    let gap = new GapIndicator({numberOfPeriods: 5, periodicity: Periodicity.DAILY});
-    gap.calculate(new Date(2019, 7 - 1,   9), new Candlestick({close: 46.00}));
-    gap.calculate(new Date(2019, 7 - 1,  10), new Candlestick({close: 47.00}));
-    gap.calculate(new Date(2019, 7 - 1,  11), new Candlestick({close: 48.00}));
-    gap.calculate(new Date(2019, 7 - 1,  12), new Candlestick({close: 49.00}));
+  it('Can calculate gap of 1 period over 5 days', () => {
+    let gap = new GapIndicator({gapDistance: 5, numberOfPeriods: 1, periodicity: Periodicity.DAILY});
+    gap.calculate(new Date(2019, 7 - 1,   9), new Candlestick({close: 40.00}));
+    gap.calculate(new Date(2019, 7 - 1,  10), new Candlestick({close: 41.00}));
+    gap.calculate(new Date(2019, 7 - 1,  11), new Candlestick({close: 42.00}));
+    gap.calculate(new Date(2019, 7 - 1,  12), new Candlestick({close: 43.00}));
+    gap.calculate(new Date(2019, 7 - 1,  13), new Candlestick({close: 44.00}));
 
-    let maximumGap = gap.calculate(new Date(2019, 7 - 1,  13), new Candlestick({close: 50.00}));
-    expect(maximumGap).toBeCloseTo(0.087, 4);
+    let gapValue = gap.calculate(new Date(2019, 7 - 1,  14), new Candlestick({close: 45.00}));
+    expect(gapValue).withContext("The 14th").toBeCloseTo(0.0250, 4);
+
+    gapValue = gap.calculate(new Date(2019, 7 - 1,  15), new Candlestick({close: 46.00}));
+    expect(gapValue).withContext("The 15th").toBeCloseTo(0.0244, 4);
   });
 
-  it('Can calculate gap as always a positive value', () => {
-    let gap = new GapIndicator({numberOfPeriods: 5, periodicity: Periodicity.DAILY});
-    gap.calculate(new Date(2019, 7 - 1,   9), new Candlestick({close: 50.00}));
-    gap.calculate(new Date(2019, 7 - 1,  10), new Candlestick({close: 49.00}));
-    gap.calculate(new Date(2019, 7 - 1,  11), new Candlestick({close: 48.00}));
-    gap.calculate(new Date(2019, 7 - 1,  12), new Candlestick({close: 47.00}));
+  it('Can calculate gap of 2 periods over 5 days', () => {
+    let gap = new GapIndicator({gapDistance: 5, numberOfPeriods: 2, periodicity: Periodicity.DAILY});
+    gap.calculate(new Date(2019, 7 - 1,   9), new Candlestick({close: 40.00}));
+    gap.calculate(new Date(2019, 7 - 1,  10), new Candlestick({close: 41.00}));
+    gap.calculate(new Date(2019, 7 - 1,  11), new Candlestick({close: 42.00}));
+    gap.calculate(new Date(2019, 7 - 1,  12), new Candlestick({close: 43.00}));
+    gap.calculate(new Date(2019, 7 - 1,  13), new Candlestick({close: 44.00}));
 
-    let maximumGap = gap.calculate(new Date(2019, 7 - 1,  13), new Candlestick({close: 46.00}));
-    expect(maximumGap).toBeCloseTo(0.08, 4);
+    let gapValue = gap.calculate(new Date(2019, 7 - 1,  14), new Candlestick({close: 45.00}));
+    expect(gapValue).withContext("The 14th").toBeCloseTo(0.0500, 4);
+
+    gapValue = gap.calculate(new Date(2019, 7 - 1,  15), new Candlestick({close: 46.00}));
+    expect(gapValue).withContext("The 15th").toBeCloseTo(0.0500, 4);
+
+    gapValue = gap.calculate(new Date(2019, 7 - 1,  16), new Candlestick({close: 47.00}));
+    expect(gapValue).withContext("The 16th").toBeCloseTo(0.0488, 4);
   });
 
-  it('Can calculate gap over 10 days', () => {
-    let gap = new GapIndicator({numberOfPeriods: 10, periodicity: Periodicity.DAILY});
-    gap.calculate(new Date(2019, 7 - 1,   3), new Candlestick({close: 40.00}));
-    gap.calculate(new Date(2019, 7 - 1,   4), new Candlestick({close: 41.00}));
-    gap.calculate(new Date(2019, 7 - 1,   5), new Candlestick({close: 42.00}));
-    gap.calculate(new Date(2019, 7 - 1,   6), new Candlestick({close: 43.00}));
-    gap.calculate(new Date(2019, 7 - 1,   7), new Candlestick({close: 44.00}));
-    gap.calculate(new Date(2019, 7 - 1,   8), new Candlestick({close: 45.00}));
-    gap.calculate(new Date(2019, 7 - 1,   9), new Candlestick({close: 46.00}));
-    gap.calculate(new Date(2019, 7 - 1,  10), new Candlestick({close: 47.00}));
-    gap.calculate(new Date(2019, 7 - 1,  11), new Candlestick({close: 48.00}));
-    gap.calculate(new Date(2019, 7 - 1,  12), new Candlestick({close: 49.00}));
-
-    let maximumGap = gap.calculate(new Date(2019, 7 - 1,  13), new Candlestick({close: 50.00}));
-    expect(maximumGap).toBeCloseTo(0.25, 4);
-  });
 });

@@ -2,6 +2,12 @@ import { IndicatorConfiguration, IndicatorConfigurationError } from './configura
 import { ConfigurableSourceIndicator } from './configurable-source-indicator';
 
 export interface GapIndicatorConfiguration extends IndicatorConfiguration {
+  /**
+   * The number of periods we're looking in the past.
+   * Gaps occurring beyond this number are not considered any more.
+   **/
+  gapDistance: number;
+
    /**
     * The width of the gap itself, number of periods considered when measuring a gap.
     * For example, consider the following series "10, 10, 10, 15, 20, 25, 25":
@@ -12,12 +18,7 @@ export interface GapIndicatorConfiguration extends IndicatorConfiguration {
     * - If the gap width is 3, then the gap is 15, because that's maximum variation
     *   between any two values that are either 1, 2 or 3 positions apart.
     **/
-  numberOfPeriods: number;
-  /**
-   * The number of periods we're looking in the past.
-   * Gaps occurring beyond this number are not considered any more.
-   **/
-  gapWidth?: number;
+  numberOfPeriods?: number;
 }
 
 export class GapIndicatorConfigurationGapWidthError extends IndicatorConfigurationError {
@@ -41,7 +42,7 @@ interface Gap {
  */
 export class GapIndicator extends ConfigurableSourceIndicator {
   public numberOfPeriods: number;
-  public gapWidth: number;
+  public gapDistance: number;
   private gaps: Gap[];
   private maximumGap: Gap;
 
@@ -52,15 +53,11 @@ export class GapIndicator extends ConfigurableSourceIndicator {
   constructor(obj = {} as GapIndicatorConfiguration) {
     super(obj);
     let {
-      numberOfPeriods,
-      gapWidth = numberOfPeriods
+      gapDistance,
+      numberOfPeriods = 1
     } = obj;
+    this.gapDistance = gapDistance;
     this.numberOfPeriods = numberOfPeriods;
-    if (this.numberOfPeriods < gapWidth) {
-      throw new GapIndicatorConfigurationgapWidthError(this.numberOfPeriods, gapWidth);
-    } else {
-      this.gapWidth = gapWidth;
-    }
     this.gaps = [];
   }
 
@@ -71,11 +68,11 @@ export class GapIndicator extends ConfigurableSourceIndicator {
       this.maximumGap = incomingGap;
     }
 
-    if (this.gaps.length > this.numberOfPeriods) {
+    if (this.gaps.length > this.gapDistance) {
       let outgoingGap = this.gaps.shift();
       outgoingGap.gapWith = null;
       if (outgoingGap == this.maximumGap) {
-        this.maximumGap == null;
+        this.maximumGap = null;
         this.gaps.forEach(gap => {
           if (!this.maximumGap || this.maximumGap.gap < gap.gap) {
             this.maximumGap = gap;
@@ -94,8 +91,8 @@ export class GapIndicator extends ConfigurableSourceIndicator {
       gap: 0
     };
 
-    let from = Math.max(0, this.gaps.length - this.gapWidth);
     let to = this.gaps.length - 1;
+    let from = Math.max(0, this.gaps.length - this.numberOfPeriods);
     for(var i = from; i <= to; i++) {
       let previousValue:number = this.gaps[i].value;
       let gap = Math.abs(value - previousValue) / previousValue;
