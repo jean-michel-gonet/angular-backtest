@@ -86,8 +86,8 @@ export class MomentumQuoteAssessor implements QuoteAssessor {
       periodicity: Periodicity.DAILY});
 
     this.gapIndicator = new GapIndicator({
-      numberOfPeriods: gapDistance,
-      maximumGapWidth: 1,
+      gapDistance: gapDistance,
+      numberOfPeriods: 1,
       periodicity: Periodicity.DAILY});
 
     this.averageTrueRange = new AverageTrueRange(averageTrueRangeDistance);
