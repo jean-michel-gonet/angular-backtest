@@ -9,7 +9,6 @@ import { ConfigurableSource, ConfigurablePreprocessing, IndicatorConfiguration }
  * Counter-example: ATR...
  */
 export abstract class ConfigurableSourceIndicator implements Indicator {
-  public numberOfPeriods: number;
   public periodicity: Periodicity;
   public source: ConfigurableSource;
   public preprocessing: ConfigurablePreprocessing;
@@ -19,13 +18,11 @@ export abstract class ConfigurableSourceIndicator implements Indicator {
 
   constructor(obj = {} as IndicatorConfiguration) {
     let {
-      numberOfPeriods,
       periodicity,
       source = ConfigurableSource.CLOSE,
       preprocessing = ConfigurablePreprocessing.LAST
     } = obj;
 
-    this.numberOfPeriods = numberOfPeriods;
     this.periodicity = periodicity;
     this.source = source;
     this.preprocessing = preprocessing;

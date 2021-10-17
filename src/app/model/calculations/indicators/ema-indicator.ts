@@ -2,6 +2,10 @@ import { ConfigurableSourceIndicator } from './configurable-source-indicator';
 import { ExponentialMovingAverage } from '../moving-average/exponential-moving-average';
 import { IndicatorConfiguration } from './configurable-source';
 
+interface EmaIndicatorConfiguration extends IndicatorConfiguration {
+  numberOfPeriods: number;
+}
+
 /**
  * Calculates the Exponential Moving Average of the quotes provided
  * along time.
@@ -17,7 +21,7 @@ import { IndicatorConfiguration } from './configurable-source';
  * period. In this case, the first day of each month.
  */
 export class EmaIndicator extends ConfigurableSourceIndicator {
-
+  public numberOfPeriods: number;
   public exponential: ExponentialMovingAverage;
 
   /**
@@ -26,9 +30,13 @@ export class EmaIndicator extends ConfigurableSourceIndicator {
    * the moving average.
    * @param {Periodicity} periodicity The period period length.
    */
-  constructor(obj = {} as IndicatorConfiguration) {
+  constructor(obj = {} as EmaIndicatorConfiguration) {
     super(obj);
-    this.exponential = new ExponentialMovingAverage(this.numberOfPeriods);
+    let {
+      numberOfPeriods = 12
+    } = obj;
+    this.exponential = new ExponentialMovingAverage(numberOfPeriods);
+    this.numberOfPeriods = numberOfPeriods;
   }
 
   /**

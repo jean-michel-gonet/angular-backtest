@@ -2,14 +2,28 @@ import { IndicatorConfiguration, IndicatorConfigurationError } from './configura
 import { ConfigurableSourceIndicator } from './configurable-source-indicator';
 
 export interface GapIndicatorConfiguration extends IndicatorConfiguration {
-  /** Maximum number of periods considered when measuging a gap. **/
-  maximumGapWidth?: number;
+   /**
+    * The width of the gap itself, number of periods considered when measuring a gap.
+    * For example, consider the following series "10, 10, 10, 15, 20, 25, 25":
+    * - If the gap width is 1, then the gap is 5, because that's the maximum variation
+    *   between any two consecutive values.
+    * - If the gap width is 2, then the gap is 10, because that's maximum variation
+    *   between any two values that are either 1 or 2 positions apart.
+    * - If the gap width is 3, then the gap is 15, because that's maximum variation
+    *   between any two values that are either 1, 2 or 3 positions apart.
+    **/
+  numberOfPeriods: number;
+  /**
+   * The number of periods we're looking in the past.
+   * Gaps occurring beyond this number are not considered any more.
+   **/
+  gapWidth?: number;
 }
 
-export class GapIndicatorConfigurationMaximumGapWidthError extends IndicatorConfigurationError {
-  constructor(public numberOfPeriods: number, public maximumGapWidth: number) {
-    super("Gap Indicator numberOfPeriods smaller than maximumGapWidth: "
-      + numberOfPeriods + " < " + maximumGapWidth);
+export class GapIndicatorConfigurationGapWidthError extends IndicatorConfigurationError {
+  constructor(public numberOfPeriods: number, public gapWidth: number) {
+    super("Gap Indicator numberOfPeriods smaller than gapWidth: "
+      + numberOfPeriods + " < " + gapWidth);
   }
 }
 
@@ -23,11 +37,11 @@ interface Gap {
 /**
  * Looks for the maximum gap between any two values within the relevant period
  * range.
- * Gaps are calculated over a maximum of {#maximumGapWidth} number of periods.
+ * Gaps are calculated over a maximum of {#gapWidth} number of periods.
  */
 export class GapIndicator extends ConfigurableSourceIndicator {
-  public maximumGapWidth: number;
-  private positionCounter: number = 0;
+  public numberOfPeriods: number;
+  public gapWidth: number;
   private gaps: Gap[];
   private maximumGap: Gap;
 
@@ -38,12 +52,14 @@ export class GapIndicator extends ConfigurableSourceIndicator {
   constructor(obj = {} as GapIndicatorConfiguration) {
     super(obj);
     let {
-      maximumGapWidth = this.numberOfPeriods
+      numberOfPeriods,
+      gapWidth = numberOfPeriods
     } = obj;
-    if (this.numberOfPeriods < maximumGapWidth) {
-      throw new GapIndicatorConfigurationMaximumGapWidthError(this.numberOfPeriods, maximumGapWidth);
+    this.numberOfPeriods = numberOfPeriods;
+    if (this.numberOfPeriods < gapWidth) {
+      throw new GapIndicatorConfigurationgapWidthError(this.numberOfPeriods, gapWidth);
     } else {
-      this.maximumGapWidth = maximumGapWidth;
+      this.gapWidth = gapWidth;
     }
     this.gaps = [];
   }
@@ -78,7 +94,7 @@ export class GapIndicator extends ConfigurableSourceIndicator {
       gap: 0
     };
 
-    let from = Math.max(0, this.gaps.length - this.maximumGapWidth);
+    let from = Math.max(0, this.gaps.length - this.gapWidth);
     let to = this.gaps.length - 1;
     for(var i = from; i <= to; i++) {
       let previousValue:number = this.gaps[i].value;

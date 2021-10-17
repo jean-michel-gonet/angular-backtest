@@ -1,0 +1,42 @@
+<h1>Momentum Strategy</h1>
+
+
+<simulation start="2011-03-01" end="2021-03-01">
+  <reports>
+    <highcharts-report title="Momentum Strategy on S&P 500">
+      <chart-report-configuration show="SP500.CLOSE"  showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
+      <chart-report-configuration show="ACC.NAV"      showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
+      <chart-report-annotation show="MT.BULL" color="blue"></chart-report-annotation>
+      <chart-report-annotation show="MT.BEAR" color="red"></chart-report-annotation>
+    </highcharts-report>
+  </reports>
+  <accounts>
+    <swiss-quote id="ACC" cash="400000">
+      <strategy>
+        <momentum id = "ID100"
+                  universeName = "SP500_UNIVERSE" <!-- Investment universe is the SP500 -->
+                  tradingDayOfTheWeek = "3"       <!-- Trade only on Wednesdays -->
+                  momentumDistance = "90"         <!-- Rank all assets in universe with 90 days Volatility Adjusted Momentum -->
+                  topOfIndex = "20"               <!-- Consider only the 100 top assets in the ranking -->
+                  maximumAcceptableGap = "0.15"   <!-- Disqualify assets with gaps bigger than 15% ... -->
+                  gapDistance = "100"             <!-- ... in the last 100 days. -->
+                  movingAverageDistance = "100"   <!-- Also disqualify assets whose current quote is below 100 days moving average -->
+                  averageTrueRangeDistance = "20" <!-- Calculate ATR over 20 days -->
+                  maximumAtrPerPosition = "0.001" <!-- Daily variation of 10 basis points -->
+                  smallestOperation = "400"       <!-- Don't do any operation smaller than 400$ -->
+                  minimumCash = "10000">          <!-- Keep 10000 in cash -->
+          <market-timing>
+            <!-- Don't buy assets if index value is below 200 days EMA -->
+            <ema-filter id="MT"
+                        assetName="SP500"
+                        source="CLOSE"
+                        periodicity="DAILY"
+                        fastPeriod="5"
+                        slowPeriod="200"
+                        status="BEAR"></ema-filter>
+          </market-timing>
+        </momentum>
+      </strategy>
+    </swiss-quote>
+  </accounts>
+</simulation>

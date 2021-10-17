@@ -21,7 +21,6 @@ describe('ConfigurableSourceIndicator', () => {
     let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
 
     let ema = new TestMovingCalculator({
-      numberOfPeriods:5,
       periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.CLOSE,
       preprocessing: ConfigurablePreprocessing.LAST
@@ -40,7 +39,6 @@ describe('ConfigurableSourceIndicator', () => {
     let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
 
     let ema = new TestMovingCalculator({
-      numberOfPeriods:5,
       periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.OPEN,
       preprocessing: ConfigurablePreprocessing.LAST
@@ -59,7 +57,6 @@ describe('ConfigurableSourceIndicator', () => {
     let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
 
     let ema = new TestMovingCalculator({
-      numberOfPeriods:5,
       periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.HIGH,
       preprocessing: ConfigurablePreprocessing.LAST
@@ -78,7 +75,6 @@ describe('ConfigurableSourceIndicator', () => {
     let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
 
     let ema = new TestMovingCalculator({
-      numberOfPeriods:5,
       periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.LOW,
       preprocessing: ConfigurablePreprocessing.LAST
@@ -98,7 +94,6 @@ describe('ConfigurableSourceIndicator', () => {
     let lowValues: number[] = [38.86, 39.71, 38.88, 38.75, 38.77];
 
     let ema = new TestMovingCalculator({
-      numberOfPeriods:5,
       periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.MID,
       preprocessing: ConfigurablePreprocessing.LAST
@@ -117,7 +112,6 @@ describe('ConfigurableSourceIndicator', () => {
     let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
 
     let ema = new TestMovingCalculator({
-      numberOfPeriods:5,
       periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.CLOSE,
       preprocessing: ConfigurablePreprocessing.FIRST
@@ -138,7 +132,6 @@ describe('ConfigurableSourceIndicator', () => {
     let mean = total / values.length;
 
     let ema = new TestMovingCalculator({
-      numberOfPeriods:5,
       periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.CLOSE,
       preprocessing: ConfigurablePreprocessing.TYPICAL
@@ -157,7 +150,6 @@ describe('ConfigurableSourceIndicator', () => {
     let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
 
     let ema = new TestMovingCalculator({
-      numberOfPeriods:5,
       periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.CLOSE,
       preprocessing: ConfigurablePreprocessing.MEDIAN
@@ -176,7 +168,6 @@ describe('ConfigurableSourceIndicator', () => {
     let values: number[] = [39.86, 40.71, 40.88, 40.75, 40.77, 39.93];
 
     let ema = new TestMovingCalculator({
-      numberOfPeriods:5,
       periodicity: Periodicity.WEEKLY,
       source: ConfigurableSource.CLOSE,
       preprocessing: ConfigurablePreprocessing.MEDIAN

@@ -3,6 +3,9 @@ import { IndicatorConfiguration } from './configurable-source';
 import { ExponentialRegression } from '../statistics/exponential-regression';
 import { Period, Periodicity } from '../../core/period';
 
+interface MomentumIndicatorConfiguration extends IndicatorConfiguration {
+  numberOfPeriods: number;
+}
 
 class Record {
   private exponential: ExponentialRegression;
@@ -30,12 +33,14 @@ class Record {
 }
 
 export class MomentumIndicator extends ConfigurableSourceIndicator {
+  public numberOfPeriods: number;
   private records: Record[];
   public cagr: number;
   public r2: number;
 
-  constructor(configuration = {} as IndicatorConfiguration) {
+  constructor(configuration = {} as MomentumIndicatorConfiguration) {
     super(configuration);
+    this.numberOfPeriods = configuration.numberOfPeriods;
     this.records = [];
   }
 

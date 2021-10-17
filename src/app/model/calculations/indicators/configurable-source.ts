@@ -24,7 +24,6 @@ export class IndicatorConfigurationError extends Error {
 }
 
 export interface IndicatorConfiguration {
-  numberOfPeriods: number;
   periodicity: Periodicity;
   source?: ConfigurableSource;
   preprocessing?: ConfigurablePreprocessing;

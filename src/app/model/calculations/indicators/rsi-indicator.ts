@@ -23,10 +23,12 @@ export enum RsiAverage {
 }
 
 export interface RsiIndicatorConfiguration extends IndicatorConfiguration {
+  numberOfPeriods: number;
   rsiAverage?: RsiAverage;
 }
 
 export class RsiIndicator extends ConfigurableSourceIndicator {
+  public numberOfPeriods: number;
   private previous: number;
   private smmaU: MovingAverage;
   private smmaD: MovingAverage;
@@ -37,6 +39,8 @@ export class RsiIndicator extends ConfigurableSourceIndicator {
       rsiAverage = RsiAverage.WILDER,
       numberOfPeriods = 14
     } = configuration;
+
+    this.numberOfPeriods = numberOfPeriods;
 
     switch(rsiAverage) {
       case RsiAverage.WILDER:

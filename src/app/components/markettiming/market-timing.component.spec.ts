@@ -17,6 +17,7 @@ import { RsiMarketTimingComponent } from './market-timing.rsi.component';
 import { RsiMarketTiming } from 'src/app/model/markettiming/market-timing.rsi';
 import { MomentumMarketTimingComponent } from './market-timing.momentum.component';
 import { MomentumMarketTiming } from 'src/app/model/markettiming/market-timing.momentum';
+import { EmaIndicator } from 'src/app/model/calculations/indicators/ema-indicator';
 
 @Component({
   selector: 'parent',
@@ -103,7 +104,8 @@ describe('MarketTimingComponent', () => {
       expect(emaFilter.threshold).toBe(1.5);
       expect(emaFilter.offset).toBe(3.3);
       expect(emaFilter.bearBull()).toBe(BearBull.BEAR);
-      expect(emaFilter.fastEMA.numberOfPeriods).toBe(7);
+      let fastEMA = emaFilter.fastEMA as EmaIndicator;
+      expect(fastEMA.numberOfPeriods).toBe(7);
       expect(emaFilter.fastEMA.periodicity).toBe(Periodicity.WEEKLY);
       expect(emaFilter.fastEMA.source).toBe(ConfigurableSource.OPEN);
       expect(emaFilter.fastEMA.preprocessing).toBe(ConfigurablePreprocessing.MEDIAN);

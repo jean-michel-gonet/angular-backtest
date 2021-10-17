@@ -1,7 +1,7 @@
 import { Periodicity } from '../../core/period';
 import { Candlestick } from '../../core/quotes';
 import { ConfigurableSource, ConfigurablePreprocessing } from './configurable-source';
-import { GapIndicator, GapIndicatorConfigurationMaximumGapWidthError } from "./gap-indicator";
+import { GapIndicator, GapIndicatorConfigurationGapWidthError } from "./gap-indicator";
 
 describe('GapIndicator', () => {
   it('Can create a new instance', () => {
@@ -10,19 +10,19 @@ describe('GapIndicator', () => {
       periodicity: Periodicity.MONTHLY,
       source: ConfigurableSource.HIGH,
       preprocessing: ConfigurablePreprocessing.TYPICAL,
-      maximumGapWidth: 2
+      gapWidth: 2
     }))
     .toBeTruthy();
   });
 
-  it('Can raise an exception if maximumGapWidth is larger than numberOfPeriods', () => {
+  it('Can raise an exception if gapWidth is larger than numberOfPeriods', () => {
     expect(() => {
       new GapIndicator({
         numberOfPeriods: 2,
         periodicity: Periodicity.MONTHLY,
-        maximumGapWidth: 20
+        gapWidth: 20
       });
-    }).toThrow(new GapIndicatorConfigurationMaximumGapWidthError(2, 20))
+    }).toThrow(new GapIndicatorConfigurationGapWidthError(2, 20))
   });
 
   it('Can calculate gap of only one value, and is always zero', () => {

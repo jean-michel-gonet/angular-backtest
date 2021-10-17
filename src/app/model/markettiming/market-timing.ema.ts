@@ -3,7 +3,9 @@ import { Quote, InstantQuotes } from '../core/quotes';
 import { Report, ReportedData } from '../core/reporting';
 import { Periodicity } from '../core/period';
 import { ConfigurableSource, ConfigurablePreprocessing } from '../calculations/indicators/configurable-source';
+import { ConfigurableSourceIndicator } from '../calculations/indicators/configurable-source-indicator';
 import { EmaIndicator } from '../calculations/indicators/ema-indicator';
+import { ImmediateIndicator } from '../calculations/indicators/immediate-indicator';
 
 export class IEMAMarketTiming {
   assetName: string;
@@ -32,7 +34,7 @@ export class EMAMarketTiming implements MarketTiming {
   threshold: number;
   offset: number;
 
-  fastEMA: EmaIndicator;
+  fastEMA: ConfigurableSourceIndicator;
   fastEMAValue: number;
   slowEMA: EmaIndicator;
   slowEMAValue: number;
@@ -67,13 +69,21 @@ export class EMAMarketTiming implements MarketTiming {
       preprocessing: preprocessing
     });
 
-    this.fastEMA = new EmaIndicator({
-      numberOfPeriods: fastPeriod,
-      periodicity: periodicity,
-      source: source,
-      preprocessing: preprocessing
-    });
-    console.log("EMA Market Timing", this);
+    if (fastPeriod) {
+      this.fastEMA = new EmaIndicator({
+        numberOfPeriods: fastPeriod,
+        periodicity: periodicity,
+        source: source,
+        preprocessing: preprocessing
+      });
+    } else {
+      this.fastEMA = new ImmediateIndicator({
+        periodicity: periodicity,
+        source: source,
+        preprocessing: preprocessing
+      })
+    }
+    console.log("EMAMarketTiming " + this.id, this);
   }
 
   listQuotesOfInterest(): string[] {
@@ -98,7 +108,7 @@ export class EMAMarketTiming implements MarketTiming {
         case BearBull.BULL:
           if (this.difference < this.offset - this.threshold) {
             this.status = BearBull.BEAR;
-            console.log("EMA Market Timing",
+            console.log("EMAMarketTiming " + this.id,
               this.difference,
               this.offset - this.threshold,
               ++this.numberOfTriggers,
@@ -109,7 +119,7 @@ export class EMAMarketTiming implements MarketTiming {
         case BearBull.BEAR:
           if (this.difference > this.offset + this.threshold) {
             this.status = BearBull.BULL;
-            console.log("EMA Market Timing",
+            console.log("EMAMarketTiming " + this.id,
               this.difference,
               this.offset - this.threshold,
               ++this.numberOfTriggers,
