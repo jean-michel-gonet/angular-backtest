@@ -53,18 +53,24 @@ export class QuotesServiceImpl implements QuotesService {
       let namedQuoteSource: NamedQuoteSource =
         this.quotesConfigurationService.obtainNamedQuoteSource(name);
 
-      let quoteRetriever: Observable<HistoricalQuotes> = new Observable<HistoricalQuotes>(observer => {
-        this.retrieveQuote(namedQuoteSource.name, namedQuoteSource.quote).subscribe(h1 => {
-            this.applyDividends(h1, namedQuoteSource).subscribe(h2 => {
-              this.applyExchangeRate(h2, namedQuoteSource).subscribe(h3 => {
-                observer.next(h3);
-                observer.complete();
-              })
+      if (namedQuoteSource) {
+        let quoteRetriever: Observable<HistoricalQuotes> = new Observable<HistoricalQuotes>(observer => {
+          this.retrieveQuote(namedQuoteSource.name, namedQuoteSource.quote).subscribe(h1 => {
+              this.applyDividends(h1, namedQuoteSource).subscribe(h2 => {
+                this.applyExchangeRate(h2, namedQuoteSource).subscribe(h3 => {
+                  observer.next(h3);
+                  observer.complete();
+                })
+              });
             });
-          });
-      });
-      quoteRetrievers.push(quoteRetriever);
+        });
+        quoteRetrievers.push(quoteRetriever);
+      } else {
+        console.error("Skipping " + name  + " because is not defined among named quote sourcesx");
+      }
     });
+
+    console.log("Retrieving " + quoteRetrievers.length  +" quote sources");
 
     return forkJoin(quoteRetrievers)
       .pipe(map((separatedHistoricalQuotes: HistoricalQuotes[]) => {

@@ -45,9 +45,11 @@ export class Simulation {
     // As soon as an observer subscribes:
     return new Observable(o => {
       // Retrieves quotes of interest:
+      console.log("Simulation: Retrieving quotes of interest", quotesOfInterest);
       this.quoteService
         .getQuotes(quotesOfInterest)
         .subscribe(historicalQuotes => {
+          console.log("Simulation: Retrieved quotes of interest");
 
           // Register all reporting sources:
           historicalQuotes.doRegister(this.report);
@@ -56,7 +58,9 @@ export class Simulation {
           });
 
           // Run the simulation:
+          console.log("Simulation: All accounts registerd, let's start");
           historicalQuotes.forEachDate(instantQuotes => {
+            console.log("Simulation: ", instantQuotes.instant);
             this.report.startReportingCycle(instantQuotes.instant);
             this.accounts.forEach(account => {
               account.process(instantQuotes);
