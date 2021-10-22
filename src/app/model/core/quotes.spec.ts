@@ -226,6 +226,7 @@ describe('HistoricalQuotes', () => {
     );
 
     expect(historicalQuotes.get(beforeYesterday2).quotes)
+      .withContext("Before yesterday")
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN1", close: 1.1}),
         new Quote({name: "ISIN2", close: 1.2}),
@@ -233,6 +234,7 @@ describe('HistoricalQuotes', () => {
       ]));
 
     expect(historicalQuotes.get(yesterday2).quotes)
+    .withContext("Yesterday")
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN1", close: 2.1}),
         new Quote({name: "ISIN2", close: 2.2}),
@@ -240,6 +242,7 @@ describe('HistoricalQuotes', () => {
       ]));
 
     expect(historicalQuotes.get(today2).quotes)
+      .withContext("Today")
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN3", close: 3.3})
       ]));
@@ -268,23 +271,27 @@ describe('HistoricalQuotes', () => {
     );
 
     expect(historicalQuotes.get(threeDaysAgo2).quotes)
+      .withContext("Three days ago")
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN1", close: 3.1}),
         new Quote({name: "ISIN2", close: 3.2})
       ]));
 
     expect(historicalQuotes.get(beforeYesterday2).quotes)
+      .withContext("Before yesterday")
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN3", close: 2.3})
       ]));
 
     expect(historicalQuotes.get(yesterday2).quotes)
+      .withContext("Yesterday")
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN1", close: 1.1}),
         new Quote({name: "ISIN2", close: 1.2})
       ]));
 
     expect(historicalQuotes.get(today2).quotes)
+      .withContext("Today")
       .toEqual(jasmine.arrayWithExactContents([
         new Quote({name: "ISIN3", close: 0.3})
       ]));

@@ -366,7 +366,6 @@ export class HistoricalQuotes implements Reporter {
    * @param {HistoricalQuotes} otherHistoricalQuotes The other data.
    */
   merge(otherHistoricalQuotes: HistoricalQuotes):void {
-    let mergedHistoricalQuotes: InstantQuotes[] = [];
     let otherIndex: number = 0;
     let thisIndex: number = 0;
 
@@ -375,39 +374,28 @@ export class HistoricalQuotes implements Reporter {
       let otherEntry = otherHistoricalQuotes.instantQuotes[otherIndex];
       let thisEntry = this.instantQuotes[thisIndex];
       if (thisEntry.instant.valueOf() == otherEntry.instant.valueOf()) {
-        let mergedEntry: InstantQuotes = new InstantQuotes(thisEntry);
-        mergedEntry.add(otherEntry.quotes);
-        mergedHistoricalQuotes.push(mergedEntry);
+        thisEntry.add(otherEntry.quotes);
         thisIndex++;
         otherIndex++;
+        continue;
       }
 
       if (thisEntry.instant.valueOf() < otherEntry.instant.valueOf()) {
-        let mergedEntry: InstantQuotes = new InstantQuotes(thisEntry);
-        mergedHistoricalQuotes.push(mergedEntry);
         thisIndex++;
+        continue;
       }
 
       if (thisEntry.instant.valueOf() > otherEntry.instant.valueOf()) {
-        let mergedEntry: InstantQuotes = new InstantQuotes(otherEntry);
-        mergedHistoricalQuotes.push(mergedEntry);
+        this.instantQuotes.splice(thisIndex, 0, otherEntry);
+        thisIndex++;
         otherIndex++;
+        continue;
       }
     }
 
     while(otherIndex < otherHistoricalQuotes.instantQuotes.length) {
-      let otherEntry = otherHistoricalQuotes.instantQuotes[otherIndex];
-      mergedHistoricalQuotes.push(new InstantQuotes(otherEntry));
-      otherIndex++;
+      this.instantQuotes.push(otherHistoricalQuotes.instantQuotes[otherIndex++]);
     }
-
-    while(thisIndex < this.instantQuotes.length) {
-      let thisEntry = this.instantQuotes[thisIndex];
-      mergedHistoricalQuotes.push(new InstantQuotes(thisEntry));
-      thisIndex++;
-    }
-
-    this.instantQuotes = mergedHistoricalQuotes;
   }
 
   /**
