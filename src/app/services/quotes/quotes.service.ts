@@ -58,6 +58,7 @@ export class QuotesServiceImpl implements QuotesService {
           this.retrieveQuote(namedQuoteSource.name, namedQuoteSource.quote).subscribe(h1 => {
               this.applyDividends(h1, namedQuoteSource).subscribe(h2 => {
                 this.applyExchangeRate(h2, namedQuoteSource).subscribe(h3 => {
+                  console.log("Loaded " + namedQuoteSource.name, namedQuoteSource);
                   observer.next(h3);
                   observer.complete();
                 })
@@ -66,7 +67,7 @@ export class QuotesServiceImpl implements QuotesService {
         });
         quoteRetrievers.push(quoteRetriever);
       } else {
-        console.error("Skipping " + name  + " because is not defined among named quote sourcesx");
+        console.warn("Skipping " + name  + " because is not defined among named quote sources");
       }
     });
 
@@ -75,13 +76,19 @@ export class QuotesServiceImpl implements QuotesService {
     return forkJoin(quoteRetrievers)
       .pipe(map((separatedHistoricalQuotes: HistoricalQuotes[]) => {
         let mergedHistoricalQuotes: HistoricalQuotes;
+        console.log("Loaded " + separatedHistoricalQuotes.length + " separated historical quotes to merge");
+        let n = 0;
         separatedHistoricalQuotes.forEach((singleHistoricalQuotes: HistoricalQuotes) => {
           if (mergedHistoricalQuotes) {
             mergedHistoricalQuotes.merge(singleHistoricalQuotes);
           } else {
             mergedHistoricalQuotes = singleHistoricalQuotes;
           }
+          if (n++ % 20 == 0) {
+            console.log("Merged " + n++ + " historical quotes so far...");
+          }
         });
+        console.log("Finished merging historical quotes: " + n + " in total");
         return mergedHistoricalQuotes;
       }));
   }

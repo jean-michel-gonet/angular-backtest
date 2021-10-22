@@ -257,8 +257,9 @@ export class QuotesFromInvestingService implements IQuotesService {
 
   getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
     return this.http.get(source,{responseType: 'text'}).pipe(map(s => {
-        let investingReader: InvestingReader = new InvestingReader(name, s as string);
-        return investingReader.asHistoricalQuotes();
-      }));
+      console.log("Retrieved " + s.length + " chars in investing.com format for " + name, source);
+      let investingReader: InvestingReader = new InvestingReader(name, s as string);
+      return investingReader.asHistoricalQuotes();
+    }));
   }
 }

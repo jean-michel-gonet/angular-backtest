@@ -86,8 +86,9 @@ export class QuotesFromSixService implements IQuotesService {
 
   getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
     return this.http.get(source).pipe(map(sixData => {
-        let sixReader: SixReader = new SixReader(name, sixData);
-        return sixReader.asHistoricalQuotes();
-      }));
+      console.log("Retrieved six data for " + name, source);
+      let sixReader: SixReader = new SixReader(name, sixData);
+      return sixReader.asHistoricalQuotes();
+    }));
   }
 }

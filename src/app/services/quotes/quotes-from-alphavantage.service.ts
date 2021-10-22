@@ -79,8 +79,9 @@ export class QuotesFromAlphaVantageService implements IQuotesService {
 
   getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
     return this.http.get(source).pipe(map(alphaVantageData => {
-        let alphaVantageReader: AlphaVantageReader = new AlphaVantageReader(name, alphaVantageData);
-        return alphaVantageReader.asHistoricalQuotes();
-      }));
+      console.log("Retrieved Alpha Vantage data for " + name, source);
+      let reader: AlphaVantageReader = new AlphaVantageReader(name, alphaVantageData);
+      return reader.asHistoricalQuotes();
+    }));
   }
 }

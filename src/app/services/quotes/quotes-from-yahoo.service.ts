@@ -159,9 +159,20 @@ export class QuotesFromYahooService implements IQuotesService {
   }
 
   getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
-    return this.http.get(source,{responseType: 'text'}).pipe(map(s => {
-        let yahooReader: YahooReader = new YahooReader(name, s as string);
-        return yahooReader.asHistoricalQuotes();
-      }));
+    return new Observable<HistoricalQuotes>(observer => {
+      this.http.get(source,{responseType: 'text'}).subscribe(
+        data => {
+          console.log("Retrieved " + data.length + " chars in yahoo format for " + name, source);
+          let yahooReader: YahooReader = new YahooReader(name, data);
+          observer.next(yahooReader.asHistoricalQuotes());
+          observer.complete();
+        },
+        error => {
+          console.warn("Error retrieving data in yahoo format for " + name, error);
+          observer.next(new HistoricalQuotes([]));
+          observer.complete();
+        }
+      );
+    });
   }
 }
