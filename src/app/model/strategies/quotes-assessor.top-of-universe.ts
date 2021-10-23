@@ -118,7 +118,7 @@ export class TopOfUniverseQuotesAssessor implements QuotesAssessor {
   private rankQuoteAssessments(): QuoteAssessor[] {
     let rankedQuoteAssessments: QuoteAssessor[] = [];
     this.quoteAssessors.forEach(quoteAssessor => {
-      if (this.universe.belongsToUniverse(quoteAssessor.quote.name, this.instant)) {
+      if (this.universe.belongsToUniverse(quoteAssessor.name, this.instant)) {
         rankedQuoteAssessments.push(quoteAssessor);
       }
     });

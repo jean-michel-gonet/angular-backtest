@@ -1,10 +1,16 @@
 import { InstantQuotes, Quote} from '../core/quotes';
+import { BackTestingError } from '../utils/back-testing-error';
 
 /**
  * A quote assessor is able to assess several characteristics of one single
  * quote to help in strategies that apply regular rebalance.
  */
 export interface QuoteAssessor {
+  /**
+   * The name of the quote being assessed.
+   */
+  name: string;
+
   /**
    * The latest quote of the assessed instrument.
    */
@@ -47,6 +53,24 @@ export interface QuoteAssessor {
    * @return The number of parts to buy.
    */
   partsToBuy(nav: number): number;
+}
+
+/**
+ * Common ancestor for errors related to quote assessors.
+ */
+export class QuoteAssessorError extends BackTestingError  {
+  constructor(message: string) {
+    super(message);
+  }
+}
+
+/**
+ * Quote name is crucial element of quote assessor.
+ */
+export class NoNameSuppliedQuoteAssessorError extends QuoteAssessorError {
+  constructor() {
+    super("No name supplied to assessor");
+  }
 }
 
 /**

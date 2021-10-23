@@ -195,12 +195,16 @@ export class RebalancingStrategy implements Strategy {
   }
 
   doRegister(report: Report): void {
-    throw new Error('Method not implemented.');
+    if (this.marketTiming) {
+      this.marketTiming.doRegister(report);
+    }
   }
+
   startReportingCycle(instant: Date): void {
-    throw new Error('Method not implemented.');
+    // Nothing to do
   }
+
   reportTo(report: Report): void {
-    throw new Error('Method not implemented.');
+    // Nothing to do
   }
 }

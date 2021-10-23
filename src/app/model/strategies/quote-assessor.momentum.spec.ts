@@ -1,7 +1,20 @@
 import { InstantQuotes, Quote} from '../core/quotes';
+import { NoNameSuppliedQuoteAssessorError, QuoteAssessor } from './quote-assessor';
 import { MomentumQuoteAssessor } from './quote-assessor.momentum';
 
 describe("MomentumQuoteAssessor", () => {
+  it("Can throw an error if name is not supplied", () => {
+    expect(() => {
+      new MomentumQuoteAssessor({
+        name: null
+      });
+    }).toThrow(new NoNameSuppliedQuoteAssessorError());
+    let quoteAssessor: QuoteAssessor = new MomentumQuoteAssessor({
+      name: "A"
+    });
+    expect(quoteAssessor.name).toBe("A");
+  });
+
   it("Can indicate the minimum assessment duration", () => {
     let assessor1 = new MomentumQuoteAssessor({
       name: "A",

@@ -4,7 +4,7 @@ import { ExponentialMovingAverage } from '../calculations/moving-average/exponen
 import { AverageTrueRange } from '../calculations/statistics/average-true-range';
 import { Periodicity } from '../core/period';
 import { InstantQuotes, Quote} from '../core/quotes';
-import { QuoteAssessor } from './quote-assessor';
+import { NoNameSuppliedQuoteAssessorError, QuoteAssessor } from './quote-assessor';
 
 /**
  * Configuration for {@link MomentumQuoteAssessor}.
@@ -77,7 +77,11 @@ export class MomentumQuoteAssessor implements QuoteAssessor {
       maximumAtrPerPosition = 0.04,
       movingAverageDistance = 100
     } = obj;
-    this.name = name;
+    if (name) {
+      this.name = name;
+    } else {
+      throw new NoNameSuppliedQuoteAssessorError();
+    }
     this.minimumAssessmentDuration = Math.max(
       momentumDistance, gapDistance, averageTrueRangeDistance, movingAverageDistance);
 
