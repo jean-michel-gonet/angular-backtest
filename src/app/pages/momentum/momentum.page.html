@@ -1,6 +1,6 @@
 <h1>Momentum Strategy</h1>
 
-<simulation start="2000-03-01" end="2010-03-01">
+<simulation start="2005-01-01" end="2008-01-01">
   <reports>
     <highcharts-report title="Momentum Strategy on S&P 500">
       <chart-report-configuration show="SP500.CLOSE"  showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
@@ -23,7 +23,8 @@
                   averageTrueRangeDistance = "20"
                   maximumAtrPerPosition = "0.001"
                   smallestOperation = "400"
-                  minimumCash = "10000">
+                  minimumCash = "10000"
+                  startInvesting = "2007-01-01">
           <market-timing>
             <ema-filter id="MT"
                         assetName="SP500"
@@ -37,5 +38,4 @@
       </strategy>
     </swiss-quote>
   </accounts>
-
 </simulation>
