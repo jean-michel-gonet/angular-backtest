@@ -104,9 +104,11 @@ export class RebalancingStrategy implements Strategy {
     let portfolioRebalancePeriod = this.portfolioRebalancePeriod.changeOfPeriod(instantQuotes.instant);
 
     if (positionRebalancePeriod) {
+      console.log("Position rebalancing", positionRebalancePeriod)
       let targetPositions = this.quotesAssessor.listTargetPositions(account.nav());
       this.rebalancePositions(account, targetPositions);
     } else if (portfolioRebalancePeriod) {
+      console.log("Portfolio rebalancing", portfolioRebalancePeriod)
       let targetPositions = this.quotesAssessor.listTargetPositions(account.nav());
       this.rebalancePortfolio(account, targetPositions);
     }

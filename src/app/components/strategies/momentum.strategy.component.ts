@@ -33,9 +33,6 @@ export class MomentumStrategyComponent {
   }
 
   @Input()
-  private id: string;
-
-  @Input()
   universeName: string;
 
   _momentumDistance: number;
@@ -52,7 +49,7 @@ export class MomentumStrategyComponent {
   @Input()
   set maximumAcceptableGap(value: number) {
     if (typeof value == 'string') {
-      this._maximumAcceptableGap = parseInt(value);
+      this._maximumAcceptableGap = parseFloat(value);
     } else {
       this._maximumAcceptableGap = value;
     }
@@ -82,7 +79,7 @@ export class MomentumStrategyComponent {
   @Input()
   set maximumAtrPerPosition(value: number) {
     if (typeof value == 'string') {
-      this._maximumAtrPerPosition = parseInt(value);
+      this._maximumAtrPerPosition = parseFloat(value);
     } else {
       this._maximumAtrPerPosition = value;
     }
@@ -157,9 +154,9 @@ export class MomentumStrategyComponent {
       topOfIndex: this._topOfIndex,
       universe: this.universService.getUniverse(this.universeName)
     });
-    let positionRebalancePeriod = new Period(Periodicity.WEEKLY, this.tradingDayOfTheWeek, 2);
+    let positionRebalancePeriod = new Period(Periodicity.WEEKLY, this._tradingDayOfTheWeek, 2);
 
-    let portfolioRebalancePeriod = new Period(Periodicity.WEEKLY, this.tradingDayOfTheWeek)
+    let portfolioRebalancePeriod = new Period(Periodicity.WEEKLY, this._tradingDayOfTheWeek)
     let marketTiming = this.marketTiming.asMarketTiming();
     return new RebalancingStrategy({
       minimumCash: this._minimumCash,

@@ -48,20 +48,26 @@ interface MomentumQuoteAssessorConfig {
  */
 export class MomentumQuoteAssessor implements QuoteAssessor {
   public name: string;
-  public quote: Quote;
+  public momentumDistance: number;
+  public maximumAcceptableGap: number;
+  public gapDistance: number;
+  public averageTrueRangeDistance: number;
+  public maximumAtrPerPosition: number;
+  public movingAverageDistance: number;
+
   public minimumAssessmentDuration: number;
+
+  public quote: Quote;
   public atr: number;
   public gap: number
   public movingAverage: number;
   public momentum: number;
 
-  maximumAcceptableGap: number;
-  maximumAtrPerPosition: number;
-
   private momentumIndicator: MomentumIndicator;
   private exponentialMovingAverage: ExponentialMovingAverage;
   private gapIndicator: GapIndicator;
   private averageTrueRange: AverageTrueRange;
+
 
   /**
    * Class constructor
@@ -77,6 +83,15 @@ export class MomentumQuoteAssessor implements QuoteAssessor {
       maximumAtrPerPosition = 0.04,
       movingAverageDistance = 100
     } = obj;
+
+    this.name = name;
+    this.momentumDistance = momentumDistance;
+    this.maximumAcceptableGap = maximumAcceptableGap;
+    this.gapDistance = gapDistance;
+    this.averageTrueRangeDistance = averageTrueRangeDistance;
+    this.maximumAtrPerPosition = maximumAtrPerPosition;
+    this.movingAverageDistance = movingAverageDistance;
+
     if (name) {
       this.name = name;
     } else {
