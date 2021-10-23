@@ -36,7 +36,7 @@ describe('MomentumStrategyComponent', () => {
     });
   }));
 
-  it('Can instantiate a Fixed Allocation Strategy without transfer', () => {
+  it('Can instantiate a Momentum Strategy', () => {
     TestBed.overrideComponent(TestWrapperComponent, {
         set: {
           template: `
@@ -51,7 +51,8 @@ describe('MomentumStrategyComponent', () => {
                         tradingDayOfTheWeek = "3"
                         smallestOperation = "400"
                         universeName = "SP500_UNIVERSE"
-                        minimumCash = "11000">
+                        minimumCash = "11000"
+                        startInvesting = "2020-12-25">
                 <market-timing>
                   <candle-filter></candle-filter>
                 </market-timing>
@@ -70,6 +71,7 @@ describe('MomentumStrategyComponent', () => {
 
       expect(rebalancingStrategy.minimumCash).withContext("minimumCash").toBe(11000);
       expect(rebalancingStrategy.smallestOperation).withContext("smallestOperation").toBe(400);
+      expect(rebalancingStrategy.startInvesting).withContext("startInvesting").toEqual(new Date(2020, 12 - 1, 25));
 
       expect(rebalancingStrategy.portfolioRebalancePeriod.day)
         .withContext("portfolioRebalancePeriod.day").toBe(3);

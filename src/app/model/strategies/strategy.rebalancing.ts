@@ -37,6 +37,13 @@ export interface RebalancingStrategyConfig {
 
   /** Smallest operation for rebalancing. */
   smallestOperation?: number;
+
+  /**
+   * Don't start investing before this date.
+   * Set this to allow the indicators to settle.
+   * Leave it undefined or null to start investing immediately.
+   */
+  startInvesting?: Date;
 }
 
 /**
@@ -59,6 +66,7 @@ export class RebalancingStrategy implements Strategy {
   public portfolioRebalancePeriod: Period;
   public minimumCash: number;
   public smallestOperation: number;
+  public startInvesting: Date;
 
   /**
    * Class constructor.
@@ -71,7 +79,8 @@ export class RebalancingStrategy implements Strategy {
       positionRebalancePeriod,
       portfolioRebalancePeriod,
       minimumCash = 0,
-      smallestOperation = 400
+      smallestOperation = 400,
+      startInvesting
     } = obj;
 
     this.quotesAssessor = quotesAssessor;
@@ -80,6 +89,7 @@ export class RebalancingStrategy implements Strategy {
     this.portfolioRebalancePeriod = portfolioRebalancePeriod ? portfolioRebalancePeriod : positionRebalancePeriod;
     this.minimumCash = minimumCash;
     this.smallestOperation = smallestOperation;
+    this.startInvesting = startInvesting;
   }
 
   /**
@@ -99,18 +109,19 @@ export class RebalancingStrategy implements Strategy {
   applyStrategy(account: Account, instantQuotes: InstantQuotes): void {
     this.quotesAssessor.assessQuotes(instantQuotes);
     this.marketTiming.record(instantQuotes);
-
     let positionRebalancePeriod = this.positionRebalancePeriod.changeOfPeriod(instantQuotes.instant);
     let portfolioRebalancePeriod = this.portfolioRebalancePeriod.changeOfPeriod(instantQuotes.instant);
 
-    if (positionRebalancePeriod) {
-      console.log("Position rebalancing", positionRebalancePeriod)
-      let targetPositions = this.quotesAssessor.listTargetPositions(account.nav());
-      this.rebalancePositions(account, targetPositions);
-    } else if (portfolioRebalancePeriod) {
-      console.log("Portfolio rebalancing", portfolioRebalancePeriod)
-      let targetPositions = this.quotesAssessor.listTargetPositions(account.nav());
-      this.rebalancePortfolio(account, targetPositions);
+    if (!this.startInvesting || this.startInvesting.getTime() <= instantQuotes.instant.getTime()) {
+      if (positionRebalancePeriod) {
+        console.log("Position rebalancing", positionRebalancePeriod)
+        let targetPositions = this.quotesAssessor.listTargetPositions(account.nav());
+        this.rebalancePositions(account, targetPositions);
+      } else if (portfolioRebalancePeriod) {
+        console.log("Portfolio rebalancing", portfolioRebalancePeriod)
+        let targetPositions = this.quotesAssessor.listTargetPositions(account.nav());
+        this.rebalancePortfolio(account, targetPositions);
+      }
     }
   }
 

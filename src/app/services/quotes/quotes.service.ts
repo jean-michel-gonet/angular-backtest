@@ -58,7 +58,7 @@ export class QuotesServiceImpl implements QuotesService {
           this.retrieveQuote(namedQuoteSource.name, namedQuoteSource.quote).subscribe(h1 => {
               this.applyDividends(h1, namedQuoteSource).subscribe(h2 => {
                 this.applyExchangeRate(h2, namedQuoteSource).subscribe(h3 => {
-                  console.log("Loaded " + namedQuoteSource.name, namedQuoteSource);
+                  console.info("Loaded " + namedQuoteSource.name, namedQuoteSource);
                   observer.next(h3);
                   observer.complete();
                 })

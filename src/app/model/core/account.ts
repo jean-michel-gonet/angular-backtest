@@ -404,7 +404,7 @@ export class Account extends IAccount implements Reporter, QuotesOfInterest {
     }
 
     // A little log:
-    console.info(StringUtils.formatAsDate(this.instant) +
+    console.log(StringUtils.formatAsDate(this.instant) +
       " - Account " + this.id +
       " aquired " + parts + " parts of " + quote.name + " at " + quote.open);
   }

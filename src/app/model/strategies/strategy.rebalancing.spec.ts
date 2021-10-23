@@ -81,6 +81,7 @@ describe("RebalancingStrategy", () => {
   let MON3 = new Date(2021, 8 - 1, 23);
   let TUE3 = new Date(2021, 8 - 1, 24);
   let WED3 = new Date(2021, 8 - 1, 25);  // Position rebalance
+  let THU3 = new Date(2021, 8 - 1, 26);
 
   it("Can list all quotes of interest", () => {
     let targetPositions = new TargetPositions();
@@ -97,6 +98,39 @@ describe("RebalancingStrategy", () => {
     });
 
     expect(strategy.listQuotesOfInterest()).toEqual(["A", "B", "C", "D"]);
+  });
+
+  it("Can wait before start investing", () => {
+    let targetPositions = new TargetPositions();
+    targetPositions.addTargetPosition(1, new Position({name: "A", parts: 50}));
+    let quotesAssessor = new MockQuotesAssessor(targetPositions);
+
+    let strategy = new RebalancingStrategy({
+      quotesAssessor: quotesAssessor,
+      marketTiming: new MockMarketTiming(BearBull.BULL),
+      minimumCash: 1000,
+      smallestOperation: 100,
+      positionRebalancePeriod: new Period(Periodicity.WEEKLY, 3, 2),
+      portfolioRebalancePeriod: new Period(Periodicity.WEEKLY, 3),
+      startInvesting: WED3
+    });
+
+    let account = new Account({id:"ACC", cash: 10000, strategy: strategy, positions: []});
+
+    // Skip first week:
+    account.process(new InstantQuotes({instant: WED1, quotes: [new Quote({name: "A", close: 100})]}));
+    account.process(new InstantQuotes({instant: THU1, quotes: [new Quote({name: "A", close: 100})]}));
+    expect(account.position("A")).withContext("Wait 1").toBeUndefined();
+
+    // Skip second week:
+    account.process(new InstantQuotes({instant: WED2, quotes: [new Quote({name: "A", close: 100})]}));
+    account.process(new InstantQuotes({instant: THU2, quotes: [new Quote({name: "A", close: 100})]}));
+    expect(account.position("A")).withContext("Wait 2").toBeUndefined();
+
+    // Start investing 3rd week:
+    account.process(new InstantQuotes({instant: WED3, quotes: [new Quote({name: "A", close: 100})]}));
+    account.process(new InstantQuotes({instant: THU3, quotes: [new Quote({name: "A", close: 100})]}));
+    expect(account.position("A").parts).withContext("Start investing week 3").toBe(50);
   });
 
   it("Can buy initial investment, and then alternate rebalancing portfolio and positions", () => {

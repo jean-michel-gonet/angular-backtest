@@ -3,6 +3,7 @@ import { Period, Periodicity } from 'src/app/model/core/period';
 import { MomentumQuoteAssessor } from 'src/app/model/strategies/quote-assessor.momentum';
 import { TopOfUniverseQuotesAssessor } from 'src/app/model/strategies/quotes-assessor.top-of-universe';
 import { RebalancingStrategy } from 'src/app/model/strategies/strategy.rebalancing';
+import { StringUtils } from 'src/app/model/utils/string-utils';
 import { UniverseService } from 'src/app/services/universe/universe.service';
 import { MarketTimingComponent } from '../markettiming/market-timing.component';
 
@@ -135,6 +136,16 @@ export class MomentumStrategyComponent {
     }
   }
 
+  _startInvesting: Date;
+  @Input()
+  set startInvesting(value: Date) {
+    if (typeof value == 'string') {
+      this._startInvesting = StringUtils.convertToDate(value);
+    } else {
+      this._startInvesting = value;
+    }
+  }
+
   @ContentChild(MarketTimingComponent, {static: true})
   private marketTiming: MarketTimingComponent;
 
@@ -161,6 +172,7 @@ export class MomentumStrategyComponent {
     return new RebalancingStrategy({
       minimumCash: this._minimumCash,
       smallestOperation: this._smallestOperation,
+      startInvesting: this._startInvesting,
       marketTiming: marketTiming,
       portfolioRebalancePeriod: portfolioRebalancePeriod,
       positionRebalancePeriod: positionRebalancePeriod,
