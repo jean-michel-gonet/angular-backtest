@@ -24,7 +24,7 @@ describe("TopOfUniverseQuotesAssessor", () => {
     }
 
     compare(otherQuoteAssessor: MockQuoteAssessor): number {
-      return this.position - otherQuoteAssessor.position;
+      return otherQuoteAssessor.position - this.position;
     }
 
     isEligible(): boolean {

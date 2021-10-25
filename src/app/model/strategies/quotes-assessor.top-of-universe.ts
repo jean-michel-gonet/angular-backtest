@@ -123,7 +123,7 @@ export class TopOfUniverseQuotesAssessor implements QuotesAssessor {
       }
     });
     rankedQuoteAssessments.sort((a, b) => {
-      return a.compare(b);
+      return b.compare(a);
     });
     return rankedQuoteAssessments;
   }
