@@ -1,27 +1,16 @@
 import { ConfigurableSourceIndicator } from './configurable-source-indicator';
 import { IndicatorConfiguration } from './configurable-source';
 import { ExponentialRegression } from '../statistics/exponential-regression';
-import { Period, Periodicity } from '../../core/period';
 
 interface MomentumIndicatorConfiguration extends IndicatorConfiguration {
   numberOfPeriods: number;
 }
 
 class Record {
-  private exponential: ExponentialRegression;
-  private period: Period;
-
-  constructor(periodicity: Periodicity, private numberOfPeriods: number) {
-    this.exponential = new ExponentialRegression();
-    this.period = new Period(periodicity);
-  }
+  private exponential = new ExponentialRegression();
 
   public compute(instant: Date, value: number) {
     this.exponential.regression(instant, value);
-  }
-
-  public isFinished(instant: Date) {
-    return this.period.timeIsUp(instant, this.numberOfPeriods);
   }
 
   public getCAGR(): number {
@@ -45,7 +34,7 @@ export class MomentumIndicator extends ConfigurableSourceIndicator {
   }
 
   compute(instant: Date, value: number): number {
-    this.records.push(new Record(this.periodicity, this.numberOfPeriods));
+    this.records.push(new Record());
     this.records.forEach(r => {
       r.compute(instant, value);
     });
