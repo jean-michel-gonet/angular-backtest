@@ -255,7 +255,7 @@ export class Account extends IAccount implements Reporter, QuotesOfInterest {
       });
       if (position) {
         position.update(quote);
-        if (quote.dividend) {
+        if (quote.dividend && position.parts) {
           let dividends = position.parts * quote.dividend;
           this.cash += dividends;
           console.info(StringUtils.formatAsDate(this.instant) +
