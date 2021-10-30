@@ -154,7 +154,7 @@ export class MomentumQuoteAssessor implements QuoteAssessor {
    * than X% of the nav.
    */
   partsToBuy(nav: number): number {
-    return nav * this.maximumAtrPerPosition / this.atr;
+    return Math.floor(nav * this.maximumAtrPerPosition / this.atr);
   }
 
   /**
