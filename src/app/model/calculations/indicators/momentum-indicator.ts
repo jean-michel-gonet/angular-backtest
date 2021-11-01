@@ -8,24 +8,35 @@ interface MomentumIndicatorConfiguration extends IndicatorConfiguration {
 
 class Record {
   private exponential = new ExponentialRegression();
+  public firstInstant: Date;
+  public lastInstant: Date;
+  public numberOfComputations: number = 0;
+  public cagr: number;
+  public r2: number;
 
   public compute(instant: Date, value: number) {
+    if (!this.firstInstant) {
+      this.firstInstant = instant;
+    }
+    this.lastInstant = instant;
+    this.numberOfComputations++;
     this.exponential.regression(instant, value);
   }
 
   public getCAGR(): number {
-    return this.exponential.getCAGR();
+    this.cagr = this.exponential.getCAGR();
+    return this.cagr;
   }
   public getR2(): number {
-    return this.exponential.getR2();
+    this.r2 = this.exponential.getR2();
+    return this.r2;
   }
 }
 
 export class MomentumIndicator extends ConfigurableSourceIndicator {
   public numberOfPeriods: number;
   private records: Record[];
-  public cagr: number;
-  public r2: number;
+  public latestRecord: Record;
 
   constructor(configuration = {} as MomentumIndicatorConfiguration) {
     super(configuration);
@@ -40,11 +51,9 @@ export class MomentumIndicator extends ConfigurableSourceIndicator {
     });
 
     let result: number;
-    while(this.records.length > this.numberOfPeriods) {
-      let r = this.records.shift();
-      this.r2 = r.getR2();
-      this.cagr = r.getCAGR();
-      result = this.cagr * this.r2;
+    while(this.records.length >= this.numberOfPeriods) {
+      this.latestRecord = this.records.shift();
+      result = this.latestRecord.getCAGR() * this.latestRecord.getR2();
     }
 
     return result;
