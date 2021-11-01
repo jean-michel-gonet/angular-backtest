@@ -5,7 +5,8 @@ export enum ConfigurableSource {
   CLOSE = 'CLOSE',
   HIGH = 'HIGH',
   LOW = 'LOW',
-  MID = 'MID'
+  ADJUSTED = 'ADJUSTED',
+  MID = 'MID',
 }
 
 export enum ConfigurablePreprocessing {

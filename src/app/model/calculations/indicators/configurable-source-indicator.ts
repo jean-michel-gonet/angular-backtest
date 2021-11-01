@@ -70,6 +70,9 @@ export abstract class ConfigurableSourceIndicator implements Indicator {
       case ConfigurableSource.CLOSE:
         return candlestick.close;
 
+      case ConfigurableSource.ADJUSTED:
+        return candlestick.adjustedClose;
+
       case ConfigurableSource.HIGH:
         return candlestick.high;
 

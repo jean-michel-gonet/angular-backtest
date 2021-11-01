@@ -88,6 +88,24 @@ describe('ConfigurableSourceIndicator', () => {
 
     expect(ema.calculate(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 0}))).toBe(values[4]);
   });
+  it('Can use the adjusted close price as input ', () => {
+    let close: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
+    let adjustedClose: number[] = [38.86, 39.71, 38.88, 38.75, 38.77];
+
+    let ema = new TestMovingCalculator({
+      periodicity: Periodicity.WEEKLY,
+      source: ConfigurableSource.ADJUSTED,
+      preprocessing: ConfigurablePreprocessing.LAST
+    });
+
+    expect(ema.calculate(new Date(2019, 7 - 1, 22), new Quote({name: 'xx', close: close[0], adjustedClose: adjustedClose[0]}))).toBeUndefined();
+    expect(ema.calculate(new Date(2019, 7 - 1, 23), new Quote({name: 'xx', close: close[1], adjustedClose: adjustedClose[1]}))).toBeUndefined();
+    expect(ema.calculate(new Date(2019, 7 - 1, 24), new Quote({name: 'xx', close: close[2], adjustedClose: adjustedClose[2]}))).toBeUndefined();
+    expect(ema.calculate(new Date(2019, 7 - 1, 25), new Quote({name: 'xx', close: close[3], adjustedClose: adjustedClose[3]}))).toBeUndefined();
+    expect(ema.calculate(new Date(2019, 7 - 1, 26), new Quote({name: 'xx', close: close[4], adjustedClose: adjustedClose[4]}))).toBeUndefined();
+
+    expect(ema.calculate(new Date(2019, 7 - 1, 29), new Quote({name: 'xx', close: 0}))).toBe(adjustedClose[4]);
+  });
 
   it('Can use the mid price as input ', () => {
     let highValues: number[] = [39.86, 40.71, 40.88, 40.75, 40.77];
