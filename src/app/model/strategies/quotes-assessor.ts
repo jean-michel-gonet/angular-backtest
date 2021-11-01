@@ -1,23 +1,39 @@
-import { Position } from '../core/account';
+import { Position, PositionConfiguration } from '../core/account';
 import { InstantQuotes, QuotesOfInterest } from '../core/quotes';
+
+interface RankedPositionConfiguration extends PositionConfiguration {
+  rank: number;
+}
+
+export class RankedPosition extends Position {
+  public rank: number;
+
+  constructor(obj: RankedPositionConfiguration = {} as RankedPositionConfiguration) {
+    super(obj);
+    let {
+      rank
+    } = obj;
+    this.rank = rank;
+  }
+}
 
 /**
  * Holds a list of target positions both by rank and by name.
  */
 export class TargetPositions {
-  private positionsMap = new Map<string, Position>();
-  public positions: Position[] = [];
+  private positionsMap = new Map<string, RankedPosition>();
+  public positions: RankedPosition[] = [];
 
   /**
    * Adds a new entry to the list of target positions.
-   * @param rank The position in the list. If a target position
-   * already exists with the same rank, it will be replaced.
-   * @param position The position. At very least, its name
-   * and its close price have to be set.
+   * @param rankedPosition A position with rank.
+   * At very least, its name, its rank and its close price have to be set.
+   * If a position already exists with the same rank, it will be replaced.
+   *
    */
-  public addTargetPosition(rank: number, position: Position) {
-    this.positions[rank] = position;
-    this.positionsMap.set(position.name, position);
+  public addTargetPosition(rankedPosition: RankedPosition) {
+    this.positions[rankedPosition.rank] = rankedPosition;
+    this.positionsMap.set(rankedPosition.name, rankedPosition);
   }
 
   /**
@@ -25,7 +41,7 @@ export class TargetPositions {
    * @param name The instrument name.
    * @return The target position, or {@code null}
    */
-  public name(name: string): Position {
+  public name(name: string): RankedPosition {
     return this.positionsMap.get(name);
   }
 }

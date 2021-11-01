@@ -1,8 +1,7 @@
-import { Position } from '../core/account';
 import { InstantQuotes } from '../core/quotes';
 import { Universe } from '../core/universe';
 import { QuoteAssessor, QuoteAssessorFactory } from './quote-assessor';
-import { QuotesAssessor, TargetPositions } from './quotes-assessor';
+import { QuotesAssessor, RankedPosition, TargetPositions } from './quotes-assessor';
 
 /**
  * Configuration for {@link TopOfUniverseQuotesAssessor}
@@ -99,7 +98,8 @@ export class TopOfUniverseQuotesAssessor implements QuotesAssessor {
       }
 
       // Add it to the target positions:
-      targetPositions.addTargetPosition(rank++, new Position({
+      targetPositions.addTargetPosition(new RankedPosition({
+        rank: rank++,
         name: rankedQuoteAssessment.quote.name,
         parts: parts,
         // The parts will actually be bought at open value tomorrow,

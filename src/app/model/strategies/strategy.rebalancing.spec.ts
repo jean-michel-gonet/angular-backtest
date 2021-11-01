@@ -1,7 +1,7 @@
 import { BearBull, MarketTiming } from "../core/market-timing";
 import { InstantQuotes, Quote } from '../core/quotes';
 import { Report } from '../core/reporting';
-import { QuotesAssessor, TargetPositions } from './quotes-assessor';
+import { QuotesAssessor, RankedPosition, TargetPositions } from './quotes-assessor';
 import { RebalancingStrategy } from './strategy.rebalancing';
 import { Period, Periodicity } from '../core/period';
 import { Account, Position } from '../core/account';
@@ -85,9 +85,9 @@ describe("RebalancingStrategy", () => {
 
   it("Can list all quotes of interest", () => {
     let targetPositions = new TargetPositions();
-    targetPositions.addTargetPosition(0, new Position({name: "A", parts: 10}));
-    targetPositions.addTargetPosition(1, new Position({name: "B", parts: 20}));
-    targetPositions.addTargetPosition(2, new Position({name: "C", parts: 50}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 0, name: "A", parts: 10}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 1, name: "B", parts: 20}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 2, name: "C", parts: 50}));
 
     let strategy = new RebalancingStrategy({
       quotesAssessor: new MockQuotesAssessor(targetPositions),
@@ -102,7 +102,7 @@ describe("RebalancingStrategy", () => {
 
   it("Can wait before start investing", () => {
     let targetPositions = new TargetPositions();
-    targetPositions.addTargetPosition(1, new Position({name: "A", parts: 50}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 1, name: "A", parts: 50}));
     let quotesAssessor = new MockQuotesAssessor(targetPositions);
 
     let strategy = new RebalancingStrategy({
@@ -151,9 +151,9 @@ describe("RebalancingStrategy", () => {
 
     // First aquisition ( and positions rebalance):
     targetPositions = new TargetPositions();
-    targetPositions.addTargetPosition(0, new Position({name: "A", parts: 30}));
-    targetPositions.addTargetPosition(1, new Position({name: "C", parts: 40}));
-    targetPositions.addTargetPosition(2, new Position({name: "D", parts: 50}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 0, name: "A", parts: 30}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 1, name: "C", parts: 40}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 2, name: "D", parts: 50}));
     quotesAssessor.setTargetPositions(targetPositions);
 
     account.process(new InstantQuotes({instant: MON1, quotes: []}));
@@ -180,9 +180,9 @@ describe("RebalancingStrategy", () => {
 
     // Portfolio rebalance (and change of target):
     targetPositions = new TargetPositions();
-    targetPositions.addTargetPosition(0, new Position({name: "B", parts: 70}));
-    targetPositions.addTargetPosition(1, new Position({name: "C", parts: 10}));
-    targetPositions.addTargetPosition(2, new Position({name: "D", parts: 10}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 0, name: "B", parts: 70}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 1, name: "C", parts: 10}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 2, name: "D", parts: 10}));
     quotesAssessor.setTargetPositions(targetPositions);
 
     account.process(new InstantQuotes({instant: MON2, quotes: []}));
@@ -236,9 +236,9 @@ describe("RebalancingStrategy", () => {
 
   it("Can keep selling but stop buying when market timing is bearish", () => {
     let targetPositions = new TargetPositions();
-    targetPositions.addTargetPosition(0, new Position({name: "A", parts: 10}));
-    targetPositions.addTargetPosition(1, new Position({name: "B", parts: 20}));
-    targetPositions.addTargetPosition(2, new Position({name: "C", parts: 50}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 0, name: "A", parts: 10}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 1, name: "B", parts: 20}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 2, name: "C", parts: 50}));
 
     let strategy = new RebalancingStrategy({
       quotesAssessor: new MockQuotesAssessor(targetPositions),
@@ -276,8 +276,8 @@ describe("RebalancingStrategy", () => {
 
   it("Can create buy orders through the settlement days", () => {
     let targetPositions = new TargetPositions();
-    targetPositions.addTargetPosition(0, new Position({name: "C", parts: 50}));
-    targetPositions.addTargetPosition(1, new Position({name: "D", parts: 50}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 0, name: "C", parts: 50}));
+    targetPositions.addTargetPosition(new RankedPosition({rank: 1, name: "D", parts: 50}));
 
     let strategy = new RebalancingStrategy({
       quotesAssessor: new MockQuotesAssessor(targetPositions),

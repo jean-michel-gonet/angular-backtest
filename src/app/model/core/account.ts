@@ -3,7 +3,7 @@ import { Strategy, NullStrategy } from './strategy';
 import { Reporter, Report, ReportedData } from './reporting';
 import { StringUtils } from '../utils/string-utils';
 
-class IPosition {
+export interface PositionConfiguration {
   name: string;
   parts?: number;
   partValue?: number;
@@ -59,7 +59,7 @@ export class Position {
   /** Class constructor.
    * @param {IPosition} obj The object properties.
    */
-  constructor(obj: IPosition = {} as IPosition) {
+  constructor(obj: PositionConfiguration = {} as PositionConfiguration) {
     let {
       name,
       parts = 0,
