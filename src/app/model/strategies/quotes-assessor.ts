@@ -1,5 +1,6 @@
 import { Position, PositionConfiguration } from '../core/account';
 import { InstantQuotes, QuotesOfInterest } from '../core/quotes';
+import { Reporter } from '../core/reporting';
 
 interface RankedPositionConfiguration extends PositionConfiguration {
   rank: number;
@@ -50,7 +51,7 @@ export class TargetPositions {
  * Receives instant quotes to assess, and can build a list of
  * target positions useful to rebalance a portfolio.
  */
-export interface QuotesAssessor extends QuotesOfInterest {
+export interface QuotesAssessor extends QuotesOfInterest, Reporter {
   /**
    * Assess all provided quotes.
    * @param instantQuotes The quotes to assess.

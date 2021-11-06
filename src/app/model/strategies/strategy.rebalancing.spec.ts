@@ -40,6 +40,9 @@ describe("RebalancingStrategy", () => {
     constructor(targetPositions: TargetPositions = new TargetPositions()) {
       this.targetPositions = targetPositions;
     }
+    doRegister(report: Report): void {}
+    startReportingCycle(instant: Date): void {}
+    reportTo(report: Report): void {}
 
     listQuotesOfInterest(): string[] {
       let quotesOfInterest: string[] = [];

@@ -55,9 +55,9 @@ export interface Report {
 
   /**
    * A data processor can receive data provided by a reporter.
-   * @param {ReportedData} providedData The provided data.
+   * @param {ReportedData} reportedData The provided data.
    */
-  receiveData(providedData: ReportedData):void;
+  receiveData(reportedData: ReportedData):void;
 
   /**
    * Start a new reporting cycle.
@@ -93,7 +93,7 @@ export class NullReport implements Report {
     // Let's do nothing.
   }
 
-  receiveData(): void {
+  receiveData(reportedData: ReportedData): void {
     // Let's do nothing.
   }
 

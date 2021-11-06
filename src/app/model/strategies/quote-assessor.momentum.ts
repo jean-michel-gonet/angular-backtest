@@ -4,6 +4,7 @@ import { ExponentialMovingAverage } from '../calculations/moving-average/exponen
 import { AverageTrueRange } from '../calculations/statistics/average-true-range';
 import { Periodicity } from '../core/period';
 import { InstantQuotes, Quote} from '../core/quotes';
+import { Report } from '../core/reporting';
 import { NoNameSuppliedQuoteAssessorError, QuoteAssessor } from './quote-assessor';
 
 /**
@@ -162,5 +163,35 @@ export class MomentumQuoteAssessor implements QuoteAssessor {
    */
   compare(otherQuoteAssessor: MomentumQuoteAssessor): number {
     return this.momentum - otherQuoteAssessor.momentum;
+  }
+
+  doRegister(report: Report): void {
+    report.register(this);
+  }
+
+  startReportingCycle(instant: Date): void {
+    // Nothing to do.
+  }
+
+  reportTo(report: Report): void {
+    let quote = this.quote;
+    if (quote) {
+      report.receiveData({
+        sourceName: quote.name + ".ATR",
+        y: this.atr
+      });
+      report.receiveData({
+        sourceName: quote.name + ".MOV",
+        y: this.movingAverage
+      });
+      report.receiveData({
+        sourceName: quote.name + ".MOM",
+        y: this.momentum
+      });
+      report.receiveData({
+        sourceName: quote.name + ".GAP",
+        y: this.gap
+      })
+    }
   }
 }

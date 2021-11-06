@@ -1,11 +1,12 @@
 import { InstantQuotes, Quote} from '../core/quotes';
+import { Reporter } from '../core/reporting';
 import { BackTestingError } from '../utils/back-testing-error';
 
 /**
  * A quote assessor is able to assess several characteristics of one single
  * quote to help in strategies that apply regular rebalance.
  */
-export interface QuoteAssessor {
+export interface QuoteAssessor extends Reporter {
   /**
    * The name of the quote being assessed.
    */

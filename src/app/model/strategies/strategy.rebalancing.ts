@@ -208,6 +208,9 @@ export class RebalancingStrategy implements Strategy {
   }
 
   doRegister(report: Report): void {
+    if (this.quotesAssessor) {
+      this.quotesAssessor.doRegister(report);
+    }
     if (this.marketTiming) {
       this.marketTiming.doRegister(report);
     }

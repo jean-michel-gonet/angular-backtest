@@ -1,4 +1,5 @@
 import { Quote, InstantQuotes } from '../core/quotes';
+import { NullReport, Report, ReportedData, Reporter } from '../core/reporting';
 import { Universe } from '../core/universe';
 import { QuoteAssessor } from './quote-assessor';
 import { TopOfUniverseQuotesAssessor } from "./quotes-assessor.top-of-universe";
@@ -6,6 +7,7 @@ import { TopOfUniverseQuotesAssessor } from "./quotes-assessor.top-of-universe";
 describe("TopOfUniverseQuotesAssessor", () => {
   class MockQuoteAssessor implements QuoteAssessor {
     quote: Quote;
+    instant: Date;
 
     /**
      * Class constructor.
@@ -34,7 +36,23 @@ describe("TopOfUniverseQuotesAssessor", () => {
     partsToBuy(nav: number): number {
       return Math.round(nav / 100);
     }
+
+    doRegister(report: Report): void {
+      report.register(this);
+    }
+
+    startReportingCycle(instant: Date): void {
+      this.instant = instant;
+    }
+
+    reportTo(report: Report): void {
+      report.receiveData({
+        sourceName: this.quote.name + ".X",
+        y: 12
+      })
+    }
   }
+
   class MockUniverse implements Universe {
     constructor(public names: string[] = []){}
 
@@ -195,4 +213,50 @@ describe("TopOfUniverseQuotesAssessor", () => {
     expect(targetPositions.positions[3].name).withContext("Fourth position").toBe("G");
   });
 
+  class MockReport extends NullReport {
+
+    public reporters: Reporter[] = [];
+    public reportedData: ReportedData[] = [];
+    register(reporter: Reporter): void {
+      this.reporters.push(reporter);
+    }
+    receiveData(reportedData: ReportedData): void {
+      this.reportedData.push(reportedData);
+    }
+  }
+
+  it("Can let register quote assessors to reports", ()=> {
+    let report1 = new MockReport();
+    let report2 = new MockReport();
+
+    let quotesAssessor = new TopOfUniverseQuotesAssessor({
+      quoteAssessorFactory: (name: string) => {
+        return new MockQuoteAssessor(name, 0, true, 10);
+      },
+      universe: new MockUniverse(["A", "B", "C", "G"]),
+      topOfIndex: 10
+    });
+
+    quotesAssessor.doRegister(report1);
+    expect(report1.reporters).toHaveSize(0);
+
+    quotesAssessor.assessQuotes(new InstantQuotes({instant: new Date(2010, 11, 1), quotes:[
+      new Quote({name: "A", close: 10}),
+      new Quote({name: "B", close: 10}),
+      new Quote({name: "C", close: 10}),
+      new Quote({name: "D", close: 10}),
+    ]}));
+
+    quotesAssessor.doRegister(report2);
+    expect(report2.reporters).toHaveSize(0);
+
+    quotesAssessor.assessQuotes(new InstantQuotes({instant: new Date(2010, 11, 2), quotes:[
+      new Quote({name: "E", close: 10}),
+      new Quote({name: "F", close: 10}),
+      new Quote({name: "G", close: 10})
+    ]}));
+
+    expect(report1.reporters).withContext("First report").toHaveSize(4);
+    expect(report2.reporters).withContext("Second Report").toHaveSize(1);
+  });
 });

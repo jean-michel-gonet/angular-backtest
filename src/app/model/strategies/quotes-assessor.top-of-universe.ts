@@ -1,4 +1,5 @@
 import { InstantQuotes } from '../core/quotes';
+import { Report } from '../core/reporting';
 import { Universe } from '../core/universe';
 import { QuoteAssessor, QuoteAssessorFactory } from './quote-assessor';
 import { QuotesAssessor, RankedPosition, TargetPositions } from './quotes-assessor';
@@ -26,6 +27,7 @@ export class TopOfUniverseQuotesAssessor implements QuotesAssessor {
   public universe: Universe;
   private quoteAssessors = new Map<String, QuoteAssessor>();
   private instant: Date;
+  private reports: Report[];
 
   /**
    * Class constructor
@@ -44,6 +46,19 @@ export class TopOfUniverseQuotesAssessor implements QuotesAssessor {
     this.quoteAssessorFactory = quoteAssessorFactory;
     this.universe = universe;
     this.topOfIndex = topOfIndex;
+    this.reports = [];
+  }
+
+  doRegister(report: Report): void {
+    this.reports.push(report);
+  }
+
+  startReportingCycle(instant: Date): void {
+    // Nothing to do.
+  }
+
+  reportTo(report: Report): void {
+    // Nothing to do.
   }
 
   /**
@@ -69,6 +84,9 @@ export class TopOfUniverseQuotesAssessor implements QuotesAssessor {
     let quoteAssessor:QuoteAssessor = this.quoteAssessors.get(name);
     if (!quoteAssessor) {
       quoteAssessor = this.quoteAssessorFactory(name);
+      this.reports.forEach(report => {
+        quoteAssessor.doRegister(report);
+      });
       this.quoteAssessors.set(name, quoteAssessor);
     }
     return quoteAssessor;
@@ -127,5 +145,4 @@ export class TopOfUniverseQuotesAssessor implements QuotesAssessor {
     });
     return rankedQuoteAssessments;
   }
-
 }
