@@ -188,6 +188,17 @@ export class MomentumQuoteAssessor implements QuoteAssessor {
         sourceName: quote.name + ".MOM",
         y: this.momentum
       });
+      let latestRecord = this.momentumIndicator.latestRecord;
+      if (latestRecord) {
+        report.receiveData({
+          sourceName: quote.name + ".MOM.CAGR",
+          y: latestRecord.cagr
+        });
+        report.receiveData({
+          sourceName: quote.name + ".MOM.R2",
+          y: latestRecord.r2
+        });
+      }
       report.receiveData({
         sourceName: quote.name + ".GAP",
         y: this.gap
