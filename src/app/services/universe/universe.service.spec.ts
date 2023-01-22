@@ -15,80 +15,80 @@ describe("ConfigurableUniverseEntryPeriod", () =>{
   it("Can contain all instants when no period defined", () =>{
     let universeEntryPeriod = new ConfigurableUniverseEntryPeriod({});
 
-    expect(universeEntryPeriod.contains(DAY_00.getTime())).withContext("DAY_00").toBeTrue();
-    expect(universeEntryPeriod.contains(DAY_15.getTime())).withContext("DAY_15").toBeTrue();
-    expect(universeEntryPeriod.contains(DAY_30.getTime())).withContext("DAY_30").toBeTrue();
-    expect(universeEntryPeriod.contains(DAY_45.getTime())).withContext("DAY_45").toBeTrue();
-    expect(universeEntryPeriod.contains(DAY_60.getTime())).withContext("DAY_60").toBeTrue();
+    expect(universeEntryPeriod.contains(DAY_00)).withContext("DAY_00").toBeTrue();
+    expect(universeEntryPeriod.contains(DAY_15)).withContext("DAY_15").toBeTrue();
+    expect(universeEntryPeriod.contains(DAY_30)).withContext("DAY_30").toBeTrue();
+    expect(universeEntryPeriod.contains(DAY_45)).withContext("DAY_45").toBeTrue();
+    expect(universeEntryPeriod.contains(DAY_60)).withContext("DAY_60").toBeTrue();
   });
 
   it("Can intersect with any interval when no period is defined", () => {
     let universeEntryPeriod = new ConfigurableUniverseEntryPeriod({});
-    expect(universeEntryPeriod.intersects(DAY_00.getTime(), DAY_75.getTime())).toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_00, DAY_75)).toBeTrue();
   });
 
   it("Can contain instants when from is not defined", () => {
     let universeEntryPeriod = new ConfigurableUniverseEntryPeriod({to: DAY_60});
 
-    expect(universeEntryPeriod.contains(DAY_00.getTime())).withContext("DAY_00").toBeTrue();
-    expect(universeEntryPeriod.contains(DAY_60.getTime())).withContext("DAY_60").toBeTrue();
-    expect(universeEntryPeriod.contains(DAY_75.getTime())).withContext("DAY_75").toBeFalse();
+    expect(universeEntryPeriod.contains(DAY_00)).withContext("DAY_00").toBeTrue();
+    expect(universeEntryPeriod.contains(DAY_60)).withContext("DAY_60").toBeTrue();
+    expect(universeEntryPeriod.contains(DAY_75)).withContext("DAY_75").toBeFalse();
   });
 
   it("Can intersect with intervals when from is not defined", () => {
     let universeEntryPeriod = new ConfigurableUniverseEntryPeriod({to: DAY_45});
 
-    expect(universeEntryPeriod.intersects(DAY_00.getTime(), DAY_75.getTime())).withContext("DAY_00-DAY_75").toBeTrue();
-    expect(universeEntryPeriod.intersects(DAY_00.getTime(), DAY_45.getTime())).withContext("DAY_00-DAY_45").toBeTrue();
-    expect(universeEntryPeriod.intersects(DAY_00.getTime(), DAY_30.getTime())).withContext("DAY_00-DAY_30").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_00, DAY_75)).withContext("DAY_00-DAY_75").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_00, DAY_45)).withContext("DAY_00-DAY_45").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_00, DAY_30)).withContext("DAY_00-DAY_30").toBeTrue();
 
-    expect(universeEntryPeriod.intersects(DAY_30.getTime(), DAY_75.getTime())).withContext("DAY_30-DAY_75").toBeTrue();
-    expect(universeEntryPeriod.intersects(DAY_45.getTime(), DAY_75.getTime())).withContext("DAY_45-DAY_75").toBeTrue();
-    expect(universeEntryPeriod.intersects(DAY_60.getTime(), DAY_75.getTime())).withContext("DAY_60-DAY_75").toBeFalse();
+    expect(universeEntryPeriod.intersects(DAY_30, DAY_75)).withContext("DAY_30-DAY_75").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_45, DAY_75)).withContext("DAY_45-DAY_75").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_60, DAY_75)).withContext("DAY_60-DAY_75").toBeFalse();
   });
 
   it("Can contain instants when to is not defined", () => {
     let universeEntryPeriod = new ConfigurableUniverseEntryPeriod({from: DAY_60});
 
-    expect(universeEntryPeriod.contains(DAY_00.getTime())).withContext("DAY_00").toBeFalse();
-    expect(universeEntryPeriod.contains(DAY_60.getTime())).withContext("DAY_60").toBeTrue();
-    expect(universeEntryPeriod.contains(DAY_75.getTime())).withContext("DAY_75").toBeTrue();
+    expect(universeEntryPeriod.contains(DAY_00)).withContext("DAY_00").toBeFalse();
+    expect(universeEntryPeriod.contains(DAY_60)).withContext("DAY_60").toBeTrue();
+    expect(universeEntryPeriod.contains(DAY_75)).withContext("DAY_75").toBeTrue();
   });
 
   it("Can intersect with intervals when from is not defined", () => {
     let universeEntryPeriod = new ConfigurableUniverseEntryPeriod({from: DAY_45});
 
-    expect(universeEntryPeriod.intersects(DAY_00.getTime(), DAY_75.getTime())).withContext("DAY_00-DAY_75").toBeTrue();
-    expect(universeEntryPeriod.intersects(DAY_00.getTime(), DAY_45.getTime())).withContext("DAY_00-DAY_45").toBeTrue();
-    expect(universeEntryPeriod.intersects(DAY_00.getTime(), DAY_30.getTime())).withContext("DAY_00-DAY_30").toBeFalse();
+    expect(universeEntryPeriod.intersects(DAY_00, DAY_75)).withContext("DAY_00-DAY_75").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_00, DAY_45)).withContext("DAY_00-DAY_45").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_00, DAY_30)).withContext("DAY_00-DAY_30").toBeFalse();
 
-    expect(universeEntryPeriod.intersects(DAY_30.getTime(), DAY_75.getTime())).withContext("DAY_30-DAY_75").toBeTrue();
-    expect(universeEntryPeriod.intersects(DAY_45.getTime(), DAY_75.getTime())).withContext("DAY_45-DAY_75").toBeTrue();
-    expect(universeEntryPeriod.intersects(DAY_60.getTime(), DAY_75.getTime())).withContext("DAY_60-DAY_75").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_30, DAY_75)).withContext("DAY_30-DAY_75").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_45, DAY_75)).withContext("DAY_45-DAY_75").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_60, DAY_75)).withContext("DAY_60-DAY_75").toBeTrue();
   });
 
   it("Can contain instants when from and to are both defined", () => {
     let universeEntryPeriod = new ConfigurableUniverseEntryPeriod({from: DAY_15, to: DAY_45});
 
-    expect(universeEntryPeriod.contains(DAY_00.getTime())).withContext("DAY_00").toBeFalse();
-    expect(universeEntryPeriod.contains(DAY_15.getTime())).withContext("DAY_15").toBeTrue();
-    expect(universeEntryPeriod.contains(DAY_30.getTime())).withContext("DAY_30").toBeTrue();
-    expect(universeEntryPeriod.contains(DAY_45.getTime())).withContext("DAY_45").toBeTrue();
-    expect(universeEntryPeriod.contains(DAY_60.getTime())).withContext("DAY_60").toBeFalse();
+    expect(universeEntryPeriod.contains(DAY_00)).withContext("DAY_00").toBeFalse();
+    expect(universeEntryPeriod.contains(DAY_15)).withContext("DAY_15").toBeTrue();
+    expect(universeEntryPeriod.contains(DAY_30)).withContext("DAY_30").toBeTrue();
+    expect(universeEntryPeriod.contains(DAY_45)).withContext("DAY_45").toBeTrue();
+    expect(universeEntryPeriod.contains(DAY_60)).withContext("DAY_60").toBeFalse();
   });
 
   it("Can intersect with intervals when from and to are both defined", () => {
     let universeEntryPeriod = new ConfigurableUniverseEntryPeriod({from: DAY_30, to: DAY_45});
 
-    expect(universeEntryPeriod.intersects(DAY_00.getTime(), DAY_15.getTime())).withContext("DAY_00-DAY_15").toBeFalse();
-    expect(universeEntryPeriod.intersects(DAY_00.getTime(), DAY_30.getTime())).withContext("DAY_00-DAY_30").toBeTrue();
-    expect(universeEntryPeriod.intersects(DAY_00.getTime(), DAY_45.getTime())).withContext("DAY_00-DAY_45").toBeTrue();
-    expect(universeEntryPeriod.intersects(DAY_00.getTime(), DAY_60.getTime())).withContext("DAY_00-DAY_60").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_00, DAY_15)).withContext("DAY_00-DAY_15").toBeFalse();
+    expect(universeEntryPeriod.intersects(DAY_00, DAY_30)).withContext("DAY_00-DAY_30").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_00, DAY_45)).withContext("DAY_00-DAY_45").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_00, DAY_60)).withContext("DAY_00-DAY_60").toBeTrue();
 
-    expect(universeEntryPeriod.intersects(DAY_15.getTime(), DAY_75.getTime())).withContext("DAY_15-DAY_75").toBeTrue();
-    expect(universeEntryPeriod.intersects(DAY_30.getTime(), DAY_75.getTime())).withContext("DAY_30-DAY_75").toBeTrue();
-    expect(universeEntryPeriod.intersects(DAY_45.getTime(), DAY_75.getTime())).withContext("DAY_45-DAY_75").toBeTrue();
-    expect(universeEntryPeriod.intersects(DAY_60.getTime(), DAY_75.getTime())).withContext("DAY_60-DAY_75").toBeFalse();
+    expect(universeEntryPeriod.intersects(DAY_15, DAY_75)).withContext("DAY_15-DAY_75").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_30, DAY_75)).withContext("DAY_30-DAY_75").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_45, DAY_75)).withContext("DAY_45-DAY_75").toBeTrue();
+    expect(universeEntryPeriod.intersects(DAY_60, DAY_75)).withContext("DAY_60-DAY_75").toBeFalse();
   });
 });
 
@@ -104,11 +104,11 @@ describe("ConfigurableUniverseEntry", () => {
       name: "A",
       periods: [{from: DAY_2000, to: DAY_2005}, {from: DAY_2015, to: DAY_2020}]
     });
-    expect(universeEntry.belongsToUniverse(DAY_2000.getTime())).withContext("DAY_2000").toBeTrue();
-    expect(universeEntry.belongsToUniverse(DAY_2005.getTime())).withContext("DAY_2005").toBeTrue();
-    expect(universeEntry.belongsToUniverse(DAY_2010.getTime())).withContext("DAY_2010").toBeFalse();
-    expect(universeEntry.belongsToUniverse(DAY_2015.getTime())).withContext("DAY_2015").toBeTrue();
-    expect(universeEntry.belongsToUniverse(DAY_2020.getTime())).withContext("DAY_2020").toBeTrue();
+    expect(universeEntry.belongsToUniverse(DAY_2000)).withContext("DAY_2000").toBeTrue();
+    expect(universeEntry.belongsToUniverse(DAY_2005)).withContext("DAY_2005").toBeTrue();
+    expect(universeEntry.belongsToUniverse(DAY_2010)).withContext("DAY_2010").toBeFalse();
+    expect(universeEntry.belongsToUniverse(DAY_2015)).withContext("DAY_2015").toBeTrue();
+    expect(universeEntry.belongsToUniverse(DAY_2020)).withContext("DAY_2020").toBeTrue();
   });
 
   it("Can detect when it belongs to universe with missing from and to", () => {
@@ -116,11 +116,11 @@ describe("ConfigurableUniverseEntry", () => {
       name: "A",
       periods: [{to: DAY_2005}, {from: DAY_2015}]
     });
-    expect(universeEntry.belongsToUniverse(DAY_2000.getTime())).withContext("DAY_2000").toBeTrue();
-    expect(universeEntry.belongsToUniverse(DAY_2005.getTime())).withContext("DAY_2005").toBeTrue();
-    expect(universeEntry.belongsToUniverse(DAY_2010.getTime())).withContext("DAY_2010").toBeFalse();
-    expect(universeEntry.belongsToUniverse(DAY_2015.getTime())).withContext("DAY_2015").toBeTrue();
-    expect(universeEntry.belongsToUniverse(DAY_2020.getTime())).withContext("DAY_2020").toBeTrue();
+    expect(universeEntry.belongsToUniverse(DAY_2000)).withContext("DAY_2000").toBeTrue();
+    expect(universeEntry.belongsToUniverse(DAY_2005)).withContext("DAY_2005").toBeTrue();
+    expect(universeEntry.belongsToUniverse(DAY_2010)).withContext("DAY_2010").toBeFalse();
+    expect(universeEntry.belongsToUniverse(DAY_2015)).withContext("DAY_2015").toBeTrue();
+    expect(universeEntry.belongsToUniverse(DAY_2020)).withContext("DAY_2020").toBeTrue();
   });
 
   it("Can detect when it is worth assessing", () => {
@@ -133,12 +133,11 @@ describe("ConfigurableUniverseEntry", () => {
     let DAYS_BEFORE_10 = new Date(DAY_2010.getFullYear(), DAY_2010.getMonth(), DAY_2010.getDate() - 10);
     let DAY_AFTER      = new Date(DAY_2015.getFullYear(), DAY_2015.getMonth(), DAY_2015.getDate() + 1);
 
-    expect(universeEntry.worthAssessing(DAYS_BEFORE_40.getTime(), 20)).withContext("DAYS_BEFORE_40").toBeFalse();
-    expect(universeEntry.worthAssessing(DAYS_BEFORE_20.getTime(), 20)).withContext("DAYS_BEFORE_20").toBeTrue();
-    expect(universeEntry.worthAssessing(DAYS_BEFORE_10.getTime(), 20)).withContext("DAYS_BEFORE_10").toBeTrue();
-    expect(universeEntry.worthAssessing(DAY_2015.getTime(), 20))      .withContext("DAY_2015")      .toBeTrue();
-    console.log("Testing DAY_AFTER: " + DAY_AFTER + " - " + DAY_AFTER.getTime());
-    expect(universeEntry.worthAssessing(DAY_AFTER.getTime(), 20))     .withContext("DAY_AFTER")     .toBeFalse();
+    expect(universeEntry.worthAssessing(DAYS_BEFORE_40, 20)).withContext("DAYS_BEFORE_40").toBeFalse();
+    expect(universeEntry.worthAssessing(DAYS_BEFORE_20, 20)).withContext("DAYS_BEFORE_20").toBeTrue();
+    expect(universeEntry.worthAssessing(DAYS_BEFORE_10, 20)).withContext("DAYS_BEFORE_10").toBeTrue();
+    expect(universeEntry.worthAssessing(DAY_2015, 20))      .withContext("DAY_2015")      .toBeTrue();
+    expect(universeEntry.worthAssessing(DAY_AFTER, 20))     .withContext("DAY_AFTER")     .toBeFalse();
   });
 });
 

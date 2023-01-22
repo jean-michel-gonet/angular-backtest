@@ -7,23 +7,19 @@ import { UniverseConfigurationService } from './universe-configuration.service';
 const MILISECONDS_IN_A_DAY = 86400000;
 
 export class ConfigurableUniverseEntryPeriod {
-  public from: number;
-  public to: number;
+  public from: Date;
+  public to: Date;
 
   constructor(period: NamedUniverseEntryPeriod) {
-    if (period.from) {
-      this.from = MILISECONDS_IN_A_DAY * Math.floor(period.from.getTime() / MILISECONDS_IN_A_DAY);
-    }
-    if(period.to) {
-      this.to = MILISECONDS_IN_A_DAY * (1 + Math.floor(period.to.getTime() / MILISECONDS_IN_A_DAY));
-    }
+    this.from = period.from;
+    this.to = period.to;
   }
 
   public toString() {
     return "from: " + this.from + ", to: " + this.to;
   }
 
-  public contains(instant: number): boolean {
+  public contains(instant: Date): boolean {
     if (this.from && this.from > instant) {
       return false;
     }
@@ -33,7 +29,7 @@ export class ConfigurableUniverseEntryPeriod {
     return true;
   }
 
-  public intersects(from: number, to: number): boolean {
+  public intersects(from: Date, to: Date): boolean {
     if (this.from && to < this.from) {
       return false;
     }
@@ -64,7 +60,7 @@ export class ConfigurableUniverseEntry {
     });
   }
 
-  belongsToUniverse(instant: number): boolean {
+  belongsToUniverse(instant: Date): boolean {
     for(var n = 0; n < this.periods.length; n++) {
       if (this.periods[n].contains(instant)) {
         return true;
@@ -73,20 +69,10 @@ export class ConfigurableUniverseEntry {
     return false;
   }
 
-  worthAssessing(instant: number, assessmentDays: number): boolean {
-    console.log("instant:" + instant + ", assessmentDays:" + assessmentDays);
-    let to = instant + assessmentDays * MILISECONDS_IN_A_DAY;
+  worthAssessing(instant: Date, assessmentDays: number): boolean {
+    let to = new Date(instant.getTime() + assessmentDays * MILISECONDS_IN_A_DAY);
     for(var n = 0; n < this.periods.length; n++) {
-      let period = this.periods[n];
-      console.log("Comparing (instant:" + instant + ", to:" + to + ") with period[" + n + "] = (" + period + ")");
-      // Github:
-      // instant:                    1420156800000, to: 1421884800000) 
-      // from:    1262304000000, to: 1420156800000)'
-
-      // Local:
-      // instant:                    1420153200000, to:1421881200000)
-      // from:    1262217600000, to: 1420070400000)
-      if (period.intersects(instant, to)) {
+      if (this.periods[n].intersects(instant, to)) {
         return true;
       }
     }
@@ -112,7 +98,7 @@ export class ConfigurableUniverse implements Universe {
   belongsToUniverse(name: string, instant: Date): boolean {
     let universeEntry = this.entries.get(name);
     if (universeEntry) {
-      return universeEntry.belongsToUniverse(instant.getTime());
+      return universeEntry.belongsToUniverse(instant);
     } else {
       return false;
     }
@@ -129,7 +115,7 @@ export class ConfigurableUniverse implements Universe {
   worthAssessing(name: string, instant: Date, assessmentDays: number): boolean {
     let universeEntry = this.entries.get(name);
     if (universeEntry) {
-      return universeEntry.worthAssessing(instant.getTime(), assessmentDays);
+      return universeEntry.worthAssessing(instant, assessmentDays);
     } else {
       return false;
     }
@@ -138,9 +124,8 @@ export class ConfigurableUniverse implements Universe {
   allQuotes(instant?: Date): string[] {
     let q: string[] = [];
     if (instant) {
-      let time = instant.getTime();
       this.entries.forEach(entry => {
-        if (entry.belongsToUniverse(time)) {
+        if (entry.belongsToUniverse(instant)) {
           q.push(entry.name)
         }
       });
