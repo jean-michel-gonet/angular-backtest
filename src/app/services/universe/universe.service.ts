@@ -76,10 +76,10 @@ export class ConfigurableUniverseEntry {
   worthAssessing(instant: number, assessmentDays: number): boolean {
     console.log("instant:" + instant + ", assessmentDays:" + assessmentDays);
     let to = instant + assessmentDays * MILISECONDS_IN_A_DAY;
-    console.log("instant:" + instant + ", to:" + to);
     for(var n = 0; n < this.periods.length; n++) {
-      console.log("Comparing with period " + n + ": " + this.periods[n].toString());
-      if (this.periods[n].intersects(instant, to)) {
+      let period = this.periods[n];
+      console.log("Comparing (instant:" + instant + ", to:" + to + ") with period[" + n + "] = (" + period + ")");
+      if (period.intersects(instant, to)) {
         return true;
       }
     }
