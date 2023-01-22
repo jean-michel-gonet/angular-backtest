@@ -11,11 +11,12 @@ export class HistoricalValue {
 }
 
 
-class ICandleStick {
+class CandlestickConfiguration {
   close: number;
   open?: number;
   high?: number;
   low?: number;
+  adjustedClose?: number;
 }
 
 /**
@@ -45,33 +46,24 @@ export class Candlestick {
   high: number;
   low: number;
   close: number;
+  adjustedClose: number;
 
   /**
    * Class constructor.
    */
-  constructor(obj: ICandleStick = {} as ICandleStick) {
+  constructor(obj: CandlestickConfiguration = {} as CandlestickConfiguration) {
     let {
-      open,
-      high,
-      low,
-      close
+      close,
+      open = close,
+      high = Math.max(open, close),
+      low = Math.min(open, close),
+      adjustedClose = close
     } = obj;
     this.close = close;
-    if (open) {
-      this.open = open;
-    } else {
-      this.open = close;
-    }
-    if (high) {
-      this.high = high;
-    } else {
-      this.high = Math.max(this.open, this.close);
-    }
-    if (low) {
-      this.low = low;
-    } else {
-      this.low = Math.min(this.open, this.close);
-    }
+    this.open = open;
+    this.high = high;
+    this.low = low;
+    this.adjustedClose = adjustedClose;
   }
 
   /**
@@ -85,7 +77,8 @@ export class Candlestick {
       open: this.open,
       close: other.close,
       high: Math.max(this.high, other.high),
-      low: Math.min(this.low, other.low)
+      low: Math.min(this.low, other.low),
+      adjustedClose: other.close,
     })
   }
 
@@ -104,9 +97,8 @@ export class Candlestick {
   }
 }
 
-class IQuote extends ICandleStick {
+class QuoteConfiguration extends CandlestickConfiguration {
   name: string;
-  adjustedClose?: number;
   volume?: number;
   spread?: number;
   dividend?: number;
@@ -125,22 +117,13 @@ export class Quote extends Candlestick {
   name: string;
 
   /**
-   * Adjusted closing price changes a stock’s closing price to correctly
-   * reveal that stock’s value after accounting for every action of some
-   * company. So, it is recognized as the accurate price of the stock.
-   * It is necessary when you want to examine historical returns.
-   * see https://traders-paradise.com/magazine/2020/02/adjusted-closing-price-find-stock-return/
-   */
-  adjustedClose?: number;
-
-  /**
    * The number of shares or contracts traded in a security or an
    * entire market during a given period of time.
    * While volume is not directly used when performing operations,
    * it is important to estimate the dividends.
    * see https://www.investopedia.com/terms/v/volume.asp
    */
-  volume?: number;
+  volume: number;
 
   /**
   * The spread is the gap between the bid and the ask prices of a security
@@ -148,14 +131,14 @@ export class Quote extends Candlestick {
   * This is known as a bid-ask spread.
   * see https://www.investopedia.com/terms/s/spread.asp
   */
-  spread?: number;
+  spread: number;
 
   /**
    * A dividend is the distribution of reward from a portion of the company's
    * earnings and is paid to a class of its shareholders.
    * Dividends are given in absolute value per part.
    */
-  dividend?: number;
+  dividend: number;
 
   /**
    * A text describing the kind of anomaly found in the data.
@@ -164,24 +147,18 @@ export class Quote extends Candlestick {
    * Could also be any other kind of alert.
    * See https://en.wikipedia.org/wiki/Trading_curb
    */
-  alert?: string;
+  alert: string;
 
-  constructor(obj: IQuote = {} as IQuote) {
+  constructor(obj: QuoteConfiguration = {} as QuoteConfiguration) {
     super(obj);
     let {
       name = "",
-      adjustedClose = 0,
       volume = 0,
       spread = 0,
       dividend = 0,
       alert
     } = obj;
     this.name = name;
-    if (adjustedClose) {
-      this.adjustedClose = adjustedClose;
-    } else {
-      this.adjustedClose = this.close;
-    }
     this.volume = volume;
     this.spread = spread;
     this.dividend = dividend;
@@ -201,6 +178,17 @@ export class Quote extends Candlestick {
       return this.close;
     }
   }
+}
+
+/**
+ * Interface impemented by any component needing to be provided with specific quotes.
+ * Typically, strategies require quotes.
+ */
+export interface QuotesOfInterest {
+  /**
+   * Return a list of quote names.
+   */
+  listQuotesOfInterest(): string[];
 }
 
 export class IInstantQuotes {
@@ -355,7 +343,6 @@ export class HistoricalQuotes implements Reporter {
    * @param {HistoricalQuotes} otherHistoricalQuotes The other data.
    */
   merge(otherHistoricalQuotes: HistoricalQuotes):void {
-    let mergedHistoricalQuotes: InstantQuotes[] = [];
     let otherIndex: number = 0;
     let thisIndex: number = 0;
 
@@ -364,39 +351,28 @@ export class HistoricalQuotes implements Reporter {
       let otherEntry = otherHistoricalQuotes.instantQuotes[otherIndex];
       let thisEntry = this.instantQuotes[thisIndex];
       if (thisEntry.instant.valueOf() == otherEntry.instant.valueOf()) {
-        let mergedEntry: InstantQuotes = new InstantQuotes(thisEntry);
-        mergedEntry.add(otherEntry.quotes);
-        mergedHistoricalQuotes.push(mergedEntry);
+        thisEntry.add(otherEntry.quotes);
         thisIndex++;
         otherIndex++;
+        continue;
       }
 
       if (thisEntry.instant.valueOf() < otherEntry.instant.valueOf()) {
-        let mergedEntry: InstantQuotes = new InstantQuotes(thisEntry);
-        mergedHistoricalQuotes.push(mergedEntry);
         thisIndex++;
+        continue;
       }
 
       if (thisEntry.instant.valueOf() > otherEntry.instant.valueOf()) {
-        let mergedEntry: InstantQuotes = new InstantQuotes(otherEntry);
-        mergedHistoricalQuotes.push(mergedEntry);
+        this.instantQuotes.splice(thisIndex, 0, otherEntry);
+        thisIndex++;
         otherIndex++;
+        continue;
       }
     }
 
     while(otherIndex < otherHistoricalQuotes.instantQuotes.length) {
-      let otherEntry = otherHistoricalQuotes.instantQuotes[otherIndex];
-      mergedHistoricalQuotes.push(new InstantQuotes(otherEntry));
-      otherIndex++;
+      this.instantQuotes.push(otherHistoricalQuotes.instantQuotes[otherIndex++]);
     }
-
-    while(thisIndex < this.instantQuotes.length) {
-      let thisEntry = this.instantQuotes[thisIndex];
-      mergedHistoricalQuotes.push(new InstantQuotes(thisEntry));
-      thisIndex++;
-    }
-
-    this.instantQuotes = mergedHistoricalQuotes;
   }
 
   /**

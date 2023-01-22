@@ -76,8 +76,9 @@ export class QuotesFromMarketStackService implements IQuotesService {
 
   getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
     return this.http.get(source).pipe(map(marketStackData => {
-        let sixReader: MarketStackReader = new MarketStackReader(name, marketStackData);
-        return sixReader.asHistoricalQuotes();
-      }));
+      console.log("Retrieved Market Stack data for " + name, source);
+      let reader: MarketStackReader = new MarketStackReader(name, marketStackData);
+      return reader.asHistoricalQuotes();
+    }));
   }
 }

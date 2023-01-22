@@ -1,52 +1,77 @@
-import { HistoricalQuotes } from './quotes';
 import { Account } from './account';
 import { Report, NullReport } from './reporting';
+import { QuotesService } from 'src/app/services/quotes/quotes.service';
+import { Observable, Observer } from 'rxjs';
 
-class ISimulation {
-  historicalQuotes: HistoricalQuotes;
+interface SimulationConfig {
+  quoteService: QuotesService;
   accounts: Account[];
   report?: Report;
-
-  constructor(obj = {} as ISimulation) {
-    let {
-      historicalQuotes = new HistoricalQuotes([]),
-      accounts = [],
-      report = new NullReport()
-    } = obj;
-    this.historicalQuotes = historicalQuotes;
-    this.accounts = accounts;
-    this.report = report;
-  }
 }
 
 /**
  * A class performing a back test simulation based on instantQuotes data,
  * over the specified account.
  */
-export class Simulation extends ISimulation {
-  constructor(obj = {} as ISimulation) {
-    super(obj);
+export class Simulation {
+  public quoteService: QuotesService;
+  public accounts: Account[];
+  public report: Report;
+
+  constructor(obj = {} as SimulationConfig) {
+    let {
+      quoteService,
+      accounts,
+      report = new NullReport()
+    } = obj;
+    this.quoteService = quoteService;
+    this.accounts = accounts;
+    this.report = report;
   }
 
   /**
    * Runs the simulation.
    * @param {Date} start Starts the simulation at this date.
    * @param {Date} end Ends the simulation at this date.
+   * @return Subscribe to the returned observable to launch simulation.
    */
-  run(start?:Date, end?:Date) {
-    this.accounts.forEach(account => {
-      account.doRegister(this.report);
+  run(start?:Date, end?:Date): Observable<void> {
+    // Lists all quotes of interest:
+    let quotesOfInterest: string[] = [];
+    this.accounts.forEach(a => {
+      quotesOfInterest = quotesOfInterest.concat(a.listQuotesOfInterest());
     });
-    this.historicalQuotes.doRegister(this.report);
 
-    this.historicalQuotes.forEachDate(instantQuotes => {
-      this.report.startReportingCycle(instantQuotes.instant);
-      this.accounts.forEach(account => {
-        account.process(instantQuotes);
-      });
-      this.report.collectReports();
-    }, start, end);
+    // As soon as an observer subscribes:
+    return new Observable(o => {
+      // Retrieves quotes of interest:
+      console.log("Simulation: Retrieving quotes of interest", quotesOfInterest);
+      this.quoteService
+        .getQuotes(quotesOfInterest)
+        .subscribe(historicalQuotes => {
+          console.log("Simulation: Retrieved quotes of interest");
 
-    this.report.completeReport();
+          // Register all reporting sources:
+          historicalQuotes.doRegister(this.report);
+          this.accounts.forEach(account => {
+            account.doRegister(this.report);
+          });
+
+          // Run the simulation:
+          console.log("Simulation: All accounts registerd, let's start");
+          historicalQuotes.forEachDate(instantQuotes => {
+            console.log("Simulation: ", instantQuotes.instant);
+            this.report.startReportingCycle(instantQuotes.instant);
+            this.accounts.forEach(account => {
+              account.process(instantQuotes);
+            });
+            this.report.collectReports();
+          }, start, end);
+
+          this.report.completeReport();
+          o.next();
+          o.complete();
+        });
+    });
   }
 }

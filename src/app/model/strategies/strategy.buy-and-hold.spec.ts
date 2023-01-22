@@ -3,11 +3,18 @@ import { Account, Position } from '../core/account';
 import { InstantQuotes, Quote } from '../core/quotes';
 import { RegularTransfer, RegularPeriod } from '../core/transfer';
 import { DefaultMarketTiming, BearBull } from '../core/market-timing';
+import { SuperthonMarketTiming } from '../markettiming/market-timing.superthon';
 
 
 describe('BuyAndHoldStrategy', () => {
   it('Can create a new instance', () => {
-    expect(new BuyAndHoldStrategy()).toBeTruthy();
+    let buyAndHoldStrategy: BuyAndHoldStrategy = new BuyAndHoldStrategy({
+      assetName: "ISIN1",
+      assetNameDuringBear: "ISIN2",
+      marketTiming: new SuperthonMarketTiming({assetName: "ISIN3"})
+    });
+    expect(buyAndHoldStrategy).toBeTruthy();
+    expect(buyAndHoldStrategy.listQuotesOfInterest()).toEqual(["ISIN1", "ISIN2", "ISIN3"]);
   });
 
 

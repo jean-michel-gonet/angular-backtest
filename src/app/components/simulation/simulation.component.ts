@@ -1,6 +1,6 @@
 import { Component, Input, ContentChild } from '@angular/core';
 import { AccountsComponent } from '../accounts/accounts.component';
-import { QuotesService } from 'src/app/services/quotes/quotes.service';
+import { QuotesServiceImpl } from 'src/app/services/quotes/quotes.service';
 import { Simulation } from 'src/app/model/core/simulation';
 import { ReportsComponent } from '../reports/reports.component';
 
@@ -19,7 +19,6 @@ export class SimulationComponent {
 
   private _start: Date;
   private _end: Date;
-  private _quotes: string[];
 
   @Input()
   set start(value: Date) {
@@ -41,26 +40,13 @@ export class SimulationComponent {
     return this._end;
   }
 
-  @Input()
-  set quotes(value: string[]) {
-    if (typeof value == 'string') {
-      this._quotes = this.convertToArray(value);
-    } else {
-      this._quotes = value;
-    }
-  }
-  get quotes() {
-    return this._quotes;
-  }
-
-
   @ContentChild(ReportsComponent, {static: true})
   public reportComponent: ReportsComponent;
 
   @ContentChild(AccountsComponent, {static: true})
   public accountsComponent: AccountsComponent;
 
-  constructor(private quotesService:QuotesService) {
+  constructor(private quotesService:QuotesServiceImpl) {
   }
 
   displayRunButton(): boolean  {
@@ -69,37 +55,24 @@ export class SimulationComponent {
 
   run(): void {
     console.log("Simulation starting at '" + this.start +
-                "', ending at '" + this.end +
-                "' based on [" + this.quotes + "]");
+                "', ending at '" + this.end + "'");
 
-    // Fetch the data:
-    this.quotesService.getQuotes(this.quotes)
-      .subscribe(historicalQuotes => {
-        // Set up the simulation:
-        let simulation: Simulation = new Simulation({
-          accounts: this.accountsComponent.asAccounts(),
-          historicalQuotes: historicalQuotes,
-          report: this.reportComponent.asReports()
-        });
-
-        // Run the simulation:
-        simulation
-          .run(this.start, this.end);
-
-        this.status = SimulationStatus.COMPLETED;
+    // Set up the simulation:
+    let simulation: Simulation = new Simulation({
+      accounts: this.accountsComponent.asAccounts(),
+      quoteService: this.quotesService,
+      report: this.reportComponent.asReports()
     });
-    this.status = SimulationStatus.RUNNING;
-  }
 
-  private convertToArray(s: string): string[] {
-    let array: string[] = [];
-    if (s) {
-      let tokens = s.split(/[,.]/);
-      tokens.forEach(element => {
-        array.push(element.trim());
+    // Run the simulation:
+    simulation
+      .run(this.start, this.end)
+      .subscribe(() => {
+        this.status = SimulationStatus.COMPLETED;
       });
-    }
-    return array;
+
+    // Simulation is running until further notification:
+    this.status = SimulationStatus.RUNNING;
   }
 
   private convertToDate(s: string) {

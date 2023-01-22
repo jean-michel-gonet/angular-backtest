@@ -93,7 +93,7 @@ export class OptimizationEmaPage implements OnInit {
 
     // Prepare the simulation:
     let simulation: Simulation = new Simulation({
-      historicalQuotes: this.historicalQuotes,
+      quoteService: this.quotesService,
       accounts: [new SwissQuoteAccount({
         id: "ACC",
         cash: 100000,
@@ -134,7 +134,9 @@ export class OptimizationEmaPage implements OnInit {
       })
     });
     // Run the simulation:
-    simulation.run(new Date(2000, 0, 1), new Date(2020, 6, 17));
+    simulation.run(new Date(2000, 0, 1), new Date(2020, 6, 17)).subscribe(() => {
+
+    });
 
     // Returns the result of the simulation:
     return {

@@ -8,15 +8,17 @@ import { OptimizationSuperthonPage } from './pages/optimization/optimization-sup
 import { HighchartsPage } from './pages/highcharts/highcharts.page';
 import { AllocationsAllWeatherPage } from './pages/allocations/all-weather.page';
 import { SuperthonPage } from './pages/market-timing/superthon.page';
+import { MomentumPage } from './pages/momentum/momentum.page';
 
 
 const routes: Routes = [
   { path: 'home', component: HomePage },
+  { path: 'momentum', component: MomentumPage },
+  { path: 'superthon', component: SuperthonPage},
   { path: 'highcharts', component: HighchartsPage },
   { path: 'market-timing', component: MarketTimingPage},
-  { path: 'superthon', component: SuperthonPage},
-  { path: 'investing-in-bear', component: InvestingInBearPage},
   { path: 'optimization-ema', component: OptimizationEmaPage},
+  { path: 'investing-in-bear', component: InvestingInBearPage},
   { path: 'optimization-superthon', component: OptimizationSuperthonPage},
   { path: 'allocations-all-weather', component: AllocationsAllWeatherPage},
 ];

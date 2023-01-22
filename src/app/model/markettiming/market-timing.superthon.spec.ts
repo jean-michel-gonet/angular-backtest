@@ -5,11 +5,13 @@ import { Periodicity } from '../core/period';
 
 describe('SuperthonMarketTiming', () => {
   it('Can create a new instance', () => {
-    expect(new SuperthonMarketTiming({
+    let marketTiming = new SuperthonMarketTiming({
       assetName: "ANY",
       periodicity: Periodicity.MONTHLY,
       periods: 12
-    })).toBeTruthy();
+    });
+    expect(marketTiming).toBeTruthy();
+    expect(marketTiming.listQuotesOfInterest()).toEqual(["ANY"]);
   });
 
   let makeSuperthon = function(start: Date, values:Candlestick[]): SuperthonMarketTiming {

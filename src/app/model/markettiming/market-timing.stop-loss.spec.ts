@@ -10,6 +10,7 @@ describe("StopLosMarketTiming", () => {
       threshold: 0.2
     });
     expect(stopLossMarketTiming).toBeTruthy();
+    expect(stopLossMarketTiming.listQuotesOfInterest()).toEqual(["ANY"]);
   });
 
   it("Can wait the specified number of periods before changing status", () => {

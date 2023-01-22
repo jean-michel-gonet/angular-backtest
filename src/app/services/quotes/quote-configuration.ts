@@ -21,7 +21,8 @@ export enum QuoteProvider {
   YAHOO = 'finance.yahoo.com',
   SIX = 'www.six-group.com',
   INVESTING = 'www.investing.com',
-  MARKETSTACK = 'www.marketstack.com'
+  MARKETSTACK = 'www.marketstack.com',
+  ALPHA_VANTAGE = '/www.alphavantage.co'
 };
 
 export enum ExchangeRateOperation {

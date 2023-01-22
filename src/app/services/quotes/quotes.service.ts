@@ -10,6 +10,24 @@ import { QuotesFromInvestingService } from './quotes-from-investing.service';
 import { ApplyExchangeRate } from './quotes-exchange-rate';
 import { NamedQuoteSource, QuoteProvider, DividendSource, DataSource, QuoteSource, ExchangeRateSource } from './quote-configuration';
 import { ComputeDividends } from './quotes-dividends';
+import { QuotesFromAlphaVantageService } from './quotes-from-alphavantage.service';
+
+export interface QuotesService {
+  getQuotes(names: string[]): Observable<HistoricalQuotes>;
+}
+
+/**
+ * Forces relative path to quotes.
+ * @param uri A path or URI, absolute or relative.
+ * @returns Same if uri was absolute, or quotes folder if it was relative.
+ */
+export function makePathRelativeToQuotes(uri: string): string {
+  if (uri.startsWith('/')) {
+    return uri;
+  } else {
+    return "assets/quotes/" + uri;
+  }
+}
 
 /**
  * Retrieves instantQuotes data from a provider, and then broadcasts the
@@ -19,10 +37,11 @@ import { ComputeDividends } from './quotes-dividends';
  @Injectable({
    providedIn: 'root'
  })
-export class QuotesService {
+export class QuotesServiceImpl implements QuotesService {
   constructor(private quotesFromSixService: QuotesFromSixService,
               private quotesFromYahooService: QuotesFromYahooService,
               private quotesFromInvestingService: QuotesFromInvestingService,
+              private quotesFromAlphaVantageService: QuotesFromAlphaVantageService,
               private plainDataService: PlainDataService,
               private quotesConfigurationService: QuotesConfigurationService) {
   }
@@ -34,35 +53,48 @@ export class QuotesService {
       let namedQuoteSource: NamedQuoteSource =
         this.quotesConfigurationService.obtainNamedQuoteSource(name);
 
-      let quoteRetriever: Observable<HistoricalQuotes> = new Observable<HistoricalQuotes>(observer => {
-        this.retrieveQuote(namedQuoteSource.name, namedQuoteSource.quote).subscribe(h1 => {
-            this.applyDividends(h1, namedQuoteSource).subscribe(h2 => {
-              this.applyExchangeRate(h2, namedQuoteSource).subscribe(h3 => {
-                observer.next(h3);
-                observer.complete();
-              })
+      if (namedQuoteSource) {
+        let quoteRetriever: Observable<HistoricalQuotes> = new Observable<HistoricalQuotes>(observer => {
+          this.retrieveQuote(namedQuoteSource.name, namedQuoteSource.quote).subscribe(h1 => {
+              this.applyDividends(h1, namedQuoteSource).subscribe(h2 => {
+                this.applyExchangeRate(h2, namedQuoteSource).subscribe(h3 => {
+                  console.info("Loaded " + namedQuoteSource.name, namedQuoteSource);
+                  observer.next(h3);
+                  observer.complete();
+                })
+              });
             });
-          });
-      });
-      quoteRetrievers.push(quoteRetriever);
+        });
+        quoteRetrievers.push(quoteRetriever);
+      } else {
+        console.warn("Skipping " + name  + " because is not defined among named quote sources");
+      }
     });
+
+    console.log("Retrieving " + quoteRetrievers.length  +" quote sources");
 
     return forkJoin(quoteRetrievers)
       .pipe(map((separatedHistoricalQuotes: HistoricalQuotes[]) => {
         let mergedHistoricalQuotes: HistoricalQuotes;
+        console.log("Loaded " + separatedHistoricalQuotes.length + " separated historical quotes to merge");
+        let n = 0;
         separatedHistoricalQuotes.forEach((singleHistoricalQuotes: HistoricalQuotes) => {
           if (mergedHistoricalQuotes) {
             mergedHistoricalQuotes.merge(singleHistoricalQuotes);
           } else {
             mergedHistoricalQuotes = singleHistoricalQuotes;
           }
+          if (n++ % 20 == 0) {
+            console.log("Merged " + n++ + " historical quotes so far...");
+          }
         });
+        console.log("Finished merging historical quotes: " + n + " in total");
         return mergedHistoricalQuotes;
       }));
   }
 
   private retrieveQuote(name: string, quoteSource: QuoteSource): Observable<HistoricalQuotes> {
-    let fileName = this.makeRelativePath(quoteSource.local.fileName);
+    let fileName = makePathRelativeToQuotes(quoteSource.local.fileName);
     let format = quoteSource.local.format;
 
     switch(format) {
@@ -72,6 +104,8 @@ export class QuotesService {
         return this.quotesFromYahooService.getHistoricalQuotes(fileName, name);
       case QuoteProvider.INVESTING:
         return this.quotesFromInvestingService.getHistoricalQuotes(fileName, name);
+      case QuoteProvider.ALPHA_VANTAGE:
+        return this.quotesFromAlphaVantageService.getHistoricalQuotes(fileName, name);
       default:
         console.warn(format + " - Unsupported provider");
         return null;
@@ -83,7 +117,7 @@ export class QuotesService {
     if (dividendsSource) {
       let directDividendsSource: DataSource = dividendsSource.directDividends;
       if (directDividendsSource) {
-        let uri = this.makeRelativePath(directDividendsSource.uri);
+        let uri = makePathRelativeToQuotes(directDividendsSource.uri);
         return new Observable<HistoricalQuotes>(observer => {
           this.plainDataService.getHistoricalValues(uri).subscribe(directDividends => {
             ComputeDividends
@@ -129,14 +163,6 @@ export class QuotesService {
       });
     } else {
       return of(historicalQuotes);
-    }
-  }
-
-  public makeRelativePath(uri: string): string {
-    if (uri.startsWith('/')) {
-      return uri;
-    } else {
-      return "assets/quotes/" + uri;
     }
   }
 }

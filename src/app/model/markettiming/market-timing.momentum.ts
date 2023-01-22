@@ -66,6 +66,10 @@ export class MomentumMarketTiming implements MarketTiming {
     console.log("Momentum Market Timing", this);
   }
 
+  listQuotesOfInterest(): string[] {
+    return [this.assetName];
+  }
+
   record(instantQuotes: InstantQuotes): void {
     let instant: Date = instantQuotes.instant;
     let quote: Quote = instantQuotes.quote(this.assetName);

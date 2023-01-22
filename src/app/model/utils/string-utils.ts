@@ -14,9 +14,15 @@ export class StringUtils {
     return array;
   }
 
+  /**
+   * Converts a string into a date.
+   * @param s String is expected to be YYYY.MM.DD
+   * Separator can be either dot (.) or a minus (-)
+   * @return The date, or undefined if it could not be converted.
+   */
   public static convertToDate(s: string) {
     if (s) {
-      let tokens = s.split(new RegExp("[.-]"));
+      let tokens = s.split(new RegExp("[/.-]"));
       if (tokens.length == 3) {
         let year = parseInt(tokens[0]);
         let month = parseInt(tokens[1]) - 1;

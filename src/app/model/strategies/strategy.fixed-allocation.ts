@@ -4,6 +4,7 @@ import { Account, Position } from '../core/account';
 import { RegularTransfer } from '../core/transfer';
 import { Report } from '../core/reporting';
 import { Period, Periodicity } from '../core/period';
+import { BackTestingError } from '../utils/back-testing-error';
 
 /**
  * Describes the fixed allocation for one asset.
@@ -41,11 +42,9 @@ class IFixedAllocationStrategy {
   transfer?: RegularTransfer;
 }
 
-export class FixedAllocationStrategyError extends Error {
+export class FixedAllocationStrategyError extends BackTestingError {
   constructor(message: string) {
     super(message);
-    Object.setPrototypeOf(this, new.target.prototype)
-    this.name = this.constructor.name;
   }
 }
 
@@ -128,6 +127,16 @@ export class FixedAllocationStrategy implements Strategy {
     this.pendingReallocation = [];
     this.threshold = threshold;
     this.transfer = transfer;
+  }
+  /**
+   * Liats all fixed allocations as quotes of interest.
+   */
+  listQuotesOfInterest(): string[] {
+    let quotesOfInterest: string[] = [];
+    this.fixedAllocations.forEach(f => {
+      quotesOfInterest.push(f.assetName);
+    });
+    return quotesOfInterest;
   }
 
   /**

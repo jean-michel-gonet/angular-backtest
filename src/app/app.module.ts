@@ -23,6 +23,7 @@ import { RegularTransferComponent } from './components/transfer/regular-transfer
 
 import { StrategyComponent } from './components/strategies/strategy.component';
 import { BuyAndHoldStrategyComponent } from './components/strategies/b-a-h.strategy.component';
+import { MomentumStrategyComponent } from './components/strategies/momentum.strategy.component';
 import { EMAMarketTimingComponent } from './components/markettiming/market-timing.ema.component';
 import { SuperthonMarketTimingComponent } from './components/markettiming/market-timing.superthon.component';
 import { MACDMarketTimingComponent } from './components/markettiming/market-timing.macd.component';
@@ -48,6 +49,7 @@ import { InvestingInBearPage } from './pages/investing-in-bear/investing-in-bear
 import { OptimizationEmaPage } from './pages/optimization/optimization-ema.page';
 import { OptimizationSuperthonPage } from './pages/optimization/optimization-superthon.page';
 import { AllocationsAllWeatherPage } from './pages/allocations/all-weather.page';
+import { MomentumPage } from './pages/momentum/momentum.page';
 import { AllocationComponent, FixedAllocationsStrategyComponent } from './components/strategies/fixed-allocation.strategy.component';
 
 @NgModule({
@@ -87,6 +89,7 @@ import { AllocationComponent, FixedAllocationsStrategyComponent } from './compon
 
     BuyAndHoldStrategyComponent,
     FixedAllocationsStrategyComponent,
+    MomentumStrategyComponent,
     AllocationComponent,
     StrategyComponent,
 
@@ -99,7 +102,8 @@ import { AllocationComponent, FixedAllocationsStrategyComponent } from './compon
     InvestingInBearPage,
     OptimizationEmaPage,
     OptimizationSuperthonPage,
-    AllocationsAllWeatherPage
+    AllocationsAllWeatherPage,
+    MomentumPage
   ],
   imports: [
     BrowserModule,

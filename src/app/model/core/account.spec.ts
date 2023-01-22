@@ -27,12 +27,35 @@ describe('Position', () => {
 class MockStrategy extends NullStrategy {
   gotCalled: boolean = false;
 
+  listQuotesOfInterest(): string[] {
+    return ["A", "B"];
+  }
+
   applyStrategy(account: Account, instantQuotes: InstantQuotes): void {
     this.gotCalled = true;
   }
 }
 
 describe('Account', () => {
+  it('Can provide the list of quotes of interest', () => {
+    let account: Account = new Account({
+      cash: 1000.0,
+      strategy: new MockStrategy(),
+      positions: [
+        new Position({
+          name: "XX",
+          partValue: 100,
+          parts: 3
+        }),
+        new Position({
+          name: "YY",
+          partValue: 10,
+          parts: 4
+        })]
+    });
+    expect(account.listQuotesOfInterest()).toEqual(["A", "B", "XX", "YY"]);
+  });
+
   it('Can calculate NAV', () => {
     let account: Account = new Account({
       cash: 1000.0,

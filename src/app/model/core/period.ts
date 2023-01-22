@@ -17,10 +17,11 @@ export class Period {
 
   /**
    * Class constructor.
-   * @param {Periodicity} periodicity The length of the period.
+   * @param periodicity The length of the period.
+   * @param day What day in the specified period. Default value is 1.
+   * @param skip Skip periods.
    */
-  public constructor(public periodicity: Periodicity) {}
-
+  public constructor(public periodicity: Periodicity, public day: number = 1, public skip: number = 1) {}
 
   /**
    * Indicates whether the specified number of periods has passed since the
@@ -85,7 +86,7 @@ export class Period {
         return Math.floor(instant.valueOf() / 86400000);
 
       case Periodicity.WEEKLY:
-        return this.weekNumber(instant);
+        return Math.floor(this.weekNumber(instant) / this.skip);
 
       case Periodicity.SEMIMONTHLY:
         return this.semiMonthNumber(instant);
@@ -108,7 +109,8 @@ export class Period {
   private weekNumber(instant: Date): number {
     let x = Date.UTC(instant.getFullYear(), instant.getMonth(), instant.getDate());
     let numberOfDays: number = (x - Period.MONDAY_1970) / 86400000;
-    let numberOfWeeks = numberOfDays / 7;
+    let numberOfDaysShifted = numberOfDays - this.day + 1;
+    let numberOfWeeks = numberOfDaysShifted / 7;
     return Math.floor(numberOfWeeks);
   }
 

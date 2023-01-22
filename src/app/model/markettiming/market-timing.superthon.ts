@@ -53,6 +53,10 @@ export class SuperthonMarketTiming implements MarketTiming {
                 " status=" + this.status);
   }
 
+  listQuotesOfInterest(): string[] {
+    return [this.assetName];
+  }
+
   record(instantQuotes: InstantQuotes): void {
     let instant = instantQuotes.instant;
     let quote: Candlestick = instantQuotes.quote(this.assetName);

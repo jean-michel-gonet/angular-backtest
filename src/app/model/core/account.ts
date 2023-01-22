@@ -1,9 +1,9 @@
-import { InstantQuotes, Quote } from './quotes';
+import { InstantQuotes, Quote, QuotesOfInterest } from './quotes';
 import { Strategy, NullStrategy } from './strategy';
 import { Reporter, Report, ReportedData } from './reporting';
 import { StringUtils } from '../utils/string-utils';
 
-class IPosition {
+export interface PositionConfiguration {
   name: string;
   parts?: number;
   partValue?: number;
@@ -59,7 +59,7 @@ export class Position {
   /** Class constructor.
    * @param {IPosition} obj The object properties.
    */
-  constructor(obj: IPosition = {} as IPosition) {
+  constructor(obj: PositionConfiguration = {} as PositionConfiguration) {
     let {
       name,
       parts = 0,
@@ -145,7 +145,7 @@ class IAccount {
  * It also handles the buy and sell operations.
  * @class{Account}
  */
-export class Account extends IAccount implements Reporter {
+export class Account extends IAccount implements Reporter, QuotesOfInterest {
   private standingOrders: Order[] = [];
   private cashSettlements: Settlement[] = [];
   public accumulatedCosts: number = 0;
@@ -153,6 +153,18 @@ export class Account extends IAccount implements Reporter {
 
   constructor(obj = {} as IAccount) {
     super(obj);
+  }
+
+  /**
+   * Quotes of interest are all initial positions, plus quotes of interest
+   * of the strategy.
+   */
+  listQuotesOfInterest(): string[] {
+    let quotestOfInterest: string[] = this.strategy.listQuotesOfInterest();
+    this.positions.forEach(p => {
+      quotestOfInterest.push(p.name);
+    });
+    return quotestOfInterest;
   }
 
   /**
@@ -243,7 +255,7 @@ export class Account extends IAccount implements Reporter {
       });
       if (position) {
         position.update(quote);
-        if (quote.dividend) {
+        if (quote.dividend && position.parts) {
           let dividends = position.parts * quote.dividend;
           this.cash += dividends;
           console.info(StringUtils.formatAsDate(this.instant) +
@@ -392,7 +404,7 @@ export class Account extends IAccount implements Reporter {
     }
 
     // A little log:
-    console.info(StringUtils.formatAsDate(this.instant) +
+    console.log(StringUtils.formatAsDate(this.instant) +
       " - Account " + this.id +
       " aquired " + parts + " parts of " + quote.name + " at " + quote.open);
   }

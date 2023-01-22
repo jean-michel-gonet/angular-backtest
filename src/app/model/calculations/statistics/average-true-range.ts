@@ -38,8 +38,6 @@ export class AverageTrueRange {
 
   atr(candlestick: Candlestick): number {
     let trueRange = this.trueRange.trueRange(candlestick);
-    if (trueRange != undefined) {
-      return this.sma.movingAverageOf(trueRange);
-    }
+    return this.sma.movingAverageOf(trueRange);
   }
 }

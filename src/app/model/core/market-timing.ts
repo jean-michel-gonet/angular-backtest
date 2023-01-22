@@ -1,4 +1,4 @@
-import { InstantQuotes } from './quotes';
+import { InstantQuotes, QuotesOfInterest } from './quotes';
 import { Reporter, Report } from './reporting';
 
 /**
@@ -19,7 +19,7 @@ export enum BearBull {
  * See https://www.investopedia.com/terms/m/markettiming.asp
  * @class {MarketTiming}
  */
-export interface MarketTiming extends Reporter {
+export interface MarketTiming extends Reporter, QuotesOfInterest {
   /**
    * Identity of the market timing.
    * @return {string} The identity of the market timing. Any unique string.
@@ -61,6 +61,13 @@ export class DefaultMarketTiming implements MarketTiming {
    */
   bearBull(): BearBull {
     return BearBull.BULL;
+  }
+
+  /**
+   * Not interested in any quote.
+   */
+  listQuotesOfInterest(): string[] {
+    return [];
   }
 
   doRegister(report: Report): void {

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { HistoricalQuotes, InstantQuotes, Quote } from '../../../app/model/core/quotes';
 import { IQuotesService } from './quotes.service.interface';
 
@@ -159,9 +158,19 @@ export class QuotesFromYahooService implements IQuotesService {
   }
 
   getHistoricalQuotes(source: string, name: string): Observable<HistoricalQuotes> {
-    return this.http.get(source,{responseType: 'text'}).pipe(map(s => {
-        let yahooReader: YahooReader = new YahooReader(name, s as string);
-        return yahooReader.asHistoricalQuotes();
-      }));
+    return new Observable<HistoricalQuotes>(observer => {
+      this.http.get(source,{responseType: 'text'}).subscribe(
+        data => {
+          let yahooReader: YahooReader = new YahooReader(name, data);
+          observer.next(yahooReader.asHistoricalQuotes());
+          observer.complete();
+        },
+        error => {
+          console.warn("Error retrieving data in yahoo format for " + name, error);
+          observer.next(new HistoricalQuotes([]));
+          observer.complete();
+        }
+      );
+    });
   }
 }
