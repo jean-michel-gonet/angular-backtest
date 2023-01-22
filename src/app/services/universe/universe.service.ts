@@ -79,6 +79,13 @@ export class ConfigurableUniverseEntry {
     for(var n = 0; n < this.periods.length; n++) {
       let period = this.periods[n];
       console.log("Comparing (instant:" + instant + ", to:" + to + ") with period[" + n + "] = (" + period + ")");
+      // Github:
+      // instant:                    1420156800000, to: 1421884800000) 
+      // from:    1262304000000, to: 1420156800000)'
+
+      // Local:
+      // instant:                    1420153200000, to:1421881200000)
+      // from:    1262217600000, to: 1420070400000)
       if (period.intersects(instant, to)) {
         return true;
       }

@@ -137,7 +137,7 @@ describe("ConfigurableUniverseEntry", () => {
     expect(universeEntry.worthAssessing(DAYS_BEFORE_20.getTime(), 20)).withContext("DAYS_BEFORE_20").toBeTrue();
     expect(universeEntry.worthAssessing(DAYS_BEFORE_10.getTime(), 20)).withContext("DAYS_BEFORE_10").toBeTrue();
     expect(universeEntry.worthAssessing(DAY_2015.getTime(), 20))      .withContext("DAY_2015")      .toBeTrue();
-    console.log("Testing DAY_AFTER");
+    console.log("Testing DAY_AFTER: " + DAY_AFTER + " - " + DAY_AFTER.getTime());
     expect(universeEntry.worthAssessing(DAY_AFTER.getTime(), 20))     .withContext("DAY_AFTER")     .toBeFalse();
   });
 });
