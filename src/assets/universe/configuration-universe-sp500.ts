@@ -250,7 +250,7 @@ export const SP500_UNIVERSE: NamedUniverse = {
     { name: "EQT", longName: "EQT Corp", gicsSector: "", gicsSubIndustry: "", periods: [{to: new Date(2018, 11 - 1 , 13)}]},
     { name: "ES", longName: "Eversource Energy", gicsSector: "Utilities", gicsSubIndustry: "Multi-Utilities", founded: 1966, periods: [{}]},
     { name: "ESRX", longName: "Express Scripts", gicsSector: "", gicsSubIndustry: "", periods: [{from: new Date(2003, 9 - 1 , 25), to: new Date(2018, 12 - 1 , 24)}]},
-    { name: "ESS", longName: "Essex Property Trust, Inc.", gicsSector: "Real Estate", gicsSubIndustry: "Residential REITs", founded: 1971, periods: [{from: new Date(2014, 4 - 1 , 2)}]},
+    { name: "ESS", longName: "Essex Property Trust, Inc.", gicsSector: "Real Estate", gicsSubIndustry: "Residential REITs", founded: 1971, periods: [{from: new Date(2005, 4 - 1 , 2)}]},
     { name: "ESV", longName: "Ensco plc (now Valaris plc)", gicsSector: "", gicsSubIndustry: "", periods: [{from: new Date(2012, 7 - 1 , 31), to: new Date(2016, 3 - 1 , 30)}]},
     { name: "ETFC", longName: "E*TRADE Financial", gicsSector: "", gicsSubIndustry: "", periods: [{to: new Date(2020, 10 - 1 , 7)}]},
     { name: "ETN", longName: "Eaton Corporation", gicsSector: "Industrials", gicsSubIndustry: "Electrical Components & Equipment", founded: 1911, periods: [{}]},

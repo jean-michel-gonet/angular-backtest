@@ -1,12 +1,10 @@
 <h1>Momentum Strategy</h1>
 
-<simulation start="2005-01-01" end="2008-01-01">
+<simulation start="2005-01-01" end="2009-09-30">
   <reports>
     <highcharts-report title="Momentum Strategy on S&P 500">
-      <chart-report-configuration show="SP500.CLOSE"  showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
-      <chart-report-configuration show="ACC.NAV"      showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
-      <chart-report-annotation show="MT.BULL" color="blue"></chart-report-annotation>
-      <chart-report-annotation show="MT.BEAR" color="red"></chart-report-annotation>
+      <chart-report-configuration show="ESS.CLOSE"  showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
+      <chart-report-configuration show="ESS.MOM.CAGR"      showDataAs="LINE" showDataOn="LEFT"   ></chart-report-configuration>
     </highcharts-report>
   </reports>
   <accounts>
@@ -24,7 +22,7 @@
                   maximumAtrPerPosition = "0.001"
                   smallestOperation = "400"
                   minimumCash = "10000"
-                  startInvesting = "2007-01-01">
+                  startInvesting = "2008-06-01">
           <market-timing>
             <ema-filter id="MT"
                         assetName="SP500"
