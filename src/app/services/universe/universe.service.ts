@@ -19,6 +19,10 @@ export class ConfigurableUniverseEntryPeriod {
     }
   }
 
+  public toString() {
+    return "from: " + this.from + ", to: " + this.to;
+  }
+
   public contains(instant: number): boolean {
     if (this.from && this.from > instant) {
       return false;
@@ -70,8 +74,11 @@ export class ConfigurableUniverseEntry {
   }
 
   worthAssessing(instant: number, assessmentDays: number): boolean {
+    console.log("instant:" + instant + ", assessmentDays:" + assessmentDays);
     let to = instant + assessmentDays * MILISECONDS_IN_A_DAY;
+    console.log("instant:" + instant + ", to:" + to);
     for(var n = 0; n < this.periods.length; n++) {
+      console.log("Comparing with period " + n + ": " + this.periods[n].toString());
       if (this.periods[n].intersects(instant, to)) {
         return true;
       }
