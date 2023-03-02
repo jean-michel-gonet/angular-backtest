@@ -53,10 +53,6 @@ export const INDEX_SOURCES: NamedQuoteSource[] = [
       local: {
         format: QuoteProvider.INVESTING,
         fileName: "indexes/bcom-usd-investing.csv"
-      },
-      remote: {
-        provider: QuoteProvider.MARKETSTACK,
-        ticker: "BCOM.INDX"
       }
     }
   }
