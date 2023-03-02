@@ -54,46 +54,23 @@ export class InvestingWriter {
   }
 
   private convertDate(value: Date): string {
-    let sMonth = this.convertMonth(value.getMonth());
     let sDay: string;
     if (value.getDate() < 10) {
       sDay = "0" + value.getDate();
     } else {
       sDay = value.getDate().toString();
     }
+
+    let sMonth: string;
+    if (value.getMonth() < 9) {
+      sMonth = "0" + value.getMonth() + 1;
+    } else {
+      sMonth = (value.getMonth() + 1).toString();
+    }
+
     let sYear = value.getFullYear().toString();
 
-    return sMonth + " " + sDay + ", " + sYear;
-  }
-
-  private convertMonth(month: number): string {
-    switch(month) {
-      case 0:
-        return('Jan');
-      case 1:
-        return 'Feb';
-      case 2:
-        return 'Mar';
-      case 3:
-        return 'Apr';
-      case 4:
-        return 'May';
-      case 5:
-        return 'Jun';
-      case 6:
-        return 'Jul';
-      case 7:
-        return 'Aug';
-      case 8:
-        return 'Sep';
-      case 9:
-        return 'Oct';
-      case 10:
-        return 'Nov';
-      case 11:
-        return 'Dec';
-    }
-    return null;
+    return sDay + "/" + sMonth + "/" + sYear;
   }
 
   private convertNumber(value: number): string {
@@ -182,54 +159,23 @@ export class InvestingReader {
    * @return {Date} The date.
    */
   private convertToDate(sDate: string): Date {
-    let token1:string[] = sDate.split(",");
-    let sMonthDay: string = token1[0];
-    let sYear: string = token1[1];
+    let token:string[] = sDate.split("/");
+    let sMonthDay: string = token[0];
+    let sMonth: string = token[1];
+    let sYear: string = token[2];
 
+    let day: number = parseInt(sMonthDay);
+    let month: number = parseInt(sMonth) - 1;
     let year: number = parseInt(sYear);
-
-    let token2: string[] = sMonthDay.split(" ");
-    let day: number = parseInt(token2[1]);
-
-    let month: number = this.convertToMonth(token2[0]);
 
     return new Date(year, month, day);
   }
 
-  private convertToMonth(sMonth: string): number {
-    switch(sMonth) {
-      case 'Jan':
-        return 0;
-      case 'Feb':
-        return 1;
-      case 'Mar':
-        return 2;
-      case 'Apr':
-        return 3;
-      case 'May':
-        return 4;
-      case 'Jun':
-        return 5;
-      case 'Jul':
-        return 6;
-      case 'Aug':
-        return 7;
-      case 'Sep':
-        return 8;
-      case 'Oct':
-        return 9;
-      case 'Nov':
-        return 10;
-      case 'Dec':
-        return 11;
-    }
-    return null;
-  }
   /**
    * Converts a string into a number.
    */
    private convertToNumber(s: string): number {
-     if (s == '-') {
+     if (s == '') {
        return undefined;
      }
      let exponent: number = 1;

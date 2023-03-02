@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NamedQuoteSource } from './quote-configuration';
-import { QUOTE_SOURCES } from 'src/assets/quotes/configuration';
+import { ALL_SOURCES } from 'src/assets/quotes/configuration';
 
 /**
 * Imports the configuration file where all securities data are registered.
@@ -21,7 +21,7 @@ export class QuotesConfigurationService {
   private namedQuoteSources: NamedQuoteSource[];
 
   constructor() {
-    this.namedQuoteSources = QUOTE_SOURCES;
+    this.namedQuoteSources = ALL_SOURCES;
   }
 
   /**

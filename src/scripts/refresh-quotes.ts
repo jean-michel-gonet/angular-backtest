@@ -2,7 +2,7 @@ import { readFile, writeFile} from 'fs';
 import { join } from 'path';
 import { Observable } from 'rxjs';
 
-import { QUOTE_SOURCES } from '../assets/quotes/configuration';
+import { BASIC_SOURCES } from '../assets/quotes/configuration';
 
 import { NamedQuoteSource, QuoteProvider } from '../app/services/quotes/quote-configuration';
 import { HistoricalQuotes } from '../app/model/core/quotes';
@@ -167,7 +167,7 @@ export class RefreshQuotes {
   private quotesToRefresh(restrictTo: string[]): NamedQuoteSource[] {
     let fileNames: Map<string, NamedQuoteSource> = new Map();
 
-    QUOTE_SOURCES.forEach(namedQuoteSource => {
+    BASIC_SOURCES.forEach(namedQuoteSource => {
       let skipIt: boolean = false;
 
       let remote = namedQuoteSource.quote.remote;
