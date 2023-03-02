@@ -23,8 +23,8 @@ export const INDEX_SOURCES: NamedQuoteSource[] = [
     name: "IBEX35",
     quote: {
       local: {
-        format: QuoteProvider.INVESTING,
-        fileName: "indexes/ibex35-investing.csv"
+        format: QuoteProvider.YAHOO,
+        fileName: "indexes/ibex35-eur-yahoo.csv"
       },
       remote: {
         provider: QuoteProvider.YAHOO,

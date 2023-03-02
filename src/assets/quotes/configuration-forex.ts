@@ -30,5 +30,19 @@ export const FOREX_SOURCES: NamedQuoteSource[] = [
         ticker: "USDCHF"
       }
     }
+  },
+  {
+    name: "EURCHF",
+    longName: "EUR-CHF",
+    quote: {
+      local: {
+        format: QuoteProvider.YAHOO,
+        fileName: "forex/eur-chf-alva.csv"
+      },
+      remote: {
+        provider: QuoteProvider.ALPHA_VANTAGE,
+        ticker: "EURCHF"
+      }
+    }
   }
 ];
