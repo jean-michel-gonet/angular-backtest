@@ -6,10 +6,10 @@ import { HttpRequest } from '@angular/common/http';
 
 var investingResponse =
 `"Date","Price","Open","High","Low","Vol.","Change %"
-"Apr 09, 2020","7,278.20","7,277.58","7,281.20","7,275.47","190.28M","1.52%"
-"Apr 06, 2020","7,264.86","7,257.84","7,267.00","7,248.17","184.52M","6.72%"
-"Mar 28, 2020","7,253.42","7,253.42","7,253.42","7,253.42","-","0.00%"
-"Mar 27, 2020","7,253.42","7,253.27","7,260.81","7,251.05","220.44M","-2.98%"
+"05/01/2021","0.8783","0.8816","0.8821","0.8774","31.94K","-0.34%"
+"04/01/2021","0.8813","0.8820","0.8850","0.8784","33.36K","-0.98%"
+"01/01/2021","0.8900","0.8985","0.8992","0.8892","","0.55%"
+"31/12/2020","0.8851","0.8812","0.8860","0.8792","26.29K","0.47%"
 `;
 
 describe('QuotesFromInvestingService', () => {
@@ -65,13 +65,13 @@ describe('InvestingWriter', () => {
 
     let csv1: string = investingWriter1.asInvestingCsvFile();
     expect(csv1).toBe(`"Date","Price","Open","High","Low","Vol.","Change %"\r\n` +
-	     `"Dec 25, 2001","9,000.25","10,000.23","11,000.26","8,000.27","100,000.28","-10%"\r\n` +
-	     `"Dec 26, 2001","9,500","10,500","11,500","8,500","150,000","-9.52%"\r\n`);
+	     `"25/12/2001","9,000.25","10,000.23","11,000.26","8,000.27","100,000.28","-10%"\r\n` +
+	     `"26/12/2001","9,500","10,500","11,500","8,500","150,000","-9.52%"\r\n`);
 
     let csv2: string = investingWriter2.asInvestingCsvFile();
     expect(csv2).toBe(`"Date","Price","Open","High","Low","Vol.","Change %"\r\n` +
-	     `"Dec 25, 2001","9.25","10.24","11.26","8.27","600.28","-9.67%"\r\n` +
-	     `"Dec 26, 2001","19","20","21","18","300","-5%"\r\n`);
+	     `"25/12/2001","9.25","10.24","11.26","8.27","600.28","-9.67%"\r\n` +
+	     `"26/12/2001","19","20","21","18","300","-5%"\r\n`);
   });
 
   it('Can cycle convert historical Investing CSV file', () =>{
@@ -118,11 +118,10 @@ describe('InvestingWriter', () => {
 
     let csv1: string = investingWriter.asInvestingCsvFile();
     expect(csv1).toBe(`"Date","Price","Open","High","Low","Vol.","Change %"\r\n` +
-	     `"Dec 25, 2001","90","90","90","90","0","0%"\r\n` +
-	     `"Dec 26, 2001","95","95","95","95","0","0%"\r\n`);
+	     `"25/12/2001","90","90","90","90","0","0%"\r\n` +
+	     `"26/12/2001","95","95","95","95","0","0%"\r\n`);
   });
 });
-
 
 describe('InvestingReader', () => {
   it('Can convert files downloaded from Investing.com', () => {
@@ -132,55 +131,55 @@ describe('InvestingReader', () => {
     expect(iStock).toEqual(
       jasmine.arrayWithExactContents([
         new IInstantQuotes({
-          instant: new Date(2020, 3 - 1, 27),
+          instant: new Date(2021, 1 - 1, 5),
           quotes: [
             new Quote({
               name: "ISIN1",
-              close: 7253.42,
-              open: 7253.27,
-              high: 7260.81,
-              low: 7251.05,
-              volume: 220440000,
+              close: 0.8783,
+              open: 0.8816,
+              high: 0.8821,
+              low: 0.8774,
+              volume: 31940,
               spread: 0,
               dividend: 0
             })]}),
         new IInstantQuotes({
-          instant: new Date(2020, 3 - 1, 28),
+          instant: new Date(2021, 1 - 1, 4),
           quotes: [
             new Quote({
               name: "ISIN1",
-              close: 7253.42,
-              open: 7253.42,
-              high: 7253.42,
-              low: 7253.42,
+              close: 0.8813,
+              open: 0.8820,
+              high: 0.8850,
+              low: 0.8784,
+              volume: 33360,
+              spread: 0,
+              dividend: 0
+            })]}),
+        new IInstantQuotes({
+          instant: new Date(2021, 1 - 1, 1),
+          quotes: [
+            new Quote({
+              name: "ISIN1",
+              close: 0.8900,
+              open: 0.8985,
+              high: 0.8992,
+              low: 0.8892,
               volume: undefined,
               alert: "Circuit Breaker",
               spread: 0,
               dividend: 0
             })]}),
         new IInstantQuotes({
-          instant: new Date(2020, 4 - 1, 6),
+          instant: new Date(2020, 12 - 1, 31),
           quotes: [
             new Quote({
               name: "ISIN1",
-              close: 7264.86,
-              open: 7257.84,
-              high: 7267.00,
-              low: 7248.17,
-              volume: 184520000,
-              spread: 0,
-              dividend: 0
-            })]}),
-        new IInstantQuotes({
-          instant: new Date(2020, 4 - 1, 9),
-          quotes: [
-            new Quote({
-              name: "ISIN1",
-              close: 7278.20,
-              open: 7277.58,
-              high: 7281.20,
-              low: 7275.47,
-              volume: 190280000,
+              close: 0.8851,
+              open: 0.8812,
+              high: 0.8860,
+              low: 0.8792,
+              volume: 26290,
               spread: 0,
               dividend: 0
             })]})
