@@ -1,6 +1,6 @@
 <h1>This is the home page</h1>
 <h3>The S&amp;P500</h3>
-<simulation start="2000-01-01" end="2020-09-04" quotes="SPY, SPYCHF, USDCHF">
+<simulation start="2000-01-01" quotes="SPY, SPYCHF, USDCHF">
   <reports>
     <highlight-report>
       <table border="1">
@@ -63,9 +63,9 @@
             <candle-filter assetName="SPY"
                            id="MT"
                            on="SPY"
-                           periods="13"
+                           periods="12"
                            threshold="1"
-                           periodicity="SEMIMONTHLY"></candle-filter>
+                           periodicity="MONTHLY"></candle-filter>
           </market-timing>
         </buy-and-hold>
       </strategy>

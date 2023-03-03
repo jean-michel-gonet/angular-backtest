@@ -6,7 +6,7 @@ import {
 /**
  * Translates indexes, instruments and forex into CHF when not directly available.
  */
-export const INDEX_SOURCES: NamedQuoteSource[] = [
+export const CHF_SOURCES: NamedQuoteSource[] = [
   {
     name: "BCOMCHF",
     longName: "Bloomberg Commodity (CHF)",
@@ -19,8 +19,8 @@ export const INDEX_SOURCES: NamedQuoteSource[] = [
     exchangeRate: {
       quote: {
         local: {
-          format: QuoteProvider.INVESTING,
-          fileName: "forex/usd-chf-investing.csv"
+          format: QuoteProvider.YAHOO,
+          fileName: "forex/usd-chf-alva.csv"
         }
       },
       operation: ExchangeRateOperation.MULTIPLY
@@ -37,8 +37,8 @@ export const INDEX_SOURCES: NamedQuoteSource[] = [
     exchangeRate: {
       quote: {
         local: {
-          format: QuoteProvider.INVESTING,
-          fileName: "forex/usd-chf-investing.csv"
+          format: QuoteProvider.YAHOO,
+          fileName: "forex/usd-chf-alva.csv"
         }
       },
       operation: ExchangeRateOperation.MULTIPLY
@@ -55,8 +55,8 @@ export const INDEX_SOURCES: NamedQuoteSource[] = [
     exchangeRate: {
       quote: {
         local: {
-          format: QuoteProvider.INVESTING,
-          fileName: "forex/usd-chf-investing.csv"
+          format: QuoteProvider.YAHOO,
+          fileName: "forex/usd-chf-alva.csv"
         }
       },
       operation: ExchangeRateOperation.MULTIPLY
