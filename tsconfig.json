@@ -10,11 +10,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "importHelpers": true,
-<<<<<<< HEAD
-    "target": "ES2022",
-=======
     "target": "es2020",
->>>>>>> 5d5d28a (Fixes)
     "typeRoots": [
       "node_modules/@types"
     ],
