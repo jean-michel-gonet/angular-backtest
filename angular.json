@@ -122,7 +122,6 @@
       }
     }
   },
-  "defaultProject": "angular-backtest",
   "cli": {
     "analytics": "ad262f74-b874-47a8-9752-b77502821d97"
   }
