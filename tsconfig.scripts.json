@@ -1,6 +1,10 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "module": "commonjs", // For NodeJS 8 compat, see https://www.typescriptlang.org/tsconfig#target for more info
+        "module": "ES2022",
+    },
+    "ts-node": {
+        "esm": true,
+        "experimentalSpecifierResolution": "node"
     }
 }

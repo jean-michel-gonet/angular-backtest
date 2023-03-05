@@ -1,5 +1,6 @@
 import { readFile, writeFile} from 'fs';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import {fileURLToPath} from 'url';
 import { Observable } from 'rxjs';
 
 import { BASIC_SOURCES } from '../assets/quotes/configuration';
@@ -17,10 +18,17 @@ import { DownloadFromAlphaVantage } from './download-from-alpha-vantage';
  * To execupte this script:
  */
 export class RefreshQuotes {
+  private dirname: string;
   private downloadFromYahoo = new DownloadFromYahoo();
   private downloadFromMarketStack = new DownloadFromMarketStack();
   private downloadFromAlphaVantage = new DownloadFromAlphaVantage();
 
+  public constructor() {
+    let filename = fileURLToPath(import.meta.url);
+    console.info("filename: " + filename);
+    this.dirname = dirname(filename);
+    console.info("dirname: " + this.dirname);
+  }
   /**
    * Refresh all specified quotes, or all available quotes.
    * @param names If not empty, then refresh only those. When left empty,
@@ -154,7 +162,7 @@ export class RefreshQuotes {
     if (uri.startsWith('/')) {
       return uri;
     } else {
-      return join(__dirname, "../assets/quotes/", uri);
+      return join(this.dirname, "../assets/quotes/", uri);
     }
   }
 
