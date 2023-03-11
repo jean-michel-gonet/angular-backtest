@@ -24,7 +24,7 @@ There are tons of those, and none is completely satisfactory</p>
 
 <p>Following simulation demostrates the strategy over 21 years:</p>
 
-<simulation start="2000-01-01" end="2021-03-01" quotes="SPY, AGG">
+<simulation start="2000-01-01" quotes="SPY, AGG">
   <reports>
     <highlight-report>
       <table border="1">
@@ -86,8 +86,8 @@ There are tons of those, and none is completely satisfactory</p>
             <candle-filter
                     assetName="SPY"
                     id="CANDLE"
-                    periods="13"
-                    periodicity="SEMIMONTHLY"
+                    periods="12"
+                    periodicity="MONTHLY"
                     threshold="1"
                     status="BULL"></candle-filter>
           </market-timing>
@@ -105,7 +105,7 @@ still worth investing in USD?</p>
 <p>This is the same simulation as above, but multiplying by the USD/CHF exchange rate,
 so as to be in the perspective of a Switzerland based investor.</p>
 
-<simulation start="2000-01-01" end="2021-03-01" quotes="SPY, USDCHF, SPYCHF, AGGCHF">
+<simulation start="2000-01-01" quotes="SPY, USDCHF, SPYCHF, AGGCHF">
   <reports>
     <highlight-report>
       <table border="1">
@@ -167,8 +167,67 @@ so as to be in the perspective of a Switzerland based investor.</p>
             <candle-filter
                     assetName="SPY"
                     id="CANDLE"
-                    periods="13"
-                    periodicity="SEMIMONTHLY"
+                    periods="12"
+                    periodicity="MONTHLY"
+                    threshold="1"
+                    status="BULL"></candle-filter>
+          </market-timing>
+        </buy-and-hold>
+      </strategy>
+    </swiss-quote>
+  </accounts>
+</simulation>
+<h2>SP500 / CHF with Candle filter, in CHF</h2>
+
+<p>It looks like the SP500 is worthwhile even for a Swiss investor. However,
+  looking at the graphs, when considering the USDCHF exchange rare, the AGG
+  hasn't stop falling since its inception. Wouldn't be better to invest in CHF
+  during BEAR periods?</p>
+
+<p>This runs two simulations: </p>
+<ul>
+  <li>First simulation uses SPY on BULL and AGG on BEAR.</li>
+  <li>Second simulation uses SPY on BULL and CHF on BEAR.</li>
+</ul>
+<p>Both simulations are equal on all other aspects. </p>
+
+<simulation start="2000-01-01" quotes="SPY, USDCHF, SPYCHF, AGGCHF">
+  <reports>
+    <highcharts-report>
+      <chart-report-configuration show="SPYCHF.CLOSE" showDataAs="LINE" showDataOn="LEFT"></chart-report-configuration>
+      <chart-report-configuration show="AGGCHF.CLOSE" showDataAs="LINE" showDataOn="LEFT"></chart-report-configuration>
+      <chart-report-configuration show="USDCHF.CLOSE" showDataAs="LINE" showDataOn="LEFT"></chart-report-configuration>
+      <chart-report-configuration show="ACC1.NAV" showDataAs="LINE" showDataOn="RIGHT"></chart-report-configuration>
+      <chart-report-configuration show="ACC2.NAV" showDataAs="LINE" showDataOn="RIGHT"></chart-report-configuration>
+      <chart-report-annotation show="CANDLE.BULL" color="blue"></chart-report-annotation>
+      <chart-report-annotation show="CANDLE.BEAR" color="red"></chart-report-annotation>
+    </highcharts-report>
+  </reports>
+  <accounts>
+    <swiss-quote id="ACC1" cash="100000">
+      <strategy>
+        <buy-and-hold assetName="SPYCHF" assetNameDuringBear="AGGCHF">
+          <market-timing>
+            <candle-filter
+                    assetName="SPY"
+                    id="CANDLE"
+                    periods="12"
+                    periodicity="MONTHLY"
+                    threshold="1"
+                    status="BULL"></candle-filter>
+          </market-timing>
+        </buy-and-hold>
+      </strategy>
+    </swiss-quote>
+    <swiss-quote id="ACC2" cash="100000">
+      <strategy>
+        <buy-and-hold assetName="SPYCHF">
+          <market-timing>
+            <candle-filter
+                    assetName="SPY"
+                    id="CANDLE"
+                    periods="12"
+                    periodicity="MONTHLY"
                     threshold="1"
                     status="BULL"></candle-filter>
           </market-timing>
