@@ -104,4 +104,15 @@ export class Reports implements Report, Reporter {
       r.completeReport();
     });
   }
+
+  listQuotesOfInterest(): string[] {
+    let quotesOfInterest: string[] = [];
+    this.reports.forEach(r => {
+      quotesOfInterest = quotesOfInterest.concat(r.listQuotesOfInterest());
+    });
+    this.preProcessors.forEach(p => {
+      quotesOfInterest = quotesOfInterest.concat(p.listQuotesOfInterest());
+    });
+    return quotesOfInterest;
+  }
 }

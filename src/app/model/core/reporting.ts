@@ -1,3 +1,5 @@
+import { QuotesOfInterest } from "./quotes";
+
 /**
  * The smallest atom of provided data.
  */
@@ -45,8 +47,9 @@ export interface Reporter {
 
 /**
  * Interface to receive data produced by @class{Reporter}.
- */
-export interface Report {
+ * Reports may have their own quotes of interest.
+s */
+export interface Report extends QuotesOfInterest {
   /**
    * Registers a reporter to this data processor.
    * @param {Reporter} reporter The reporter to register.
@@ -99,5 +102,10 @@ export class NullReport implements Report {
 
   completeReport(): void {
     // Let's do nothing.
+  }
+
+  listQuotesOfInterest(): string[] {
+    // I have no interests in life.
+    return [];
   }
 }

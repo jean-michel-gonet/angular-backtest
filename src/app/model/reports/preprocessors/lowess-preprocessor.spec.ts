@@ -74,4 +74,13 @@ describe('LowessPreprocessor', () =>{
     expect(testReport.entryOf(new Date(1980, 3, 1))).toBeCloseTo(11, 2);
   });
 
+  it('Can list the quotest of interest', () => {
+    reports.registerPreProcessor(new LowessPreprocessor({
+      source: "SOURCE",
+      over: 3,
+      unitOfTime: UnitOfTime.MONTH,
+      output: "OUTPUT"
+    }));
+    expect(reports.listQuotesOfInterest()).toEqual(jasmine.arrayWithExactContents(["SOURCE", "OUTPUT"]));
+  });
 });

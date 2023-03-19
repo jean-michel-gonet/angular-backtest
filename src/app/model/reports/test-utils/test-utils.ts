@@ -1,4 +1,5 @@
 import { Reporter, Report, ReportedData } from '../../core/reporting';
+import { StringUtils } from '../../utils/string-utils';
 import { PreProcessor } from '../preprocessors/preprocessor';
 
 /**
@@ -38,7 +39,7 @@ export class TestReport implements Report {
   private entries: Map<number, number> = new Map<number, number>();
   public reportIsCompleted: boolean = false;
 
-  constructor(public sourceName: String) {}
+  constructor(public sourceName: string) {}
 
   register(reporter: Reporter): void {
     this.reporters.push(reporter);
@@ -70,6 +71,10 @@ export class TestReport implements Report {
     this.reportIsCompleted = true;
   }
 
+  listQuotesOfInterest(): string[] {
+    return [StringUtils.quoteOfInterestFor(this.sourceName)];
+  }
+
   public numberOfEntries(): number {
     return this.entries.size;
   }
@@ -89,6 +94,10 @@ export class TestPreProcessor implements PreProcessor {
   public instant: Date;
 
   constructor(public sourceName: string, public output: string, public p:(y:number) => number) {}
+  
+  listQuotesOfInterest(): string[] {
+    return [StringUtils.quoteOfInterestFor(this.sourceName)];
+  }
 
   startReportingCycle(instant: Date): void {
     this.instant = instant;

@@ -1,9 +1,10 @@
+import { QuotesOfInterest } from "../../core/quotes";
 import { Report, ReportedData } from "../../core/reporting";
 
 /**
  * A preprocessor is a report that reports to a higher report.
  */
-export interface PreProcessor {
+export interface PreProcessor extends QuotesOfInterest {
     /**
      * Start a new reporting cycle.
      * @param {Date} instant As reports are instant based, the instant of this reporting cycle.

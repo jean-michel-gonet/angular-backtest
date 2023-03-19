@@ -33,4 +33,10 @@ describe("HighlighReport", () => {
     expect(maxHighlight.max).toBe(13);
     expect(maxHighlight.instantMax).toBe(TODAY);
   });
+
+  it("Can list the quotes of interest", () => {
+    let maxHighlight: MaxHighlight = new MaxHighlight(SOURCE);
+    let highlightReport: HighlightReport = new HighlightReport([maxHighlight]);
+    expect(highlightReport.listQuotesOfInterest()).toEqual([SOURCE]);
+  });
 });

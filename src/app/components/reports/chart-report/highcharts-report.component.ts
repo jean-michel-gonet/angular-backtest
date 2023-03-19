@@ -261,6 +261,14 @@ export class HighchartsReportComponent implements AfterViewInit, Report {
     this.cdr.detectChanges();
   }
 
+  listQuotesOfInterest(): string[] {
+    let quotesOfInterest: string[] = [];
+    this.configurationComponents.forEach(c => {
+      quotesOfInterest.push(StringUtils.quoteOfInterestFor(c.show));
+    });
+    return quotesOfInterest;
+  }
+
   public static normalize(event: any) {
     let chart: any = event.point.series.chart;
     let min: number = chart.xAxis[0].min;

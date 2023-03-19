@@ -37,10 +37,7 @@ export class Simulation {
    */
   run(start?:Date, end?:Date): Observable<void> {
     // Lists all quotes of interest:
-    let quotesOfInterest: string[] = [];
-    this.accounts.forEach(a => {
-      quotesOfInterest = quotesOfInterest.concat(a.listQuotesOfInterest());
-    });
+    let quotesOfInterest = this.listQuotesOfInterest();
 
     // As soon as an observer subscribes:
     return new Observable(o => {
@@ -73,5 +70,13 @@ export class Simulation {
           o.complete();
         });
     });
+  }
+
+  private listQuotesOfInterest(): string[] {
+    let quotesOfInterest: string[] = this.report.listQuotesOfInterest();
+    this.accounts.forEach(a => {
+      quotesOfInterest = quotesOfInterest.concat(a.listQuotesOfInterest());
+    });
+    return quotesOfInterest;
   }
 }

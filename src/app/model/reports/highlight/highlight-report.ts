@@ -1,6 +1,7 @@
 import { Report, Reporter, ReportedData } from 'src/app/model/core/reporting';
+import { QuotesOfInterest } from '../../core/quotes';
 
-export interface Highlight {
+export interface Highlight extends QuotesOfInterest {
   startReportingCycle(instant: Date): void;
   receiveData(providedData: ReportedData): void;
   completeReport(): void;
@@ -43,5 +44,12 @@ export class HighlightReport implements Report {
     this.highlights.forEach(h => {
       h.completeReport();
     });
+  }
+  listQuotesOfInterest(): string[] {
+    let quotesOfInterest: string[] = [];
+    this.highlights.forEach(h => {
+      quotesOfInterest = quotesOfInterest.concat(h.listQuotesOfInterest());
+    });
+    return quotesOfInterest;
   }
 }

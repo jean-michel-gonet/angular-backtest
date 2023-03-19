@@ -77,4 +77,9 @@ describe("Reports", () => {
     expect(report1.reportIsCompleted).toBeTruthy();
     expect(report2.reportIsCompleted).toBeTruthy();
   });
+
+  it("Can list the quotes of interest", () => {
+    let quotesOfInterest = reports.listQuotesOfInterest();
+    expect(quotesOfInterest).toEqual(jasmine.arrayWithExactContents([SOURCE1, SOURCE2, SOURCE3, SOURCE4]));
+  });
 });

@@ -1,4 +1,5 @@
 import { Report, ReportedData } from '../../core/reporting';
+import { StringUtils } from '../../utils/string-utils';
 import { PreProcessor } from './preprocessor';
 import { UnitOfTime, UnitsOfTime } from './unit-of-time';
 
@@ -33,6 +34,10 @@ export abstract class BasePreprocessor implements PreProcessor {
     this.source = source;
     this.unitsOfTime = new UnitsOfTime(over, unitOfTime);
     this.output = output;
+  }
+
+  listQuotesOfInterest(): string[] {
+    return [StringUtils.quoteOfInterestFor(this.source)];
   }
 
   startReportingCycle(instant: Date): void {

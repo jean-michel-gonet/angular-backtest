@@ -2,6 +2,7 @@ import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, forwardRe
 import { MaxHighlight, MinHighlight, AvgHighlight, StdHighlight } from 'src/app/model/reports/highlight/highlight';
 import { Highlight } from 'src/app/model/reports/highlight/highlight-report';
 import { ReportedData } from 'src/app/model/core/reporting';
+import { StringUtils } from 'src/app/model/utils/string-utils';
 
 export abstract class HighlightComponent implements Highlight {
   public highlight: Highlight;
@@ -18,6 +19,10 @@ export abstract class HighlightComponent implements Highlight {
   }
 
   constructor(private cdr: ChangeDetectorRef) {
+  }
+
+  listQuotesOfInterest(): string[] {
+    return [StringUtils.quoteOfInterestFor(this._sourceName)];
   }
 
   protected abstract initializeHighlight(sourceName: string): Highlight;
