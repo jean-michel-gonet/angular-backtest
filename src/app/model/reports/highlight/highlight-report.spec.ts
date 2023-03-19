@@ -17,15 +17,15 @@ describe("HighlighReport", () => {
     highlightReport.register(reporter);
 
     highlightReport.startReportingCycle(YESTERDAY);
-    reporter.setY(10);
+    reporter.y = 10;
     highlightReport.collectReports();
 
     highlightReport.startReportingCycle(TODAY);
-    reporter.setY(13);
+    reporter.y = 13;
     highlightReport.collectReports();
 
     highlightReport.startReportingCycle(TOMORROW);
-    reporter.setY(9);
+    reporter.y = 9;
     highlightReport.collectReports();
 
     highlightReport.completeReport();

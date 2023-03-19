@@ -14,6 +14,8 @@ interface IReports {
 
 /**
  * A report that can hold multiple report and behave as one.
+ * It also can hold pre-processors, passing their data to the registered
+ * reports automatically.
  */
 export class Reports implements Report, Reporter {
   reports: Report[];
@@ -33,6 +35,14 @@ export class Reports implements Report, Reporter {
     this.reports.forEach(r => {
       r.register(this)
     });
+  }
+
+  /**
+   * Adds pre-processors to those already configured.
+   * @param preProcessor An additional pre-processor.
+   */
+  registerPreProcessor(preProcessor: PreProcessor): void {
+    this.preProcessors.push(preProcessor);
   }
 
   register(reporter: Reporter): void {
@@ -57,8 +67,8 @@ export class Reports implements Report, Reporter {
       this.reporters.forEach(r => {
         r.startReportingCycle(instant);
       })
+      this.reportingCycleInProgress = false;
     }
-    this.reportingCycleInProgress = false;
   }
 
   collectReports(): void {

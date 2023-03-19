@@ -1,15 +1,21 @@
 import { PerformancePreprocessor} from "./performance-preprocessor";
 import { UnitOfTime } from "./unit-of-time";
 import { TestReport, TestReporter } from '../test-utils/test-utils';
+import { Reports } from "../reports";
 
 describe('PerformancePreprocessor', () =>{
+  let reports: Reports;
   let testReport: TestReport;
   let testReporter: TestReporter;
 
   beforeEach(() => {
     testReport = new TestReport("OUTPUT");
+    reports = new Reports({
+      preProcessors: [],
+      reports: [testReport]
+    });
     testReporter = new TestReporter("SOURCE");
-    testReport.register(testReporter);
+    reports.register(testReporter);
   });
 
   it('Can be instantiated', () => {
@@ -22,22 +28,22 @@ describe('PerformancePreprocessor', () =>{
   });
 
   it('Can compute performance over 3 years', () => {
-    testReport.setPreProcessor(new PerformancePreprocessor({
+    reports.registerPreProcessor(new PerformancePreprocessor({
       source: "SOURCE",
       over: 3,
       unitOfTime: UnitOfTime.YEAR,
       output: "OUTPUT"
     }));
 
-    let endDate: Date =   new Date(1983, 0, 1);  // 3 years later.
-    let instant: Date = new Date(1980, 0, 1);    // Some date in the past.
+    let instant: Date = new Date(1980, 0, 1);  // Some date in the past.
+    let endDate: Date = new Date(1983, 0, 1);  // 3 years later.
     let initialValue = 1000;
     let value: number = initialValue;
     let days: number = 0;
     while(instant <= endDate) {
-      testReport.startReportingCycle(instant);
-      testReporter.setY(value);
-      testReport.collectReports();
+      reports.startReportingCycle(instant);
+      testReporter.y = value;
+      reports.collectReports();
       instant.setDate(instant.getDate() + 1);
       days++;
       value++;
@@ -52,23 +58,23 @@ describe('PerformancePreprocessor', () =>{
   });
 
   it('Can compute performance over 3 month with missing dayas', () => {
-    testReport.setPreProcessor(new PerformancePreprocessor({
+    reports.registerPreProcessor(new PerformancePreprocessor({
       source: "SOURCE",
       over: 3,
       unitOfTime: UnitOfTime.MONTH,
       output: "OUTPUT"
     }));
 
-    testReport.startReportingCycle(new Date(1980, 0, 1));
-    testReporter.setY(10);
-    testReport.collectReports();
-    testReport.startReportingCycle(new Date(1980, 2, 31));
-    testReporter.setY(11);
-    testReport.collectReports();
+    reports.startReportingCycle(new Date(1980, 0, 1));
+    testReporter.y = 10;
+    reports.collectReports();
+    reports.startReportingCycle(new Date(1980, 2, 31));
+    testReporter.y = 11;
+    reports.collectReports();
 
-    testReport.startReportingCycle(new Date(1980, 3, 1));
-    testReporter.setY(100);
-    testReport.collectReports();
+    reports.startReportingCycle(new Date(1980, 3, 1));
+    testReporter.y = 100;
+    reports.collectReports();
 
     expect(testReport.numberOfEntries()).toBe(1);
 
