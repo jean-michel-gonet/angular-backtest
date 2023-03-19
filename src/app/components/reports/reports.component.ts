@@ -1,9 +1,10 @@
 import { Component, ContentChild } from '@angular/core';
 import { Reports } from 'src/app/model/reports/reports';
 import { PreprocessorsComponent } from './preprocessors/preprocessors.component';
-import { PreProcessor, Report } from 'src/app/model/core/reporting';
+import { Report } from 'src/app/model/core/reporting';
 import { HighlightReportComponent } from './highlight-report/highlight-report.component';
 import { HighchartsReportComponent } from './chart-report/highcharts-report.component';
+import { PreProcessor } from 'src/app/model/reports/preprocessors/preprocessor';
 
 @Component({
   selector: 'reports',

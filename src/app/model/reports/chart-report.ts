@@ -1,5 +1,3 @@
-import { PreProcessor } from '../core/reporting';
-
 export enum ShowDataAs {
   LINE = 'LINE',
   SCATTER = 'SCATTER'
@@ -20,12 +18,4 @@ export interface ChartConfiguration {
 export interface ChartAnnotation {
   show: string;
   color: string;
-}
-
-export interface IChartReport {
-  start?: Date;
-  end?: Date;
-  preProcessors?: PreProcessor[];
-  configurations: ChartConfiguration[],
-  annotations?: ChartAnnotation[]
 }

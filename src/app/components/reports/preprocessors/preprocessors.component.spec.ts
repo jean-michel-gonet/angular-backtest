@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RegressionPreprocessorComponent } from './regression-preprocessor.component';
 import { PerformancePreprocessorComponent } from './performance-preprocessor.component';
 import { PreprocessorsComponent } from './preprocessors.component';
-import { PreProcessor } from 'src/app/model/core/reporting';
 import { LowessPreprocessorComponent } from './lowess-preprocessor.component';
+import { PreProcessor } from "src/app/model/reports/preprocessors/preprocessor";
 
 @Component({
   selector: 'parent',

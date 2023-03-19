@@ -3,6 +3,25 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class StringUtils {
 
+  /**
+   * Extracts the quote of interest based on the source name.
+   * Examples:
+   * <dl>
+   *  <di>USDCHF.CLOSE</di><dd>becomes USDCHF</dd>
+   *  <di>USDCHF</di><dd>becomes USDCHF</dd>
+   * </dl>
+   * @param The source name.
+   * @returns The quote of interest.
+   */
+  public static quoteOfInterestFor(sourceName: string): string {
+    let c = sourceName.lastIndexOf('.');
+    if (c >= 0) {
+      return sourceName.substring(0, c);
+    } else {
+      return sourceName;
+    }
+  }
+
   public static convertToArray(s: string): string[] {
     let array: string[] = [];
     if (s) {

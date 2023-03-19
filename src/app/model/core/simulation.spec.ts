@@ -5,6 +5,7 @@ import { NullStrategy } from './strategy';
 import { Quote } from './quotes';
 import { QuotesService } from 'src/app/services/quotes/quotes.service';
 import { Observable } from 'rxjs';
+import { TestReport } from "../reports/test-utils/test-utils";
 
 /**
  * A fake strategy, just to verify that it has been called.
@@ -61,13 +62,14 @@ describe('Simulation', () => {
             name: "P2"
           })],
         strategy: new TestStrategy(["X1", "X2"])})],
+      report: new TestReport("S1"),
       quoteService: quotesService
     });
     expect(simulation).toBeTruthy();
     simulation.run().subscribe(() => {
       done();
     })
-    expect(quotesService.requestedQuoteNames).toEqual(["X1", "X2", "P1", "P2"]);
+    expect(quotesService.requestedQuoteNames).toEqual(jasmine.arrayWithExactContents(["X1", "X2", "P1", "P2", "S1"]));
   });
 
   let now: Date = new Date();

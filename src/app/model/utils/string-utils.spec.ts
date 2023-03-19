@@ -1,6 +1,13 @@
 import { StringUtils } from './string-utils';
 
 describe('StringUtils', () => {
+  it("Can convert to quote of interest", () => {
+    let quoteOfInterest1: string = StringUtils.quoteOfInterestFor("USDCHF.CLOSE");
+    expect(quoteOfInterest1).toBe("USDCHF");
+
+    let quoteOfInterest2: string = StringUtils.quoteOfInterestFor("USDCHF");
+    expect(quoteOfInterest2).toBe("USDCHF");
+  });
   it("Can convert to array", () => {
     let s = StringUtils.convertToArray("A, AA. AAA");
     expect(s[0]).toBe("A");

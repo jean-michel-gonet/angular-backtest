@@ -17,20 +17,26 @@ describe("HighlighReport", () => {
     highlightReport.register(reporter);
 
     highlightReport.startReportingCycle(YESTERDAY);
-    reporter.setY(10);
+    reporter.y = 10;
     highlightReport.collectReports();
 
     highlightReport.startReportingCycle(TODAY);
-    reporter.setY(13);
+    reporter.y = 13;
     highlightReport.collectReports();
 
     highlightReport.startReportingCycle(TOMORROW);
-    reporter.setY(9);
+    reporter.y = 9;
     highlightReport.collectReports();
 
     highlightReport.completeReport();
 
     expect(maxHighlight.max).toBe(13);
     expect(maxHighlight.instantMax).toBe(TODAY);
+  });
+
+  it("Can list the quotes of interest", () => {
+    let maxHighlight: MaxHighlight = new MaxHighlight(SOURCE);
+    let highlightReport: HighlightReport = new HighlightReport([maxHighlight]);
+    expect(highlightReport.listQuotesOfInterest()).toEqual([SOURCE]);
   });
 });

@@ -1,8 +1,10 @@
 import { RegressionPreprocessor} from "./regression-preprocessor";
 import { UnitOfTime } from "./unit-of-time";
 import { TestReport, TestReporter } from '../test-utils/test-utils';
+import { Reports } from "../reports";
 
 describe('RegressionProcessor', () =>{
+  let reports: Reports;
   let testReport: TestReport;
   let testReporter: TestReporter;
   let regressionPreprocessor: RegressionPreprocessor;
@@ -10,7 +12,11 @@ describe('RegressionProcessor', () =>{
   beforeEach(() => {
     testReport = new TestReport("OUTPUT");
     testReporter = new TestReporter("SOURCE");
-    testReport.register(testReporter);
+    reports = new Reports({
+      preProcessors: [],
+      reports: [testReport]
+    });
+    reports.register(testReporter);
   });
 
   it('Can be instantiated', () => {
@@ -26,13 +32,13 @@ describe('RegressionProcessor', () =>{
    * Formats the provided number as a date
    */
   let feedReportWith = function(instant: Date, y: number): void {
-    testReport.startReportingCycle(instant);
-    testReporter.setY(y);
-    testReport.collectReports();
+    reports.startReportingCycle(instant);
+    testReporter.y = y;
+    reports.collectReports();
   }
 
   it('Can compute performance over 3 years with uneven sampling', () => {
-    testReport.setPreProcessor(new RegressionPreprocessor({
+    reports.registerPreProcessor(new RegressionPreprocessor({
       source: "SOURCE",
       over: 3,
       unitOfTime: UnitOfTime.YEAR,

@@ -1,28 +1,30 @@
-import { Reporter, Report, ReportedData, PreProcessor } from '../../core/reporting';
+import { Reporter, Report, ReportedData } from '../../core/reporting';
+import { StringUtils } from '../../utils/string-utils';
+import { PreProcessor } from '../preprocessors/preprocessor';
 
 /**
  * A test reporter, to make unit tests with it.
  * @class{TestReporter}
  */
 export class TestReporter implements Reporter {
-  private y: number;
+  public instant: Date;
+  public y: number;
 
   constructor(private sourceName: string) {}
-
-  public setY(y: number) {
-    this.y = y;
-  }
 
   doRegister(report: Report): void {
     report.register(this);
   }
 
   startReportingCycle(instant: Date): void {
-    // Nothing to do.
+    this.instant = instant;
   }
 
   reportTo(report: Report): void {
-    report.receiveData(new ReportedData({sourceName: this.sourceName, y: this.y}));
+    report.receiveData(new ReportedData({
+      sourceName: this.sourceName, 
+      y: this.y
+    }));
   }
 }
 
@@ -31,48 +33,85 @@ export class TestReporter implements Reporter {
  * @class{TestReport}
  */
 export class TestReport implements Report {
-  private reporter: Reporter;
-  private instant: Date;
-  private info: Map<number, number> = new Map<number, number>();
-  public preProcessor: PreProcessor;
+  public reporters: Reporter[] = [];
+  public instant: Date;
+  public y: number;
+  private entries: Map<number, number> = new Map<number, number>();
+  public reportIsCompleted: boolean = false;
 
-  constructor(private source: string) {}
-
-  setPreProcessor(preProcessor: PreProcessor): void {
-    this.preProcessor = preProcessor;
-  }
+  constructor(public sourceName: string) {}
 
   register(reporter: Reporter): void {
-    this.reporter = reporter;
+    this.reporters.push(reporter);
   }
 
   receiveData(providedData: ReportedData): void {
-    this.preProcessor.receiveData(providedData);
-    if (providedData.sourceName == this.source) {
-      this.info.set(this.instant.valueOf(), providedData.y);
+    if (providedData.sourceName == this.sourceName) {
+      this.y = providedData.y;
+      if (providedData.sourceName == this.sourceName) {
+        this.entries.set(this.instant.valueOf(), providedData.y);    
+      }
     }
   }
 
   startReportingCycle(instant: Date): void {
     this.instant = instant;
-    this.reporter.startReportingCycle(instant);
-    this.preProcessor.startReportingCycle(instant);
+    this.reporters.forEach(r => {
+      r.startReportingCycle(instant);
+    });
   }
 
   collectReports(): void {
-    this.reporter.reportTo(this);
-    this.preProcessor.reportTo(this);
+    this.reporters.forEach(r => {
+      r.reportTo(this)
+    });
   }
 
   completeReport(): void {
-    // Nothing to do.
+    this.reportIsCompleted = true;
+  }
+
+  listQuotesOfInterest(): string[] {
+    return [StringUtils.quoteOfInterestFor(this.sourceName)];
   }
 
   public numberOfEntries(): number {
-    return this.info.size;
+    return this.entries.size;
   }
 
   public entryOf(instant: Date): number {
-    return this.info.get(instant.valueOf());
+    return this.entries.get(instant.valueOf());
   }
 }
+
+/**
+ * A test pre-processor, to make unit tests with it.
+ * @class{TestPreProcessor}
+ */
+export class TestPreProcessor implements PreProcessor {
+  private y: number;
+
+  public instant: Date;
+
+  constructor(public sourceName: string, public output: string, public p:(y:number) => number) {}
+  
+  listQuotesOfInterest(): string[] {
+    return [StringUtils.quoteOfInterestFor(this.sourceName)];
+  }
+
+  startReportingCycle(instant: Date): void {
+    this.instant = instant;
+  }
+
+  receiveData(providedData: ReportedData): void {
+    if (providedData.sourceName == this.sourceName) {
+      this.y = this.p(providedData.y);
+    }
+  }
+  reportTo(report: Report): void {
+    if (this.y) {
+      report.receiveData(new ReportedData({sourceName: this.output, y: this.y}));
+    }
+  }
+}
+

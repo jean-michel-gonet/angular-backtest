@@ -2,6 +2,7 @@ import { Highlight } from './highlight-report';
 import { ReportedData } from '../../core/reporting';
 import { CumulativeMovingAverage } from '../../calculations/moving-average/cumulative-moving-average';
 import { StandardDeviation } from '../../calculations/statistics/standard-deviation';
+import { StringUtils } from '../../utils/string-utils';
 
 export abstract class BaseHighlight implements Highlight {
   protected instant: Date;
@@ -19,6 +20,15 @@ export abstract class BaseHighlight implements Highlight {
 
   completeReport(): void {
     // Nothing to do.
+  }
+
+  /**
+   * Quote of interest is the source name minus the last bit.
+   * For example, "SPYCHF.CLOSE" becomes "SPYCHF"
+   * @returns The quotes of interest, based on the source name.
+   */
+  listQuotesOfInterest(): string[] {
+    return [StringUtils.quoteOfInterestFor(this.sourceName)];
   }
 }
 
