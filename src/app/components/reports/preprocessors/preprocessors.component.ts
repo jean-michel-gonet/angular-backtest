@@ -1,8 +1,8 @@
 import { Component, ContentChildren, QueryList } from '@angular/core';
 import { PerformancePreprocessorComponent } from './performance-preprocessor.component';
 import { RegressionPreprocessorComponent } from './regression-preprocessor.component';
-import { PreProcessor } from 'src/app/model/core/reporting';
 import { LowessPreprocessorComponent } from './lowess-preprocessor.component';
+import { PreProcessor } from 'src/app/model/reports/preprocessors/preprocessor';
 
 @Component({
   selector: 'preprocessors',

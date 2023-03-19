@@ -1,4 +1,5 @@
-import { Report, Reporter, ReportedData, PreProcessor } from '../core/reporting';
+import { Report, Reporter, ReportedData } from '../core/reporting';
+import { PreProcessor } from './preprocessors/preprocessor';
 
 interface IReports {
   /**

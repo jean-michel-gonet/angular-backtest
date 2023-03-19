@@ -1,4 +1,5 @@
-import { Reporter, Report, ReportedData, PreProcessor } from '../../core/reporting';
+import { Reporter, Report, ReportedData } from '../../core/reporting';
+import { PreProcessor } from '../preprocessors/preprocessor';
 
 /**
  * A test reporter, to make unit tests with it.

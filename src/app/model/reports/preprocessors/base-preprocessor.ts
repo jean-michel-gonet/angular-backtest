@@ -1,4 +1,5 @@
-import { Report, PreProcessor, ReportedData } from '../../core/reporting';
+import { Report, ReportedData } from '../../core/reporting';
+import { PreProcessor } from './preprocessor';
 import { UnitOfTime, UnitsOfTime } from './unit-of-time';
 
 export interface IBasePreprocessor {
